@@ -9,7 +9,7 @@
 
 from __future__ import print_function
 
-import StringIO,json,sys,os,re
+import StringIO,sys,os,re
 
 from datetime import datetime
 from oaipmh.client import Client
