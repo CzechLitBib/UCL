@@ -142,6 +142,8 @@ for record in records:
 
 	counter+=1
 
-log.write("\nTOTAL: " + str(counter))
+# EXIT -------------------
+log.write('TOTAL: ' + str(counter) + '\n')
 log.close()
+print('Done.')
 
