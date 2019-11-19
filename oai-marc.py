@@ -54,10 +54,10 @@ oai = Client(URL, registry)
 #records = oai.listIdentifiers(metadataPrefix='marc21', set='STMUS')
 
 try:
-	print("Harversting..")
+	print('Harversting..')
 	records = oai.listRecords(metadataPrefix='marc21', set='STMUS', from_=datetime(2019,1,1), until=datetime(2019,2,1))# Ymd
 except:
-	print("Harversting failed.")
+	print('Harversting failed.')
 	sys.exit(1)
 
 # MAIN -------------------
@@ -84,10 +84,10 @@ for record in records:
 
 	# retry missing metadata(?)
 	if not metadata:
-		print(header.identifier() + " Missing matadata. Retrying..")
+		print(header.identifier() + ' Missing matadata. Retrying..')
 		retry = oai.getRecord(metadataPrefix='marc21', identifier=header.identifier())
 		if not retry[1]:
-			print(header.identifier() + " Missing retry metadata.")
+			print(header.identifier() + ' Missing retry metadata.')
 			continue
 		else:
 			header = retry[0]
@@ -96,34 +96,34 @@ for record in records:
 	# VALIDATION ------------------
 	
 	#TEST: TAG EXISTS
-	if not '002' in metadata: log.write(header.identifier() + " Missing 002 tag.\n")
+	if not '002' in metadata: log.write(header.identifier() + ' Missing 002 tag.\n')
 	#TEST: TAG SUBFIELD EXISTS
 	if '100' in metadata:
 		if not('a' and 'd' and '7') in metadata['100']:
-			log.write(header.identifier() + " Missing a,d,7 subfield group in 100 tag.\n")
+			log.write(header.identifier() + ' Missing a,d,7 subfield group in 100 tag.\n')
 	#TEST: TAG + TAG SUBFIELD EXISTS
 	if '072' in metadata:
 		if 'x' in metadata['072']:
 			if not '245' in metadata:
-				log.write(header.identifier() + " Missing 245 tag when x subfield in 072 tag.\n")
+				log.write(header.identifier() + ' Missing 245 tag when x subfield in 072 tag.\n')
 	#TEST: EQUAL VALUE
 	if '100' in metadata:
 		if '260' in metadata:
 			if metadata['100'].value() != metadata['260'].value():
-				log.write(header.identifier() + " Value of 100 and 260 not equal.\n")
+				log.write(header.identifier() + ' Value of 100 and 260 not equal.\n')
 	#TEST: VALUE IN LIST
-	l = ('auto','kolo','vlak')
+	LIST = ('auto','kolo','vlak')
 	if '260' in metadata:
-		if not metadata['260'].value() in l:
-				log.write(header.identifier() + " Value of 260 not in list.\n")
+		if not metadata['260'].value() in LIST:
+				log.write(header.identifier() + ' Value of 260 not in list.\n')
 	#TEST: PRINT VALUE FROM LIST
 	for TAG in ('001','005','007'):
 		if TAG in metadata:
-			log.write(header.identifier() + " Tag " + TAG + " value: " + metadata[TAG].value() + '\n')
+			log.write(header.identifier() + ' Tag ' + TAG + ' value: ' + metadata[TAG].value() + '\n')
 	#TEST: VALUE DATE FORMAT
 	if '001' in metadata:
 		if not re.match('\d+', metadata['001'].value()):
-			log.write(header.identifier() + " Tag 001 invalid data format.\n")
+			log.write(header.identifier() + ' Tag 001 invalid data format.\n')
 
 	# EXPORT -------------------
 
