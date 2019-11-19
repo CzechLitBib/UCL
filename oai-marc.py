@@ -67,17 +67,18 @@ counter = 0
 for record in records:
 
 	header = record[0]
-	#print tostring(record_header.element())
-	#print header.identifier()
-	#print header.datestamp()
-	#print header.setSpec()
+	#print(tostring(record_header.element()))
+	#print(header.identifier())
+	#print(header.datestamp())
+	#print(header.setSpec())
 
 	metadata = record[1]
-	#print metadata
-	#print metadata.leader
-	#print metadata.title()
-	#print metadata.as_marc()
-	#print metadata.as_dict()
+	#print(metadata)
+	#print(metadata.leader)
+	#print(metadata.title())
+	#print(metadata.as_marc())
+	#print(metadata.as_dict())
+	#print(metadata.as_json(indent=4,sort_keys=True))
 	
 	# skip deleted records
 	if header.isDeleted(): continue
@@ -96,7 +97,7 @@ for record in records:
 	# VALIDATION ------------------
 	
 	#TEST: TAG EXISTS
-	if not '002' in metadata: log.write(header.identifier() + ' Missing 002 tag.\n')
+	if not '001' in metadata: log.write(header.identifier() + ' Missing 001 tag.\n')
 	#TEST: TAG SUBFIELD EXISTS
 	if '100' in metadata:
 		if not('a' and 'd' and '7') in metadata['100']:
@@ -128,16 +129,16 @@ for record in records:
 	# EXPORT -------------------
 
 	# MARC21
-	writer = MARCWriter(open('export/marc/' + record[0].identifier() + '.dat', 'wb'))
-	writer.write(record[1])
+	writer = MARCWriter(open('export/marc/' + header.identifier() + '.dat', 'wb'))
+	writer.write(metadata)
 	writer.close()
 	# JSON
-	writer = JSONWriter(open('export/json/'+ record[0].identifier() + '.json', 'wt'))
-	writer.write(record[1])
+	writer = JSONWriter(open('export/json/'+ header.identifier() + '.json', 'wt'))
+	writer.write(metadata)
 	writer.close()
 	# MARCXML
-	writer = XMLWriter(open('export/xml/' + record[0].identifier() + '.xml', 'wb'))
-	writer.write(record[1])
+	writer = XMLWriter(open('export/xml/' + header.identifier() + '.xml', 'wb'))
+	writer.write(metadata)
 	writer.close()
 
 	counter+=1
