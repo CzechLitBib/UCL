@@ -36,6 +36,12 @@ def valid_date(s):
 		msg = 'Invalid date format.'
 		raise argparse.ArgumentTypeError(msg)
 
+def valid_format(s):
+	if s in ('json', 'marc', 'xml'): return
+	else:
+		msg = 'Invalid export format.'
+		raise argparse.ArgumentTypeError(msg)
+
 # ARG -------------------
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
@@ -43,7 +49,7 @@ required = parser.add_argument_group('required arguments')
 required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date', required=True)
 required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date', required=True)
 optional = parser.add_argument_group('export')
-optional.add_argument('--export', help='Export data. [json] [marc] [xml]')
+optional.add_argument('--export', help='Export data format. [json] [marc] [xml]', type=valid_format)
 args = parser.parse_args()
 
 # INIT -------------------
