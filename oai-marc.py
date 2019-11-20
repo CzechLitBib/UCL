@@ -38,10 +38,10 @@ def valid_date(s):
 
 # ARG -------------------
 
-parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML validator.")
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
 required = parser.add_argument_group('required arguments')
-required.add_argument('--from', help='From date. [YY-mm-dd hh:mm:ss]', type=valid_date, dest='from_date', required=True)
-required.add_argument('--until', help='Until date. [YY-mm-dd hh:mm:ss]', type=valid_date, dest='until_date', required=True)
+required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date', required=True)
+required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date', required=True)
 optional = parser.add_argument_group('export')
 optional.add_argument('--export', help='Export data. [json] [marc] [xml]')
 args = parser.parse_args()
