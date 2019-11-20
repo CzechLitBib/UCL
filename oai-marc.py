@@ -50,7 +50,7 @@ required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type
 required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date', required=True)
 optional = parser.add_argument_group('export')
 optional.add_argument('--export', help='Export data format. [json] [marc] [xml]', type=valid_format)
-optional.add_argument('--display', help='Display data.',action='store_true')
+optional.add_argument('--display', help='Print output to stdout.', action='store_true')
 args = parser.parse_args()
 
 # INIT -------------------
@@ -113,9 +113,6 @@ for record in records:
 		#print(metadata.as_marc())
 		#print(metadata.as_dict())
 		#print(metadata.as_json(indent=4,sort_keys=True))
-		
-		print("Press key to continue..",end='')
-		raw_input('')
 
 	# VALIDATION ------------------
 	
@@ -175,4 +172,5 @@ for record in records:
 log.write('TOTAL: ' + str(counter) + '\n')
 log.close()
 print('Done.')
+print('Total: ' + str(counter))
 
