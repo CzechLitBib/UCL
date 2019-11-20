@@ -9,7 +9,7 @@
 
 from __future__ import print_function
 
-import StringIO,sys,os,re
+import argparse,StringIO,sys,os,re
 
 from datetime import datetime
 from oaipmh.client import Client
@@ -29,6 +29,23 @@ def MarcXML(xml):
 	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
 	return handler.records[0]
 
+def valid_date(s):
+	try:
+		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+	except:
+		msg = 'Invalid date format.'
+		raise argparse.ArgumentTypeError(msg)
+
+# ARG -------------------
+
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML validator.")
+required = parser.add_argument_group('required arguments')
+required.add_argument('--from', help='From date. [YY-mm-dd hh:mm:ss]', type=valid_date, dest='from_date', required=True)
+required.add_argument('--until', help='Until date. [YY-mm-dd hh:mm:ss]', type=valid_date, dest='until_date', required=True)
+optional = parser.add_argument_group('export')
+optional.add_argument('--export', help='Export data. [json] [marc] [xml]')
+args = parser.parse_args()
+
 # INIT -------------------
 
 try:
@@ -36,13 +53,6 @@ try:
 except:
 	print("Read only FS exiting..")
 	exit(1)
-
-try:
-	os.mkdir('export')
-	os.mkdir('export/marc')
-	os.mkdir('export/json')
-	os.mkdir('export/xml')
-except: pass
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -54,8 +64,8 @@ oai = Client(URL, registry)
 #records = oai.listIdentifiers(metadataPrefix='marc21', set='STMUS')
 
 try:
-	print('Harversting..')
-	records = oai.listRecords(metadataPrefix='marc21', set='STMUS', from_=datetime(2019,1,1), until=datetime(2019,2,1))# Ymd
+	print('Validating..')
+	records = oai.listRecords(metadataPrefix='marc21', set='STMUS', from_=args.from_date, until=args.until_date)
 except:
 	print('Harversting failed.')
 	sys.exit(1)
@@ -128,18 +138,23 @@ for record in records:
 
 	# EXPORT -------------------
 
-	# MARC21
-	writer = MARCWriter(open('export/marc/' + header.identifier() + '.dat', 'wb'))
-	writer.write(metadata)
-	writer.close()
-	# JSON
-	writer = JSONWriter(open('export/json/'+ header.identifier() + '.json', 'wt'))
-	writer.write(metadata)
-	writer.close()
-	# MARCXML
-	writer = XMLWriter(open('export/xml/' + header.identifier() + '.xml', 'wb'))
-	writer.write(metadata)
-	writer.close()
+	if args.export:
+		try:
+			os.mkdir('export')
+			os.mkdir('export/' + args.export)
+		except: pass
+		if args.export == 'marc':# MARC 21
+			writer = MARCWriter(open('export/marc/' + header.identifier() + '.dat', 'wb'))
+			writer.write(metadata)
+			writer.close()
+		if args.export == 'json':# JSON
+			writer = JSONWriter(open('export/json/'+ header.identifier() + '.json', 'wt'))
+			writer.write(metadata)
+			writer.close()
+		if args.export == 'xml':# MARCXML
+			writer = XMLWriter(open('export/xml/' + header.identifier() + '.xml', 'wb'))
+			writer.write(metadata)
+			writer.close()
 
 	counter+=1
 
