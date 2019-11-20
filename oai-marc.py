@@ -50,6 +50,7 @@ required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type
 required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date', required=True)
 optional = parser.add_argument_group('export')
 optional.add_argument('--export', help='Export data format. [json] [marc] [xml]', type=valid_format)
+optional.add_argument('--display', help='Display data.',action='store_true')
 args = parser.parse_args()
 
 # INIT -------------------
@@ -83,18 +84,7 @@ counter = 0
 for record in records:
 
 	header = record[0]
-	#print(tostring(record_header.element()))
-	#print(header.identifier())
-	#print(header.datestamp())
-	#print(header.setSpec())
-
 	metadata = record[1]
-	#print(metadata)
-	#print(metadata.leader)
-	#print(metadata.title())
-	#print(metadata.as_marc())
-	#print(metadata.as_dict())
-	#print(metadata.as_json(indent=4,sort_keys=True))
 	
 	# skip deleted records
 	if header.isDeleted(): continue
@@ -109,7 +99,24 @@ for record in records:
 		else:
 			header = retry[0]
 			metadata = retry[1]
-	
+
+	# DISPLAY ------------------
+
+	if args.display:
+		#print(tostring(record_header.element()))
+		print(header.identifier())
+		#print(header.datestamp())
+		#print(header.setSpec())
+		print(metadata)
+		#print(metadata.leader)
+		#print(metadata.title())
+		#print(metadata.as_marc())
+		#print(metadata.as_dict())
+		#print(metadata.as_json(indent=4,sort_keys=True))
+		
+		print("Press key to continue..",end='')
+		raw_input('')
+
 	# VALIDATION ------------------
 	
 	#TEST: TAG EXISTS
