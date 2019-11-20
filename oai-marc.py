@@ -37,7 +37,7 @@ def valid_date(s):
 		raise argparse.ArgumentTypeError(msg)
 
 def valid_format(s):
-	if s in ('json', 'marc', 'xml'): return
+	if s in ('json', 'marc', 'xml'): return s
 	else:
 		msg = 'Invalid export format.'
 		raise argparse.ArgumentTypeError(msg)
