@@ -2,10 +2,6 @@
 #
 # JSON to MARC convertor.
 # 
-#          Core: {'fields':[], 'leader':'foo'}
-#   Basic field: {'001':'foo'}
-# Complex field: {'040':{'ind1':'', 'ind2':'', 'subfields':[{'a':''}, {'b':''}]}}
-#
 
 # INCLUDE -----------------
 
@@ -71,7 +67,7 @@ with open('in/in2.json','rb') as f:
 # Complex field: {'040':{'ind1':'', 'ind2':'', 'subfields':[{'a':''}, {'b':''}]}}
 #
 
-template={'leader':'foo', 'fields':[{'001':'foo'}]}
+template = {'leader':'foo', 'fields':[{'001':'foo'}]}
 reader = JSONReader(json.dumps(template))
 
 for record in reader: print(record)
@@ -114,3 +110,4 @@ print(record)
 
 #log.close()
 #print('Done.')
+
