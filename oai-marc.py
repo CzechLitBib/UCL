@@ -74,7 +74,7 @@ try:
 	print('Validating..')
 	records = oai.listRecords(metadataPrefix='marc21', set='STMUS', from_=args.from_date, until=args.until_date)
 except:
-	print('Harversting failed.')
+	print('No records found.')
 	sys.exit(1)
 
 # MAIN -------------------
@@ -104,15 +104,16 @@ for record in records:
 
 	if args.display:
 		#print(tostring(record_header.element()))
-		print(header.identifier())
+		#print(header.identifier())
 		#print(header.datestamp())
 		#print(header.setSpec())
-		print(metadata)
+		#print(metadata)
 		#print(metadata.leader)
 		#print(metadata.title())
 		#print(metadata.as_marc())
-		#print(metadata.as_dict())
+		print(metadata.as_dict())
 		#print(metadata.as_json(indent=4,sort_keys=True))
+		#print(metadata.as_json())
 
 	# VALIDATION ------------------
 	
