@@ -6,12 +6,6 @@
 #   Basic field: {'001':'foo'}
 # Complex field: {'040':{'ind1':'', 'ind2':'', 'subfields':[{'a':''}, {'b':''}]}}
 #
-# TODO:
-#
-# - extraction
-# - deconstruction(marcpy.Record <- pymarc.Field or dict -> JSONReader ?)
-#
-
 
 # INCLUDE -----------------
 
@@ -20,12 +14,12 @@ from __future__ import print_function
 import argparse,json,sys,os,re
 
 from pymarc import JSONReader,JSONWriter,MARCWriter,XMLWriter
+from pymarc.record import Record
+from pymarc.field import Field
 
 # VAR -----------------
 
 LOG='json-marc.log'
-
-TEMPLATE={'leader':'', 'fields':[]}
 
 # DEF -----------------
 
@@ -69,15 +63,31 @@ with open('in/in2.json','rb') as f:
 #print(j['drawer'])
 
 # UPDATE TEMPLATE
+
+# THE JSON WAY
 #
-# ...
-# ...
+#          Core: {'fields':[], 'leader':'foo'}
+#   Basic field: {'001':'foo'}
+# Complex field: {'040':{'ind1':'', 'ind2':'', 'subfields':[{'a':''}, {'b':''}]}}
 #
 
-reader = JSONReader(json.dumps(TEMPLATE))
+template={'leader':'foo', 'fields':[{'001':'foo'}]}
+reader = JSONReader(json.dumps(template))
 
-for record in reader:
-	print(record)
+for record in reader: print(record)
+
+# THE RECORD WAY
+#
+# field = Field(tag='001',data='foo')
+# field = Field(tag='040', indicators=['1','0'], subfields=['a','','b',''])
+#
+
+record = Record()
+record.leader = 'foo'
+field = Field(tag='001', data='foo')
+record.add_field(field)
+
+print(record)
 
 # EXPORT -----------------
 
