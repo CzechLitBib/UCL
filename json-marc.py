@@ -1,7 +1,17 @@
 #!/usr/bin/python
 #
 # JSON to MARC convertor.
+# 
+#          Core: {'fields':[], 'leader':'foo'}
+#   Basic field: {'001':'foo'}
+# Complex field: {'040':{'ind1':'', 'ind2':'', 'subfields':[{'a':''}, {'b':''}]}}
 #
+# TODO:
+#
+# - extraction
+# - deconstruction(marcpy.Record <- pymarc.Field or dict -> JSONReader ?)
+#
+
 
 # INCLUDE -----------------
 
@@ -14,6 +24,8 @@ from pymarc import JSONReader,JSONWriter,MARCWriter,XMLWriter
 # VAR -----------------
 
 LOG='json-marc.log'
+
+TEMPLATE={'leader':'', 'fields':[]}
 
 # DEF -----------------
 
@@ -31,64 +43,64 @@ def valid_format(s):
 
 #  ARG -------------------
 
-parser = argparse.ArgumentParser(description="JSON - MARC Convertor.")
-required = parser.add_argument_group('required arguments')
-required.add_argument('--in', help='Import directory.', dest='in_dir', type=valid_dir, required=True)
-required.add_argument('--format', help='Export format. [json] [marc] [xml]', type=valid_format, required=True)
-args = parser.parse_args()
+#parser = argparse.ArgumentParser(description="JSON - MARC Convertor.")
+#required = parser.add_argument_group('required arguments')
+#required.add_argument('--in', help='Import directory.', dest='in_dir', type=valid_dir, required=True)
+#required.add_argument('--format', help='Export format. [json] [marc] [xml]', type=valid_format, required=True)
+#args = parser.parse_args()
 
 # INIT -----------------
 
-try:
-	log = open(LOG,'a',0)
-except:
-	print('Read only FS exiting.')
-	sys.exit(1)
+#try:
+#	log = open(LOG,'a',0)
+#except:
+#	print('Read only FS exiting.')
+#	sys.exit(1)
 
 # MAIN -----------------
 
-for f in os.listdir(args.in_dir):
+# LOAD BROKEN JSON SOURCE
 
-	# skip directory
-	if os.path.isdir(args.in_dir + '/' + f): continue
+with open('in/in2.json','rb') as f:
+	j = json.loads(f.read(), strict=False)# ignore control char garbage
 
-	print(f)
+#print(json.dumps(j, indent=2))
+#print(j['_rev'])
+#print(j['drawer'])
 
-	# LOAD JSON
-	j = json.load(open(args.in_dir + '/' + f, 'rb'), encoding='utf-8')
+# UPDATE TEMPLATE
+#
+# ...
+# ...
+#
 
-	# MODIFY STRUCTURE
-	print(json.dumps(j, indent=2))
+reader = JSONReader(json.dumps(TEMPLATE))
 
-	# EXPORT -----------------
+for record in reader:
+	print(record)
 
-	try:
-		os.mkdir('export')
-		os.mkdir('export/' + args.format)
-	except: pass
+# EXPORT -----------------
 
-	reader = JSONReader(j)
+#try:
+#	os.mkdir('export')
+#	os.mkdir('export/' + args.format)
+#except: pass
 
-	print(reader)
-
-	sys.exit(1)
-
-	for record in reader:
-		if args.format == 'json':# JSON
-			writer = JSONWriter(open('export/json/' + re.sub('(.*)\.json', '\\1', f) + '.json', 'wt'))
-			writer.write(record)
-			writer.close()
-		if args.format == 'marc':# MARC21
-			writer = MARCWriter(open('export/marc/' + re.sub('(.*)\.json', '\\1', f)  + '.dat', 'wb'))
-			writer.write(record)
-			writer.close()
-		if args.format == 'xml':# MARCXML
-			writer = XMLWriter(open('export/xml/' + re.sub('(.*)\.json', '\\1', f) + '.xml', 'wb'))
-			writer.write(record)
-			writer.close()
+#for record in reader:
+#	if args.format == 'json':# JSON
+#		writer = JSONWriter(open('export/json/' + re.sub('(.*)\.json', '\\1', f) + '.json', 'wt'))
+#		writer.write(record)
+#		writer.close()
+#	if args.format == 'marc':# MARC21
+#		writer = MARCWriter(open('export/marc/' + re.sub('(.*)\.json', '\\1', f)  + '.dat', 'wb'))
+#		writer.write(record)
+#		writer.close()
+#	if args.format == 'xml':# MARCXML
+#		writer = XMLWriter(open('export/xml/' + re.sub('(.*)\.json', '\\1', f) + '.xml', 'wb'))
+#		writer.write(record)
+#		writer.close()
 
 # EXIT -------------------
 
-log.close()
-print('Done.')
-
+#log.close()
+#print('Done.')
