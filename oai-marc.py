@@ -42,15 +42,22 @@ def valid_format(s):
 		msg = 'Invalid export format.'
 		raise argparse.ArgumentTypeError(msg)
 
+def valid_display(s):
+	if s in ('info', 'json', 'marc'): return s
+	else:
+		msg = 'Invalid export format.'
+		raise argparse.ArgumentTypeError(msg)
+
+
 # ARG -------------------
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
 required = parser.add_argument_group('required arguments')
 required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date', required=True)
 required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date', required=True)
-optional = parser.add_argument_group('export')
+optional = parser.add_argument_group('output')
 optional.add_argument('--export', help='Export data format. [json] [marc] [xml]', type=valid_format)
-optional.add_argument('--display', help='Print output to stdout.', action='store_true')
+optional.add_argument('--display', help='Display output format. [info] [json] [marc]', nargs='?', type=valid_display, const='info')
 args = parser.parse_args()
 
 # INIT -------------------
@@ -72,6 +79,7 @@ oai = Client(URL, registry)
 
 try:
 	print('Validating..')
+	print('------------------')
 	records = oai.listRecords(metadataPrefix='marc21', set='STMUS', from_=args.from_date, until=args.until_date)
 except:
 	print('No records found.')
@@ -103,17 +111,12 @@ for record in records:
 	# DISPLAY ------------------
 
 	if args.display:
-		#print(tostring(record_header.element()))
-		#print(header.identifier())
-		#print(header.datestamp())
-		#print(header.setSpec())
-		#print(metadata)
-		#print(metadata.leader)
-		#print(metadata.title())
-		#print(metadata.as_marc())
-		print(metadata.as_dict())
-		#print(metadata.as_json(indent=4,sort_keys=True))
-		#print(metadata.as_json())
+		if args.display == 'info':
+			print(header.identifier())
+		if args.display == 'json':
+			print(metadata.as_json(indent=4, sort_keys=True))
+		if args.display == 'marc':
+			print(metadata)
 
 	# VALIDATION ------------------
 	
@@ -172,6 +175,7 @@ for record in records:
 # EXIT -------------------
 log.write('TOTAL: ' + str(counter) + '\n')
 log.close()
+print('------------------')
 print('Done.')
 print('Total: ' + str(counter))
 
