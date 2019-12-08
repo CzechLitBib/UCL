@@ -43,22 +43,38 @@ def valid_format(s):
 		raise argparse.ArgumentTypeError(msg)
 
 def valid_display(s):
-	if s in ('info', 'json', 'marc'): return s
+	if s in ('ident', 'json', 'marc'): return s
 	else:
-		msg = 'Invalid export format.'
+		msg = 'Invalid display format.'
 		raise argparse.ArgumentTypeError(msg)
 
+def valid_request(s):
+	if s in ('record', 'set', 'meta'): return s
+	else:
+		msg = 'Invalid request format.'
+		raise argparse.ArgumentTypeError(msg)
 
 # ARG -------------------
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
-required = parser.add_argument_group('required arguments')
-required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date', required=True)
-required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date', required=True)
+listing = parser.add_argument_group('info')
+listing.add_argument('--get', help='Request type. [record] [set] [meta]', type=valid_request, default='record')
+required = parser.add_argument_group('validation')
+required.add_argument('--set', help='Records set.')
+required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 optional = parser.add_argument_group('output')
 optional.add_argument('--export', help='Export data format. [json] [marc] [xml]', type=valid_format)
-optional.add_argument('--display', help='Display output format. [info] [json] [marc]', nargs='?', type=valid_display, const='info')
+optional.add_argument('--display', help='Display output format. [ident] [json] [marc]', nargs='?', type=valid_display, const='ident')
 args = parser.parse_args()
+
+if args.get == 'record':
+	if not args.set:
+		parser.error('argument --set is required.')
+	if not args.from_date:
+		parser.error('argument --from is required.')
+	if not args.until_date:
+		parser.error('argument --until is required.')
 
 # INIT -------------------
 
@@ -73,23 +89,30 @@ registry.registerReader('marc21', MarcXML)
 
 oai = Client(URL, registry)
 
-#records = oai.listSets()
-#records = oai.listMetadataFormats()
-#records = oai.listIdentifiers(metadataPrefix='marc21', set='STMUS')
-
 try:
-	print('Validating..')
-	print('------------------')
-	records = oai.listRecords(metadataPrefix='marc21', set='STMUS', from_=args.from_date, until=args.until_date)
+	if args.get == 'record':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
 except:
-	print('No records found.')
+	print('No records.')
 	sys.exit(1)
+
+if args.get == 'record': print('Validating..')
+if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
 
 counter = 0
 
 for record in records:
+
+	if args.get == 'set' or args.get == 'meta':
+		print(record[0])
+		counter+=1
+		continue
 
 	header = record[0]
 	metadata = record[1]
@@ -111,7 +134,7 @@ for record in records:
 	# DISPLAY ------------------
 
 	if args.display:
-		if args.display == 'info':
+		if args.display == 'ident':
 			print(header.identifier())
 		if args.display == 'json':
 			print(metadata.as_json(indent=4, sort_keys=True))
@@ -175,7 +198,7 @@ for record in records:
 # EXIT -------------------
 log.write('TOTAL: ' + str(counter) + '\n')
 log.close()
-print('------------------')
+if args.display or args.get != 'record': print('------------------')
 print('Done.')
 print('Total: ' + str(counter))
 
