@@ -100,6 +100,14 @@ except:
 	print('No records.')
 	sys.exit(1)
 
+if args.export:
+	try:
+		os.mkdir('export')
+	except :pass
+	try:
+		os.mkdir('export/' + args.export)
+	except: pass
+
 if args.get == 'record': print('Validating..')
 if args.display or args.get != 'record': print('------------------')
 
@@ -176,10 +184,6 @@ for record in records:
 	# EXPORT -------------------
 
 	if args.export:
-		try:
-			os.mkdir('export')
-			os.mkdir('export/' + args.export)
-		except: pass
 		if args.export == 'marc':# MARC 21
 			writer = MARCWriter(open('export/marc/' + header.identifier() + '.dat', 'wb'))
 			writer.write(metadata)
