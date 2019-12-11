@@ -64,6 +64,7 @@ required.add_argument('--set', help='Records set.')
 required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
 required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 optional = parser.add_argument_group('output')
+optional.add_argument('--check', help='Validation control.', action='store_true')
 optional.add_argument('--export', help='Export data format. [json] [marc] [xml]', type=valid_format)
 optional.add_argument('--display', help='Display output format. [ident] [json] [marc]', nargs='?', type=valid_display, const='ident')
 args = parser.parse_args()
@@ -150,36 +151,36 @@ for record in records:
 			print(metadata)
 
 	# VALIDATION ------------------
-	
-	#TEST: TAG EXISTS
-	if not '001' in metadata: log.write(header.identifier() + ' Missing 001 tag.\n')
-	#TEST: TAG SUBFIELD EXISTS
-	if '100' in metadata:
-		if not('a' and 'd' and '7') in metadata['100']:
-			log.write(header.identifier() + ' Missing a,d,7 subfield group in 100 tag.\n')
-	#TEST: TAG + TAG SUBFIELD EXISTS
-	if '072' in metadata:
-		if 'x' in metadata['072']:
-			if not '245' in metadata:
-				log.write(header.identifier() + ' Missing 245 tag when x subfield in 072 tag.\n')
-	#TEST: EQUAL VALUE
-	if '100' in metadata:
-		if '260' in metadata:
+
+	if args.check:
+		#TEST: TAG EXISTS
+		if not '001' in metadata: log.write(header.identifier() + ' Missing 001 tag.\n')
+		#TEST: TAG SUBFIELD EXISTS
+		if '100' in metadata:
+			if not('a' and 'd' and '7') in metadata['100']:
+				log.write(header.identifier() + ' Missing a,d,7 subfield group in 100 tag.\n')
+		#TEST: TAG + TAG SUBFIELD EXISTS
+		if '072' in metadata:
+			if 'x' in metadata['072']:
+				if not '245' in metadata:
+					log.write(header.identifier() + ' Missing 245 tag when x subfield in 072 tag.\n')
+		#TEST: EQUAL VALUE
+		if '100' and '260' in metadata:
 			if metadata['100'].value() != metadata['260'].value():
 				log.write(header.identifier() + ' Value of 100 and 260 not equal.\n')
-	#TEST: VALUE IN LIST
-	LIST = ('auto','kolo','vlak')
-	if '260' in metadata:
-		if not metadata['260'].value() in LIST:
+		#TEST: VALUE IN LIST
+		LIST = ('auto','kolo','vlak')
+		if '260' in metadata:
+			if not metadata['260'].value() in LIST:
 				log.write(header.identifier() + ' Value of 260 not in list.\n')
-	#TEST: PRINT VALUE FROM LIST
-	for TAG in ('001','005','007'):
-		if TAG in metadata:
-			log.write(header.identifier() + ' Tag ' + TAG + ' value: ' + metadata[TAG].value() + '\n')
-	#TEST: VALUE DATE FORMAT
-	if '001' in metadata:
-		if not re.match('\d+', metadata['001'].value()):
-			log.write(header.identifier() + ' Tag 001 invalid data format.\n')
+		#TEST: PRINT VALUE FROM LIST
+		for TAG in ('001','005','007'):
+			if TAG in metadata:
+				log.write(header.identifier() + ' Tag ' + TAG + ' value: ' + metadata[TAG].value() + '\n')
+		#TEST: VALUE DATE FORMAT
+		if '001' in metadata:
+			if not re.match('\d+', metadata['001'].value()):
+				log.write(header.identifier() + ' Tag 001 invalid data format.\n')
 
 	# EXPORT -------------------
 
