@@ -80,9 +80,9 @@ if args.get == 'record':
 # INIT -------------------
 
 try:
-	log = open(LOG,'a',0)
+	log = open(LOG, 'w', 0)
 except:
-	print("Read only FS exiting..")
+	print('Read only FS exiting..')
 	exit(1)
 
 registry = MetadataRegistry()
@@ -109,7 +109,7 @@ if args.export:
 		os.mkdir('export/' + args.export)
 	except: pass
 
-if args.get == 'record': print('Validating..')
+if args.check: print('Validating..')
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
@@ -153,34 +153,76 @@ for record in records:
 	# VALIDATION ------------------
 
 	if args.check:
-		#TEST: TAG EXISTS
-		if not '001' in metadata: log.write(header.identifier() + ' Missing 001 tag.\n')
-		#TEST: TAG SUBFIELD EXISTS
-		if '100' in metadata:
-			if not('a' and 'd' and '7') in metadata['100']:
-				log.write(header.identifier() + ' Missing a,d,7 subfield group in 100 tag.\n')
-		#TEST: TAG + TAG SUBFIELD EXISTS
+		#TEST TAG
+		for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'SIF', 'OWN'):
+			if not TAG in metadata:
+				log.write(header.identifier() + ' Missing ' + TAG + ' tag.\n')
+		if not 'KAT' or 'CAT' in metadata:
+			log.write(header.identifier() + ' Missing KAT/CAT tag.\n')
+		if not metadata.leader:
+			log.write(header.identifier() + ' Missing LDR tag.\n')
+	
+		#TEST TAG/SUBFIELD VALUE
+		if '003' in metadata:
+			if metadata['003'].value() != 'Cz-PrUCL':
+				log.write(header.identifier() + ' Invalid value 003 tag.\n')
+		if '040' in metadata:
+			if 'a' in metadata['040']:
+				if metadata['040']['a'] != 'ABB060':
+					log.write(header.identifier() + ' Invalid value 040a subfield.\n')
+			if 'b' in metadata['040']:
+				if metadata['040']['b'] != 'cze':
+					log.write(header.identifier() + ' Invalid value 040b subfield.\n')
+			if 'e' in metadata['040']:
+				if metadata['040']['e'] != 'rda':
+					log.write(header.identifier() + ' Invalid value 040e subfield.\n')
 		if '072' in metadata:
-			if 'x' in metadata['072']:
-				if not '245' in metadata:
-					log.write(header.identifier() + ' Missing 245 tag when x subfield in 072 tag.\n')
+			if '2' in metadata['072']:
+				if metadata['072']['2'] != 'Konspekt':
+					log.write(header.identifier() + ' Invalid value 072-2 subfield.\n')
+		if '082' in metadata:
+			if '2' in metadata['082']:
+				if not metadata['082']['2'] in ('MRF', 'MRF-sel'):
+					log.write(header.identifier() + ' Invalid value 082-2 subfield.\n')
+		if '910' in metadata:
+			if 'a' in metadata['910']:
+				if metadata['910']['2'] != 'ABB060':
+					log.write(header.identifier() + ' Invalid value 910a subfield.\n')
+		if 'OWN' in metadata:
+			if metadata['OWN'].value() != 'UCLA':
+				log.write(header.identifier() + ' Invalid value OWN tag.\n')
+		if '856' in metadata:
+			if '4' in metadata['856']:
+				if metadata['856']['4'] != '4':
+					log.write(header.identifier() + ' Invalid value 856-4 subfield.\n')
+			if 'y' in metadata['856']:
+				if not metadata['856']['y'] in ('online', 'Webarchiv'):
+					log.write(header.identifier() + ' Invalid value 856y subfield.\n')
+
+		#	if nots in metadata['100']:
+		#		log.write(header.identifier() + ' Missing a,d,7 subfield group in 100 tag.\n')
+		#TEST: TAG + TAG SUBFIELD EXISTS
+		#if '072' in metadata:
+		#	if 'x' in metadata['072']:
+		#		if not '245' in metadata:
+		#			log.write(header.identifier() + ' Missing 245 tag when x subfield in 072 tag.\n')
 		#TEST: EQUAL VALUE
-		if '100' and '260' in metadata:
-			if metadata['100'].value() != metadata['260'].value():
-				log.write(header.identifier() + ' Value of 100 and 260 not equal.\n')
+		#if '100' and '260' in metadata:
+		#	if metadata['100'].value() != metadata['260'].value():
+		#		log.write(header.identifier() + ' Value of 100 and 260 not equal.\n')
 		#TEST: VALUE IN LIST
-		LIST = ('auto','kolo','vlak')
-		if '260' in metadata:
-			if not metadata['260'].value() in LIST:
-				log.write(header.identifier() + ' Value of 260 not in list.\n')
+		#LIST = ('auto','kolo','vlak')
+		#if '260' in metadata:
+		#	if not metadata['260'].value() in LIST:
+		#		log.write(header.identifier() + ' Value of 260 not in list.\n')
 		#TEST: PRINT VALUE FROM LIST
-		for TAG in ('001','005','007'):
-			if TAG in metadata:
-				log.write(header.identifier() + ' Tag ' + TAG + ' value: ' + metadata[TAG].value() + '\n')
+		#for TAG in ('001','005','007'):
+		#	if TAG in metadata:
+		#		log.write(header.identifier() + ' Tag ' + TAG + ' value: ' + metadata[TAG].value() + '\n')
 		#TEST: VALUE DATE FORMAT
-		if '001' in metadata:
-			if not re.match('\d+', metadata['001'].value()):
-				log.write(header.identifier() + ' Tag 001 invalid data format.\n')
+		#if '001' in metadata:
+		#	if not re.match('\d+', metadata['001'].value()):
+		#		log.write(header.identifier() + ' Tag 001 invalid data format.\n')
 
 	# EXPORT -------------------
 
