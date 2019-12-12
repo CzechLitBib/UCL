@@ -215,7 +215,7 @@ for record in records:
 		#TEST SUBFIELD
 		for TAG in ('072', '080', '100', '245', '520', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			if TAG in metadata:
-				if not len(metadata[TAG].get_subfields('a')) != 1:
+				if len(metadata[TAG].get_subfields('a')) != 1:
 					log.write(header.identifier() + ' Invalid ' + TAG + 'a subfield.\n')
 		if '022' in metadata:
 			if len(metadata['022'].get_subfields('a')) > 1:
