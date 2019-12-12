@@ -216,41 +216,41 @@ for record in records:
 		for TAG in ('072', '080', '100', '245', '520', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
-					log.write(header.identifier() + ' Invalid ' + TAG + 'a subfield.\n')
+					log.write(header.identifier() + ' Missing ' + TAG + 'a subfield.\n')
 		if '022' in metadata:
-			if len(metadata['022'].get_subfields('a')) > 1:
+			if not len(metadata['022'].get_subfields('a')) > 1:
 				log.write(header.identifier() + ' Invalid 022a subfield.\n')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
-				log.write(header.identifier() + ' Invalid 072x subfield.\n')
+				log.write(header.identifier() + ' Missing 072x subfield.\n')
 			if len(metadata['072'].get_subfields('2')) != 1:
-				log.write(header.identifier() + ' Invalid 072-2 subfield.\n')
+				log.write(header.identifier() + ' Missing 072-2 subfield.\n')
 			if len(metadata['072'].get_subfields('9')) != 1:
-				log.write(header.identifier() + ' Invalid 072-9 subfield.\n')
+				log.write(header.identifier() + ' Missing 072-9 subfield.\n')
 		if '080' in metadata:
 			if len(metadata['080'].get_subfields('2')) != 1:
-				log.write(header.identifier() + ' Invalid 080-2 subfield.\n')
+				log.write(header.identifier() + ' Missing 080-2 subfield.\n')
 		if '700' in metadata:
-			if len(metadata['700'].get_subfields('4')) > 1:
+			if not len(metadata['700'].get_subfields('4')) > 1:
 				log.write(header.identifier() + ' Invalid 700-4 subfield.\n')
 		if '710' in metadata:
-			if len(metadata['710'].get_subfields('4')) > 1:
+			if not len(metadata['710'].get_subfields('4')) > 1:
 				log.write(header.identifier() + ' Invalid 710-4 subfield.\n')
 		if '773' in metadata:
 			if len(metadata['773'].get_subfields('t')) != 1:
-				log.write(header.identifier() + ' Invalid 773t subfield.\n')
+				log.write(header.identifier() + ' Missing 773t subfield.\n')
 			if len(metadata['773'].get_subfields('9')) != 1:
-				log.write(header.identifier() + ' Invalid 773-9 subfield.\n')
+				log.write(header.identifier() + ' Missing 773-9 subfield.\n')
 		if '787' in metadata:
 			if len(metadata['787'].get_subfields('t')) != 1:
-				log.write(header.identifier() + ' Invalid 787t subfield.\n')
+				log.write(header.identifier() + ' Missing 787t subfield.\n')
 			if len(metadata['787'].get_subfields('4')) != 1:
-				log.write(header.identifier() + ' Invalid 787-4 subfield.\n')
+				log.write(header.identifier() + ' Missing 787-4 subfield.\n')
 		if '856' in metadata:
 			if len(metadata['856'].get_subfields('u')) != 1:
-				log.write(header.identifier() + ' Invalid 856u subfield.\n')
+				log.write(header.identifier() + ' Missing 856u subfield.\n')
 			if len(metadata['856'].get_subfields('y')) != 1:
-				log.write(header.identifier() + ' Invalid 856y subfield.\n')
+				log.write(header.identifier() + ' Missing 856y subfield.\n')
 
 		#TEST VALID LINK
 		if '856' in metadata:
