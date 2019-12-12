@@ -9,7 +9,7 @@
 
 from __future__ import print_function
 
-import argparse,StringIO,sys,os,re
+import httplib,argparse,StringIO,sys,os,re
 
 from datetime import datetime
 from oaipmh.client import Client
@@ -53,6 +53,19 @@ def valid_request(s):
 	else:
 		msg = 'Invalid request format.'
 		raise argparse.ArgumentTypeError(msg)
+
+def url_response(url):
+	try:
+		c = httplib.HTTPConnection(url)
+		c. request('GET','/')
+		r = c.getresponse()
+		if r.status == 200: return 1
+		c = httplib.HTTPSConnection(url)
+		c. request('GET','/')
+		r = c.getresponse()
+		if r.status == 200: return 1
+	except: pass
+	return 0
 
 # ARG -------------------
 
@@ -199,8 +212,52 @@ for record in records:
 				if not metadata['856']['y'] in ('online', 'Webarchiv'):
 					log.write(header.identifier() + ' Invalid value 856y subfield.\n')
 
-		#	if nots in metadata['100']:
-		#		log.write(header.identifier() + ' Missing a,d,7 subfield group in 100 tag.\n')
+		#TEST SUBFIELD
+		for TAG in ('072', '080', '100', '245', '520', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
+			if TAG in metadata:
+				if not len(metadata[TAG].get_subfields('a')) != 1:
+					log.write(header.identifier() + ' Invalid ' + TAG + 'a subfield.\n')
+		if '022' in metadata:
+			if len(metadata['022'].get_subfields('a')) > 1:
+				log.write(header.identifier() + ' Invalid 022a subfield.\n')
+		if '072' in metadata:
+			if len(metadata['072'].get_subfields('x')) != 1:
+				log.write(header.identifier() + ' Invalid 072x subfield.\n')
+			if len(metadata['072'].get_subfields('2')) != 1:
+				log.write(header.identifier() + ' Invalid 072-2 subfield.\n')
+			if len(metadata['072'].get_subfields('9')) != 1:
+				log.write(header.identifier() + ' Invalid 072-9 subfield.\n')
+		if '080' in metadata:
+			if len(metadata['080'].get_subfields('2')) != 1:
+				log.write(header.identifier() + ' Invalid 080-2 subfield.\n')
+		if '700' in metadata:
+			if len(metadata['700'].get_subfields('4')) > 1:
+				log.write(header.identifier() + ' Invalid 700-4 subfield.\n')
+		if '710' in metadata:
+			if len(metadata['710'].get_subfields('4')) > 1:
+				log.write(header.identifier() + ' Invalid 710-4 subfield.\n')
+		if '773' in metadata:
+			if len(metadata['773'].get_subfields('t')) != 1:
+				log.write(header.identifier() + ' Invalid 773t subfield.\n')
+			if len(metadata['773'].get_subfields('9')) != 1:
+				log.write(header.identifier() + ' Invalid 773-9 subfield.\n')
+		if '787' in metadata:
+			if len(metadata['787'].get_subfields('t')) != 1:
+				log.write(header.identifier() + ' Invalid 787t subfield.\n')
+			if len(metadata['787'].get_subfields('4')) != 1:
+				log.write(header.identifier() + ' Invalid 787-4 subfield.\n')
+		if '856' in metadata:
+			if len(metadata['856'].get_subfields('u')) != 1:
+				log.write(header.identifier() + ' Invalid 856u subfield.\n')
+			if len(metadata['856'].get_subfields('y')) != 1:
+				log.write(header.identifier() + ' Invalid 856y subfield.\n')
+
+		#TEST VALID LINK
+		if '856' in metadata:
+			if 'u' in metadata['856']:
+				if not url_response(metadata['856']['u']):
+					log.write(header.identifier() + ' Invalid 856u link.\n')
+
 		#TEST: TAG + TAG SUBFIELD EXISTS
 		#if '072' in metadata:
 		#	if 'x' in metadata['072']:
