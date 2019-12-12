@@ -33,26 +33,22 @@ def valid_date(s):
 	try:
 		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
 	except:
-		msg = 'Invalid date format.'
-		raise argparse.ArgumentTypeError(msg)
+		raise argparse.ArgumentTypeError('Invalid date format.')
 
 def valid_format(s):
 	if s in ('json', 'marc', 'xml'): return s
 	else:
-		msg = 'Invalid export format.'
-		raise argparse.ArgumentTypeError(msg)
+		raise argparse.ArgumentTypeError('Invalid export format.')
 
 def valid_display(s):
 	if s in ('ident', 'json', 'marc'): return s
 	else:
-		msg = 'Invalid display format.'
-		raise argparse.ArgumentTypeError(msg)
+		raise argparse.ArgumentTypeError('Invalid display format.')
 
 def valid_request(s):
 	if s in ('record', 'set', 'meta'): return s
 	else:
-		msg = 'Invalid request format.'
-		raise argparse.ArgumentTypeError(msg)
+		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def url_response(url):
 	try:
