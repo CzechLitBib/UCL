@@ -113,7 +113,7 @@ except:
 if args.export:
 	try:
 		os.mkdir('export')
-	except :pass
+	except: pass
 	try:
 		os.mkdir('export/' + args.export)
 	except: pass
@@ -214,7 +214,7 @@ for record in records:
 				if len(metadata[TAG].get_subfields('a')) != 1:
 					log.write(header.identifier() + ' Missing ' + TAG + 'a subfield.\n')
 		if '022' in metadata:
-			if not len(metadata['022'].get_subfields('a')) > 1:
+			if not len(metadata['022'].get_subfields('a')) >= 1:
 				log.write(header.identifier() + ' Invalid 022a subfield.\n')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
@@ -227,10 +227,10 @@ for record in records:
 			if len(metadata['080'].get_subfields('2')) != 1:
 				log.write(header.identifier() + ' Missing 080-2 subfield.\n')
 		if '700' in metadata:
-			if not len(metadata['700'].get_subfields('4')) > 1:
+			if not len(metadata['700'].get_subfields('4')) >= 1:
 				log.write(header.identifier() + ' Invalid 700-4 subfield.\n')
 		if '710' in metadata:
-			if not len(metadata['710'].get_subfields('4')) > 1:
+			if not len(metadata['710'].get_subfields('4')) >= 1:
 				log.write(header.identifier() + ' Invalid 710-4 subfield.\n')
 		if '773' in metadata:
 			if len(metadata['773'].get_subfields('t')) != 1:
