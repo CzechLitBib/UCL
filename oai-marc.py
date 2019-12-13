@@ -9,7 +9,7 @@
 
 from __future__ import print_function
 
-import argparse,StringIO,urllib,sys,os
+import argparse,StringIO,urllib,sys,os,re
 
 from datetime import datetime
 from oaipmh.client import Client
@@ -256,58 +256,58 @@ for record in records:
 
 		if '041' in metadata:
 			if not metadata['041'].indicator1 in ('1', '0') or metadata['041'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 041 indicator.\n')
+				log.write(header.identifier() + ' Invalid 041 indicator value.\n')
 		if '072' in metadata:
 			if metadata['072'].indicator1 != ' ' or metadata['072'].indicator2 != '7':
-				log.write(header.identifier() + ' Invalid 072 indicator.\n')
+				log.write(header.identifier() + ' Invalid 072 indicator value.\n')
 		if '100' in metadata:
 			if not metadata['100'].indicator1 in ('3', '1', '0') or metadata['100'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 100 indicator.\n')
+				log.write(header.identifier() + ' Invalid 100 indicator value.\n')
 		if '110' in metadata:
 			if not metadata['110'].indicator1 in ('1', '2') or metadata['110'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 110 indicator.\n')
+				log.write(header.identifier() + ' Invalid 110 indicator value.\n')
 		if '245' in metadata:
 			if not metadata['245'].indicator1 in ('0', '1'):
-				log.write(header.identifier() + ' Invalid 245 indicator.\n')
+				log.write(header.identifier() + ' Invalid 245 indicator value.\n')
 		if '520' in metadata:
 			if metadata['520'].indicator1 != '2' or metadata['520'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 520 indicator.\n')
+				log.write(header.identifier() + ' Invalid 520 indicator value.\n')
 		if '600' in metadata:
 			if not metadata['600'].indicator1 + metadata['600'].indicator2 in ('34', '37', '14', '17', '04', '07'):
-				log.write(header.identifier() + ' Invalid 600 indicator.\n')
+				log.write(header.identifier() + ' Invalid 600 indicator value.\n')
 		if '610' in metadata:
 			if not metadata['610'].indicator1 + metadata['610'].indicator2 in ('14', '17', '24', '27'):
-				log.write(header.identifier() + ' Invalid 610 indicator.\n')
+				log.write(header.identifier() + ' Invalid 610 indicator value.\n')
 		if '611' in metadata:
 			if not metadata['611'].indicator1 + metadata['611'].indicator2 in ('14', '17', '24', '27'):
-				log.write(header.identifier() + ' Invalid 611 indicator.\n')
+				log.write(header.identifier() + ' Invalid 611 indicator value.\n')
 		if '648' in metadata:
 			if metadata['648'].indicator1 != ' ' or not metadata['648'].indicator2 in ('4', '7'):
-				log.write(header.identifier() + ' Invalid 648 indicator.\n')
+				log.write(header.identifier() + ' Invalid 648 indicator value.\n')
 		if '650' in metadata:
 			if not metadata['650'].indicator1 + metadata['650'].indicator2 in ('14', '17', '04', '07'):
-				log.write(header.identifier() + ' Invalid 650 indicator.\n')
+				log.write(header.identifier() + ' Invalid 650 indicator value.\n')
 		if '651' in metadata:
 			if not metadata['651'].indicator1 + metadata['651'].indicator2 in ('14', '17', '04', '07'):
-				log.write(header.identifier() + ' Invalid 651 indicator.\n')
+				log.write(header.identifier() + ' Invalid 651 indicator value.\n')
 		if '653' in metadata:
 			if metadata['653'].indicator1 != '0' or metadata['653'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 653 indicator.\n')
+				log.write(header.identifier() + ' Invalid 653 indicator value.\n')
 		if '655' in metadata:
 			if not metadata['655'].indicator1 != ' ' or not metadata['655'].indicator2 in ('4', '7'):
-				log.write(header.identifier() + ' Invalid 655 indicator.\n')
+				log.write(header.identifier() + ' Invalid 655 indicator value.\n')
 		if '700' in metadata:
 			if not metadata['700'].indicator1 in ('3', '1', '0') or metadata['700'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 700 indicator.\n')
+				log.write(header.identifier() + ' Invalid 700 indicator value.\n')
 		if '710' in metadata:
 			if not metadata['710'].indicator1 in ('1', '2') or metadata['710'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 710 indicator.\n')
+				log.write(header.identifier() + ' Invalid 710 indicator value.\n')
 		if '773' in metadata:
 			if metadata['773'].indicator1 != '0' or metadata['773'].indicator2 != ' ':
-				log.write(header.identifier() + ' Invalid 773 indicator.\n')
+				log.write(header.identifier() + ' Invalid 773 indicator value.\n')
 		if '787' in metadata:
 			if metadata['787'].indicator1 != '0' or metadata['787'].indicator2 != '8':
-				log.write(header.identifier() + ' Invalid 787 indicator.\n')
+				log.write(header.identifier() + ' Invalid 787 indicator value.\n')
 
 		#TEST DEPENDENCE ------------------
 
@@ -488,7 +488,58 @@ for record in records:
 		#TEST VALUE RANGE ------------------
 
 		#TEST SUBFIELD DEPENDENCE ------------------
-
+		if '041' in metadata:
+			if metadata['041'].indicator1 == '0':
+				if not 'h' in metadata['041']:
+					log.write(header.identifier() + ' Invalid 041 indicator.\n')
+		if '041' in metadata:
+			if metadata['041'].indicator1 == '1':
+				if 'h' in metadata['041']:
+					log.write(header.identifier() + ' Invalid 041 indicator.\n')
+		if '100' in metadata:
+			if metadata['100'].indicator1 == '0':
+				if 'a' in metadata['100']:
+					if re.match('^.*,.+$', metadata['100']['a']):
+						log.write(header.identifier() + ' Invalid 100 indicator.\n')
+			if metadata['100'].indicator1 == '1':
+				if 'c' in metadata['100']:
+					if re.match('^\[.*$', metadata['100']['c']):
+						log.write(header.identifier() + ' Invalid 100 indicator.\n')
+				if 'a' in metadata['100']:
+					if re.match('^.*\..*$', metadata['100']['a']):
+						log.write(header.identifier() + ' Invalid 100 indicator.\n')
+		if '245' in metadata:
+			if metadata['245'].indicator1 == '1':
+				for TAG in ('100', '110', '111', '130'):
+					if not TAG in metadata:
+						log.write(header.identifier() + ' Invalid 245 indicator.\n')
+			if metadata['245'].indicator1 == '0':
+				for TAG in ('100', '110', '111', '130'):
+					if TAG in metadata:
+						log.write(header.identifier() + ' Invalid 245 indicator.\n')
+			if metadata['245'].indicator2 == '0':
+				if 'a' in metadata['245']:
+					for S in ('The', 'An', 'Der', 'Die', 'Das', 'Le', 'La'):
+						if re.match('^' + S + '.*', metadata['245']['a']):
+							log.write(header.identifier() + ' Invalid 2nd 245 indicator.\n')
+		if '600' in metadata:
+			if metadata['600'].indicator1 == '0':
+				if 'a' in metadata['600']:
+					if re.match('^.*,.+$', metadata['600']['a']):
+						log.write(header.identifier() + ' Invalid 1st 600 indicator.\n')
+		for TAG in ('600', '610', '611', '630' ,'648', '650', '651', '655'):
+			if TAG in metadata:
+				if metadata[TAG].indicator2 == '7':
+					if not ('2' or '7') in metadata[TAG]: 
+						log.write(header.identifier() + ' Invalid 2nd ' + TAG + ' indicator.\n')
+					elif metadata[TAG]['2'] != 'czenas':
+						log.write(header.identifier() + ' Invalid 2nd ' + TAG + ' indicator.\n')
+				if metadata[TAG].indicator2 == '4':
+					if '7' in metadata[TAG]: 
+						log.write(header.identifier() + ' Invalid 2nd ' + TAG + ' indicator.\n')
+					if '2' in metadata[TAG]: 
+						if metadata[TAG]['2'] == 'czenas':
+							log.write(header.identifier() + ' Invalid 2nd ' + TAG + ' indicator.\n')
 
 		# STDERR = TAG + SIF + ErrorCode.
 
