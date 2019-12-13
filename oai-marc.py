@@ -155,7 +155,9 @@ for record in records:
 	# VALIDATION ------------------
 
 	if args.check:
-		#TEST TAG
+
+		#TEST TAG ------------------
+
 		for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'SIF', 'OWN'):
 			if not TAG in metadata:
 				log.write(header.identifier() + ' Missing ' + TAG + ' tag.\n')
@@ -164,7 +166,8 @@ for record in records:
 		if not metadata.leader:
 			log.write(header.identifier() + ' Missing LDR tag.\n')
 	
-		#TEST TAG/SUBFIELD VALUE
+		#TEST TAG/SUBFIELD VALUE ------------------
+
 		if '003' in metadata:
 			if metadata['003'].value() != 'Cz-PrUCL':
 				log.write(header.identifier() + ' Invalid value 003 tag.\n')
@@ -201,7 +204,8 @@ for record in records:
 				if not metadata['856']['y'] in ('online', 'Webarchiv'):
 					log.write(header.identifier() + ' Invalid value 856y subfield.\n')
 
-		#TEST SUBFIELD
+		#TEST SUBFIELD ------------------
+
 		for TAG in ('072', '080', '100', '245', '520', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
@@ -241,13 +245,15 @@ for record in records:
 			if len(metadata['856'].get_subfields('y')) != 1:
 				log.write(header.identifier() + ' Missing 856y subfield.\n')
 
-		#TEST VALID LINK
+		#TEST VALID LINK ------------------
+
 		if '856' in metadata:
 			if 'u' in metadata['856']:
 				if not url_response(metadata['856']['u']):
 					log.write(header.identifier() + ' Invalid 856u link.\n')
 		
-		#TEST INDICATOR
+		#TEST INDICATOR ------------------
+
 		if '041' in metadata:
 			if not metadata['041'].indicator1 in ('1', '0') or metadata['041'].indicator2 != ' ':
 				log.write(header.identifier() + ' Invalid 041 indicator.\n')
@@ -303,7 +309,8 @@ for record in records:
 			if metadata['787'].indicator1 != '0' or metadata['787'].indicator2 != '8':
 				log.write(header.identifier() + ' Invalid 787 indicator.\n')
 
-		#TEST DEPENDENCE
+		#TEST DEPENDENCE ------------------
+
 		if metadata.leader[7] == 'm':
 			for TAG in ('250', '260', '264', '490', '830'):
 				if not TAG in metadata:
@@ -312,7 +319,8 @@ for record in records:
 			if not '773' in metadata:
 				log.write(header.identifier() + ' Invalid record type 773 tag.\n')
 
-		#TEST SUBFIELD RANGE
+		#TEST SUBFIELD RANGE ------------------
+
 		if '040' in metadata:
 			for SUB in metadata['040'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'e'):
@@ -442,17 +450,45 @@ for record in records:
 				if SUB != 'a':
 					log.write(header.identifier() + ' Invalid subfield code 964 tag.\n')
 		
+		#TEST SUBFIELD ORDER ------------------
 
-
-
-
+		#TEST SUBFIELD REPEAT ------------------
 		
+		if '041' in metadata:
+			for SUB in metadata['041'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'k', 'h'):
+					if len(metadata['041'].get_subfields(SUB)) > 1:
+						log.write(header.identifier() + ' Invalid subfield count 041 tag.\n')
+		if '044' in metadata:
+			for SUB in metadata['041'].subfields[0::2]:
+				if SUB != 'a':
+					if len(metadata['044'].get_subfields(SUB)) > 1:
+						log.write(header.identifier() + ' Invalid subfield count 044 tag.\n')
+		if '245' in metadata:
+			for SUB in metadata['245'].subfields[0::2]:
+				if SUB not in ('n', 'p'):
+					if len(metadata['245'].get_subfields(SUB)) > 1:
+						log.write(header.identifier() + ' Invalid subfield count 245 tag.\n')
+		if '260' in metadata:
+			for SUB in metadata['260'].subfields[0::2]:
+				if SUB not in ('a', 'b'):
+					if len(metadata['260'].get_subfields(SUB)) > 1:
+						log.write(header.identifier() + ' Invalid subfield count 260 tag.\n')
+		if '264' in metadata:
+			for SUB in metadata['264'].subfields[0::2]:
+				if SUB not in ('a', 'b'):
+					if len(metadata['264'].get_subfields(SUB)) > 1:
+						log.write(header.identifier() + ' Invalid subfield count 264 tag.\n')
+		if '787' in metadata:
+			for SUB in metadata['787'].subfields[0::2]:
+				if SUB != 'k':
+					if len(metadata['787'].get_subfields(SUB)) > 1:
+						log.write(header.identifier() + ' Invalid subfield count 787 tag.\n')
 
-		
-		#TEST SUBFIELD ORDER
-		#TEST SUBFIELD REPEAT
-		#TEST VALUE RANGE
-		#TEST SUBFIELD DEPENDENCE
+		#TEST VALUE RANGE ------------------
+
+		#TEST SUBFIELD DEPENDENCE ------------------
+
 
 		# STDERR = TAG + SIF + ErrorCode.
 
