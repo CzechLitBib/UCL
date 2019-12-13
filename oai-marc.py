@@ -9,7 +9,7 @@
 
 from __future__ import print_function
 
-import httplib,argparse,StringIO,sys,os,re
+import argparse,StringIO,urllib,sys,os
 
 from datetime import datetime
 from oaipmh.client import Client
@@ -51,15 +51,8 @@ def valid_request(s):
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def url_response(url):
-	try:
-		c = httplib.HTTPConnection(url)
-		c. request('GET','/')
-		r = c.getresponse()
-		if r.status == 200: return 1
-		c = httplib.HTTPSConnection(url)
-		c. request('GET','/')
-		r = c.getresponse()
-		if r.status == 200: return 1
+	try: 
+		if urllib.urlopen(url).getcode() == 200: return 1
 	except: pass
 	return 0
 
@@ -134,7 +127,7 @@ for record in records:
 
 	header = record[0]
 	metadata = record[1]
-	
+
 	# skip deleted records
 	if header.isDeleted(): continue
 
@@ -253,29 +246,71 @@ for record in records:
 			if 'u' in metadata['856']:
 				if not url_response(metadata['856']['u']):
 					log.write(header.identifier() + ' Invalid 856u link.\n')
+		
+		#TEST INDICATOR
+		if '041' in metadata:
+			if not (metadata['041'].indicator1 and metadata['041'].indicator2) in ('1 ', '0 '):
+				log.write(header.identifier() + ' Invalid 041 indicator.\n')
+		if '072' in metadata:
+			if metadata['072'].indicator1 or metadata['072'].indicator2 != ' 7':
+				log.write(header.identifier() + ' Invalid 072 indicator.\n')
+		if '100' in metadata:
+			if not (metadata['100'].indicator1 and metadata['100'].indicator2) in ('3 ', '1 ', '0 '):
+				log.write(header.identifier() + ' Invalid 100 indicator.\n')
+		if '110' in metadata:
+			if not (metadata['110'].indicator1 and metadata['110'].indicator2) in ('1 ', '2 '):
+				log.write(header.identifier() + ' Invalid 110 indicator.\n')
+		if '245' in metadata:
+			if not metadata['245'].indicator1 in ('0 ', '1 '):
+				log.write(header.identifier() + ' Invalid 245 indicator.\n')
+		if '520' in metadata:
+			if metadata['520'].indicator1 or metadata['520'].indicator2 != '2 ':
+				log.write(header.identifier() + ' Invalid 520 indicator.\n')
+		if '600' in metadata:
+			if not (metadata['600'].indicator1 and metadata['600'].indicator2) in ('34', '37', '14', '17', '04', '07'):
+				log.write(header.identifier() + ' Invalid 600 indicator.\n')
+		if '610' in metadata:
+			if not (metadata['610'].indicator1 and metadata['610'].indicator2) in ('14', '17', '24', '27'):
+				log.write(header.identifier() + ' Invalid 610 indicator.\n')
+		if '611' in metadata:
+			if not (metadata['611'].indicator1 and metadata['611'].indicator2) in ('14', '17', '24', '27'):
+				log.write(header.identifier() + ' Invalid 611 indicator.\n')
+		if '648' in metadata:
+			if not (metadata['648'].indicator1 and metadata['648'].indicator2) in (' 4', ' 7'):
+				log.write(header.identifier() + ' Invalid 648 indicator.\n')
+		if '650' in metadata:
+			if not (metadata['650'].indicator1 and metadata['650'].indicator2) in ('14', '17', '04', '07'):
+				log.write(header.identifier() + ' Invalid 650 indicator.\n')
+		if '651' in metadata:
+			if not (metadata['651'].indicator1 and metadata['651'].indicator2) in ('14', '17', '04', '07'):
+				log.write(header.identifier() + ' Invalid 651 indicator.\n')
+		if '653' in metadata:
+			if metadata['653'].indicator1 != '0 ':
+				log.write(header.identifier() + ' Invalid 653 indicator.\n')
+		if '655' in metadata:
+			if not (metadata['655'].indicator1 and metadata['655'].indicator2) in (' 4', ' 7'):
+				log.write(header.identifier() + ' Invalid 655 indicator.\n')
+		if '700' in metadata:
+			if not (metadata['700'].indicator1 and metadata['700'].indicator2) in ('3 ', '1 ', '0 '):
+				log.write(header.identifier() + ' Invalid 700 indicator.\n')
+		if '710' in metadata:
+			if not (metadata['710'].indicator1 and metadata['710'].indicator2) in ('1 ', '2 '):
+				log.write(header.identifier() + ' Invalid 710 indicator.\n')
+		if '773' in metadata:
+			if metadata['773'].indicator1 != '0 ':
+				log.write(header.identifier() + ' Invalid 773 indicator.\n')
+		if '787' in metadata:
+			if metadata['787'].indicator1 != '08':
+				log.write(header.identifier() + ' Invalid 787 indicator.\n')
 
-		#TEST: TAG + TAG SUBFIELD EXISTS
-		#if '072' in metadata:
-		#	if 'x' in metadata['072']:
-		#		if not '245' in metadata:
-		#			log.write(header.identifier() + ' Missing 245 tag when x subfield in 072 tag.\n')
-		#TEST: EQUAL VALUE
-		#if '100' and '260' in metadata:
-		#	if metadata['100'].value() != metadata['260'].value():
-		#		log.write(header.identifier() + ' Value of 100 and 260 not equal.\n')
-		#TEST: VALUE IN LIST
-		#LIST = ('auto','kolo','vlak')
-		#if '260' in metadata:
-		#	if not metadata['260'].value() in LIST:
-		#		log.write(header.identifier() + ' Value of 260 not in list.\n')
-		#TEST: PRINT VALUE FROM LIST
-		#for TAG in ('001','005','007'):
-		#	if TAG in metadata:
-		#		log.write(header.identifier() + ' Tag ' + TAG + ' value: ' + metadata[TAG].value() + '\n')
-		#TEST: VALUE DATE FORMAT
-		#if '001' in metadata:
-		#	if not re.match('\d+', metadata['001'].value()):
-		#		log.write(header.identifier() + ' Tag 001 invalid data format.\n')
+		#TEST DEPENDENCE
+		#TEST SUBFIELD RANG#
+		#TEST SUBFIELD ORDER
+		#TEST SUBFIELD REPEAT
+		#TEST VALUE RANGE
+		#TEST SUBFIELD DEPENDENCE
+
+		# STDERR = TAG + SIF + ErrorCode.
 
 	# EXPORT -------------------
 
