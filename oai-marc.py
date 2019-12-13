@@ -9,6 +9,7 @@
 #
 # TEST VALUE RANGE
 # TEST SUBFIELD ORDER
+# TEST ' ,', ' .' regexp DATA
 # IDENT + SIF - Error code.
 #
 
