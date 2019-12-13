@@ -169,7 +169,7 @@ for record in records:
 		for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'SIF', 'OWN'):
 			if not TAG in metadata:
 				log.write(header.identifier() + ' Chybí pole ' + TAG + '.\n')
-		if not 'KAT' or 'CAT' in metadata:
+		if not ('KAT' or 'CAT') in metadata:
 			log.write(header.identifier() + ' Chybí pole KAT/CAT.\n')
 		if not metadata.leader:
 			log.write(header.identifier() + ' Chybí pole LDR.\n')
