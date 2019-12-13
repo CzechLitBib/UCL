@@ -304,7 +304,151 @@ for record in records:
 				log.write(header.identifier() + ' Invalid 787 indicator.\n')
 
 		#TEST DEPENDENCE
-		#TEST SUBFIELD RANG#
+		if metadata.leader[7] == 'm':
+			for TAG in ('250', '260', '264', '490', '830'):
+				if not TAG in metadata:
+					log.write(header.identifier() + ' Invalid record type ' + TAG + ' tag.\n')
+		if metadata.leader[7] in ('a', 'b'):
+			if not '773' in metadata:
+				log.write(header.identifier() + ' Invalid record type 773 tag.\n')
+
+		#TEST SUBFIELD RANGE
+		if '040' in metadata:
+			for SUB in metadata['040'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'e'):
+					log.write(header.identifier() + ' Invalid subfield code 040 tag.\n')
+		if '070' in metadata:
+			for SUB in metadata['070'].subfields[0::2]:
+				if SUB not in ('a', 'x', '2', '9'):
+					log.write(header.identifier() + ' Invalid subfield code 070 tag.\n')
+		if '100' in metadata:
+			for SUB in metadata['100'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'g', '4', '7'):
+					log.write(header.identifier() + ' Invalid subfield code 100 tag.\n')
+		if '100' in metadata:
+			for SUB in metadata['100'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'g', '4', '7'):
+					log.write(header.identifier() + ' Invalid subfield code 100 tag.\n')
+		if '110' in metadata:
+			for SUB in metadata['110'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7'):
+					log.write(header.identifier() + ' Invalid subfield code 110 tag.\n')
+		if '111' in metadata:
+			for SUB in metadata['111'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7'):
+					log.write(header.identifier() + ' Invalid subfield code 111 tag.\n')
+		if '245' in metadata:
+			for SUB in metadata['245'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'n', 'p', 'c'):
+					log.write(header.identifier() + ' Invalid subfield code 245 tag.\n')
+		if '250' in metadata:
+			for SUB in metadata['250'].subfields[0::2]:
+				if SUB != 'a':
+					log.write(header.identifier() + ' Invalid subfield code 250 tag.\n')
+		if '260' in metadata:
+			for SUB in metadata['260'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c'):
+					log.write(header.identifier() + ' Invalid subfield code 260 tag.\n')
+		if '264' in metadata:
+			for SUB in metadata['264'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c'):
+					log.write(header.identifier() + ' Invalid subfield code 264 tag.\n')
+		if '300' in metadata:
+			for SUB in metadata['300'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'e'):
+					log.write(header.identifier() + ' Invalid subfield code 300 tag.\n')
+		if '490' in metadata:
+			for SUB in metadata['490'].subfields[0::2]:
+				if SUB not in ('a', 'v'):
+					log.write(header.identifier() + ' Invalid subfield code 490 tag.\n')
+		if '500' in metadata:
+			for SUB in metadata['500'].subfields[0::2]:
+				if SUB != 'a':
+					log.write(header.identifier() + ' Invalid subfield code 500 tag.\n')
+		if '505' in metadata:
+			for SUB in metadata['505'].subfields[0::2]:
+				if SUB not in ('t', 'r', 'g'):
+					log.write(header.identifier() + ' Invalid subfield code 505 tag.\n')
+		if '520' in metadata:
+			for SUB in metadata['520'].subfields[0::2]:
+				if SUB not in ('a', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 520 tag.\n')
+		if '600' in metadata:
+			for SUB in metadata['600'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'q', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 600 tag.\n')
+		if '610' in metadata:
+			for SUB in metadata['610'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 610 tag.\n')
+		if '611' in metadata:
+			for SUB in metadata['611'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 611 tag.\n')
+		if '630' in metadata:
+			for SUB in metadata['630'].subfields[0::2]:
+				if SUB not in ('a', 'l', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 630 tag.\n')
+		if '648' in metadata:
+			for SUB in metadata['648'].subfields[0::2]:
+				if SUB not in ('a', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 648 tag.\n')
+		if '650' in metadata:
+			for SUB in metadata['650'].subfields[0::2]:
+				if SUB not in ('a', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 650 tag.\n')
+		if '651' in metadata:
+			for SUB in metadata['651'].subfields[0::2]:
+				if SUB not in ('a', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 651 tag.\n')
+		if '653' in metadata:
+			for SUB in metadata['653'].subfields[0::2]:
+				if SUB != 'a':
+					log.write(header.identifier() + ' Invalid subfield code 653 tag.\n')
+		if '655' in metadata:
+			for SUB in metadata['655'].subfields[0::2]:
+				if SUB not in ('a', '7', '2'):
+					log.write(header.identifier() + ' Invalid subfield code 655 tag.\n')
+		if '700' in metadata:
+			for SUB in metadata['700'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'q', '4', '7'):
+					log.write(header.identifier() + ' Invalid subfield code 700 tag.\n')
+		if '710' in metadata:
+			for SUB in metadata['710'].subfields[0::2]:
+				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7'):
+					log.write(header.identifier() + ' Invalid subfield code 710 tag.\n')
+		if '773' in metadata:
+			for SUB in metadata['773'].subfields[0::2]:
+				if SUB not in ('a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', '9'):
+					log.write(header.identifier() + ' Invalid subfield code 773 tag.\n')
+		if '787' in metadata:
+			for SUB in metadata['787'].subfields[0::2]:
+				if SUB not in ('i', 'a', 't', 'x', 'n', 'd', 'b', 'k', 'y', '4'):
+					log.write(header.identifier() + ' Invalid subfield code 773 tag.\n')
+		if '830' in metadata:
+			for SUB in metadata['830'].subfields[0::2]:
+				if SUB != 'a':
+					log.write(header.identifier() + ' Invalid subfield code 830 tag.\n')
+		if '856' in metadata:
+			for SUB in metadata['856'].subfields[0::2]:
+				if SUB not in ('u', 'y', '4'):
+					log.write(header.identifier() + ' Invalid subfield code 856 tag.\n')
+		if '910' in metadata:
+			for SUB in metadata['910'].subfields[0::2]:
+				if SUB != 'a':
+					log.write(header.identifier() + ' Invalid subfield code 910 tag.\n')
+		if '964' in metadata:
+			for SUB in metadata['964'].subfields[0::2]:
+				if SUB != 'a':
+					log.write(header.identifier() + ' Invalid subfield code 964 tag.\n')
+		
+
+
+
+
+		
+
+		
 		#TEST SUBFIELD ORDER
 		#TEST SUBFIELD REPEAT
 		#TEST VALUE RANGE
