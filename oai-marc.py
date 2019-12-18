@@ -513,10 +513,10 @@ for record in records:
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
 					if re.match('^\[.*$', metadata['100']['c']):
-						log.write(header.identifier() + ' Chybný znak v podpoli 'c' v poli 100.\n")
+						log.write(header.identifier() + " Chybný znak v podpoli 'c' v poli 100.\n")
 				if 'a' in metadata['100']:
 					if re.match('^.*\..*$', metadata['100']['a']):
-						log.write(header.identifier() + ' Chybný znak v podpoli 'a' v poli 100.\n')
+						log.write(header.identifier() + " Chybný znak v podpoli 'a' v poli 100.\n")
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
 				N=0
