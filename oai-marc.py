@@ -322,7 +322,7 @@ for record in records:
 
 		if metadata.leader[7] == 'm':
 			if not ('260' or '264') in metadata:
-				log.write(header.identifier() + ' Chybný typ záznamupole 260/264).\n')
+				log.write(header.identifier() + ' Chybný typ záznamu (pole 260/264).\n')
 		for TAG in ('250', '490', '830'):
 			if TAG in metadata:
 				if metadata.leader[7] != 'm':
@@ -500,46 +500,46 @@ for record in records:
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '0':
 				if 'h' in metadata['041']:
-					log.write(header.identifier() + ' Chybný indikátor v poli 041.\n')
+					log.write(header.identifier() + " Chybné podpole 'h' v poli 041.\n")
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '1':
 				if not 'h' in metadata['041']:
-					log.write(header.identifier() + ' Chybný indikátor v poli 041.\n')
+					log.write(header.identifier() + " Chybné podpole 'h' v poli 041.\n")
 		if '100' in metadata:
 			if metadata['100'].indicator1 == '0':
 				if 'a' in metadata['100']:
 					if re.match('^.*,.+$', metadata['100']['a']):
-						log.write(header.identifier() + ' Chybný indikátor v poli 100.\n')
+						log.write(header.identifier() + " Chybný znak v podpoli 'a' v poli 100.\n")
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
 					if re.match('^\[.*$', metadata['100']['c']):
-						log.write(header.identifier() + ' Chybný indikátor v poli 100.\n')
+						log.write(header.identifier() + ' Chybný znak v podpoli 'c' v poli 100.\n")
 				if 'a' in metadata['100']:
 					if re.match('^.*\..*$', metadata['100']['a']):
-						log.write(header.identifier() + ' Chybný indikátor v poli 100.\n')
+						log.write(header.identifier() + ' Chybný znak v podpoli 'a' v poli 100.\n')
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
 				N=0
 				for TAG in ('100', '110', '111', '130'):
 					if TAG in metadata: N+=1
 				if N != 1:
-					log.write(header.identifier() + ' Chybný indikátor v poli 245.\n')
+					log.write(header.identifier() + 'Neplatné pole, chybný indikátor v poli 245.\n')
 			if metadata['245'].indicator1 == '0':
 				N=0
 				for TAG in ('100', '110', '111', '130'):
 					if TAG in metadata: N+=1
 				if N > 0:
-					log.write(header.identifier() + ' Chybný indikátor v poli 245.\n')
+					log.write(header.identifier() + 'Neplatné pole, chybný indikátor v poli 245.\n')
 			if metadata['245'].indicator2 == '0':
 				if 'a' in metadata['245']:
 					for S in ('The ', 'An ', 'Der ', 'Die ', 'Das ', 'Le ', 'La '):
 						if re.match('^' + S + '.*', metadata['245']['a']):
-							log.write(header.identifier() + ' Chybný 2. indikátor v poli 245.\n')
+							log.write(header.identifier() + ' Neplatný prefix, chybný 2. indikátor v poli 245.\n')
 		if '600' in metadata:
 			if metadata['600'].indicator1 == '0':
 				if 'a' in metadata['600']:
 					if re.match('^.*,.+$', metadata['600']['a']):
-						log.write(header.identifier() + ' Chybný 1. indikátor v poli 600.\n')
+						log.write(header.identifier() + " Chybný znak v podpoli 'a' v poli 600.\n")
 		for TAG in ('600', '610', '611', '630' ,'648', '650', '651', '655'):
 			if TAG in metadata:
 				if metadata[TAG].indicator2 == '7':
