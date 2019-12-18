@@ -439,7 +439,7 @@ for record in records:
 					log.write(header.identifier() + ' Chybný kód podpole v poli 773.\n')
 		if '787' in metadata:
 			for SUB in metadata['787'].subfields[0::2]:
-				if SUB not in ('i', 'a', 't', 'x', 'n', 'd', 'b', 'k', 'y', '4'):
+				if SUB not in ('i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'y', '4'):
 					log.write(header.identifier() + ' Chybný kód podpole v poli 787.\n')
 		if '830' in metadata:
 			for SUB in metadata['830'].subfields[0::2]:
