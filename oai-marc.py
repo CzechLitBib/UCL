@@ -17,7 +17,7 @@
 
 from __future__ import print_function
 
-import argparse,StringIO,urllib,sys,os,re
+import argparse,StringIO,urllib2,sys,os,re
 
 from datetime import datetime
 from oaipmh.client import Client
@@ -60,7 +60,7 @@ def valid_request(s):
 
 def url_response(url):
 	try:
-		if urllib.urlopen(url).getcode() == 200: return 1
+		if urllib2.urlopen(url, timeout=10).getcode() == 200: return 1
 	except: pass
 	return 0
 
@@ -119,7 +119,9 @@ if args.export:
 		os.mkdir('export/' + args.export)
 	except: pass
 
-if args.check: print('Validating..')
+if args.check:
+	print('Validating..')
+	log.write("BEGIN: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
@@ -577,6 +579,7 @@ for record in records:
 	counter+=1
 
 # EXIT -------------------
+log.write("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
 log.write('TOTAL: ' + str(counter) + '\n')
 log.close()
 if args.display or args.get != 'record': print('------------------')
