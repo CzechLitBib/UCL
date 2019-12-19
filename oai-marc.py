@@ -473,7 +473,7 @@ for record in records:
 					if len(metadata['041'].get_subfields(SUB)) > 1:
 						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 041.\n')
 		if '044' in metadata:
-			for SUB in metadata['041'].subfields[0::2]:
+			for SUB in metadata['044'].subfields[0::2]:
 				if SUB != 'a':
 					if len(metadata['044'].get_subfields(SUB)) > 1:
 						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 044.\n')
