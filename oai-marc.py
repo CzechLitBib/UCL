@@ -3,8 +3,6 @@
 #
 # Harvested OAI-PMH 2.0 MARCXML Record validator.
 #
-# https://aleph.mzk.cz/OAI?verb=GetRecord&identifier=oai:aleph.mzk.cz:MZK01-000152782&metadataPrefix=marc21
-#
 # TODO:
 #
 # TEST VALUE RANGE
