@@ -27,7 +27,6 @@ from lxml.etree import tostring
 
 # VAR -------------------
 
-#URL='https://aleph.mzk.cz/OAI'
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.log'
 
@@ -60,7 +59,7 @@ def valid_request(s):
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def url_response(url):
-	try: 
+	try:
 		if urllib.urlopen(url).getcode() == 200: return 1
 	except: pass
 	return 0
@@ -264,7 +263,7 @@ for record in records:
 		if '856' in metadata:
 			if 'u' in metadata['856']:
 				if not url_response(metadata['856']['u']):
-					log.write(header.identifier() + ' [' + ID + '] Nefunkční link v poli 856u.\n')
+					log.write(header.identifier() + ' [' + ID + '] Nefunkční odkaz v poli 856u.\n')
 		
 		#TEST INDICATOR ------------------
 
