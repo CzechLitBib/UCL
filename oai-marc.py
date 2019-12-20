@@ -5,6 +5,8 @@
 #
 # TODO:
 #
+# LINK https://aleph22.lib.cas.cz/F/?func=direct&doc_number=002471429&current_base=&format=001
+#                                                           ID__/                      TAG__/
 # TEST VALUE RANGE
 # TEST SUBFIELD ORDER
 # TEST ' ,', ' .' regexp DATA
