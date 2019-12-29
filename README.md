@@ -1,13 +1,13 @@
 
 DESCRIPTION
 
-Library support software collection.
+UCL library support software.
 
 INSTALL
 <pre>
 apt-get install python-setuptools python-lxml python-six
 
-wget ttps://files.pythonhosted.org/packages/21/3c/0ad6e6d50fc355be718fe667541797a27d0252641983b7925df685ef2163/pyoai-2.5.0.tar.gz
+wget https://files.pythonhosted.org/packages/21/3c/0ad6e6d50fc355be718fe667541797a27d0252641983b7925df685ef2163/pyoai-2.5.0.tar.gz
 tar xzf pyoai-2.5.0.tar.gz
 cd pyoai-2.5.0
 python -B setup.py install
