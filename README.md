@@ -1,7 +1,7 @@
 
 DESCRIPTION
 
-UCL library support software.
+Library support software.
 
 INSTALL
 <pre>
