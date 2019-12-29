@@ -6,19 +6,16 @@
 # TODO:
 #
 # LINK https://aleph22.lib.cas.cz/F/?func=direct&doc_number=002471429&current_base=&format=001
-#                                                           ID__/                      TAG__/
-# TEST VALUE RANGE
-# TEST SUBFIELD ORDER
-# TEST ' ,', ' .' regexp DATA
-# EMAIL + URL
+# FIX DISPLAY/EXPORT
 #
 
 # INCLUDE -------------------
 
 from __future__ import print_function
 
-import argparse,StringIO,urllib2,sys,os,re
+import argparse,StringIO,urllib2,smtplib,sys,os,re
 
+from email.mime.text import MIMEText
 from datetime import datetime
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
@@ -29,6 +26,13 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.log'
+
+MAIL_SENDER='xxx@xxx.xx'
+MAIL_RECIPIENT='xxx@xxx.xx'
+MAIL_SERVER='xxx.xx'
+MAIL_HEADER='<html><head></head><body>'
+MAIL_BODY=''
+MAIL_FOOTER='</body></html>'
 
 # DEF -------------------
 
@@ -63,6 +67,18 @@ def url_response(url):
 		if urllib2.urlopen(url, timeout=10).getcode() == 200: return 1
 	except: pass
 	return 0
+
+def write_mail(html):
+	try:
+		msg = MIMEText(html, 'html')
+		msg['Subject'] = 'OIA MARC Validator Report'
+		msg['From'] = 'OIA MARC Validator <' + MAIL_SENDER + '>'
+		msg['To'] = MAIL_RECIPIENT
+		s = smtplib.SMTP(MAIL_SERVER)
+		s.sendmail(MAIL_SENDER, MAIL_RECIPIENT, msg.as_string())
+		s.quit()
+	except:
+		print('Failed to write mail.')
 
 # ARG -------------------
 
@@ -121,7 +137,7 @@ if args.export:
 
 if args.check:
 	print('Validating..')
-	log.write("BEGIN: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
+	print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
@@ -559,6 +575,8 @@ for record in records:
 					if '2' in metadata[TAG]: 
 						if metadata[TAG]['2'] == 'czenas':
 							log.write(header.identifier() + ' [' + ID + '] Chybný 2.indikátor v poli ' + TAG + '.\n')
+	
+		#TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
 	# EXPORT -------------------
 
@@ -579,10 +597,10 @@ for record in records:
 	counter+=1
 
 # EXIT -------------------
-log.write("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
-log.write('TOTAL: ' + str(counter) + '\n')
 log.close()
+
 if args.display or args.get != 'record': print('------------------')
+if args.check: print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+print('TOTAL: ' + str(counter))
 print('Done.')
-print('Total: ' + str(counter))
 
