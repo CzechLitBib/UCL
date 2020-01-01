@@ -232,7 +232,7 @@ for record in records:
 				if metadata['856']['4'] != 'N':
 					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 856-4.\n')
 			if 'y' in metadata['856']:
-				if not metadata['856']['y'] in ('online', 'Webarchiv'):
+				if not metadata['856']['y'] in ('online', 'Webarchiv', 'Obsah knihy'):
 					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 856y.\n')
 
 		#TEST SUBFIELD ------------------
@@ -365,7 +365,7 @@ for record in records:
 					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 070.\n')
 		if '100' in metadata:
 			for SUB in metadata['100'].subfields[0::2]:
-				if SUB not in ('a', 'b', 'c', 'd', 'g', '4', '7', 'x'):
+				if SUB not in ('a', 'b', 'c', 'd', 'g', '4', '7', 'x', 'q', 'j'):
 					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 100.\n')
 		if '110' in metadata:
 			for SUB in metadata['110'].subfields[0::2]:
@@ -449,7 +449,7 @@ for record in records:
 					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 655.\n')
 		if '700' in metadata:
 			for SUB in metadata['700'].subfields[0::2]:
-				if SUB not in ('a', 'b', 'c', 'd', 'q', '4', '7', 'x'):
+				if SUB not in ('a', 'b', 'c', 'd', 'q', '4', '7', 'x', 'j'):
 					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 700.\n')
 		if '710' in metadata:
 			for SUB in metadata['710'].subfields[0::2]:
@@ -457,7 +457,7 @@ for record in records:
 					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 710.\n')
 		if '773' in metadata:
 			for SUB in metadata['773'].subfields[0::2]:
-				if SUB not in ('a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9'):
+				if SUB not in ('a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9', 'z'):
 					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 773.\n')
 		if '787' in metadata:
 			for SUB in metadata['787'].subfields[0::2]:
@@ -509,9 +509,14 @@ for record in records:
 				if SUB not in ('a', 'b'):
 					if len(metadata['264'].get_subfields(SUB)) > 1:
 						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 264.\n')
+		if '773' in metadata:
+			for SUB in metadata['773'].subfields[0::2]:
+				if SUB  != 'z':
+					if len(metadata['773'].get_subfields(SUB)) > 1:
+						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 773.\n')
 		if '787' in metadata:
 			for SUB in metadata['787'].subfields[0::2]:
-				if SUB != 'k':
+				if SUB not in ('k', 'z'):
 					if len(metadata['787'].get_subfields(SUB)) > 1:
 						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 787.\n')
 
