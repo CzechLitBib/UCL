@@ -577,8 +577,9 @@ for record in records:
 				if metadata[TAG].indicator2 == '7':
 					if '2' not in metadata[TAG] and '7' not in metadata[TAG]: 
 						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
-					elif metadata[TAG]['2'] != 'czenas':
-						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
+					if '2' in metadata[TAG] and '7' in metadata[TAG]:
+						if metadata[TAG]['2'] != 'czenas':
+							html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 				if metadata[TAG].indicator2 == '4':
 					if '7' in metadata[TAG]: 
 						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
@@ -611,7 +612,7 @@ for record in records:
 if args.display or args.get != 'record': print('------------------')
 if args.check:
 	print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	log.write('</body></html>')
+	log.write('<br></body></html>')
 print('TOTAL: ' + str(counter))
 print('Done.')
 log.close()
