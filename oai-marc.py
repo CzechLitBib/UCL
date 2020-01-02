@@ -192,8 +192,8 @@ for record in records:
 		if 'SIF' in metadata:
 			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
 		else:
-			html_write(header.identifier(), 'SIF', SIF,  'Chybí pole SIF.')
 			SIF = ''
+			html_write(header.identifier(), 'SIF', SIF,  'Chybí pole SIF.')
 		for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'OWN'):
 			if not TAG in metadata:
 				html_write(header.identifier(), TAG, SIF, 'Chybí pole ' + TAG + '.')
