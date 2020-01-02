@@ -75,8 +75,8 @@ def html_write(ID,TAG,SIF,CODE):
 def write_mail(html):
 	try:
 		msg = MIMEText(html, 'html')
-		msg['Subject'] = 'OIA MARC Validator Report'
-		msg['From'] = 'OIA MARC Validator <' + MAIL_SENDER + '>'
+		msg['Subject'] = 'OAI MARC Validator Report'
+		msg['From'] = 'OAI MARC Validator <' + MAIL_SENDER + '>'
 		msg['To'] = MAIL_RECIPIENT
 		s = smtplib.SMTP(MAIL_SERVER)
 		s.sendmail(MAIL_SENDER, MAIL_RECIPIENT, msg.as_string())
