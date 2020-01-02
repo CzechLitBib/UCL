@@ -5,7 +5,6 @@
 #
 # TODO:
 #
-# LINK https://aleph22.lib.cas.cz/F/?func=direct&doc_number=002471429&current_base=&format=001
 # FIX DISPLAY/EXPORT
 #
 
@@ -25,14 +24,11 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-LOG='oai-marc.log'
+LOG='oai-marc.html'
 
 MAIL_SENDER='xxx@xxx.xx'
 MAIL_RECIPIENT='xxx@xxx.xx'
 MAIL_SERVER='xxx.xx'
-MAIL_HEADER='<html><head></head><body>'
-MAIL_BODY=''
-MAIL_FOOTER='</body></html>'
 
 # DEF -------------------
 
@@ -67,6 +63,14 @@ def url_response(url):
 		if urllib2.urlopen(url, timeout=10).getcode() == 200: return 1
 	except: pass
 	return 0
+
+def html_write(ID,TAG,SIF,CODE):
+	log.write(
+		'<p><a target="_blank" href="https://aleph22.lib.cas.cz' +
+		 '/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&current_base=&format=' + TAG + '">' + ID + '</a>' +
+		 ' [' + SIF + '] ' + CODE + '</p>'
+		)
+	return	
 
 def write_mail(html):
 	try:
@@ -138,6 +142,7 @@ if args.export:
 if args.check:
 	print('Validating..')
 	print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+	log.write('<html><head></head><body><br>')
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
@@ -185,300 +190,300 @@ for record in records:
 		#TEST TAG ------------------
 
 		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']: ID = metadata['SIF']['a'].encode('utf-8')
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
 		else:
-			log.write(header.identifier() + ' Chybí pole SIF.\n')
-			ID = ''
+			html_write(header.identifier(), 'SIF', SIF,  'Chybí pole SIF.')
+			SIF = ''
 		for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'OWN'):
 			if not TAG in metadata:
-				log.write(header.identifier() + ' [' + ID + '] Chybí pole ' + TAG + '.\n')
-		if not ('KAT' or 'CAT') in metadata:
-			log.write(header.identifier() + ' [' + ID + '] Chybí pole KAT/CAT.\n')
+				html_write(header.identifier(), TAG, SIF, 'Chybí pole ' + TAG + '.')
+		if 'KAT' not in metadata and 'CAT' not in metadata:
+			html_write(header.identifier(), 'CAT/KAT', SIF, 'Chybí pole KAT/CAT.')
 		if not metadata.leader:
-			log.write(header.identifier() + ' [' + ID + '] Chybí pole LDR.\n')
+			html_write(header.identifier(), 'LDR', SIF, 'Chybí pole LDR.')
 	
 		#TEST TAG/SUBFIELD VALUE ------------------
 
 		if '003' in metadata:
 			if metadata['003'].value() != 'CZ PrUCL':
-				log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v poli 003.\n')
+				html_write(header.identifier(), '003', SIF, 'Chybná hodnota v poli 003.')
 		if '040' in metadata:
 			if 'a' in metadata['040']:
 				if metadata['040']['a'] != 'ABB060':
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 040a.\n')
+					html_write(header.identifier(), '040', SIF, 'Chybná hodnota v podpoli 040a.')
 			if 'b' in metadata['040']:
 				if metadata['040']['b'] != 'cze':
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 040b.\n')
+					html_write(header.identifier(), '040', SIF, 'Chybná hodnota v podpoli 040b.')
 			if 'e' in metadata['040']:
 				if metadata['040']['e'] != 'rda':
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 040e.\n')
+					html_write(header.identifier(), '040', SIF, 'Chybná hodnota v podpoli 040e.')
 		if '072' in metadata:
 			if '2' in metadata['072']:
 				if metadata['072']['2'] != 'Konspekt':
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 072-2.\n')
+					html_write(header.identifier(), '072', SIF, 'Chybná hodnota v podpoli 072-2.')
 		if '082' in metadata:
 			if '2' in metadata['082']:
 				if not metadata['082']['2'] in ('MRF', 'MRF-sel'):
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 082-2.\n')
+					html_write(header.identifier(), '082', SIF, 'Chybná hodnota v podpoli 082-2.')
 		if '910' in metadata:
 			if 'a' in metadata['910']:
 				if metadata['910']['a'] != 'ABB060':
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 910a.\n')
+					html_write(header.identifier(), '910', SIF, 'Chybná hodnota v podpoli 910a.')
 		if 'OWN' in metadata:
 			if metadata['OWN'].value() != 'UCLA':
-				log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v poli OWN.\n')
+				html_write(header.identifier(), 'OWN', SIF, 'Chybná hodnota v poli OWN.')
 		if '856' in metadata:
 			if '4' in metadata['856']:
 				if metadata['856']['4'] != 'N':
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 856-4.\n')
+					html_write(header.identifier(), '856', SIF, 'Chybná hodnota v podpoli 856-4.')
 			if 'y' in metadata['856']:
 				if not metadata['856']['y'] in ('online', 'Webarchiv', 'Obsah knihy'):
-					log.write(header.identifier() + ' [' + ID + '] Chybná hodnota v podpoli 856y.\n')
+					html_write(header.identifier(), '856', SIF, 'Chybná hodnota v podpoli 856y.')
 
 		#TEST SUBFIELD ------------------
 
 		for TAG in ('072', '080', '100', '245', '520', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
-					log.write(header.identifier() + ' [' + ID + '] Chybí podpole ' + TAG + 'a.\n')
+					html_write(header.identifier(), TAG, SIF, 'Chybí podpole ' + TAG + 'a.')
 		if '022' in metadata:
 			if not len(metadata['022'].get_subfields('a')) >= 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 022a.\n')
+				html_write(header.identifier(), '022', SIF, 'Chybí podpole 022a.')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 072x.\n')
+				html_write(header.identifier(), '072', SIF, 'Chybí podpole 072x.')
 			if len(metadata['072'].get_subfields('2')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 072-2.\n')
+				html_write(header.identifier(), '072', SIF, 'Chybí podpole 072-2.')
 			if len(metadata['072'].get_subfields('9')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 072-9.\n')
+				html_write(header.identifier(), '072', SIF, 'Chybí podpole 072-9.')
 		if '080' in metadata:
 			if len(metadata['080'].get_subfields('2')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 080-2.\n')
+				html_write(header.identifier(), '080', SIF, 'Chybí podpole 080-2.')
 		if '700' in metadata:
 			if not len(metadata['700'].get_subfields('4')) >= 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 700-4.\n')
+				html_write(header.identifier(), '700', SIF, 'Chybí podpole 700-4.')
 		if '710' in metadata:
 			if not len(metadata['710'].get_subfields('4')) >= 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 710-4.\n')
+				html_write(header.identifier(), '710', SIF, 'Chybí podpole 710-4.')
 		if '773' in metadata:
 			if len(metadata['773'].get_subfields('t')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 773t.\n')
+				html_write(header.identifier(), '773', SIF, 'Chybí podpole 773t.')
 			if len(metadata['773'].get_subfields('9')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 773-9.\n')
+				html_write(header.identifier(), '773', SIF, 'Chybí podpole 773-9.')
 		if '787' in metadata:
 			if len(metadata['787'].get_subfields('t')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 787t.\n')
+				html_write(header.identifier(), '787', SIF, 'Chybí podpole 787t.')
 			if len(metadata['787'].get_subfields('4')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 787-4.\n')
+				html_write(header.identifier(), '787', SIF, 'Chybí podpole 787-4.')
 		if '856' in metadata:
 			if len(metadata['856'].get_subfields('u')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 856u.\n')
+				html_write(header.identifier(), '856', SIF, 'Chybí podpole 856u.')
 			if len(metadata['856'].get_subfields('y')) != 1:
-				log.write(header.identifier() + ' [' + ID + '] Chybí podpole 856y.\n')
+				html_write(header.identifier(), '856', SIF, 'Chybí podpole 856y.')
 
 		#TEST VALID LINK ------------------
 
 		if '856' in metadata:
 			if 'u' in metadata['856']:
 				if not url_response(metadata['856']['u']):
-					log.write(header.identifier() + ' [' + ID + '] Nefunkční odkaz v poli 856u.\n')
+					html_write(header.identifier(), '856', SIF, 'Nefunkční odkaz v poli 856u.')
 		
 		#TEST INDICATOR ------------------
 
 		if '041' in metadata:
 			if not metadata['041'].indicator1 + metadata['041'].indicator2 in ('1 ', '0 '):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 041.\n')
+				html_write(header.identifier(), '041', SIF, 'Chybný indikátor v poli 041.')
 		if '072' in metadata:
 			if metadata['072'].indicator1 + metadata['072'].indicator2 != ' 7':
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 072.\n')
+				html_write(header.identifier(), '072', SIF, 'Chybný indikátor v poli 072.')
 		if '100' in metadata:
 			if not metadata['100'].indicator1 + metadata['100'].indicator2 in ('3 ', '1 ', '0 '):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 100.\n')
+				html_write(header.identifier(), '100', SIF, 'Chybný indikátor v poli 100.')
 		if '110' in metadata:
 			if not metadata['110'].indicator1 + metadata['110'].indicator2 in ('1 ', '2 '):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 110.\n')
+				html_write(header.identifier(), '110', SIF, 'Chybný indikátor v poli 110.')
 		if '245' in metadata:
 			if not metadata['245'].indicator1 in ('0', '1'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 245.\n')
+				html_write(header.identifier(), '245', SIF, 'Chybný indikátor v poli 245.')
 		if '520' in metadata:
 			if metadata['520'].indicator1 + metadata['520'].indicator2 != '2 ':
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 520.\n')
+				html_write(header.identifier(), '520', SIF, 'Chybný indikátor v poli 520.')
 		if '600' in metadata:
 			if not metadata['600'].indicator1 + metadata['600'].indicator2 in ('34', '37', '14', '17', '04', '07'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 600.\n')
+				html_write(header.identifier(), '600', SIF, 'Chybný indikátor v poli 600.')
 		if '610' in metadata:
 			if not metadata['610'].indicator1 + metadata['610'].indicator2 in ('14', '17', '24', '27'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 610.\n')
+				html_write(header.identifier(), '610', SIF, 'Chybný indikátor v poli 610.')
 		if '611' in metadata:
 			if not metadata['611'].indicator1 + metadata['611'].indicator2 in ('14', '17', '24', '27'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 611.\n')
+				html_write(header.identifier(), '611', SIF, 'Chybný indikátor v poli 611.')
 		if '648' in metadata:
 			if not metadata['648'].indicator1 + metadata['648'].indicator2 in (' 4', ' 7'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 648.\n')
+				html_write(header.identifier(), '648', SIF, 'Chybný indikátor v poli 648.')
 		if '650' in metadata:
 			if not metadata['650'].indicator1 + metadata['650'].indicator2 in ('14', '17', '04', '07'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 650.\n')
+				html_write(header.identifier(), '650', SIF, 'Chybný indikátor v poli 650.')
 		if '651' in metadata:
 			if not metadata['651'].indicator1 + metadata['651'].indicator2 in (' 4', ' 7'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 651.\n')
+				html_write(header.identifier(), '651', SIF, 'Chybný indikátor v poli 651.')
 		if '653' in metadata:
 			if metadata['653'].indicator1 + metadata['653'].indicator2 != '0 ':
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 653.\n')
+				html_write(header.identifier(), '653', SIF, 'Chybný indikátor v poli 653.')
 		if '655' in metadata:
 			if not metadata['655'].indicator1 + metadata['655'].indicator2 in (' 4', ' 7'):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 655.\n')
+				html_write(header.identifier(), '655', SIF, 'Chybný indikátor v poli 655.')
 		if '700' in metadata:
 			if not metadata['700'].indicator1 + metadata['700'].indicator2 in ('3 ', '1 ', '0 '):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 700.\n')
+				html_write(header.identifier(), '700', SIF, 'Chybný indikátor v poli 700.')
 		if '710' in metadata:
 			if not metadata['710'].indicator1 + metadata['710'].indicator2 in ('1 ', '2 '):
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 710.\n')
+				html_write(header.identifier(), '710', SIF, 'Chybný indikátor v poli 710.')
 		if '773' in metadata:
 			if metadata['773'].indicator1 + metadata['773'].indicator2 != '0 ':
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 773.\n')
+				html_write(header.identifier(), '773', SIF, 'Chybný indikátor v poli 773.')
 		if '787' in metadata:
 			if metadata['787'].indicator1 + metadata['787'].indicator2 != '08':
-				log.write(header.identifier() + ' [' + ID + '] Chybný indikátor v poli 787.\n')
+				html_write(header.identifier(), '787', SIF, 'Chybný indikátor v poli 787.')
 
 		#TEST DEPENDENCE ------------------
 
 		if metadata.leader[7] == 'm':
-			if not ('260' or '264') in metadata:
-				log.write(header.identifier() + ' [' + ID + '] Chybný typ záznamu (pole 260/264).\n')
+			if '260' not in metadata and '264' not in metadata:
+				html_write(header.identifier(), '260/264', SIF, 'Chybný typ záznamu (pole 260/264).')
 		for TAG in ('250', '490', '830'):
 			if TAG in metadata:
 				if metadata.leader[7] != 'm':
-					log.write(header.identifier() + ' [' + ID + '] Chybný typ záznamu (pole ' + TAG + ').\n')
+					html_write(header.identifier(), TAG, SIF, 'Chybný typ záznamu (pole ' + TAG + ').')
 		if metadata.leader[7] in ('a', 'b'):
 			if not '773' in metadata:
-				log.write(header.identifier() + ' [' + ID + '] Chybný typ záznamu (pole 773).\n')
+				html_write(header.identifier(), '773', SIF, 'Chybný typ záznamu (pole 773).')
 
 		#TEST SUBFIELD RANGE ------------------
 
 		if '040' in metadata:
 			for SUB in metadata['040'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'e'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 040.\n')
+					html_write(header.identifier(), '040', SIF, 'Chybný kód podpole v poli 040.')
 		if '070' in metadata:
 			for SUB in metadata['070'].subfields[0::2]:
 				if SUB not in ('a', 'x', '2', '9'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 070.\n')
+					html_write(header.identifier(), '070', SIF, 'Chybný kód podpole v poli 070.')
 		if '100' in metadata:
 			for SUB in metadata['100'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'g', '4', '7', 'x', 'q', 'j'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 100.\n')
+					html_write(header.identifier(), '100', SIF, 'Chybný kód podpole v poli 100.')
 		if '110' in metadata:
 			for SUB in metadata['110'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 110.\n')
+					html_write(header.identifier(), '110', SIF, 'Chybný kód podpole v poli 110.')
 		if '111' in metadata:
 			for SUB in metadata['111'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 111.\n')
+					html_write(header.identifier(), '111', SIF, 'Chybný kód podpole v poli 111.')
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'n', 'p', 'c'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 245.\n')
+					html_write(header.identifier(), '245', SIF, 'Chybný kód podpole v poli 245.')
 		if '250' in metadata:
 			for SUB in metadata['250'].subfields[0::2]:
 				if SUB != 'a':
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 250.\n')
+					html_write(header.identifier(), '250', SIF, 'Chybný kód podpole v poli 250.')
 		if '260' in metadata:
 			for SUB in metadata['260'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 260.\n')
+					html_write(header.identifier(), '260', SIF, 'Chybný kód podpole v poli 260.')
 		if '264' in metadata:
 			for SUB in metadata['264'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 264.\n')
+					html_write(header.identifier(), '264', SIF, 'Chybný kód podpole v poli 264.')
 		if '300' in metadata:
 			for SUB in metadata['300'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'e'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 300.\n')
+					html_write(header.identifier(), '300', SIF, 'Chybný kód podpole v poli 300.')
 		if '490' in metadata:
 			for SUB in metadata['490'].subfields[0::2]:
 				if SUB not in ('a', 'v'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 490.\n')
+					html_write(header.identifier(), '490', SIF, 'Chybný kód podpole v poli 490.')
 		if '500' in metadata:
 			for SUB in metadata['500'].subfields[0::2]:
 				if SUB != 'a':
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 500.\n')
+					html_write(header.identifier(), '500', SIF, 'Chybný kód podpole v poli 500.')
 		if '505' in metadata:
 			for SUB in metadata['505'].subfields[0::2]:
 				if SUB not in ('t', 'r', 'g'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 505.\n')
+					html_write(header.identifier(), '505', SIF, 'Chybný kód podpole v poli 505.')
 		if '520' in metadata:
 			for SUB in metadata['520'].subfields[0::2]:
 				if SUB not in ('a', '2'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 520.\n')
+					html_write(header.identifier(), '520', SIF, 'Chybný kód podpole v poli 520.')
 		if '600' in metadata:
 			for SUB in metadata['600'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'q', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 600.\n')
+					html_write(header.identifier(), '600', SIF, 'Chybný kód podpole v poli 600.')
 		if '610' in metadata:
 			for SUB in metadata['610'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 610.\n')
+					html_write(header.identifier(), '610', SIF, 'Chybný kód podpole v poli 610.')
 		if '611' in metadata:
 			for SUB in metadata['611'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 611.\n')
+					html_write(header.identifier(), '611', SIF, 'Chybný kód podpole v poli 611.')
 		if '630' in metadata:
 			for SUB in metadata['630'].subfields[0::2]:
 				if SUB not in ('a', 'l', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 630.\n')
+					html_write(header.identifier(), '630', SIF, 'Chybný kód podpole v poli 630.')
 		if '648' in metadata:
 			for SUB in metadata['648'].subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 648.\n')
+					html_write(header.identifier(), '648', SIF, 'Chybný kód podpole v poli 648.')
 		if '650' in metadata:
 			for SUB in metadata['650'].subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 650.\n')
+					html_write(header.identifier(), '650', SIF, 'Chybný kód podpole v poli 650.')
 		if '651' in metadata:
 			for SUB in metadata['651'].subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 651.\n')
+					html_write(header.identifier(), '651', SIF, 'Chybný kód podpole v poli 651.')
 		if '653' in metadata:
 			for SUB in metadata['653'].subfields[0::2]:
 				if SUB not in ('a', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 653.\n')
+					html_write(header.identifier(), '653', SIF, 'Chybný kód podpole v poli 653.')
 		if '655' in metadata:
 			for SUB in metadata['655'].subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 655.\n')
+					html_write(header.identifier(), '655', SIF, 'Chybný kód podpole v poli 655.')
 		if '700' in metadata:
 			for SUB in metadata['700'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'q', '4', '7', 'x', 'j'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 700.\n')
+					html_write(header.identifier(), '700', SIF, 'Chybný kód podpole v poli 700.')
 		if '710' in metadata:
 			for SUB in metadata['710'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 710.\n')
+					html_write(header.identifier(), '710', SIF, 'Chybný kód podpole v poli 710.')
 		if '773' in metadata:
 			for SUB in metadata['773'].subfields[0::2]:
 				if SUB not in ('a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9', 'z'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 773.\n')
+					html_write(header.identifier(), '773', SIF, 'Chybný kód podpole v poli 773.')
 		if '787' in metadata:
 			for SUB in metadata['787'].subfields[0::2]:
 				if SUB not in ('i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'y', '4'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 787.\n')
+					html_write(header.identifier(), '787', SIF, 'Chybný kód podpole v poli 787.')
 		if '830' in metadata:
 			for SUB in metadata['830'].subfields[0::2]:
 				if SUB != 'a':
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 830.\n')
+					html_write(header.identifier(), '830', SIF, 'Chybný kód podpole v poli 830.')
 		if '856' in metadata:
 			for SUB in metadata['856'].subfields[0::2]:
 				if SUB not in ('u', 'y', '4'):
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 856.\n')
+					html_write(header.identifier(), '856', SIF, 'Chybný kód podpole v poli 856.')
 		if '910' in metadata:
 			for SUB in metadata['910'].subfields[0::2]:
 				if SUB != 'a':
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 910.\n')
+					html_write(header.identifier(), '910', SIF, 'Chybný kód podpole v poli 910.')
 		if '964' in metadata:
 			for SUB in metadata['964'].subfields[0::2]:
 				if SUB != 'a':
-					log.write(header.identifier() + ' [' + ID + '] Chybný kód podpole v poli 964.\n')
+					html_write(header.identifier(), '964', SIF, 'Chybný kód podpole v poli 964.')
 		
 		#TEST SUBFIELD ORDER ------------------
 
@@ -488,37 +493,37 @@ for record in records:
 			for SUB in metadata['041'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'k', 'h'):
 					if len(metadata['041'].get_subfields(SUB)) > 1:
-						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 041.\n')
+						html_write(header.identifier(), '041', SIF, 'Neplatné opakování podpolí v poli 041.')
 		if '044' in metadata:
 			for SUB in metadata['044'].subfields[0::2]:
 				if SUB != 'a':
 					if len(metadata['044'].get_subfields(SUB)) > 1:
-						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 044.\n')
+						html_write(header.identifier(), '044', SIF, 'Neplatné opakování podpolí v poli 044.')
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[0::2]:
 				if SUB not in ('n', 'p'):
 					if len(metadata['245'].get_subfields(SUB)) > 1:
-						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 245.\n')
+						html_write(header.identifier(), '245', SIF, 'Neplatné opakování podpolí v poli 245.')
 		if '260' in metadata:
 			for SUB in metadata['260'].subfields[0::2]:
 				if SUB not in ('a', 'b'):
 					if len(metadata['260'].get_subfields(SUB)) > 1:
-						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 260.\n')
+						html_write(header.identifier(), '260', SIF, 'Neplatné opakování podpolí v poli 260.')
 		if '264' in metadata:
 			for SUB in metadata['264'].subfields[0::2]:
 				if SUB not in ('a', 'b'):
 					if len(metadata['264'].get_subfields(SUB)) > 1:
-						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 264.\n')
+						html_write(header.identifier(), '264', SIF, 'Neplatné opakování podpolí v poli 264.')
 		if '773' in metadata:
 			for SUB in metadata['773'].subfields[0::2]:
 				if SUB  != 'z':
 					if len(metadata['773'].get_subfields(SUB)) > 1:
-						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 773.\n')
+						html_write(header.identifier(), '773', SIF, 'Neplatné opakování podpolí v poli 773.')
 		if '787' in metadata:
 			for SUB in metadata['787'].subfields[0::2]:
 				if SUB not in ('k', 'z'):
 					if len(metadata['787'].get_subfields(SUB)) > 1:
-						log.write(header.identifier() + ' [' + ID + '] Neplatné opakování podpolí v poli 787.\n')
+						html_write(header.identifier(), '787', SIF, 'Neplatné opakování podpolí v poli 787.')
 
 		#TEST VALUE RANGE ------------------
 
@@ -527,59 +532,59 @@ for record in records:
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '0':
 				if 'h' in metadata['041']:
-					log.write(header.identifier() + ' [' + ID + "] Chybné podpole 'h' v poli 041.\n")
+					html_write(header.identifier(), '041', SIF, "Chybné podpole 'h' v poli 041.")
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '1':
 				if not 'h' in metadata['041']:
-					log.write(header.identifier() + ' [' + ID + "] Chybné podpole 'h' v poli 041.\n")
+					html_write(header.identifier(), '041', SIF, "Chybné podpole 'h' v poli 041.")
 		if '100' in metadata:
 			if metadata['100'].indicator1 == '0':
 				if 'a' in metadata['100']:
 					if re.match('^.*,.+$', metadata['100']['a']):
-						log.write(header.identifier() + ' [' + ID + "] Chybný znak v podpoli 'a' v poli 100.\n")
+						html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'a' v poli 100.")
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
 					if re.match('^\[.*$', metadata['100']['c']):
-						log.write(header.identifier() + ' [' + ID + "] Chybný znak v podpoli 'c' v poli 100.\n")
+						html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'c' v poli 100.")
 				if 'a' in metadata['100']:
 					if re.match('^.*\..*$', metadata['100']['a']):
-						log.write(header.identifier() + ' [' + ID + "] Chybný znak v podpoli 'a' v poli 100.\n")
+						html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'a' v poli 100.")
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
 				N=0
 				for TAG in ('100', '110', '111', '130'):
 					if TAG in metadata: N+=1
 				if N != 1:
-					log.write(header.identifier() + ' [' + ID + '] Neplatné pole, chybný indikátor v poli 245.\n')
+					html_write(header.identifier(), '245', SIF, 'Neplatné pole, chybný indikátor v poli 245.')
 			if metadata['245'].indicator1 == '0':
 				N=0
 				for TAG in ('100', '110', '111', '130'):
 					if TAG in metadata: N+=1
 				if N > 0:
-					log.write(header.identifier() + ' [' + ID + '] Neplatné pole, chybný indikátor v poli 245.\n')
+					html_write(header.identifier(), '245', SIF, 'Neplatné pole, chybný indikátor v poli 245.')
 			if metadata['245'].indicator2 == '0':
 				if 'a' in metadata['245']:
 					for S in ('The ', 'An ', 'Der ', 'Die ', 'Das ', 'Le ', 'La '):
 						if re.match('^' + S + '.*', metadata['245']['a']):
-							log.write(header.identifier() + ' [' + ID + '] Neplatný prefix, chybný 2.indikátor v poli 245.\n')
+							html_write(header.identifier(), '245', SIF, 'Neplatný prefix, chybný 2.indikátor v poli 245.')
 		if '600' in metadata:
 			if metadata['600'].indicator1 == '0':
 				if 'a' in metadata['600']:
 					if re.match('^.*,.+$', metadata['600']['a']):
-						log.write(header.identifier() + ' [' + ID + "] Chybný znak v podpoli 'a' v poli 600.\n")
+						html_write(header.identifier(), '600', SIF, "] Chybný znak v podpoli 'a' v poli 600.")
 		for TAG in ('600', '610', '611', '630' ,'648', '650', '651', '655'):
 			if TAG in metadata:
 				if metadata[TAG].indicator2 == '7':
-					if not ('2' or '7') in metadata[TAG]: 
-						log.write(header.identifier() + ' [' + ID + '] Chybný 2.indikátor v poli ' + TAG + '.\n')
+					if '2' not in metadata[TAG] and '7' not in metadata[TAG]: 
+						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 					elif metadata[TAG]['2'] != 'czenas':
-						log.write(header.identifier() + ' [' + ID + '] Chybný 2.indikátor v poli ' + TAG + '.\n')
+						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 				if metadata[TAG].indicator2 == '4':
 					if '7' in metadata[TAG]: 
-						log.write(header.identifier() + ' [' + ID + '] Chybný 2.indikátor v poli ' + TAG + '.\n')
+						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 					if '2' in metadata[TAG]: 
 						if metadata[TAG]['2'] == 'czenas':
-							log.write(header.identifier() + ' [' + ID + '] Chybný 2.indikátor v poli ' + TAG + '.\n')
+							html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 	
 		#TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
@@ -602,10 +607,12 @@ for record in records:
 	counter+=1
 
 # EXIT -------------------
-log.close()
 
 if args.display or args.get != 'record': print('------------------')
-if args.check: print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+if args.check:
+	print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+	log.write('</body></html>')
 print('TOTAL: ' + str(counter))
 print('Done.')
+log.close()
 
