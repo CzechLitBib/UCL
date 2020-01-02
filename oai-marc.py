@@ -67,8 +67,9 @@ def url_response(url):
 def html_write(ID,TAG,SIF,CODE):
 	log.write(
 		'<p><a target="_blank" href="https://aleph22.lib.cas.cz' +
-		 '/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&current_base=&format=' + TAG + '">' + ID + '</a>' +
-		 ' [' + SIF + '] ' + CODE + '</p>'
+		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
+		#'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&current_base=&format=' + TAG + '">' + ID + '</a>' +
+		' [' + SIF + '] ' + CODE + '</p>'
 		)
 	return	
 
@@ -546,9 +547,9 @@ for record in records:
 				if 'c' in metadata['100']:
 					if re.match('^\[.*$', metadata['100']['c']):
 						html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'c' v poli 100.")
-				if 'a' in metadata['100']:
-					if re.match('^.*\..*$', metadata['100']['a']):
-						html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'a' v poli 100.")
+				#if 'a' in metadata['100']:
+				#	if re.match('^.*\..*$', metadata['100']['a']):
+				#		html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'a' v poli 100.")
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
 				N=0
