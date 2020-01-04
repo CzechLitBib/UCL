@@ -613,7 +613,7 @@ for record in records:
 if args.display or args.get != 'record': print('------------------')
 if args.check:
 	print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	html_write('<br></body></html>')
+	log.write('<br></body></html>')
 print('TOTAL: ' + str(counter))
 print('Done.')
 log.close()
