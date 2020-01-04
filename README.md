@@ -21,11 +21,8 @@ FILE
 <pre>
  oai-marc.py - Validate harvested OAI-PMH 2.0 MARCXML records.
 json-marc.py - Convert JSON data to custom MARC structure.
+     year.sh - Generate yearly OAI check report.
 </pre>
-REF
-
-https://developers.exlibrisgroup.com/aleph/apis/aleph-restful-apis/items/
-
 SOURCE
 
 https://github.com/KyomaHooin/UCL
