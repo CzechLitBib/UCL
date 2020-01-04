@@ -196,7 +196,7 @@ for record in records:
 			SIF = ''
 			html_write(header.identifier(), 'SIF', SIF,  'Chybí pole SIF.')
 		for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'OWN'):
-			if not TAG in metadata:
+			if TAG not in metadata:
 				html_write(header.identifier(), TAG, SIF, 'Chybí pole ' + TAG + '.')
 		if 'KAT' not in metadata and 'CAT' not in metadata:
 			html_write(header.identifier(), 'CAT/KAT', SIF, 'Chybí pole KAT/CAT.')
@@ -224,7 +224,7 @@ for record in records:
 					html_write(header.identifier(), '072', SIF, 'Chybná hodnota v podpoli 072-2.')
 		if '082' in metadata:
 			if '2' in metadata['082']:
-				if not metadata['082']['2'] in ('MRF', 'MRF-sel'):
+				if metadata['082']['2'] not in ('MRF', 'MRF-sel'):
 					html_write(header.identifier(), '082', SIF, 'Chybná hodnota v podpoli 082-2.')
 		if '910' in metadata:
 			if 'a' in metadata['910']:
@@ -238,7 +238,7 @@ for record in records:
 				if metadata['856']['4'] != 'N':
 					html_write(header.identifier(), '856', SIF, 'Chybná hodnota v podpoli 856-4.')
 			if 'y' in metadata['856']:
-				if not metadata['856']['y'] in ('online', 'Webarchiv', 'Obsah knihy'):
+				if metadata['856']['y'] not in ('online', 'Webarchiv', 'Obsah knihy'):
 					html_write(header.identifier(), '856', SIF, 'Chybná hodnota v podpoli 856y.')
 
 		#TEST SUBFIELD ------------------
@@ -292,52 +292,52 @@ for record in records:
 		#TEST INDICATOR ------------------
 
 		if '041' in metadata:
-			if not metadata['041'].indicator1 + metadata['041'].indicator2 in ('1 ', '0 '):
+			if metadata['041'].indicator1 + metadata['041'].indicator2 not in ('1 ', '0 '):
 				html_write(header.identifier(), '041', SIF, 'Chybný indikátor v poli 041.')
 		if '072' in metadata:
 			if metadata['072'].indicator1 + metadata['072'].indicator2 != ' 7':
 				html_write(header.identifier(), '072', SIF, 'Chybný indikátor v poli 072.')
 		if '100' in metadata:
-			if not metadata['100'].indicator1 + metadata['100'].indicator2 in ('3 ', '1 ', '0 '):
+			if metadata['100'].indicator1 + metadata['100'].indicator2 not in ('3 ', '1 ', '0 '):
 				html_write(header.identifier(), '100', SIF, 'Chybný indikátor v poli 100.')
 		if '110' in metadata:
-			if not metadata['110'].indicator1 + metadata['110'].indicator2 in ('1 ', '2 '):
+			if metadata['110'].indicator1 + metadata['110'].indicator2 not in ('1 ', '2 '):
 				html_write(header.identifier(), '110', SIF, 'Chybný indikátor v poli 110.')
 		if '245' in metadata:
-			if not metadata['245'].indicator1 in ('0', '1'):
+			if metadata['245'].indicator1 not in ('0', '1'):
 				html_write(header.identifier(), '245', SIF, 'Chybný indikátor v poli 245.')
 		if '520' in metadata:
 			if metadata['520'].indicator1 + metadata['520'].indicator2 != '2 ':
 				html_write(header.identifier(), '520', SIF, 'Chybný indikátor v poli 520.')
 		if '600' in metadata:
-			if not metadata['600'].indicator1 + metadata['600'].indicator2 in ('34', '37', '14', '17', '04', '07'):
+			if metadata['600'].indicator1 + metadata['600'].indicator2 not in ('34', '37', '14', '17', '04', '07'):
 				html_write(header.identifier(), '600', SIF, 'Chybný indikátor v poli 600.')
 		if '610' in metadata:
-			if not metadata['610'].indicator1 + metadata['610'].indicator2 in ('14', '17', '24', '27'):
+			if metadata['610'].indicator1 + metadata['610'].indicator2 not in ('14', '17', '24', '27'):
 				html_write(header.identifier(), '610', SIF, 'Chybný indikátor v poli 610.')
 		if '611' in metadata:
-			if not metadata['611'].indicator1 + metadata['611'].indicator2 in ('14', '17', '24', '27'):
+			if metadata['611'].indicator1 + metadata['611'].indicator2 not in ('14', '17', '24', '27'):
 				html_write(header.identifier(), '611', SIF, 'Chybný indikátor v poli 611.')
 		if '648' in metadata:
-			if not metadata['648'].indicator1 + metadata['648'].indicator2 in (' 4', ' 7'):
+			if metadata['648'].indicator1 + metadata['648'].indicator2 not in (' 4', ' 7'):
 				html_write(header.identifier(), '648', SIF, 'Chybný indikátor v poli 648.')
 		if '650' in metadata:
-			if not metadata['650'].indicator1 + metadata['650'].indicator2 in ('14', '17', '04', '07'):
+			if metadata['650'].indicator1 + metadata['650'].indicator2 not in ('14', '17', '04', '07'):
 				html_write(header.identifier(), '650', SIF, 'Chybný indikátor v poli 650.')
 		if '651' in metadata:
-			if not metadata['651'].indicator1 + metadata['651'].indicator2 in (' 4', ' 7'):
+			if metadata['651'].indicator1 + metadata['651'].indicator2 not in (' 4', ' 7'):
 				html_write(header.identifier(), '651', SIF, 'Chybný indikátor v poli 651.')
 		if '653' in metadata:
 			if metadata['653'].indicator1 + metadata['653'].indicator2 != '0 ':
 				html_write(header.identifier(), '653', SIF, 'Chybný indikátor v poli 653.')
 		if '655' in metadata:
-			if not metadata['655'].indicator1 + metadata['655'].indicator2 in (' 4', ' 7'):
+			if metadata['655'].indicator1 + metadata['655'].indicator2 not in (' 4', ' 7'):
 				html_write(header.identifier(), '655', SIF, 'Chybný indikátor v poli 655.')
 		if '700' in metadata:
-			if not metadata['700'].indicator1 + metadata['700'].indicator2 in ('3 ', '1 ', '0 '):
+			if metadata['700'].indicator1 + metadata['700'].indicator2 not in ('3 ', '1 ', '0 '):
 				html_write(header.identifier(), '700', SIF, 'Chybný indikátor v poli 700.')
 		if '710' in metadata:
-			if not metadata['710'].indicator1 + metadata['710'].indicator2 in ('1 ', '2 '):
+			if metadata['710'].indicator1 + metadata['710'].indicator2 not in ('1 ', '2 '):
 				html_write(header.identifier(), '710', SIF, 'Chybný indikátor v poli 710.')
 		if '773' in metadata:
 			if metadata['773'].indicator1 + metadata['773'].indicator2 != '0 ':
@@ -356,7 +356,7 @@ for record in records:
 				if metadata.leader[7] != 'm':
 					html_write(header.identifier(), TAG, SIF, 'Chybný typ záznamu (pole ' + TAG + ').')
 		if metadata.leader[7] in ('a', 'b'):
-			if not '773' in metadata:
+			if '773' not in metadata:
 				html_write(header.identifier(), '773', SIF, 'Chybný typ záznamu (pole 773).')
 
 		#TEST SUBFIELD RANGE ------------------
@@ -576,7 +576,7 @@ for record in records:
 		for TAG in ('600', '610', '611', '630' ,'648', '650', '651', '655'):
 			if TAG in metadata:
 				if metadata[TAG].indicator2 == '7':
-					if '2' not in metadata[TAG] and '7' not in metadata[TAG]: 
+					if '2' not in metadata[TAG] or '7' not in metadata[TAG]: 
 						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 					if '2' in metadata[TAG] and '7' in metadata[TAG]:
 						if metadata[TAG]['2'] != 'czenas':
