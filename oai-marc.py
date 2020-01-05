@@ -248,7 +248,7 @@ for record in records:
 				if len(metadata[TAG].get_subfields('a')) != 1:
 					html_write(header.identifier(), TAG, SIF, 'Chybí podpole ' + TAG + 'a.')
 		if '022' in metadata:
-			if not len(metadata['022'].get_subfields('a')) >= 1:
+			if len(metadata['022'].get_subfields('a')) == 0:
 				html_write(header.identifier(), '022', SIF, 'Chybí podpole 022a.')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
@@ -261,10 +261,10 @@ for record in records:
 			if len(metadata['080'].get_subfields('2')) != 1:
 				html_write(header.identifier(), '080', SIF, 'Chybí podpole 080-2.')
 		if '700' in metadata:
-			if not len(metadata['700'].get_subfields('4')) >= 1:
+			if len(metadata['700'].get_subfields('4')) == 0:
 				html_write(header.identifier(), '700', SIF, 'Chybí podpole 700-4.')
 		if '710' in metadata:
-			if not len(metadata['710'].get_subfields('4')) >= 1:
+			if len(metadata['710'].get_subfields('4')) == 0:
 				html_write(header.identifier(), '710', SIF, 'Chybí podpole 710-4.')
 		if '773' in metadata:
 			if len(metadata['773'].get_subfields('t')) != 1:
@@ -536,7 +536,7 @@ for record in records:
 					html_write(header.identifier(), '041', SIF, "Chybné podpole 'h' v poli 041.")
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '1':
-				if not 'h' in metadata['041']:
+				if 'h' not in metadata['041']:
 					html_write(header.identifier(), '041', SIF, "Chybné podpole 'h' v poli 041.")
 		if '100' in metadata:
 			if metadata['100'].indicator1 == '0':
@@ -561,7 +561,7 @@ for record in records:
 				N=0
 				for TAG in ('100', '110', '111', '130'):
 					if TAG in metadata: N+=1
-				if N > 0:
+				if N != 0:
 					html_write(header.identifier(), '245', SIF, 'Neplatné pole, chybný indikátor v poli 245.')
 			if metadata['245'].indicator2 == '0':
 				if 'a' in metadata['245']:
