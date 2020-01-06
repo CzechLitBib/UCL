@@ -626,7 +626,7 @@ for record in records:
 				if '773' in metadata:
 					if '9' in metadata['773']:
 						DATA2 = re.sub('^(\d+).*$','\\1', metadata['773']['9'])
-						if DATA1[0:4] != DATA2 and DATA1[4:8] != DATA2:
+						if DATA1[0:4] != DATA2 and DATA1[4:8] != DATA2 and DATA1 != DATA2:
 							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[15:18].strip()
