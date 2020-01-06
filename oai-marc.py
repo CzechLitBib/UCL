@@ -26,6 +26,8 @@ from lxml.etree import tostring
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.html'
 
+COUNTRY_CODE='country_code.txt'
+
 MAIL_SENDER='xxx@xxx.xx'
 MAIL_RECIPIENT='xxx@xxx.xx'
 MAIL_SERVER='xxx.xx'
@@ -119,6 +121,12 @@ try:
 except:
 	print('Read only FS exiting..')
 	exit(1)
+
+try:
+	f = open(COUNTRY_CODE, 'r')
+	country_code = f.read().splitlines()
+	f.close()
+except: country_code = ''
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -630,11 +638,12 @@ for record in records:
 							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[15:18].strip()
-			if DATA not in ('kv', 'mo', 'rb', 'xr'):
-				html_write(header.identifier(), '008', SIF, 'Chybný kód země v poli 008.')
-			#if '044' in metadata:
-			#	print('"' + metadata['044'].value() + '"')
-				
+			if country_code:
+				if DATA not in country_code:
+					html_write(header.identifier(), '008', SIF, 'Chybný kód země v poli 008.')
+				if '044' in metadata:
+					if DATA != metadata['044'].value():
+						html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódy zemí v poli 008 a 044.')
 
 	# EXPORT -------------------
 
