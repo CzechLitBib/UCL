@@ -30,6 +30,9 @@ MAIL_SENDER='xxx@xxx.xx'
 MAIL_RECIPIENT='xxx@xxx.xx'
 MAIL_SERVER='xxx.xx'
 
+COUNTER=0
+MATCH=0
+
 # DEF -------------------
 
 def MarcXML(xml):
@@ -65,6 +68,8 @@ def url_response(url):
 	return 0
 
 def html_write(ID,TAG,SIF,CODE):
+	global MATCH
+	MATCH+=1
 	log.write(
 		'<p><a target="_blank" href="https://aleph22.lib.cas.cz' +
 		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
@@ -140,15 +145,13 @@ if args.export:
 		os.mkdir('export/' + args.export)
 	except: pass
 
-if args.check:
-	print('Validating..')
-	print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	log.write('<html><head></head><body><br>')
+#if args.check:
+	#print('Validating..')
+	#print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+	#log.write('<html><head><meta charset="utf-8"></head><body><br>')
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
-
-counter = 0
 
 for record in records:
 
@@ -541,7 +544,8 @@ for record in records:
 		if '100' in metadata:
 			if metadata['100'].indicator1 == '0':
 				if 'a' in metadata['100']:
-					if re.match('^.*,.+$', metadata['100']['a']):
+					if re.match('^.+\..+,.+$', metadata['100']['a']):
+					#if re.match('^.*,.+$', metadata['100']['a']):
 						html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'a' v poli 100.")
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
@@ -590,6 +594,15 @@ for record in records:
 	
 		#TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
+		# TEST DATA /  DATETIME / LANGUAGE ------------------
+		
+		#if '008' in metadata:
+		#	if metadata['008'].value()[6] not in ('s', 'd', 'm', 'q'):
+		#		html_write(header.identifier(), '008', SIF, 'Chybný kód data v poli 008.')
+		#	if not re.match('^\d+[-]?/\d+[-]?$', metadata['008'].value()[7:15]):
+		#		html_write(header.identifier(), '008', SIF, 'Neplatné datum v poli 008.')
+				
+
 	# EXPORT -------------------
 
 	if args.export:
@@ -606,15 +619,17 @@ for record in records:
 			writer.write(metadata)
 			writer.close()
 
-	counter+=1
+	COUNTER+=1
 
 # EXIT -------------------
 
 if args.display or args.get != 'record': print('------------------')
 if args.check:
-	print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+	#print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 	log.write('<br></body></html>')
-print('TOTAL: ' + str(counter))
-print('Done.')
+
+print('TOTAL ' + str(COUNTER))
+print('MATCH ' + str(MATCH))
+#print('Done.')
 log.close()
 
