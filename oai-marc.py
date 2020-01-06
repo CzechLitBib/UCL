@@ -614,20 +614,20 @@ for record in records:
 				DATA = metadata['008'].value()[7:11]
 				if '260' in metadata:
 					if 'c' in metadata['260']:
-						if DATA != metadata['260']['c']:
+						if DATA != metadata['260']['c'].strip('.'):
 							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 260/264.')
 				if '264' in metadata:
 					if 'c' in metadata['264']:
-						if DATA != metadata['264']['c']:
+						if DATA != metadata['264']['c'].strip('.'):
 							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 260/264.')
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
-				DATA = metadata['008'].value()[7:15].strip()
+				DATA1 = metadata['008'].value()[7:15].strip()
 				if '773' in metadata:
 					if '9' in metadata['773']:
-						if DATA != re.sub('^(\d+).*$','\\1', metadata['773']['9']):
+						DATA2 = re.sub('^(\d+).*$','\\1', metadata['773']['9'])
+						if DATA1[0:4] != DATA2 and DATA1[4:8] != DATA2:
 							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 773-9.')
-		
 		if '008' in metadata:
 			DATA = metadata['008'].value()[15:18].strip()
 			if DATA not in ('kv', 'mo', 'rb', 'xr'):
