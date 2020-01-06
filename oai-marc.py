@@ -73,7 +73,6 @@ def html_write(ID,TAG,SIF,CODE):
 	log.write(
 		'<p><a target="_blank" href="https://aleph22.lib.cas.cz' +
 		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
-		#'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&current_base=&format=' + TAG + '">' + ID + '</a>' +
 		' [' + SIF + '] ' + CODE + '</p>'
 		)
 	return	
@@ -145,10 +144,9 @@ if args.export:
 		os.mkdir('export/' + args.export)
 	except: pass
 
-#if args.check:
-	#print('Validating..')
+if args.check:
 	#print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	#log.write('<html><head><meta charset="utf-8"></head><body><br>')
+	log.write('<html><head><meta charset="utf-8"></head><body><br>')
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
@@ -596,11 +594,46 @@ for record in records:
 
 		# TEST DATA /  DATETIME / LANGUAGE ------------------
 		
-		#if '008' in metadata:
-		#	if metadata['008'].value()[6] not in ('s', 'd', 'm', 'q'):
-		#		html_write(header.identifier(), '008', SIF, 'Chybný kód data v poli 008.')
-		#	if not re.match('^\d+[-]?/\d+[-]?$', metadata['008'].value()[7:15]):
-		#		html_write(header.identifier(), '008', SIF, 'Neplatné datum v poli 008.')
+		if '008' in metadata:
+			DATE = metadata['008'].value()[7:15].strip()
+			if metadata['008'].value()[6] not in ('s', 'e', 'm', 'q'):
+				html_write(header.identifier(), '008', SIF, 'Chybný kód data v poli 008.')
+			if not re.match('^\d+$', DATE) or len(DATE) not in (4, 6, 8):
+					html_write(header.identifier(), '008', SIF, 'Neplatné datum v poli 008.')
+			if metadata['008'].value()[6] in ('s', 'q'):
+				if len(DATE) != 4: 
+					html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódem data a datem (má být RRRR).')
+			if metadata['008'].value()[6] == 'e':
+				if len(DATE) not in (6, 8):
+					html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódem data a datem (má být RRRRMM/RRRRMMDD).')
+			if metadata['008'].value()[6] == 'm':
+				if len(DATE) != 8:
+					html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódem data a datem (není interval roků).')
+		if metadata.leader[7] == 'm':
+			if '008' in metadata:
+				DATA = metadata['008'].value()[7:11]
+				if '260' in metadata:
+					if 'c' in metadata['260']:
+						if DATA != metadata['260']['c']:
+							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 260/264.')
+				if '264' in metadata:
+					if 'c' in metadata['264']:
+						if DATA != metadata['264']['c']:
+							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 260/264.')
+		if metadata.leader[7] == 'b':
+			if '008' in metadata:
+				DATA = metadata['008'].value()[7:15].strip()
+				if '773' in metadata:
+					if '9' in metadata['773']:
+						if DATA != re.sub('^(\d+).*$','\\1', metadata['773']['9']):
+							html_write(header.identifier(), '008', SIF, 'Nesoulad mezi daty v poli 008 a 773-9.')
+		
+		if '008' in metadata:
+			DATA = metadata['008'].value()[15:18].strip()
+			if DATA not in ('kv', 'mo', 'rb', 'xr'):
+				html_write(header.identifier(), '008', SIF, 'Chybný kód země v poli 008.')
+			#if '044' in metadata:
+			#	print('"' + metadata['044'].value() + '"')
 				
 
 	# EXPORT -------------------
@@ -630,6 +663,5 @@ if args.check:
 
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
-#print('Done.')
 log.close()
 
