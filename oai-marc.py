@@ -27,6 +27,8 @@ URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.html'
 
 COUNTRY_CODE='country_code.txt'
+LANG_CODE='lang_code.txt'
+ROLE_CODE='role_code.txt'
 
 MAIL_SENDER='xxx@xxx.xx'
 MAIL_RECIPIENT='xxx@xxx.xx'
@@ -127,6 +129,19 @@ try:
 	country_code = f.read().splitlines()
 	f.close()
 except: country_code = ''
+
+try:
+	f = open(LANG_CODE, 'r')
+	lang_code = f.read().splitlines()
+	f.close()
+except: lang_code = ''
+
+try:
+	f = open(ROLE_CODE, 'r')
+	role_code = f.read().splitlines()
+	f.close()
+except: role_code = ''
+
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -600,7 +615,7 @@ for record in records:
 	
 		#TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
-		# TEST DATA /  DATETIME / LANGUAGE ------------------
+		# TEST DATE / COUNTRY / LANG ------------------
 		
 		if '008' in metadata:
 			DATE = metadata['008'].value()[7:15].strip()
@@ -642,8 +657,56 @@ for record in records:
 				if DATA not in country_code:
 					html_write(header.identifier(), '008', SIF, 'Chybný kód země v poli 008.')
 				if '044' in metadata:
-					if DATA != metadata['044'].value():
+					if DATA not in metadata['044'].subfields[1::2]:
 						html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódy zemí v poli 008 a 044.')
+		if '008' in metadata:
+			DATA = metadata['008'].value()[35:38].strip()
+			if lang_code:
+				if DATA not in lang_code:
+					html_write(header.identifier(), '008', SIF, 'Chybný kód jazyka v poli 008.')
+				if '041' in metadata:
+					if DATA not in metadata['041'].subfields[1::2]:
+						html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódy jazyků v poli 008 a 041.')
+		if '041' in metadata:
+			if lang_code:
+				for DATA in metadata['041'].subfields[1::2]: 
+					if DATA not in lang_code:
+						html_write(header.identifier(), '041', SIF, 'Chybný kód jazyka v poli 041.')
+			#if len(metadata['041'].subfields) != 4:
+			#		html_write(header.identifier(), '041', SIF, 'Pole 041 musí obsahovat 2 a více podpolí.')
+		if '044' in metadata:
+			if country_code:
+				for DATA in metadata['044'].subfields[1::2]:
+					if DATA not in country_code:
+						html_write(header.identifier(), '044', SIF, 'Chybný kód země v poli 044.')
+			if len(metadata['044'].subfields) != 4:
+					html_write(header.identifier(), '044', SIF, 'Pole 044 musí obsahovat 2 a více podpolí.')
+		if '100' in metadata:
+			if role_code:
+				if '4' in metadata['100']:
+					if metadata['100']['4'] not in role_code: 
+						html_write(header.identifier(), '100', SIF, 'Chybný kód role v poli 100.')
+			if 'j' in metadata['100']:
+				if metadata['100']['j'] not in ('bbg', 'rej'):
+					html_write(header.identifier(), '100', SIF, 'Chybná hodnota v poli 100-j.')
+				if '4' in metadata['100']:
+					if metadata['100']['4'] != 'oth': 
+						html_write(header.identifier(), '100', SIF, 'Chybná hodnota v poli 100-4.')
+		if '700' in metadata:
+			if role_code:
+				if '4' in metadata['700']:
+					if metadata['700']['4'] not in role_code: 
+						html_write(header.identifier(), '700', SIF, 'Chybný kód role v poli 700.')
+			if 'j' in metadata['700']:
+				if metadata['700']['j'] not in ('bbg', 'rej'):
+					html_write(header.identifier(), '700', SIF, 'Chybná hodnota v poli 700-j.')
+				if '4' in metadata['700']:
+					if metadata['700']['j'] != 'oth':
+						html_write(header.identifier(), '700', SIF, 'Chybná hodnota v poli 700-4.')
+		if '100' in metadata:
+			if '4' in metadata['100']:
+				if metadata['100']['4'] and metadata['100']['4'] not in ('aut', 'ive'):
+					html_write(header.identifier(), '700', SIF, 'Chybná hodnota v poli 100-4.')
 
 	# EXPORT -------------------
 
