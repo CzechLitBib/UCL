@@ -35,6 +35,19 @@ MAIL_SENDER='xxx@xxx.xx'
 MAIL_RECIPIENT='xxx@xxx.xx'
 MAIL_SERVER='xxx.xx'
 
+HTML_HEADER='''
+<html>
+<head><meta charset="utf-8"></head>
+<body style="background-color:black;color:#6DAE42;">
+<a style="color:white;" href="/">[Zpět]</a>
+'''
+
+HTML_FOOTER='''
+<a style="color:white;" href="/">[Zpět]</a>
+</body>
+</html>
+'''
+
 COUNTER=0
 MATCH=0
 
@@ -87,13 +100,19 @@ def html_write(ID,TAG,SIF,CODE):
 	global MATCH
 	MATCH+=1
 	#write HTML
-	log.write(
-		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz' +
-		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
-		' [<font color="yellow">' + SIF + '</font>] <font color="white">' + CODE + '</font></p>'
+	if SIF:
+		log.write(
+			'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz' +
+			'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
+			' [<font color="yellow">' + SIF + '</font>] <font color="white">' + CODE + '</font></p>'
 		)
-	#notify MAIL
-	#if SIF: notify(ID, SIF.lower(), CODE)
+		#notify(ID, SIF.lower(), CODE)
+	else:
+		log.write(
+			'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz' +
+			'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
+			' <font color="white">' + CODE + '</font></p>'
+		)
 	return	
 
 # ARG -------------------
@@ -173,7 +192,7 @@ if args.export:
 
 if args.check:
 	#print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	log.write('<html><head><meta charset="utf-8"></head><body style="background-color:black;color:#6DAE42;"><br>')
+	log.write(HTML_HEADER)
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
@@ -736,7 +755,7 @@ for record in records:
 if args.display or args.get != 'record': print('------------------')
 if args.check:
 	#print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	log.write('<br></body></html>')
+	log.write(HTML_FOOTER)
 
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
