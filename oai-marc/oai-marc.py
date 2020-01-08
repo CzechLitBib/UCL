@@ -686,12 +686,13 @@ for record in records:
 				if '4' in metadata['100']:
 					if metadata['100']['4'] not in role_code: 
 						html_write(header.identifier(), '100', SIF, 'Chybný kód role v poli 100.')
+					if metadata['100']['4'] and metadata['100']['4'] not in ('aut', 'ive'):
+						html_write(header.identifier(), '100', SIF, 'V poli 100 chybí kód role "aut" nebo "ive".')
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
-					html_write(header.identifier(), '100', SIF, 'Chybná hodnota v poli 100-j.')
-				if '4' in metadata['100']:
-					if metadata['100']['4'] != 'oth': 
-						html_write(header.identifier(), '100', SIF, 'Chybná hodnota v poli 100-4.')
+					html_write(header.identifier(), '100', SIF, 'Chybný kód role v podpoli 100j.')
+				if '4' in metadata['100'] and metadata['100']['4'] == 'oth': 
+						html_write(header.identifier(), '100', SIF, 'V poli 100 chybí podpole 4 s hodnotou "oth".')
 		if '700' in metadata:
 			if role_code:
 				if '4' in metadata['700']:
@@ -699,10 +700,9 @@ for record in records:
 						html_write(header.identifier(), '700', SIF, 'Chybný kód role v poli 700.')
 			if 'j' in metadata['700']:
 				if metadata['700']['j'] not in ('bbg', 'rej'):
-					html_write(header.identifier(), '700', SIF, 'Chybná hodnota v poli 700-j.')
-				if '4' in metadata['700']:
-					if metadata['700']['j'] != 'oth':
-						html_write(header.identifier(), '700', SIF, 'Chybná hodnota v poli 700-4.')
+					html_write(header.identifier(), '700', SIF, 'Chybný kód role v podpoli 700j.')
+				if '4' in metadata['700'] and metadata['700']['4'] == 'oth':
+						html_write(header.identifier(), '700', SIF, 'V poli 700 chybí podpole 4 s hodnotou "oth".')
 		if '100' in metadata:
 			if '4' in metadata['100']:
 				if metadata['100']['4'] and metadata['100']['4'] not in ('aut', 'ive'):
