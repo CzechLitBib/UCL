@@ -29,6 +29,7 @@ LOG='oai-marc.html'
 COUNTRY_CODE='country_code.txt'
 LANG_CODE='lang_code.txt'
 ROLE_CODE='role_code.txt'
+SIF_CODE='sif_code.txt'
 
 MAIL_SENDER='xxx@xxx.xx'
 MAIL_RECIPIENT='xxx@xxx.xx'
@@ -71,27 +72,29 @@ def url_response(url):
 	except: pass
 	return 0
 
+def notify(ID,SIF,CODE):
+	try:
+		msg = MIMEText(html, 'html')
+		msg['Subject'] = 'OAI MARC Validator Report'
+		msg['From'] = 'OAI PMH 2.0 MARCXML Validator <' + MAIL_SENDER + '>'
+		msg['To'] = MAIL_RECIPIENT
+		s = smtplib.SMTP(MAIL_SERVER)
+		s.sendmail(MAIL_SENDER, MAIL_RECIPIENT, msg.as_string())
+		s.quit()
+	except: pass
+
 def html_write(ID,TAG,SIF,CODE):
 	global MATCH
 	MATCH+=1
+	#write HTML
 	log.write(
 		'<p><a target="_blank" href="https://aleph22.lib.cas.cz' +
 		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
 		' [' + SIF + '] ' + CODE + '</p>'
 		)
+	#notify MAIL
+	#if SIF: notify(ID, SIF, CODE)
 	return	
-
-def write_mail(html):
-	try:
-		msg = MIMEText(html, 'html')
-		msg['Subject'] = 'OAI MARC Validator Report'
-		msg['From'] = 'OAI MARC Validator <' + MAIL_SENDER + '>'
-		msg['To'] = MAIL_RECIPIENT
-		s = smtplib.SMTP(MAIL_SERVER)
-		s.sendmail(MAIL_SENDER, MAIL_RECIPIENT, msg.as_string())
-		s.quit()
-	except:
-		print('Failed to write mail.')
 
 # ARG -------------------
 
@@ -125,23 +128,24 @@ except:
 	exit(1)
 
 try:
-	f = open(COUNTRY_CODE, 'r')
-	country_code = f.read().splitlines()
-	f.close()
+	with open(COUNTRY_CODE, 'r') as f: country_code = f.read().splitlines()
 except: country_code = ''
 
 try:
-	f = open(LANG_CODE, 'r')
-	lang_code = f.read().splitlines()
-	f.close()
+	with open(LANG_CODE, 'r') as f:	lang_code = f.read().splitlines()
 except: lang_code = ''
 
 try:
-	f = open(ROLE_CODE, 'r')
-	role_code = f.read().splitlines()
-	f.close()
+	with open(ROLE_CODE, 'r') as f:	role_code = f.read().splitlines()
 except: role_code = ''
 
+try:
+	sif_code = {}
+	with open(SIF_CODE, 'r') as f:
+		for line in f:
+			acct_code, acct_addr = line.decode('utf-8').split(':')
+			sif_code[acct_code] = acct_addr.strip()
+except: sif_code = ''
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
