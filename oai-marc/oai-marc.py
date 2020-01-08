@@ -711,7 +711,7 @@ for record in records:
 			if '4' in metadata['100']:
 				DATA = metadata['100'].get_subfields('4')
 				if 'aut' not in DATA and 'ive' not in DATA:
-					html_write(header.identifier(), '700', SIF, 'V poli 100 chybí kód role "aut" nebo "ive".')
+					html_write(header.identifier(), '100', SIF, 'V poli 100 chybí kód role "aut" nebo "ive".')
 
 	# EXPORT -------------------
 
