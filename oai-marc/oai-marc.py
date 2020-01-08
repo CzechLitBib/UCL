@@ -199,7 +199,7 @@ for record in records:
 
 	if args.get == 'set' or args.get == 'meta':
 		print(record[0])
-		counter+=1
+		COUNTER+=1
 		continue
 
 	header = record[0]
