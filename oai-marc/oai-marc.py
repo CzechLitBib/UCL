@@ -673,7 +673,7 @@ for record in records:
 						html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódy jazyků v poli 008 a 041.')
 		if '041' in metadata:
 			if lang_code:
-				for DATA in metadata['041'].subfields[1::2]: 
+				for DATA in metadata['041'].subfields[1::2]:
 					if DATA not in lang_code:
 						html_write(header.identifier(), '041', SIF, 'Chybný kód jazyka v poli 041.')
 			#if len(metadata['041'].subfields) != 4:
@@ -688,10 +688,9 @@ for record in records:
 		if '100' in metadata:
 			if role_code:
 				if '4' in metadata['100']:
-					if metadata['100']['4'] not in role_code: 
-						html_write(header.identifier(), '100', SIF, 'Chybný kód role v poli 100.')
-					if metadata['100']['4'] and metadata['100']['4'] not in ('aut', 'ive'):
-						html_write(header.identifier(), '100', SIF, 'V poli 100 chybí kód role "aut" nebo "ive".')
+					for DATA in metadata['100'].get_subfields('4'):
+						if DATA not in role_code:
+							html_write(header.identifier(), '100', SIF, 'Chybný kód role v poli 100.')
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
 					html_write(header.identifier(), '100', SIF, 'Chybný kód role v podpoli 100j.')
@@ -700,8 +699,9 @@ for record in records:
 		if '700' in metadata:
 			if role_code:
 				if '4' in metadata['700']:
-					if metadata['700']['4'] not in role_code: 
-						html_write(header.identifier(), '700', SIF, 'Chybný kód role v poli 700.')
+					for DATA in metadata['700'].get_subfields('4'):
+						if DATA not in role_code:
+							html_write(header.identifier(), '700', SIF, 'Chybný kód role v poli 700.')
 			if 'j' in metadata['700']:
 				if metadata['700']['j'] not in ('bbg', 'rej'):
 					html_write(header.identifier(), '700', SIF, 'Chybný kód role v podpoli 700j.')
@@ -709,8 +709,9 @@ for record in records:
 						html_write(header.identifier(), '700', SIF, 'V poli 700 chybí podpole 4 s hodnotou "oth".')
 		if '100' in metadata:
 			if '4' in metadata['100']:
-				if metadata['100']['4'] and metadata['100']['4'] not in ('aut', 'ive'):
-					html_write(header.identifier(), '700', SIF, 'Chybná hodnota v poli 100-4.')
+				DATA = metadata['100'].get_subfields('4')
+				if 'aut' not in DATA or 'ive' not in DATA:
+					html_write(header.identifier(), '700', SIF, 'V poli 100 chybí kód role "aut" nebo "ive".')
 
 	# EXPORT -------------------
 
