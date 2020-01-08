@@ -605,15 +605,15 @@ for record in records:
 		for TAG in ('600', '610', '611', '630' ,'648', '650', '651', '655'):
 			if TAG in metadata:
 				if metadata[TAG].indicator2 == '7':
-					if '2' not in metadata[TAG] or '7' not in metadata[TAG]: 
+					if '2' not in metadata[TAG] or '7' not in metadata[TAG]:
 						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 					if '2' in metadata[TAG] and '7' in metadata[TAG]:
 						if metadata[TAG]['2'] != 'czenas':
 							html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 				if metadata[TAG].indicator2 == '4':
-					if '7' in metadata[TAG]: 
+					if '7' in metadata[TAG]:
 						html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
-					if '2' in metadata[TAG]: 
+					if '2' in metadata[TAG]:
 						if metadata[TAG]['2'] == 'czenas':
 							html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 	
@@ -628,7 +628,7 @@ for record in records:
 			if not re.match('^\d+$', DATE) or len(DATE) not in (4, 6, 8):
 					html_write(header.identifier(), '008', SIF, 'Neplatné datum v poli 008.')
 			if metadata['008'].value()[6] in ('s', 'q'):
-				if len(DATE) != 4: 
+				if len(DATE) != 4:
 					html_write(header.identifier(), '008', SIF, 'Nesoulad mezi kódem data a datem (má být RRRR).')
 			if metadata['008'].value()[6] == 'e':
 				if len(DATE) not in (6, 8):
@@ -694,7 +694,7 @@ for record in records:
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
 					html_write(header.identifier(), '100', SIF, 'Chybný kód role v podpoli 100j.')
-				if '4' not in metadata['100'] or 'oth' not in metadata['100'].get_subfields('4'): 
+				if '4' not in metadata['100'] or 'oth' not in metadata['100'].get_subfields('4'):
 						html_write(header.identifier(), '100', SIF, 'V poli 100 chybí podpole 4 s hodnotou "oth".')
 		if '700' in metadata:
 			if role_code:
