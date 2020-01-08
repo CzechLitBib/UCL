@@ -9,14 +9,14 @@ HEADER='<html>
 <br>
 <b>OAI-PMH 2.0 MARCXML</b><br>
 <b>--------------------------------</b><br><br>
-<b>[2019]</b><br><br>
+<b>[<font color="yellow">2019</font>]</b><br><br>
 <table>
 <tr>
 <td>
 <table>
-<tr><td style="color:#fff;" align="right"><b>měsíc</b>:</td></tr>
-<tr><td style="color:#fff;" align="right"><b>celkem</b>:</td></tr>
-<tr><td style="color:#fff;" align="right"><b>chyb</b>:</td></tr>
+<tr><td align="right"><font color="white"><b>měsíc</b></font>:</td></tr>
+<tr><td align="right"><font color="white"><b>celkem</b></font>:</td></tr>
+<tr><td align="right"><font color="white"><b>chyba</b></font>:</td></tr>
 </table>
 </td>
 <td>
@@ -30,8 +30,8 @@ FOOTER='</tr>
 TEMPLATE='<td>
 <table>
 <tr><td align="right" width="80"><a style="color:#6DAE42;" href="MNT.html">MONTH</a></td></tr>
-<tr><td style="color:#fff;" align="right" width="80">TOTAL</td></tr>
-<tr><td style="color:#fff;" align="right" width="80">MATCH</td></tr>
+<tr><td align="right" width="80"><font color="white">TOTAL</font></td></tr>
+<tr><td align="right" width="80"><font color="white">MATCH</font></td></tr>
 </table>
 </td>'
 
