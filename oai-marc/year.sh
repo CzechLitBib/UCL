@@ -7,16 +7,16 @@ HEADER='<html>
 <head><meta charset="utf-8"></head>
 <body style="background-color:#000;color:#6DAE42;">
 <br>
-<font color="#6DAE42"><b>OAI-PMH 2.0 MARCXML</b></font><br>
-<font color="#6DAE42"><b>--------------------------------</b></font><br><br>
-<font color="#6DAE42"><b>[2019]</b></font><br><br>
+<b>OAI-PMH 2.0 MARCXML</b><br>
+<b>--------------------------------</b><br><br>
+<b>[2019]</b><br><br>
 <table>
 <tr>
 <td>
 <table>
-<tr><td style="color:#6DAE42;" align="right"><b>měsíc</b>:</td></tr>
-<tr><td style="color:#6DAE42;" align="right"><b>celkem</b>:</td></tr>
-<tr><td style="color:#6DAE42;" align="right"><b>chyb</b>:</td></tr>
+<tr><td style="color:#fff;" align="right"><b>měsíc</b>:</td></tr>
+<tr><td style="color:#fff;" align="right"><b>celkem</b>:</td></tr>
+<tr><td style="color:#fff;" align="right"><b>chyb</b>:</td></tr>
 </table>
 </td>
 <td>

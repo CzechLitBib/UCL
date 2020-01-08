@@ -88,9 +88,9 @@ def html_write(ID,TAG,SIF,CODE):
 	MATCH+=1
 	#write HTML
 	log.write(
-		'<p><a target="_blank" href="https://aleph22.lib.cas.cz' +
+		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz' +
 		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
-		' [' + SIF + '] ' + CODE + '</p>'
+		' <font color="#fff;">[' + SIF + '] ' + CODE + '</font></p>'
 		)
 	#notify MAIL
 	#if SIF: notify(ID, SIF.lower(), CODE)
@@ -173,7 +173,7 @@ if args.export:
 
 if args.check:
 	#print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	log.write('<html><head><meta charset="utf-8"></head><body><br>')
+	log.write('<html><head><meta charset="utf-8"></head><body style="background-color:#000;color:#6DAE42;"><br>')
 if args.display or args.get != 'record': print('------------------')
 
 # MAIN -------------------
