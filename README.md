@@ -19,9 +19,8 @@ python -B setup.py install
 </pre>
 FILE
 <pre>
- oai-marc.py - Validate harvested OAI-PMH 2.0 MARCXML records.
-json-marc.py - Convert JSON data to custom MARC structure.
-     year.sh - Generate yearly OAI check report.
+ oai-marc/ - OAI-PMH 2.0 MARCXML record validator.
+json-marc/ - Custom JSON to MARCXML convertor.
 </pre>
 SOURCE
 
