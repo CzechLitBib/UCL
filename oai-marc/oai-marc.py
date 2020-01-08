@@ -188,10 +188,7 @@ if args.export:
 		os.mkdir('export/' + args.export)
 	except: pass
 
-if args.check:
-	#print('BEGIN: ' + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	log.write(HTML_HEADER)
-if args.display or args.get != 'record': print('------------------')
+if args.check: log.write(HTML_HEADER)
 
 # MAIN -------------------
 
@@ -750,12 +747,10 @@ for record in records:
 
 # EXIT -------------------
 
-if args.display or args.get != 'record': print('------------------')
-if args.check:
-	#print("END: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-	log.write(HTML_FOOTER)
+if args.check: log.write(HTML_FOOTER)
 
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
+
 log.close()
 
