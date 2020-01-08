@@ -695,7 +695,7 @@ for record in records:
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
 					html_write(header.identifier(), '100', SIF, 'Chybný kód role v podpoli 100j.')
-				if '4' not in metadata['100'] or metadata['100']['4'] != 'oth': 
+				if '4' not in metadata['100'] or 'oth' not in metadata['100'].get_subfields('4'): 
 						html_write(header.identifier(), '100', SIF, 'V poli 100 chybí podpole 4 s hodnotou "oth".')
 		if '700' in metadata:
 			if role_code:
@@ -705,7 +705,7 @@ for record in records:
 			if 'j' in metadata['700']:
 				if metadata['700']['j'] not in ('bbg', 'rej'):
 					html_write(header.identifier(), '700', SIF, 'Chybný kód role v podpoli 700j.')
-				if '4' not in metadata['700'] or metadata['700']['4'] != 'oth':
+				if '4' not in metadata['700'] or 'oth' not in metadata['700'].get_subfields('4'):
 						html_write(header.identifier(), '700', SIF, 'V poli 700 chybí podpole 4 s hodnotou "oth".')
 		if '100' in metadata:
 			if '4' in metadata['100']:
