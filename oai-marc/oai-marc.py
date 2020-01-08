@@ -185,8 +185,6 @@ except:
 if args.export:
 	try:
 		os.mkdir('export')
-	except: pass
-	try:
 		os.mkdir('export/' + args.export)
 	except: pass
 
