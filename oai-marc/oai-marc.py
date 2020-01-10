@@ -690,8 +690,8 @@ for record in records:
 				for DATA in metadata['041'].subfields[1::2]:
 					if DATA not in lang_code:
 						html_write(header.identifier(), '041', SIF, 'Chybný kód jazyka v poli 041.')
-			#if len(metadata['041'].subfields) != 4:
-			#		html_write(header.identifier(), '041', SIF, 'Pole 041 musí obsahovat 2 a více podpolí.')
+			if len(metadata['041'].subfields) != 4:
+					html_write(header.identifier(), '041', SIF, 'Pole 041 musí obsahovat 2 a více podpolí.')
 		if '044' in metadata:
 			if country_code:
 				for DATA in metadata['044'].subfields[1::2]:
