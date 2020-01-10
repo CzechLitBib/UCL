@@ -230,7 +230,7 @@ for record in records:
 
 	if args.check:
 
-		#TEST TAG ------------------
+		# TEST TAG ------------------
 
 		if 'SIF' in metadata:
 			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
@@ -245,7 +245,7 @@ for record in records:
 		if not metadata.leader:
 			html_write(header.identifier(), 'LDR', SIF, 'Chybí pole LDR.')
 	
-		#TEST TAG/SUBFIELD VALUE ------------------
+		# TEST TAG/SUBFIELD VALUE ------------------
 
 		if '003' in metadata:
 			if metadata['003'].value() != 'CZ PrUCL':
@@ -283,7 +283,7 @@ for record in records:
 				if metadata['856']['y'] not in ('online', 'Webarchiv', 'Obsah knihy'):
 					html_write(header.identifier(), '856', SIF, 'Chybná hodnota v podpoli 856y.')
 
-		#TEST SUBFIELD ------------------
+		# TEST SUBFIELD ------------------
 
 		for TAG in ('072', '080', '100', '245', '520', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			if TAG in metadata:
@@ -324,14 +324,14 @@ for record in records:
 			if len(metadata['856'].get_subfields('y')) != 1:
 				html_write(header.identifier(), '856', SIF, 'Chybí podpole 856y.')
 
-		#TEST VALID LINK ------------------
+		# TEST VALID LINK ------------------
 
 		if '856' in metadata:
 			if 'u' in metadata['856']:
 				if not url_response(metadata['856']['u']):
 					html_write(header.identifier(), '856', SIF, 'Nefunkční odkaz v poli 856u.')
 		
-		#TEST INDICATOR ------------------
+		# TEST INDICATOR ------------------
 
 		if '041' in metadata:
 			if metadata['041'].indicator1 + metadata['041'].indicator2 not in ('1 ', '0 '):
@@ -388,7 +388,7 @@ for record in records:
 			if metadata['787'].indicator1 + metadata['787'].indicator2 != '08':
 				html_write(header.identifier(), '787', SIF, 'Chybný indikátor v poli 787.')
 
-		#TEST DEPENDENCE ------------------
+		# TEST DEPENDENCE ------------------
 
 		if metadata.leader[7] == 'm':
 			if '260' not in metadata and '264' not in metadata:
@@ -401,7 +401,7 @@ for record in records:
 			if '773' not in metadata:
 				html_write(header.identifier(), '773', SIF, 'Chybný typ záznamu (pole 773).')
 
-		#TEST SUBFIELD RANGE ------------------
+		# TEST SUBFIELD RANGE ------------------
 
 		if '040' in metadata:
 			for SUB in metadata['040'].subfields[0::2]:
@@ -528,9 +528,9 @@ for record in records:
 				if SUB != 'a':
 					html_write(header.identifier(), '964', SIF, 'Chybný kód podpole v poli 964.')
 		
-		#TEST SUBFIELD ORDER ------------------
+		# TEST SUBFIELD ORDER ------------------
 
-		#TEST SUBFIELD REPEAT ------------------
+		# TEST SUBFIELD REPEAT ------------------
 		
 		if '041' in metadata:
 			for SUB in metadata['041'].subfields[0::2]:
@@ -568,9 +568,9 @@ for record in records:
 					if len(metadata['787'].get_subfields(SUB)) > 1:
 						html_write(header.identifier(), '787', SIF, 'Neplatné opakování podpolí v poli 787.')
 
-		#TEST VALUE RANGE ------------------
+		# TEST VALUE RANGE ------------------
 
-		#TEST SUBFIELD DEPENDENCE ------------------
+		# TEST SUBFIELD DEPENDENCE ------------------
 
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '0':
@@ -584,7 +584,6 @@ for record in records:
 			if metadata['100'].indicator1 == '0':
 				if 'a' in metadata['100']:
 					if re.match('^.+\..+,.+$', metadata['100']['a']):
-					#if re.match('^.*,.+$', metadata['100']['a']):
 						html_write(header.identifier(), '100', SIF, "Chybný znak v podpoli 'a' v poli 100.")
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
@@ -631,7 +630,7 @@ for record in records:
 						if metadata[TAG]['2'] == 'czenas':
 							html_write(header.identifier(), TAG, SIF, 'Chybný 2.indikátor v poli ' + TAG + '.')
 	
-		#TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
+		# TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
 		# TEST DATE / COUNTRY / LANG ------------------
 		
