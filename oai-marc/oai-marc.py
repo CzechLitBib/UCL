@@ -473,7 +473,7 @@ for record in records:
 					html_write(header.identifier(), '611', SIF, 'Chybný kód podpole v poli 611.')
 		if '630' in metadata:
 			for SUB in metadata['630'].subfields[0::2]:
-				if SUB not in ('a', 'l', '7', '2', 'x'):
+				if SUB not in ('a', 'l', '7', '2', 'x', 'p'):
 					html_write(header.identifier(), '630', SIF, 'Chybný kód podpole v poli 630.')
 		if '648' in metadata:
 			for SUB in metadata['648'].subfields[0::2]:
