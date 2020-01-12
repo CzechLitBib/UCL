@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Harvested OAI-PMH 2.0 MARCXML Record validator.
+# OAI-PMH 2.0 MARCXML Record validator.
 #
 # TODO:
 #

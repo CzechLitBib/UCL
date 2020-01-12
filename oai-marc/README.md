@@ -21,8 +21,8 @@ python -B setup.py install
 </pre>
 FILE
 <pre>
-     oai-marc.py - Main program.
-         year.sh - Generate simple HTML output.
+     oai-marc.py - OAI-OMH 2.0 MARCXML record validation.
+         year.sh - Yearly HTML statistic.
          stat.sh - Error code statistic.
 
 country_code.txt - MARC country code file.

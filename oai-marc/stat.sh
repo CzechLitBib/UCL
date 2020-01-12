@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Generate error code statictic
+# OAI-PMH 2.0 MARCXML Error code statistic.
 #
 
 STAT='/var/www/html/stat.html'

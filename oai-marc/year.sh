@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# OAI-PMH 2.0 MARCXML Generate yearly statistic.
+# OAI-PMH 2.0 MARCXML Yearly statistic.
 #
 
 HEADER='<html>
