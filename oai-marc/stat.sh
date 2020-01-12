@@ -5,7 +5,7 @@
 
 STAT='/var/www/html/stat.html'
 
-DATA_PATH='/var/www/html/*.html'
+DATA_PATH='/var/www/html/year/*.html'
 DATA=''
 
 CODE_START=000
