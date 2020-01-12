@@ -28,6 +28,7 @@ FILE
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
    role_code.txt - MARC core code file.
+  error_code.txt - MARC error code file.
 </pre>
 SOURCE
 

@@ -13,19 +13,34 @@ CODE_END=123
 
 HTML_HEADER='<html>
 <head><meta charset="utf-8"></head>
-<body style="background-color:black;">
-<pre><font size="4" color="white">'
-HTML_FOOTER='</font>
-</pre>
+<body style="background-color:black;color:white;">
+<br><div align="center"><table>'
+HTML_FOOTER='</table></div><br>
 </body>
 </html>'
 
 #-----------------
 
+readarray -t ERROR_CODE < error_code.txt
+
+get_error () {
+	for ((i=0; i < ${#ERROR_CODE[@]};i++)); do
+		CODE=$(echo "${ERROR_CODE[$i]}" | cut -c1-3);
+		ERROR=$(echo "${ERROR_CODE[$i]}" | cut -c5-);
+ 		if [ "$1" == "$CODE" ]; then
+			echo "$ERROR";
+		fi
+	done
+}
+
+#-----------------
+
+rm $STAT 2>/dev/null
+
 for I in $(eval echo {$CODE_START..$CODE_END}); do
-	COUNT=$(grep ">$I<" $DATA_PATH 2>/dev/null | wc -l)
+	COUNT=$(grep ">$I<" $DATA_PATH 2>/dev/null | wc -l);
 	if [ $COUNT != 0 ]; then
-		DATA=$(echo -ne "$DATA\n[$I] - $COUNT")
+		DATA=$(echo -ne "$DATA\n<tr><td align='right'> $COUNT </td><td>-</td><td>[<font color='gold'>$I</font>]</td><td> $(get_error $I)</td></tr>");
 	fi
 done
 
