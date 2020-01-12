@@ -22,7 +22,8 @@ python -B setup.py install
 FILE
 <pre>
      oai-marc.py - Main program.
-         year.sh - Gen simple HTML statistic/site.
+         year.sh - Generate simple HTML output.
+         stat.sh - Error code statistic.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
