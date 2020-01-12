@@ -102,7 +102,7 @@ def html_write(ID,TAG,SIF,CODE,CODE_TEXT):
 	log.write(
 		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz' +
 		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
-		' [<font color="yellow">' + CODE + '</font>] <font color="white">' + CODE_TEXT + '</font></p>\n'
+		' [<font color="gold">' + CODE + '</font>] <font color="white">' + CODE_TEXT + '</font></p>\n'
 	)
 	#if SIF: notify(ID, SIF.lower(), CODE)
 	return	
