@@ -43,6 +43,7 @@ TEMPLATE='<td>
 
 mkdir $DATA_PATH 2>/dev/null
 rm "$DATA_PATH/*.html" 2>/dev/null
+rm "$ROOT_PATH/*.html" 2>/dev/null
 echo "$HEADER" >> "$ROOT_PATH/index.html"
 
 # MAIN --------------------
