@@ -48,3 +48,5 @@ echo "$HTML_HEADER" >$STAT
 echo "$DATA" | sort -n -k3 | tac >> $STAT
 echo "$HTML_FOOTER" >> $STAT
 
+exit 0
+

@@ -165,3 +165,7 @@ rm stat.log
 
 echo "$FOOTER" >> /var/www/html/index.html
 
+./stat.sh
+
+exit 0
+
