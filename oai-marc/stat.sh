@@ -44,7 +44,7 @@ for I in $(eval echo {$CODE_START..$CODE_END}); do
 	fi
 done
 
-echo "$HTML_HEADER" >$STAT
+echo "$HTML_HEADER" > $STAT
 echo "$DATA" | sort -n -k3 | tac >> $STAT
 echo "$HTML_FOOTER" >> $STAT
 
