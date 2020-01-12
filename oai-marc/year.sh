@@ -9,7 +9,7 @@ HEADER='<html>
 <br>
 <b>OAI-PMH 2.0 MARCXML</b><br>
 <b>--------------------------------</b><br><br>
-<b>[<font color="yellow">2019</font>]</b><br><br>
+<b>[<font color="gold">2019</font>]</b><br><br>
 <table>
 <tr>
 <td>
