@@ -31,9 +31,8 @@ LANG_CODE='lang_code.txt'
 ROLE_CODE='role_code.txt'
 SIF_CODE='sif_code.txt'
 
-MAIL_SENDER='xxx@xxx.xx'
-MAIL_RECIPIENT='xxx@xxx.xx'
-MAIL_SERVER='xxx.xx'
+MAIL_SENDER='xxx'
+MAIL_SERVER='xxx'
 
 HTML_HEADER='''
 <html>
@@ -85,26 +84,35 @@ def url_response(url):
 	except: pass
 	return 0
 
-def notify(ID,SIF,CODE):
+def notify(ADDR,ID,CODE,CODE_TEXT):
+	aleph = re.sub('^.*-(\d+)$', '\\1', ID)
+	html = ('Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>' +
+		'<a target="_blank" href="https://aleph22.lib.cas.cz' +
+		'/F/?func=direct&doc_number=' + aleph + '&local_base=AV">' + aleph + '</a> ' + ' [' + CODE + '] ' + CODE_TEXT +
+		'<br><br>Prosíme o opravu.<br>---------------------------<br><br>' +
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>'
+		)
 	try:
-		msg = MIMEText(html, 'html')
-		msg['Subject'] = 'OAI MARC Validator Report'
-		msg['From'] = 'OAI PMH 2.0 MARCXML Validator <' + MAIL_SENDER + '>'
-		msg['To'] = MAIL_RECIPIENT
+		msg = MIMEText(html.decode('utf-8'), 'html', 'utf-8')
+		msg['Subject'] = 'Kontrolní zpráva'
+		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+		msg['To'] = ADDR
 		s = smtplib.SMTP(MAIL_SERVER)
-		s.sendmail(MAIL_SENDER, MAIL_RECIPIENT, msg.as_string())
+		s.sendmail(MAIL_SENDER, ADDR, msg.as_string())
 		s.quit()
 	except: pass
 
 def html_write(ID,TAG,SIF,CODE,CODE_TEXT):
+	aleph = re.sub('^.*-(\d+)$', '\\1', ID)
 	global MATCH
 	MATCH+=1
 	log.write(
 		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz' +
-		'/F/?func=direct&doc_number=' + re.sub('^.*-(\d+)$','\\1', ID) + '&local_base=AV">' + ID + '</a>' +
+		'/F/?func=direct&doc_number=' + aleph + '&local_base=AV">' + aleph + '</a>' +
 		' [<font color="gold">' + CODE + '</font>] <font color="white">' + CODE_TEXT + '</font></p>\n'
 	)
-	#if SIF: notify(ID, SIF.lower(), CODE)
+	#if SIF.lower() in sif_code:
+		#notify(sif_code[SIF.lower()], ID, CODE, CODE_TEXT)
 	return	
 
 # ARG -------------------
