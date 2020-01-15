@@ -299,7 +299,7 @@ for record in records:
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
 					write_error(header.identifier(), TAG, SIF, '014', 'Chybí podpole ' + TAG + 'a.')
-		for TAG in ('600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
+		for TAG in ('080', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			for F in metadata.get_fields(TAG):
 				if len(F.get_subfields('a')) != 1:
 					write_error(header.identifier(), TAG, SIF, '014', 'Chybí podpole ' + TAG + 'a.')
@@ -314,8 +314,6 @@ for record in records:
 			if len(metadata['072'].get_subfields('9')) != 1:
 				write_error(header.identifier(), '072', SIF, '018', 'Chybí podpole 072-9.')
 		for F in metadata.get_fields('080'):
-			if len(F.get_subfields('a')) != 1:
-				write_error(header.identifier(), '080', SIF, '019', 'Chybí podpole 080a.')
 			if len(F.get_subfields('2')) != 1:
 				write_error(header.identifier(), '080', SIF, '019', 'Chybí podpole 080-2.')
 		for F in metadata.get_fields('700'):
