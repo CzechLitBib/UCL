@@ -88,14 +88,14 @@ def url_response(url):
 
 def notify():
 	html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
-	html_footer =('<br><br>Prosíme o opravu.<br>---------------------------<br><br>' +
+	html_footer =('<br>Prosíme o opravu.<br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
 	for sif in ERROR:
 		if sif in sif_code:# match email
 			for aleph in ERROR[sif]:
 				for error in ERROR[sif][aleph]:
 					html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-						aleph + '&local_base=AV">' + aleph + '</a> ' + ' [' + error[0] + '] ' + error[1])
+						aleph + '&local_base=AV">' + aleph + '</a> ' + ' [' + error[0] + '] ' + error[1] + '<br>')
 			try:
 				msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
 				msg['Subject'] = 'Kontrolní zpráva'
@@ -285,22 +285,26 @@ for record in records:
 		if 'OWN' in metadata:
 			if metadata['OWN'].value() != 'UCLA':
 				write_error(header.identifier(), 'OWN', SIF, '011', 'Chybná hodnota v poli OWN.')
-		if '856' in metadata:
-			if '4' in metadata['856']:
-				if metadata['856']['4'] != 'N':
+		for F in metadata.get_fields('856'):
+			if '4' in F:
+				if F['4'] != 'N':
 					write_error(header.identifier(), '856', SIF, '012', 'Chybná hodnota v podpoli 856-4.')
-			if 'y' in metadata['856']:
-				if metadata['856']['y'] not in ('online', 'Webarchiv', 'Obsah knihy'):
+			if 'y' in F:
+				if F['y'] not in ('online', 'Webarchiv', 'Obsah knihy'):
 					write_error(header.identifier(), '856', SIF, '013', 'Chybná hodnota v podpoli 856y.')
 
 		# TEST SUBFIELD ------------------
 
-		for TAG in ('072', '080', '100', '245', '520', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
+		for TAG in ('072', '100', '245', '520'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
 					write_error(header.identifier(), TAG, SIF, '014', 'Chybí podpole ' + TAG + 'a.')
-		if '022' in metadata:
-			if len(metadata['022'].get_subfields('a')) == 0:
+		for TAG in ('600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
+			for F in metadata.get_fields(TAG):
+				if len(F.get_subfields('a')) != 1:
+					write_error(header.identifier(), TAG, SIF, '014', 'Chybí podpole ' + TAG + 'a.')
+		for F in metadata._get_fields('022'):
+			if len(F.get_subfields('a')) == 0:
 				write_error(header.identifier(), '022', SIF, '015', 'Chybí podpole 022a.')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
@@ -309,36 +313,38 @@ for record in records:
 				write_error(header.identifier(), '072', SIF, '017', 'Chybí podpole 072-2.')
 			if len(metadata['072'].get_subfields('9')) != 1:
 				write_error(header.identifier(), '072', SIF, '018', 'Chybí podpole 072-9.')
-		if '080' in metadata:
-			if len(metadata['080'].get_subfields('2')) != 1:
+		for F in metadata.get_fields('080'):
+			if len(F.get_subfields('a')) != 1:
+				write_error(header.identifier(), '080', SIF, '019', 'Chybí podpole 080a.')
+			if len(F.get_subfields('2')) != 1:
 				write_error(header.identifier(), '080', SIF, '019', 'Chybí podpole 080-2.')
-		if '700' in metadata:
-			if len(metadata['700'].get_subfields('4')) == 0:
+		for F in metadata.get_fields('700'):
+			if len(F.get_subfields('4')) == 0:
 				write_error(header.identifier(), '700', SIF, '020', 'Chybí podpole 700-4.')
-		if '710' in metadata:
-			if len(metadata['710'].get_subfields('4')) == 0:
+		for F in metadata.get_fields('710'):
+			if len(F.get_subfields('4')) == 0:
 				write_error(header.identifier(), '710', SIF, '021', 'Chybí podpole 710-4.')
-		if '773' in metadata:
-			if len(metadata['773'].get_subfields('t')) != 1:
+		for F in metadata.get_fields('773'):
+			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '773', SIF, '022', 'Chybí podpole 773t.')
-			if len(metadata['773'].get_subfields('9')) != 1:
+			if len(F.get_subfields('9')) != 1:
 				write_error(header.identifier(), '773', SIF, '023', 'Chybí podpole 773-9.')
-		if '787' in metadata:
-			if len(metadata['787'].get_subfields('t')) != 1:
+		for F in metadata.get_fields('787'):
+			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '787', SIF, '024', 'Chybí podpole 787t.')
-			if len(metadata['787'].get_subfields('4')) != 1:
+			if len(F.get_subfields('4')) != 1:
 				write_error(header.identifier(), '787', SIF, '025', 'Chybí podpole 787-4.')
-		if '856' in metadata:
-			if len(metadata['856'].get_subfields('u')) != 1:
+		for F in metadata.get_fields('856'):
+			if len(F.get_subfields('u')) != 1:
 				write_error(header.identifier(), '856', SIF, '026', 'Chybí podpole 856u.')
-			if len(metadata['856'].get_subfields('y')) != 1:
+			if len(F.get_subfields('y')) != 1:
 				write_error(header.identifier(), '856', SIF, '027', 'Chybí podpole 856y.')
 
 		# TEST VALID LINK ------------------
 
-		if '856' in metadata:
-			if 'u' in metadata['856']:
-				if not url_response(metadata['856']['u']):
+		for F in metadata.get_fields('856'):
+			if 'u' in F:
+				if not url_response(F['u']):
 					write_error(header.identifier(), '856', SIF, '028', 'Nefunkční odkaz v poli 856u.')
 		
 		# TEST INDICATOR ------------------
@@ -361,41 +367,41 @@ for record in records:
 		if '520' in metadata:
 			if metadata['520'].indicator1 + metadata['520'].indicator2 != '2 ':
 				write_error(header.identifier(), '520', SIF, '034', 'Chybný indikátor v poli 520.')
-		if '600' in metadata:
-			if metadata['600'].indicator1 + metadata['600'].indicator2 not in ('34', '37', '14', '17', '04', '07'):
+		for F in metadata.get_fields('600'):
+			if F.indicator1 + F.indicator2 not in ('34', '37', '14', '17', '04', '07'):
 				write_error(header.identifier(), '600', SIF, '035', 'Chybný indikátor v poli 600.')
-		if '610' in metadata:
-			if metadata['610'].indicator1 + metadata['610'].indicator2 not in ('14', '17', '24', '27'):
+		for F in metadata.get_fields('610'):
+			if F.indicator1 + F.indicator2 not in ('14', '17', '24', '27'):
 				write_error(header.identifier(), '610', SIF, '036', 'Chybný indikátor v poli 610.')
-		if '611' in metadata:
-			if metadata['611'].indicator1 + metadata['611'].indicator2 not in ('14', '17', '24', '27'):
+		for F in metadata.get_fields('611'):
+			if F.indicator1 + F.indicator2 not in ('14', '17', '24', '27'):
 				write_error(header.identifier(), '611', SIF, '037', 'Chybný indikátor v poli 611.')
-		if '648' in metadata:
-			if metadata['648'].indicator1 + metadata['648'].indicator2 not in (' 4', ' 7'):
+		for F in metadata.get_fields('648'):
+			if F.indicator1 + F.indicator2 not in (' 4', ' 7'):
 				write_error(header.identifier(), '648', SIF, '038', 'Chybný indikátor v poli 648.')
-		if '650' in metadata:
-			if metadata['650'].indicator1 + metadata['650'].indicator2 not in ('14', '17', '04', '07'):
+		for F in metadata.get_fileds('650'):
+			if F.indicator1 + F.indicator2 not in ('14', '17', '04', '07'):
 				write_error(header.identifier(), '650', SIF, '039', 'Chybný indikátor v poli 650.')
-		if '651' in metadata:
-			if metadata['651'].indicator1 + metadata['651'].indicator2 not in (' 4', ' 7'):
+		for F in metadata.get_fields('651'):
+			if F.indicator1 + F.indicator2 not in (' 4', ' 7'):
 				write_error(header.identifier(), '651', SIF, '040', 'Chybný indikátor v poli 651.')
-		if '653' in metadata:
-			if metadata['653'].indicator1 + metadata['653'].indicator2 != '0 ':
+		for F in metadata.get_fields('653'):
+			if F.indicator1 + F.indicator2 != '0 ':
 				write_error(header.identifier(), '653', SIF, '041', 'Chybný indikátor v poli 653.')
-		if '655' in metadata:
-			if metadata['655'].indicator1 + metadata['655'].indicator2 not in (' 4', ' 7'):
+		for F in metadata.get_fields('655'):
+			if F.indicator1 + F.indicator2 not in (' 4', ' 7'):
 				write_error(header.identifier(), '655', SIF, '042', 'Chybný indikátor v poli 655.')
-		if '700' in metadata:
-			if metadata['700'].indicator1 + metadata['700'].indicator2 not in ('3 ', '1 ', '0 '):
+		for F in metadata.get_fields('700'):
+			if F.indicator1 + F.indicator2 not in ('3 ', '1 ', '0 '):
 				write_error(header.identifier(), '700', SIF, '043', 'Chybný indikátor v poli 700.')
-		if '710' in metadata:
-			if metadata['710'].indicator1 + metadata['710'].indicator2 not in ('1 ', '2 '):
+		for F in metadata.get_fields('710'):
+			if F.indicator1 + F.indicator2 not in ('1 ', '2 '):
 				write_error(header.identifier(), '710', SIF, '044', 'Chybný indikátor v poli 710.')
-		if '773' in metadata:
-			if metadata['773'].indicator1 + metadata['773'].indicator2 != '0 ':
+		for F in metadata.get_fields('773'):
+			if F.indicator1 + F.indicator2 != '0 ':
 				write_error(header.identifier(), '773', SIF, '045', 'Chybný indikátor v poli 773.')
-		if '787' in metadata:
-			if metadata['787'].indicator1 + metadata['787'].indicator2 != '08':
+		for F in metadata.get_fields('787'):
+			if F.indicator1 + F.indicator2 != '08':
 				write_error(header.identifier(), '787', SIF, '046', 'Chybný indikátor v poli 787.')
 
 		# TEST DEPENDENCE ------------------
@@ -417,10 +423,10 @@ for record in records:
 			for SUB in metadata['040'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'e'):
 					write_error(header.identifier(), '040', SIF, '050', 'Chybný kód podpole v poli 040.')
-		if '070' in metadata:
-			for SUB in metadata['070'].subfields[0::2]:
+		if '072' in metadata:
+			for SUB in metadata['072'].subfields[0::2]:
 				if SUB not in ('a', 'x', '2', '9'):
-					write_error(header.identifier(), '070', SIF, '051', 'Chybný kód podpole v poli 070.')
+					write_error(header.identifier(), '072', SIF, '051', 'Chybný kód podpole v poli 072.')
 		if '100' in metadata:
 			for SUB in metadata['100'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'g', '4', '7', 'x', 'q', 'j'):
@@ -437,104 +443,104 @@ for record in records:
 			for SUB in metadata['245'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'n', 'p', 'c'):
 					write_error(header.identifier(), '245', SIF, '055', 'Chybný kód podpole v poli 245.')
-		if '250' in metadata:
-			for SUB in metadata['250'].subfields[0::2]:
+		for F in metadata.get_fileds('250'):
+			for SUB in F.subfields[0::2]:
 				if SUB != 'a':
 					write_error(header.identifier(), '250', SIF, '056', 'Chybný kód podpole v poli 250.')
 		if '260' in metadata:
 			for SUB in metadata['260'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c'):
 					write_error(header.identifier(), '260', SIF, '057', 'Chybný kód podpole v poli 260.')
-		if '264' in metadata:
-			for SUB in metadata['264'].subfields[0::2]:
+		for F in metadata.get_fileds('264'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c'):
 					write_error(header.identifier(), '264', SIF, '058', 'Chybný kód podpole v poli 264.')
 		if '300' in metadata:
 			for SUB in metadata['300'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'e'):
 					write_error(header.identifier(), '300', SIF, '059', 'Chybný kód podpole v poli 300.')
-		if '490' in metadata:
-			for SUB in metadata['490'].subfields[0::2]:
+		for F in metadata.get_fields('490'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'v'):
 					write_error(header.identifier(), '490', SIF, '060', 'Chybný kód podpole v poli 490.')
-		if '500' in metadata:
-			for SUB in metadata['500'].subfields[0::2]:
+		for F in metadata.get_fields('500'):
+			for SUB in F.subfields[0::2]:
 				if SUB != 'a':
 					write_error(header.identifier(), '500', SIF, '061', 'Chybný kód podpole v poli 500.')
-		if '505' in metadata:
-			for SUB in metadata['505'].subfields[0::2]:
+		for F in metadata.get_fields('505'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('t', 'r', 'g'):
 					write_error(header.identifier(), '505', SIF, '062', 'Chybný kód podpole v poli 505.')
 		if '520' in metadata:
 			for SUB in metadata['520'].subfields[0::2]:
 				if SUB not in ('a', '2'):
 					write_error(header.identifier(), '520', SIF, '063', 'Chybný kód podpole v poli 520.')
-		if '600' in metadata:
-			for SUB in metadata['600'].subfields[0::2]:
+		for F in metadata.get_fields('600'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'q', '7', '2', 'x'):
 					write_error(header.identifier(), '600', SIF, '064', 'Chybný kód podpole v poli 600.')
-		if '610' in metadata:
-			for SUB in metadata['610'].subfields[0::2]:
+		for F in metadata.get_fields('610'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
 					write_error(header.identifier(), '610', SIF, '065', 'Chybný kód podpole v poli 610.')
-		if '611' in metadata:
-			for SUB in metadata['611'].subfields[0::2]:
+		for F in metadata.get_fields('611'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
 					write_error(header.identifier(), '611', SIF, '066', 'Chybný kód podpole v poli 611.')
-		if '630' in metadata:
-			for SUB in metadata['630'].subfields[0::2]:
+		for F in metadata.get_fields('630'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'l', '7', '2', 'x', 'p'):
 					write_error(header.identifier(), '630', SIF, '067', 'Chybný kód podpole v poli 630.')
-		if '648' in metadata:
-			for SUB in metadata['648'].subfields[0::2]:
+		for F in metadata.get_fields('648'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
 					write_error(header.identifier(), '648', SIF, '068', 'Chybný kód podpole v poli 648.')
-		if '650' in metadata:
-			for SUB in metadata['650'].subfields[0::2]:
+		for F in metadata.get_fields('650'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
 					write_error(header.identifier(), '650', SIF, '069', 'Chybný kód podpole v poli 650.')
-		if '651' in metadata:
-			for SUB in metadata['651'].subfields[0::2]:
+		for F in metadata.get_fields('651'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
 					write_error(header.identifier(), '651', SIF, '070', 'Chybný kód podpole v poli 651.')
-		if '653' in metadata:
-			for SUB in metadata['653'].subfields[0::2]:
+		for F in metadata.get_fields('653'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'x'):
 					write_error(header.identifier(), '653', SIF, '071', 'Chybný kód podpole v poli 653.')
-		if '655' in metadata:
-			for SUB in metadata['655'].subfields[0::2]:
+		for F in metadata.get_fields('655'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
 					write_error(header.identifier(), '655', SIF, '072', 'Chybný kód podpole v poli 655.')
-		if '700' in metadata:
-			for SUB in metadata['700'].subfields[0::2]:
+		for F in metadata.get_fields('700'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'q', '4', '7', 'x', 'j'):
 					write_error(header.identifier(), '700', SIF, '073', 'Chybný kód podpole v poli 700.')
-		if '710' in metadata:
-			for SUB in metadata['710'].subfields[0::2]:
+		for F in metadata.get_fields('710'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x'):
 					write_error(header.identifier(), '710', SIF, '074', 'Chybný kód podpole v poli 710.')
-		if '773' in metadata:
-			for SUB in metadata['773'].subfields[0::2]:
+		for F in metadata.get_fields('773'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9', 'z'):
 					write_error(header.identifier(), '773', SIF, '075', 'Chybný kód podpole v poli 773.')
-		if '787' in metadata:
-			for SUB in metadata['787'].subfields[0::2]:
+		for F in metadata.get_fields('787'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'y', '4'):
 					write_error(header.identifier(), '787', SIF, '076', 'Chybný kód podpole v poli 787.')
-		if '830' in metadata:
-			for SUB in metadata['830'].subfields[0::2]:
+		for F in metadata.get_fields('830'):
+			for SUB in F.subfields[0::2]:
 				if SUB != 'a':
 					write_error(header.identifier(), '830', SIF, '077', 'Chybný kód podpole v poli 830.')
-		if '856' in metadata:
-			for SUB in metadata['856'].subfields[0::2]:
+		for F in metadata.get_fields('856'):
+			for SUB in F.subfields[0::2]:
 				if SUB not in ('u', 'y', '4'):
 					write_error(header.identifier(), '856', SIF, '078', 'Chybný kód podpole v poli 856.')
 		if '910' in metadata:
 			for SUB in metadata['910'].subfields[0::2]:
 				if SUB != 'a':
 					write_error(header.identifier(), '910', SIF, '079', 'Chybný kód podpole v poli 910.')
-		if '964' in metadata:
-			for SUB in metadata['964'].subfields[0::2]:
+		for F in metadata.get_fields('964'):
+			for SUB in F.subfields[0::2]:
 				if SUB != 'a':
 					write_error(header.identifier(), '964', SIF, '080', 'Chybný kód podpole v poli 964.')
 		
