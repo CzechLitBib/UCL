@@ -748,6 +748,13 @@ for record in records:
 				if 'aut' not in DATA and 'ive' not in DATA:
 					write_error(header.identifier(), '100', SIF, '124', 'V poli 100 chybí kód role "aut" nebo "ive".')
 
+		# TEST OTHER ------------------
+
+		for TAG in ('001', '003', '005', '008', '040', '041', '044', '072', '100', '110', '111', '130', '245', '260','300', '520', '910', 'OWN', 'SIF', 'ZAZ', 'ZAR'):
+			if len(metadata.get_fields(TAG)) > 1:
+				write_error(header.identifier(), TAG, SIF, '125', 'Neplatné opakování pole ' + TAG + '.')
+				
+
 	# EXPORT -------------------
 
 	if args.export:
@@ -776,5 +783,6 @@ if args.notify:
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
 
+#csv.close()
 log.close()
 

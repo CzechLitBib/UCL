@@ -123,3 +123,4 @@
 122;Chybný kód role v podpoli 700j.
 123;V poli 700 chybí podpole 4 s hodnotou "oth".
 124;V poli 100 chybí kód role "aut" nebo "ive".
+125;Neplatné opakování pole TAG.
