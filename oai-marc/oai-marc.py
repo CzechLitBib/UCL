@@ -41,11 +41,11 @@ HTML_HEADER='''
 <html>
 <head><meta charset="utf-8"></head>
 <body style="background-color:black;color:#6DAE42;">
-<a style="color:white;" href="/">[Zpět]</a>
+<br>
 '''
 
 HTML_FOOTER='''
-<a style="color:white;" href="/">[Zpět]</a>
+<br>
 </body>
 </html>
 '''
