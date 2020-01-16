@@ -19,7 +19,7 @@ FOOTER='</table>
 </body>
 </html>'
 
-TEMPLATE='<tr><td><p><a target="_blank" href="daily/FN" style="color:white;text-decoration:none;">FN</a></p></td></tr>'
+TEMPLATE='<tr><td><p><a href="daily/FN" style="color:white;text-decoration:none;">FN</a></p></td></tr>'
 
 ./oai-marc.py \
 	--set UCLA \
