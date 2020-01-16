@@ -18,10 +18,15 @@ python -B setup.py install
 tar xzf pymarc-3.1.13.tar.gz
 cd pymarc-3.1.13
 python -B setup.py install
+
+/etc/crontab:
+
+00 5 * * * root daily.sh &
 </pre>
 FILE
 <pre>
      oai-marc.py - OAI-OMH 2.0 MARCXML record validation.
+        daily.sh - Crontab daily runner.
          year.sh - Yearly HTML statistic.
          stat.sh - Error code statistic.
 
