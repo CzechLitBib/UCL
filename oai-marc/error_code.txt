@@ -13,112 +13,113 @@
 012;Chybná hodnota v podpoli 856-4.
 013;Chybná hodnota v podpoli 856y.
 014;Chybí podpole TAGa.
-015;Chybí podpole 022a.
-016;Chybí podpole 072x.
-017;Chybí podpole 072-2.
-018;Chybí podpole 072-9.
-019;Chybí podpole 080-2.
-020;Chybí podpole 700-4.
-021;Chybí podpole 710-4.
-022;Chybí podpole 773t.
-023;Chybí podpole 773-9.
-024;Chybí podpole 787t.
-025;Chybí podpole 787-4.
-026;Chybí podpole 856u.
-027;Chybí podpole 856y.
-028;Nefunkční odkaz v poli 856u.
-029;Chybný indikátor v poli 041.
-030;Chybný indikátor v poli 072.
-031;Chybný indikátor v poli 100.
-032;Chybný indikátor v poli 110.
-033;Chybný indikátor v poli 245.
-034;Chybný indikátor v poli 520.
-035;Chybný indikátor v poli 600.
-036;Chybný indikátor v poli 610.
-037;Chybný indikátor v poli 611.
-038;Chybný indikátor v poli 648.
-039;Chybný indikátor v poli 650.
-040;Chybný indikátor v poli 651.
-041;Chybný indikátor v poli 653.
-042;Chybný indikátor v poli 655.
-043;Chybný indikátor v poli 700.
-044;Chybný indikátor v poli 710.
-045;Chybný indikátor v poli 773.
-046;Chybný indikátor v poli 787.
-047;Chybný typ záznamu (pole 260/264).
-048;Chybný typ záznamu (pole TAG).
-049;Chybný typ záznamu (pole 773).
-050;Chybný kód podpole v poli 040.
-051;Chybný kód podpole v poli 070.
-052;Chybný kód podpole v poli 100.
-053;Chybný kód podpole v poli 110.
-054;Chybný kód podpole v poli 111.
-055;Chybný kód podpole v poli 245.
-056;Chybný kód podpole v poli 250.
-057;Chybný kód podpole v poli 260.
-058;Chybný kód podpole v poli 264.
-059;Chybný kód podpole v poli 300.
-060;Chybný kód podpole v poli 490.
-061;Chybný kód podpole v poli 500.
-062;Chybný kód podpole v poli 505.
-063;Chybný kód podpole v poli 520.
-064;Chybný kód podpole v poli 600.
-065;Chybný kód podpole v poli 610.
-066;Chybný kód podpole v poli 611.
-067;Chybný kód podpole v poli 630.
-068;Chybný kód podpole v poli 648.
-069;Chybný kód podpole v poli 650.
-070;Chybný kód podpole v poli 651.
-071;Chybný kód podpole v poli 653.
-072;Chybný kód podpole v poli 655.
-073;Chybný kód podpole v poli 700.
-074;Chybný kód podpole v poli 710.
-075;Chybný kód podpole v poli 773.
-076;Chybný kód podpole v poli 787.
-077;Chybný kód podpole v poli 830.
-078;Chybný kód podpole v poli 856.
-079;Chybný kód podpole v poli 910.
-080;Chybný kód podpole v poli 964.
-081;Neplatné opakování podpolí v poli 041.
-082;Neplatné opakování podpolí v poli 044.
-083;Neplatné opakování podpolí v poli 245.
-084;Neplatné opakování podpolí v poli 260.
-085;Neplatné opakování podpolí v poli 264.
-086;Neplatné opakování podpolí v poli 773.
-087;Neplatné opakování podpolí v poli 787.
-088;Chybné podpole h v poli 041.
-089;Chybné podpole h v poli 041.
-090;Chybný znak v podpoli a v poli 100.
-091;Chybný znak v podpoli c v poli 100.
-092;Chybný znak v podpoli a v poli 100.
-093;Neplatné pole, chybný indikátor v poli 245.
+015;Chybí podpole TAGa.
+016;Chybí podpole 022a.
+017;Chybí podpole 072x.
+018;Chybí podpole 072-2.
+019;Chybí podpole 072-9.
+020;Chybí podpole 080-2.
+021;Chybí podpole 700-4.
+022;Chybí podpole 710-4.
+023;Chybí podpole 773t.
+024;Chybí podpole 773-9.
+025;Chybí podpole 787t.
+026;Chybí podpole 787-4.
+027;Chybí podpole 856u.
+028;Chybí podpole 856y.
+029;Nefunkční odkaz v poli 856u.
+030;Chybný indikátor v poli 041.
+031;Chybný indikátor v poli 072.
+032;Chybný indikátor v poli 100.
+033;Chybný indikátor v poli 110.
+034;Chybný indikátor v poli 245.
+035;Chybný indikátor v poli 520.
+036;Chybný indikátor v poli 600.
+037;Chybný indikátor v poli 610.
+038;Chybný indikátor v poli 611.
+039;Chybný indikátor v poli 648.
+040;Chybný indikátor v poli 650.
+041;Chybný indikátor v poli 651.
+042;Chybný indikátor v poli 653.
+043;Chybný indikátor v poli 655.
+044;Chybný indikátor v poli 700.
+045;Chybný indikátor v poli 710.
+046;Chybný indikátor v poli 773.
+047;Chybný indikátor v poli 787.
+048;Chybný typ záznamu (pole 260/264).
+098;Chybný typ záznamu (pole TAG).
+050;Chybný typ záznamu (pole 773).
+051;Chybný kód podpole v poli 040.
+052;Chybný kód podpole v poli 072.
+053;Chybný kód podpole v poli 100.
+054;Chybný kód podpole v poli 110.
+055;Chybný kód podpole v poli 111.
+056;Chybný kód podpole v poli 245.
+057;Chybný kód podpole v poli 250.
+058;Chybný kód podpole v poli 260.
+059;Chybný kód podpole v poli 264.
+060;Chybný kód podpole v poli 300.
+061;Chybný kód podpole v poli 490.
+062;Chybný kód podpole v poli 500.
+063;Chybný kód podpole v poli 505.
+064;Chybný kód podpole v poli 520.
+065;Chybný kód podpole v poli 600.
+066;Chybný kód podpole v poli 610.
+067;Chybný kód podpole v poli 611.
+068;Chybný kód podpole v poli 630.
+069;Chybný kód podpole v poli 648.
+070;Chybný kód podpole v poli 650.
+071;Chybný kód podpole v poli 651.
+072;Chybný kód podpole v poli 653.
+073;Chybný kód podpole v poli 655.
+074;Chybný kód podpole v poli 700.
+075;Chybný kód podpole v poli 710.
+076;Chybný kód podpole v poli 773.
+077;Chybný kód podpole v poli 787.
+078;Chybný kód podpole v poli 830.
+079;Chybný kód podpole v poli 856.
+080;Chybný kód podpole v poli 910.
+081;Chybný kód podpole v poli 964.
+082;Neplatné opakování podpolí v poli 041.
+083;Neplatné opakování podpolí v poli 044.
+084;Neplatné opakování podpolí v poli 245.
+085;Neplatné opakování podpolí v poli 260.
+086;Neplatné opakování podpolí v poli 264.
+087;Neplatné opakování podpolí v poli 773.
+088;Neplatné opakování podpolí v poli 787.
+089;Chybné podpole 'h' v poli 041.
+090;Chybné podpole 'h' v poli 041.
+091;Chybný znak v podpoli 'a' v poli 100.
+092;Chybný znak v podpoli 'c' v poli 100.
+093;Chybný znak v podpoli 'a' v poli 100.
 094;Neplatné pole, chybný indikátor v poli 245.
-095;Neplatný prefix, chybný 2.indikátor v poli 245.
-096;Chybný znak v podpoli a v poli 600.
-097;Chybný 2.indikátor v poli TAG.
+095;Neplatné pole, chybný indikátor v poli 245.
+096;Neplatný prefix, chybný 2.indikátor v poli 245.
+097;Chybný znak v podpoli 'a' v poli 600.
 098;Chybný 2.indikátor v poli TAG.
 099;Chybný 2.indikátor v poli TAG.
-100;Chybný 2.indikátor v poli TAG. 
-101;Chybný kód data v poli 008.
-102;Neplatné datum v poli 008.
-103;Nesoulad mezi kódem data a datem (má být RRRR).
-104;Nesoulad mezi kódem data a datem (má být RRRRMM/RRRRMMDD).
-105;Nesoulad mezi kódem data a datem (není interval roků).
-106;Nesoulad mezi daty v poli 008 a 260/264.
+100;Chybný 2.indikátor v poli TAG.
+101;Chybný 2.indikátor v poli TAG.
+102;Chybný kód data v poli 008.
+103;Neplatné datum v poli 008.
+104;Nesoulad mezi kódem data a datem (má být RRRR).
+105;Nesoulad mezi kódem data a datem (má být RRRRMM/RRRRMMDD).
+106;Nesoulad mezi kódem data a datem (není interval roků).
 107;Nesoulad mezi daty v poli 008 a 260/264.
-108;Nesoulad mezi daty v poli 008 a 773-9.
-109;Chybný kód země v poli 008.
-110;Nesoulad mezi kódy zemí v poli 008 a 044.
-111;Chybný kód jazyka v poli 008.
-112;Nesoulad mezi kódy jazyků v poli 008 a 041.
-113;Chybný kód jazyka v poli 041.
-114;Pole 041 musí obsahovat 2 a více podpolí.
-115;Chybný kód země v poli 044.
-116;Pole 044 musí obsahovat 2 a více podpolí.
-117;Chybný kód role v poli 100.
-118;Chybný kód role v podpoli 100j.
-119;V poli 100 chybí podpole 4 s hodnotou "oth".
-120;Chybný kód role v poli 700.
-121;Chybný kód role v podpoli 700j.
-122;V poli 700 chybí podpole 4 s hodnotou "oth".
-123;V poli 100 chybí kód role "aut" nebo "ive".
+108;Nesoulad mezi daty v poli 008 a 260/264.
+109;Nesoulad mezi daty v poli 008 a 773-9.
+110;Chybný kód země v poli 008.
+111;Nesoulad mezi kódy zemí v poli 008 a 044.
+112;Chybný kód jazyka v poli 008.
+113;Nesoulad mezi kódy jazyků v poli 008 a 041.
+114;Chybný kód jazyka v poli 041.
+115;Pole 041 musí obsahovat 2 a více podpolí.
+116;Chybný kód země v poli 044.
+117;Pole 044 musí obsahovat 2 a více podpolí.
+118;Chybný kód role v poli 100.
+119;Chybný kód role v podpoli 100j.
+120;V poli 100 chybí podpole 4 s hodnotou "oth".
+121;Chybný kód role v poli 700.
+122;Chybný kód role v podpoli 700j.
+123;V poli 700 chybí podpole 4 s hodnotou "oth".
+124;V poli 100 chybí kód role "aut" nebo "ive".
