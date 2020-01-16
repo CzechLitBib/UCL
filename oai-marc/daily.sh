@@ -21,12 +21,12 @@ FOOTER='</table>
 
 TEMPLATE='<tr><td><p><a target="_blank" href="daily/FN" style="color:white;text-decoration:none;">FN</a></p></td></tr>'
 
-#./oai-marc.py \
-#	--set UCLA \
-#	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
-#	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
-#	--check \
-#	--notify
+./oai-marc.py \
+	--set UCLA \
+	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
+	--check \
+	--notify
 
 mkdir $ROOT_PATH 2>/dev/null
 mkdir $DATA_PATH 2>/dev/null
