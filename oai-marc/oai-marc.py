@@ -25,6 +25,7 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.html'
+#CSV='oai-marc.csv'
 
 COUNTRY_CODE='country_code.txt'
 LANG_CODE='lang_code.txt'
@@ -33,8 +34,8 @@ SIF_CODE='sif_code.txt'
 
 ERROR={}
 
-MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
-MAIL_SERVER='listonos.ucl.cas.cz'
+MAIL_SENDER='xxx'
+MAIL_SERVER='xxx'
 
 HTML_HEADER='''
 <html>
@@ -119,10 +120,11 @@ def write_error(id,tag,sif,code,code_text):
 	# write daily HTML
 	log.write(
 		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-		aleph + '&local_base=AV">' + aleph + '</a>' + ' [<font color="gold">' + sif + '</font>] ' +
+		aleph + '&local_base=AV">' + aleph + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
 		' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
 	)
-	# write global CSV <- will be removed. RUN ONCE
+	# write global CSV
+	#csv.write(aleph + ';' + sif + ';' + code + ';' + code_text + '\n')
 	return
 
 # ARG -------------------
@@ -156,7 +158,11 @@ try:
 except:
 	print('Read only FS exiting..')
 	exit(1)
-
+#try:
+#	csv = open(CSV, 'w', 0)
+#except:
+#	print('Read only FS exiting..')
+#	exit(1)
 try:
 	with open(COUNTRY_CODE, 'r') as f: country_code = f.read().splitlines()
 except: country_code = ''
@@ -764,7 +770,8 @@ for record in records:
 if args.check:
 	log.write(HTML_FOOTER)
 if args.notify:
-	notify()
+	print(ERROR)
+	#notify()
 
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
