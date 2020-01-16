@@ -92,7 +92,8 @@ def notify():
 	html_footer =('<br>Prosíme o opravu.<br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
 	for sif in ERROR:
-		if sif in sif_code:# match email
+		if sif in sif_code:# match email address
+			html_body=''
 			for aleph in ERROR[sif]:
 				for error in ERROR[sif][aleph]:
 					html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
@@ -101,15 +102,15 @@ def notify():
 				msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
 				msg['Subject'] = 'Kontrolní zpráva'
 				msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-				msg['To'] = ADDR
+				msg['To'] = sif_code[sif]
 				s = smtplib.SMTP(MAIL_SERVER)
-				s.sendmail(MAIL_SENDER, ADDR, msg.as_string())
+				s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
 				s.quit()
 			except: pass
 
 def write_error(id,tag,sif,code,code_text):
 	aleph = re.sub('^.*-(\d+)$', '\\1', id)
-	SIF = sif.lower()
+	SIF = sif.lower().decode('utf-8')
 	# error counter
 	global MATCH
 	MATCH+=1
@@ -770,8 +771,7 @@ for record in records:
 if args.check:
 	log.write(HTML_FOOTER)
 if args.notify:
-	print(ERROR)
-	#notify()
+	notify()
 
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
