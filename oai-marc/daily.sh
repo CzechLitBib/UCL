@@ -31,7 +31,7 @@ TEMPLATE='<tr><td><p><a target="_blank" href="daily/FN" style="color:white;text-
 mkdir $ROOT_PATH 2>/dev/null
 mkdir $DATA_PATH 2>/dev/null
 
-mv oai-marc.html "$DATA_PATH/$(date '+%Y-%m-%d').html"
+mv oai-marc.html "$DATA_PATH/$(date --date='yesterday' '+%Y-%m-%d').html"
 
 find $DATA_PATH -maxdepth 1 -type f -mtime +14 -delete
 
