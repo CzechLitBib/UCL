@@ -126,7 +126,6 @@ def write_error(id,tag,sif,code,code_text):
 	)
 	# write global CSV
 	#csv.write(aleph + ';' + sif + ';' + code + ';' + code_text + '\n')
-	return
 
 # ARG -------------------
 
