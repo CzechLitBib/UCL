@@ -25,7 +25,6 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.html'
-#CSV='oai-marc.csv'
 
 COUNTRY_CODE='country_code.txt'
 LANG_CODE='lang_code.txt'
@@ -124,8 +123,6 @@ def write_error(id,tag,sif,code,code_text):
 		aleph + '&local_base=AV">' + aleph + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
 		' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
 	)
-	# write global CSV
-	#csv.write(aleph + ';' + sif + ';' + code + ';' + code_text + '\n')
 
 # ARG -------------------
 
@@ -158,11 +155,6 @@ try:
 except:
 	print('Read only FS exiting..')
 	exit(1)
-#try:
-#	csv = open(CSV, 'w', 0)
-#except:
-#	print('Read only FS exiting..')
-#	exit(1)
 try:
 	with open(COUNTRY_CODE, 'r') as f: country_code = f.read().splitlines()
 except: country_code = ''
@@ -330,10 +322,15 @@ for record in records:
 			if len(F.get_subfields('4')) == 0:
 				write_error(header.identifier(), '710', SIF, '022', 'Chybí podpole 710-4.')
 		for F in metadata.get_fields('773'):
+			if 'g' in F:
+				if re.match('.*příl. .+', F['g'].encode('utf-8')):# get attachment
+					A = re.sub(',..\..*','', re.sub('.*příl. (.+)', '\\1', F['g'].encode('utf-8')).decode('utf-8'))
+				else: A=''
 			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '773', SIF, '023', 'Chybí podpole 773t.')
 			if len(F.get_subfields('9')) != 1:
-				write_error(header.identifier(), '773', SIF, '024', 'Chybí podpole 773-9.')
+				if 't' in F and F['t'] != A:
+					write_error(header.identifier(), '773', SIF, '024', 'Neplatné pole 773.')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '787', SIF, '025', 'Chybí podpole 787t.')
@@ -684,7 +681,7 @@ for record in records:
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
 				DATA1 = metadata['008'].value()[7:15].strip()
-				if '773'in metadata:
+				if '773' in metadata:
 					if '9' in metadata['773']:
 						DATA2 = re.sub('^(\d+).*$','\\1', metadata['773']['9'])
 						if DATA1[0:4] != DATA2 and DATA1[4:8] != DATA2 and DATA1 != DATA2:
@@ -776,12 +773,10 @@ for record in records:
 
 if args.check:
 	log.write(HTML_FOOTER)
-if args.notify:
-	notify()
+	log.close()
+
+if args.notify:	notify()
 
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
-
-#csv.close()
-log.close()
 
