@@ -22,7 +22,7 @@
 021;Chybí podpole 700-4.
 022;Chybí podpole 710-4.
 023;Chybí podpole 773t.
-024;Chybí podpole 773-9.
+024;Neplatné pole 773.
 025;Chybí podpole 787t.
 026;Chybí podpole 787-4.
 027;Chybí podpole 856u.
