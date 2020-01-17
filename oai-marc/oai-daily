@@ -2,7 +2,7 @@
 #
 # Crontab daily runner
 #
-# 00 5 * * * root daily.sh > /var/log/daily.log 2>&1 &
+# 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 #
 
 DATA_PATH='/var/www/html/daily'
