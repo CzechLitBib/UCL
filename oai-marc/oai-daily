@@ -2,7 +2,7 @@
 #
 # Crontab daily runner
 #
-# 00 5 * * * root daily.sh &
+# 00 5 * * * root daily.sh > /var/log/daily.log 2>&1 &
 #
 
 DATA_PATH='/var/www/html/daily'
@@ -11,8 +11,7 @@ ROOT_PATH='/var/www/html'
 HEADER='<html>
 <head><meta charset="utf-8"></head>
 <body style="background-color:#000;color:#6DAE42;">
-<br><b>OAI-PMH 2.0 MARCXML</b>
-<br><b>--------------------------------</b><br><br>
+<br><b><u>OAI-PMH 2.0 MARCXML</u></b><br><br>
 <table>'
 
 FOOTER='</table>
@@ -21,7 +20,7 @@ FOOTER='</table>
 
 TEMPLATE='<tr><td><p><a href="daily/FN" style="color:white;text-decoration:none;">FN</a></p></td></tr>'
 
-./oai-marc.py \
+oai-marc \
 	--set UCLA \
 	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
 	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
@@ -31,7 +30,7 @@ TEMPLATE='<tr><td><p><a href="daily/FN" style="color:white;text-decoration:none;
 mkdir $ROOT_PATH 2>/dev/null
 mkdir $DATA_PATH 2>/dev/null
 
-mv oai-marc.html "$DATA_PATH/$(date --date='yesterday' '+%Y-%m-%d').html"
+mv oai-marc.html "$DATA_PATH/$(date --date='yesterday' '+%Y-%m-%d').html" 2> /dev/null
 
 find $DATA_PATH -maxdepth 1 -type f -mtime +14 -delete
 

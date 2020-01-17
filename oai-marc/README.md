@@ -19,16 +19,19 @@ tar xzf pymarc-3.1.13.tar.gz
 cd pymarc-3.1.13
 python -B setup.py install
 
+/usr/local/bin/:
+
+oai-marc
+oai-daily
+
 /etc/crontab:
 
-00 5 * * * root daily.sh &
+00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 </pre>
 FILE
 <pre>
-     oai-marc.py - OAI-OMH 2.0 MARCXML record validation.
-        daily.sh - Crontab daily runner.
-         year.sh - Yearly HTML statistic.
-         stat.sh - Error code statistic.
+        oai-marc - OAI-OMH 2.0 MARCXML record validation.
+       oai-daily - Crontab daily runner.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
