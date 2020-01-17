@@ -684,9 +684,9 @@ for record in records:
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
 				DATA1 = metadata['008'].value()[7:15].strip()
-				for F in metadata.get_fields('773'):
-					if '9' in F:
-						DATA2 = re.sub('^(\d+).*$','\\1', F['9'])
+				if '773'in metadata:
+					if '9' in metadata['773']:
+						DATA2 = re.sub('^(\d+).*$','\\1', metadata['773']['9'])
 						if DATA1[0:4] != DATA2 and DATA1[4:8] != DATA2 and DATA1 != DATA2:
 							write_error(header.identifier(), '008', SIF, '109', 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
