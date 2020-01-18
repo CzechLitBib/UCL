@@ -36,7 +36,7 @@ find $DATA_PATH -maxdepth 1 -type f -mtime +14 -delete
 
 echo "$HEADER" > "$ROOT_PATH/index.html"
 
-for F in $(find $DATA_PATH -type f -exec basename {} \;); do
+for F in $(find $DATA_PATH -type f -exec basename {} \; | sort); do
 	echo "$TEMPLATE" | sed "s/FN/$F/" | sed "s/FNBASE/$(basename $F .html)/"  >> "$ROOT_PATH/index.html"
 done
 
