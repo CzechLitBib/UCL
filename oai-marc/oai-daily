@@ -20,6 +20,10 @@ FOOTER='</ul>
 
 TEMPLATE='<li><a href="daily/FN" style="color:white;text-decoration:none;">FNBASE</a></li>'
 
+# ------------------------
+
+echo "start $(date '+%Y-%m-%d %H:%M:%S')"
+
 oai-marc \
 	--set UCLA \
 	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
@@ -41,6 +45,8 @@ for F in $(find $DATA_PATH -type f -exec basename {} \; | sort -n); do
 done
 
 echo "$FOOTER" >> "$ROOT_PATH/index.html"
+
+echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
 exit 0
 
