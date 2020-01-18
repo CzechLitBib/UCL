@@ -775,7 +775,7 @@ if args.check:
 	log.write(HTML_FOOTER)
 	log.close()
 
-if args.notify:	notify()
+if args.notify: notify()
 
 print('TOTAL ' + str(COUNTER))
 print('MATCH ' + str(MATCH))
