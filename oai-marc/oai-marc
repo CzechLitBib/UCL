@@ -189,7 +189,7 @@ try:
 		records = oai.listMetadataFormats()
 except:
 	print('No records.')
-	sys.exit(1)
+	records=[]
 
 if args.export:
 	try:
