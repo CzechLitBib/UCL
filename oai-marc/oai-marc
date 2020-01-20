@@ -106,7 +106,8 @@ def notify():
 				s = smtplib.SMTP(MAIL_SERVER)
 				s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
 				s.quit()
-			except: pass
+			except:
+				print('Sendmail error.')
 
 def write_error(id,tag,sif,code,code_text):
 	aleph = re.sub('^.*-(\d+)$', '\\1', id)
