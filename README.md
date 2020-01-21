@@ -14,6 +14,7 @@ FILE
 <pre>
  oai-marc/ - OAI-PMH 2.0 MARCXML record validator.
 json-marc/ - Custom JSON to MARCXML convertor.
+ locative/ - Get word's locative with MorphoDiTa REST API.
 </pre>
 SOURCE
 
