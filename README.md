@@ -5,7 +5,6 @@ Library support software.
 
 TODO
 
-- Heslo "6. pad".
 - 080a + 650/655 (7) + order AUT check: aleph.nkp.cz/OAI "national authority DB" 150/080/089
 - "Koha"
 - "Wayback machine"
