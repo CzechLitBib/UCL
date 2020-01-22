@@ -190,6 +190,7 @@ try:
 	if args.get == 'meta':
 		records = oai.listMetadataFormats()
 except:
+	log.write('<font color="white">Žádný záznam.</font>')
 	print('No records.')
 	records=[]
 
@@ -774,6 +775,7 @@ for record in records:
 # EXIT -------------------
 
 if args.check:
+	if records and MATCH == 0: log.write('<font color="white">Žádný záznam.</font>')
 	log.write(HTML_FOOTER)
 	log.close()
 
