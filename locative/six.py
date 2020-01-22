@@ -30,7 +30,7 @@ try:
 							out.write(line.strip() + ':' + res['form'].encode('utf-8') + '\n')
 			else:
 				print("Response error: " + str(r.status))
-			time.sleep(1)# HTTPS rate limiting
+			time.sleep(0.1)# HTTPS rate limiting 100ms
 except: print('Error.')
 
 bad.close()
