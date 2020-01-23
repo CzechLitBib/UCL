@@ -5,21 +5,8 @@
 # 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 #
 
-DATA_PATH='/var/www/html/daily'
-ROOT_PATH='/var/www/html'
-
-HEADER='<!doctype html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="background-color:#000;color:#6DAE42;">
-<br><b><u>OAI-PMH 2.0 MARCXML</u></b><br>
-<ul>'
-
-FOOTER='</ul>
-</body>
-</html>'
-
-TEMPLATE='<li><a href="daily/FN" style="color:white;text-decoration:none;">FNBASE</a></li>'
+DATA_PATH='/var/www/html/denní'
+ARCHIVE_PATH='/var/www/html/archiv'
 
 # ------------------------
 
@@ -32,20 +19,11 @@ oai-marc \
 	--check \
 	--notify
 
-mkdir $ROOT_PATH 2>/dev/null
-mkdir $DATA_PATH 2>/dev/null
+mkdir -p "$DATA_PATH" 2>/dev/null
 
 mv oai-marc.html "$DATA_PATH/$(date --date='yesterday' '+%Y-%m-%d').html" 2> /dev/null
 
-find $DATA_PATH -maxdepth 1 -type f -mtime +14 -delete
-
-echo "$HEADER" > "$ROOT_PATH/index.html"
-
-for F in $(find $DATA_PATH -type f -exec basename {} \; | sort -n | tac); do
-	echo "$TEMPLATE" | sed "s/FN/$F/" | sed "s/FNBASE/$(basename $F .html)/"  >> "$ROOT_PATH/index.html"
-done
-
-echo "$FOOTER" >> "$ROOT_PATH/index.html"
+#find $DATA_PATH -maxdepth 1 -type f -mtime +14 -exec mv {} "$ARCHIVE_PATH" \;
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
