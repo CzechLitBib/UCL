@@ -29,11 +29,27 @@ oai-daily
 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 00 5 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 </pre>
+APACHE
+<pre>
+        DocumentRoot /var/www/html
+
+        <Directory /var/www/html>
+                Options +Indexes
+                HeaderName /include/HEADER.html
+                ReadmeName /include/README.html
+                IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable
+                IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
+                #IndexIgnore .??* *~ *# HEADER* README* include motol RCS CVS *,v *,t
+                IndexIgnore include motol
+        </Directory>
+</pre>
 FILE
 <pre>
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
+
+        include/ - Apache AutoIndexing HTML templete.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
