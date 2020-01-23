@@ -27,11 +27,13 @@ oai-daily
 /etc/crontab:
 
 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
+00 5 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 </pre>
 FILE
 <pre>
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
        oai-daily - Crontab daily runner.
+      oai-weekly - Crontab weekly runner.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
