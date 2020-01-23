@@ -5,6 +5,10 @@
 #
 # TODO:
 #
+# 008-9: YYYu -> 773-9 YYYu
+# 773: reverse attachmend check 773t -> 773-g substr.
+# 110/710: "0 " -> 'c' "^[" !
+#
 # FIX DISPLAY/EXPORT
 #
 
@@ -36,16 +40,14 @@ ERROR={}
 MAIL_SENDER='xxx'
 MAIL_SERVER='xxx'
 
-HTML_HEADER='''
-<!doctype html>
+HTML_HEADER='''<!doctype html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="background-color:black;color:#6DAE42;">
 <br>
 '''
 
-HTML_FOOTER='''
-<br>
+HTML_FOOTER='''<br>
 </body>
 </html>
 '''
@@ -77,7 +79,7 @@ def valid_display(s):
 		raise argparse.ArgumentTypeError('Invalid display format.')
 
 def valid_request(s):
-	if s in ('record', 'set', 'meta'): return s
+	if s in ('record', 'ident', 'set', 'meta'): return s
 	else:
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
@@ -130,7 +132,7 @@ def write_error(id,tag,sif,code,code_text):
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
 listing = parser.add_argument_group('info')
-listing.add_argument('--get', help='Request type. [record] [set] [meta]', type=valid_request, default='record')
+listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
 required = parser.add_argument_group('validation')
 required.add_argument('--set', help='Records set.')
 required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
@@ -142,7 +144,7 @@ optional.add_argument('--export', help='Export data format. [json] [marc] [xml]'
 optional.add_argument('--display', help='Display output format. [ident] [json] [marc]', nargs='?', type=valid_display, const='ident')
 args = parser.parse_args()
 
-if args.get == 'record':
+if args.get == 'record' or args.get == 'ident':
 	if not args.set:
 		parser.error('argument --set is required.')
 	if not args.from_date:
@@ -150,10 +152,17 @@ if args.get == 'record':
 	if not args.until_date:
 		parser.error('argument --until is required.')
 
+if args.get == 'ident':
+	if args.check or args.notify or args.export:
+		parser.error('Invalid optional argument.')
+	if args.display and args.display != 'ident':
+		parser.error('Invalid display argument.')
+
 # INIT -------------------
 
 try:
 	log = open(LOG, 'w', 0)
+	log.write(HTML_HEADER)
 except:
 	print('Read only FS exiting..')
 	exit(1)
@@ -185,6 +194,8 @@ oai = Client(URL, registry)
 try:
 	if args.get == 'record':
 		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'ident':
+		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
 	if args.get == 'set':
 		records = oai.listSets()
 	if args.get == 'meta':
@@ -200,14 +211,17 @@ if args.export:
 		os.mkdir('export/' + args.export)
 	except: pass
 
-if args.check: log.write(HTML_HEADER)
-
 # MAIN -------------------
 
 for record in records:
 
 	if args.get == 'set' or args.get == 'meta':
 		print(record[0])
+		COUNTER+=1
+		continue
+
+	if args.get == 'ident':
+		#print(record.identifier())
 		COUNTER+=1
 		continue
 
@@ -774,13 +788,14 @@ for record in records:
 
 # EXIT -------------------
 
+print('TOTAL ' + str(COUNTER))
+
 if args.check:
+	print('MATCH ' + str(MATCH))
 	if records and MATCH == 0: log.write('<font color="white">Žádný záznam.</font>')
-	log.write(HTML_FOOTER)
-	log.close()
 
 if args.notify: notify()
 
-print('TOTAL ' + str(COUNTER))
-print('MATCH ' + str(MATCH))
+log.write(HTML_FOOTER)
+log.close()
 
