@@ -23,6 +23,10 @@ mkdir -p "$DATA_PATH" 2>/dev/null
 
 mv oai-marc.html "$DATA_PATH/$(date --date='yesterday' '+%Y-%m-%d').html" 2> /dev/null
 
+# create archive dir
+# move to archive
+# create simlink
+# drop old simlinks
 #find $DATA_PATH -maxdepth 1 -type f -mtime +14 -exec mv {} "$ARCHIVE_PATH" \;
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
