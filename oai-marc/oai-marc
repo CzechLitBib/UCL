@@ -221,7 +221,7 @@ for record in records:
 		continue
 
 	if args.get == 'ident':
-		#print(record.identifier())
+		if record.isDeleted(): continue
 		COUNTER+=1
 		continue
 
