@@ -1,3 +1,15 @@
-<pre><a href="/" title="Back"><font size="4" color="white">[Domů]</font></a></pre>
+<br><a href="/" title="Back"><font size="3" color="white">[Domů]</font></a>
+<script type="application/javascript">
+document.getElementsByClassName('indexcolname')[0].textContent='';
+var e = document.getElementsByClassName('indexcolname');
+for (var i=0; i < e.length; i++) {
+	var a = e[i].getElementsByTagName('a');
+	if (a.length > 0){
+		if (a[0].textContent == 'Parent Directory') {
+			a[0].textContent='Nahoru'
+		}
+	}
+}
+</script>
 </body>
 </html>

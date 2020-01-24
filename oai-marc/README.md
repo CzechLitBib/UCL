@@ -33,15 +33,17 @@ APACHE
 <pre>
         DocumentRoot /var/www/html
 
-        <Directory /var/www/html>
-                Options +Indexes
-                HeaderName /include/HEADER.html
-                ReadmeName /include/README.html
-                IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable
-                IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
-                #IndexIgnore .??* *~ *# HEADER* README* include motol RCS CVS *,v *,t
-                IndexIgnore include motol
-        </Directory>
+	<Directory /var/www/html>
+		Options +Indexes
+		HeaderName /include/HEADER.html
+		ReadmeName /include/README.html
+		AddIcon /icons/world2.gif ..
+		IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable IgnoreClient
+		IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
+		IndexOrderDefault Descending Name
+		IndexIgnore include motol
+		IndexStyleSheet /include/STYLE.css
+	</Directory>
 </pre>
 FILE
 <pre>
