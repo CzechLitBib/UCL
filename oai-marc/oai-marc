@@ -202,7 +202,6 @@ try:
 		records = oai.listMetadataFormats()
 except:
 	log.write('<font color="white">Žádný záznam.</font>')
-	print('No records.')
 	records=[]
 
 if args.export:
