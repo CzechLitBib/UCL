@@ -50,6 +50,7 @@ with open(sys.argv[1], 'r') as f:
 					bad.write(line)
 		else:
 			print("Response error: " + str(r.status))
+		c.close()
 		time.sleep(0.1)# HTTPS rate limiting 100ms
 
 bad.close()
