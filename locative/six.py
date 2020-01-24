@@ -19,7 +19,6 @@ HEADER={'Content-type':'application/x-www-form-urlencoded', 'Accept':'applicatio
 bad = open('six-bad.log', 'w', 0)
 out = open('six-out.log', 'w', 0)
 
-#try:
 with open(sys.argv[1], 'r') as f:
 	for line in f.readlines():
 		suffix=''
@@ -56,7 +55,6 @@ with open(sys.argv[1], 'r') as f:
 		else:
 			print("Response error: " + str(r.status))
 		time.sleep(0.1)# HTTPS rate limiting 100ms
-#except: print('Error.')
 
 bad.close()
 out.close()
