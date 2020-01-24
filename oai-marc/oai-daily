@@ -7,6 +7,7 @@
 
 DATA_PATH='/var/www/html/denní'
 ARCHIVE_PATH='/var/www/html/archiv'
+FILENAME="$(date --date='yesterday' '+%Y-%m-%d').html"
 
 # ------------------------
 
@@ -19,15 +20,14 @@ oai-marc \
 	--check \
 	--notify
 
-mkdir -p "$DATA_PATH" 2>/dev/null
+mkdir -p "$DATA_PATH" 2> /dev/null
+mkdir -p "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')" 2> /dev/null
 
-mv oai-marc.html "$DATA_PATH/$(date --date='yesterday' '+%Y-%m-%d').html" 2> /dev/null
+mv oai-marc.html "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME"
 
-# create archive dir
-# move to archive
-# create simlink
-# drop old simlinks
-#find $DATA_PATH -maxdepth 1 -type f -mtime +14 -exec mv {} "$ARCHIVE_PATH" \;
+ln -s "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME" "$DATA_PATH/$FILENAME"
+
+find $DATA_PATH -maxdepth 1 -type l -mtime +14 -exec rm {} \;
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
