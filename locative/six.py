@@ -5,10 +5,6 @@
 #
 # http://ufal.mff.cuni.cz/morphodita
 #
-# TODO:
-#
-# match 'plural only'
-#
 
 import httplib,urllib,json,time,sys,re
 
@@ -39,7 +35,7 @@ with open(sys.argv[1], 'r') as f:
 				if HAS_S:
 					LOCATIVE = [res['form'] for res in DATA if re.match('NN.S6', res['tag'])]# singular
 				else:
-					LOCATIVE = [res['form'] for res in DATA if re.match('NN.[P|X][6|X]', res['tag'])]# plural
+					LOCATIVE = [res['form'] for res in DATA if re.match('NN.[P|X][6|X]', res['tag'])]# plural/none
 				if LOCATIVE:
 					LOCATIVE = [L for L in LOCATIVE if not re.match('.*ovi$', L)]# match 'ovi'
 					for L in LOCATIVE:# match 'e/ě'
