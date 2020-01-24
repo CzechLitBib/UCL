@@ -14,28 +14,33 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
 oai-marc \
 	--set UCLA \
-	--from "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
-	--until "$(date --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
+	--from "$(date --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
 	--check
 
 mkdir -p "$DATA_PATH" 2>/dev/null
 
-mv oai-marc.html "$DATA_PATH/$(date --date='8 days ago' '+%Y-%m-%d')-$(date --date='2 days ago' '+%Y-%m-%d').html" 2> /dev/null
+mv oai-marc.html "$DATA_PATH/$(date --date='2 days ago' '+%Y-%m-%d')_$(date --date='8 days ago' '+%Y-%m-%d').html" 2> /dev/null
 
+# create archive directory
+# move to archive rirectory
+# create simlink
+# drop old simlinks
 #find $DATA_PATH -maxdepth 1 -type f -mtime +14 -delete
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
-#cat << EOL | mail -s 'Kontrolní zpráva' xxx
-#
-#Dobrý den,
-#
-#Kontrolní zpráva za poslední týden:
-#
-#https://pokuston.ucl.cas.cz:38080/weekly.html
-#
-#TATO ZPRÁVA JE GENEROVÁNA AUTOMATICKY
-#EOL 
+cat << EOF | mail -s 'Kontrolní zpráva' xxx
+Dobrý den,
+
+Kontrolní zpráva je dostupná na adrese:
+
+https://http://pokuston.ucl.cas.cz:38080/t%c3%bddenn%c3%ad/
+
+---------------------------
+TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,
+NEODPOVÍDEJTE NA NI.
+EOF
 
 exit 0
 
