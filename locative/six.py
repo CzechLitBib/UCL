@@ -45,7 +45,10 @@ with open(sys.argv[1], 'r') as f:
 						LOCATIVE = [L for L in LOCATIVE if not re.match('.*u$', L)]
 					LOCATIVE = list(dict.fromkeys(LOCATIVE))# duplicity
 					LOCATIVE = [L.encode('utf-8') + suffix for L in LOCATIVE]# suffix
-					out.write(line.strip() + suffix + ':' + '%%'.join(LOCATIVE) + '\n')
+					if LOCATIVE:
+						out.write(line.strip() + suffix + ':' + '%%'.join(LOCATIVE) + '\n')
+					else:
+						bad.write(line)
 				else:
 					bad.write(line)
 		else:
