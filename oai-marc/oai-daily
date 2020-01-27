@@ -25,7 +25,7 @@ mkdir -p "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')" 2> /dev/null
 
 mv -f oai-marc.html "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME" 2> /dev/null
 
-ln -s "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME" "$DATA_PATH/$FILENAME"
+ln -s "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME" "$DATA_PATH/$FILENAME" 2> /dev/null
 
 find $DATA_PATH -maxdepth 1 -type l -mtime +14 -exec rm {} \;
 
