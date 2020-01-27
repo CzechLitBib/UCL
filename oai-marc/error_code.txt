@@ -124,3 +124,7 @@
 123;V poli 700 chybí podpole 4 s hodnotou "oth".
 124;V poli 100 chybí kód role "aut" nebo "ive".
 125;Neplatné opakování pole TAG.
+126;Chybný znak v podpoli 'c' v poli 110.
+127;Chybí podpole 'c' v poli 110.
+128;Chybný znak v podpoli 'c' v poli 710.
+129;Chybí podpole 'c' v poli 710.

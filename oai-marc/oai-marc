@@ -5,10 +5,6 @@
 #
 # TODO:
 #
-# 008-9: YYYu -> 773-9 YYYu
-# 773: reverse attachmend check 773t -> 773-g substr.
-# 110/710: "0 " -> 'c' "^[" !
-#
 # FIX DISPLAY/EXPORT
 #
 
@@ -338,14 +334,11 @@ for record in records:
 			if len(F.get_subfields('4')) == 0:
 				write_error(header.identifier(), '710', SIF, '022', 'Chybí podpole 710-4.')
 		for F in metadata.get_fields('773'):
-			if 'g' in F:
-				if re.match('.*příl. .+', F['g'].encode('utf-8')):# get attachment
-					A = re.sub(',..\..*','', re.sub('.*příl. (.+)', '\\1', F['g'].encode('utf-8')).decode('utf-8'))
-				else: A=''
+			if 'g' in F: G = F['g']
 			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '773', SIF, '023', 'Chybí podpole 773t.')
 			if len(F.get_subfields('9')) != 1:
-				if 't' in F and F['t'] != A:
+				if 't' in F and not re.match('.*' + F['t'] + '.*', G):
 					write_error(header.identifier(), '773', SIF, '024', 'Neplatné pole 773.')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
@@ -377,7 +370,7 @@ for record in records:
 			if metadata['100'].indicator1 + metadata['100'].indicator2 not in ('3 ', '1 ', '0 '):
 				write_error(header.identifier(), '100', SIF, '032', 'Chybný indikátor v poli 100.')
 		if '110' in metadata:
-			if metadata['110'].indicator1 + metadata['110'].indicator2 not in ('1 ', '2 '):
+			if metadata['110'].indicator1 + metadata['110'].indicator2 not in ('0 ', '1 ', '2 '):
 				write_error(header.identifier(), '110', SIF, '033', 'Chybný indikátor v poli 110.')
 		if '245' in metadata:
 			if metadata['245'].indicator1 not in ('0', '1'):
@@ -413,7 +406,7 @@ for record in records:
 			if F.indicator1 + F.indicator2 not in ('3 ', '1 ', '0 '):
 				write_error(header.identifier(), '700', SIF, '044', 'Chybný indikátor v poli 700.')
 		for F in metadata.get_fields('710'):
-			if F.indicator1 + F.indicator2 not in ('1 ', '2 '):
+			if F.indicator1 + F.indicator2 not in ('0 ', '1 ', '2 '):
 				write_error(header.identifier(), '710', SIF, '045', 'Chybný indikátor v poli 710.')
 		for F in metadata.get_fields('773'):
 			if F.indicator1 + F.indicator2 != '0 ':
@@ -672,7 +665,7 @@ for record in records:
 			DATE = metadata['008'].value()[7:15].strip()
 			if metadata['008'].value()[6] not in ('s', 'e', 'm', 'q'):
 				write_error(header.identifier(), '008', SIF, '102', 'Chybný kód data v poli 008.')
-			if not re.match('^\d+$', DATE) or len(DATE) not in (4, 6, 8):
+			if not re.match('^\d+u?$', DATE) or len(DATE) not in (4, 6, 8):
 					write_error(header.identifier(), '008', SIF, '103', 'Neplatné datum v poli 008.')
 			if metadata['008'].value()[6] in ('s', 'q'):
 				if len(DATE) != 4:
@@ -699,7 +692,7 @@ for record in records:
 				DATA1 = metadata['008'].value()[7:15].strip()
 				if '773' in metadata:
 					if '9' in metadata['773']:
-						DATA2 = re.sub('^(\d+).*$','\\1', metadata['773']['9'])
+						DATA2 = re.sub('^(\d+u?).*$','\\1', metadata['773']['9'])
 						if DATA1[0:4] != DATA2 and DATA1[4:8] != DATA2 and DATA1 != DATA2:
 							write_error(header.identifier(), '008', SIF, '109', 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
@@ -765,7 +758,20 @@ for record in records:
 		for TAG in ('001', '003', '005', '008', '040', '041', '044', '072', '100', '110', '111', '130', '245', '260','300', '520', '910', 'OWN', 'SIF', 'ZAZ', 'ZAR'):
 			if len(metadata.get_fields(TAG)) > 1:
 				write_error(header.identifier(), TAG, SIF, '125', 'Neplatné opakování pole ' + TAG + '.')
-				
+		if '110' in metadata:
+			if metadata['110'].indicator1 + metadata['110'].indicator2  == '0 ':
+				if 'c' in metadata['110']:
+					if not re.match('^\[.*$', metadata['110']['c']):
+						write_error(header.identifier(), '110', SIF, '126', "Chybný znak v podpoli 'c' v poli 110.")
+				else:
+					write_error(header.identifier(), '110', SIF, '127', "Chybí podpole 'c' v poli 110.")
+		for F in metadata.get_fields('710'):
+			if F.indicator1 + F.indicator2  == '0 ':
+				if 'c' in F:
+					if not re.match('^\[.*$', F['c']):
+						write_error(header.identifier(), '710', SIF, '128', "Chybný znak v podpoli 'c' v poli 710.")
+				else:
+					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 'c' v poli 710.")
 
 	# EXPORT -------------------
 
