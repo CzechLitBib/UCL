@@ -23,6 +23,7 @@ python -B setup.py install
 
 oai-marc
 oai-daily
+oai-weekly
 
 /etc/crontab:
 
@@ -33,17 +34,17 @@ APACHE
 <pre>
         DocumentRoot /var/www/html
 
-	<Directory /var/www/html>
+	&lt;Directory /var/www/html&gt;
 		Options +Indexes
 		HeaderName /include/HEADER.html
 		ReadmeName /include/README.html
 		AddIcon /icons/world2.gif ..
 		IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable IgnoreClient
 		IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
-		IndexOrderDefault Descending Name
-		IndexIgnore include motol
+		IndexIgnore .??* include motol
 		IndexStyleSheet /include/STYLE.css
-	</Directory>
+		AllowOverride Indexes
+	&lt/Directory&gt;
 </pre>
 FILE
 <pre>
@@ -51,7 +52,7 @@ FILE
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
 
-        include/ - Apache AutoIndexing HTML templete.
+           html/ - Apache AutoIndexing HTML structure.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
