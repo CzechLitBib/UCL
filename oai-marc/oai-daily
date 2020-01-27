@@ -23,7 +23,7 @@ oai-marc \
 mkdir -p "$DATA_PATH" 2> /dev/null
 mkdir -p "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')" 2> /dev/null
 
-mv oai-marc.html "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME"
+mv -f oai-marc.html "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME" 2> /dev/null
 
 ln -s "$ARCHIVE_PATH/$(date --date='yesterday' '+%Y/%m')/$FILENAME" "$DATA_PATH/$FILENAME"
 

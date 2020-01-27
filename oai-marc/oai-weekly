@@ -20,7 +20,7 @@ oai-marc \
 
 mkdir -p "$DATA_PATH" 2>/dev/null
 
-mv oai-marc.html "$DATA_PATH/$FILENAME" 2> /dev/null
+mv -f oai-marc.html "$DATA_PATH/$FILENAME" 2> /dev/null
 
 find "$DATA_PATH" -maxdepth 1 -type f -mtime +56 -delete
 
