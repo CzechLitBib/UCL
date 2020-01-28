@@ -105,7 +105,7 @@ def notify():
 
 def write_error(id,tag,sif,code,code_text):
 	aleph = re.sub('^.*-(\d+)$', '\\1', id)
-	SIF = sif.lower().decode('utf-8')
+	SIF = sif.decode('utf-8').lower()
 	# error counter
 	global MATCH
 	MATCH+=1
