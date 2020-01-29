@@ -60,13 +60,8 @@ def valid_date(s):
 	except:
 		raise argparse.ArgumentTypeError('Invalid date format.')
 
-def valid_format(s):
-	if s in ('json', 'marc', 'xml'): return s
-	else:
-		raise argparse.ArgumentTypeError('Invalid export format.')
-
 def valid_display(s):
-	if s in ('ident', 'json', 'marc'): return s
+	if s in ('ident', 'marc'): return s
 	else:
 		raise argparse.ArgumentTypeError('Invalid display format.')
 
@@ -132,8 +127,7 @@ required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', ty
 optional = parser.add_argument_group('output')
 optional.add_argument('--check', help='Validation control.', action='store_true')
 optional.add_argument('--notify', help='Enable notification.', action='store_true')
-optional.add_argument('--export', help='Export data format. [json] [marc] [xml]', type=valid_format)
-optional.add_argument('--display', help='Display output format. [ident] [json] [marc]', nargs='?', type=valid_display, const='ident')
+optional.add_argument('--display', help='Display output format. [ident] [marc]', nargs='?', type=valid_display, const='ident')
 args = parser.parse_args()
 
 if args.get == 'record' or args.get == 'ident':
@@ -196,12 +190,6 @@ except:
 	log.write('<font color="white">Žádný záznam.</font>')
 	records=[]
 
-if args.export:
-	try:
-		os.mkdir('export')
-		os.mkdir('export/' + args.export)
-	except: pass
-
 # MAIN -------------------
 
 for record in records:
@@ -238,8 +226,6 @@ for record in records:
 	if args.display:
 		if args.display == 'ident':
 			print(header.identifier())
-		if args.display == 'json':
-			print(metadata.as_json(indent=4, sort_keys=True))
 		if args.display == 'marc':
 			print(metadata)
 
@@ -768,22 +754,6 @@ for record in records:
 						write_error(header.identifier(), '710', SIF, '128', "Chybný znak v podpoli 'c' v poli 710.")
 				else:
 					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 'c' v poli 710.")
-
-	# EXPORT -------------------
-
-	if args.export:
-		if args.export == 'marc':# MARC 21
-			writer = MARCWriter(open('export/marc/' + header.identifier() + '.dat', 'wb'))
-			writer.write(metadata)
-			writer.close()
-		if args.export == 'json':# JSON
-			writer = JSONWriter(open('export/json/'+ header.identifier() + '.json', 'wt'))
-			writer.write(metadata)
-			writer.close()
-		if args.export == 'xml':# MARCXML
-			writer = XMLWriter(open('export/xml/' + header.identifier() + '.xml', 'wb'))
-			writer.write(metadata)
-			writer.close()
 
 	COUNTER+=1
 
