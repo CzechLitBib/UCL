@@ -5,8 +5,6 @@ Library support software.
 
 TODO
 
-- oai-marc: fix export/display crash
-- 001 >= 00235000 + 1.1.2019 + update(SIF(@))
 - 080a + 650/655 (7) + order AUT check: aleph.nkp.cz/OAI "national authority DB" 150/080/089
 - "Koha"
 - "Wayback machine"
