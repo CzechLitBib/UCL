@@ -25,10 +25,15 @@ oai-marc
 oai-daily
 oai-weekly
 
+country_code.txt
+lang_code.txt
+role_code.txt
+sif_code.txt
+
 /etc/crontab:
 
-00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
-00 6 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
+00 5 * * * root /usr/local/bin/oai-daily >> /var/log/oai-daily.log 2>&1 &
+00 6 * * TUE root /usr/local/bin/oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 </pre>
 APACHE
 <pre>

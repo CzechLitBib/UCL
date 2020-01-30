@@ -12,7 +12,7 @@ FILENAME="$(date --date='8 days ago' '+%Y-%m-%d')_$(date --date='2 days ago' '+%
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
-oai-marc \
+/usr/local/bin/oai-marc \
 	--set UCLA \
 	--from "$(date --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
 	--until "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \

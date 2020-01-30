@@ -3,6 +3,8 @@
 #
 # OAI-PMH 2.0 MARCXML Record validator.
 #
+# TODO: Agent
+#
 
 # INCLUDE -------------------
 
@@ -22,10 +24,10 @@ from lxml.etree import tostring
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.html'
 
-COUNTRY_CODE='country_code.txt'
-LANG_CODE='lang_code.txt'
-ROLE_CODE='role_code.txt'
-SIF_CODE='sif_code.txt'
+COUNTRY_CODE='/usr/local/bin/country_code.txt'
+LANG_CODE='/usr/local/bin/lang_code.txt'
+ROLE_CODE='/usr/local/bin/role_code.txt'
+SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
@@ -154,15 +156,15 @@ except:
 	exit(1)
 try:
 	with open(COUNTRY_CODE, 'r') as f: country_code = f.read().splitlines()
-except: country_code = ''
+except: country_code = []
 
 try:
 	with open(LANG_CODE, 'r') as f:	lang_code = f.read().splitlines()
-except: lang_code = ''
+except: lang_code = []
 
 try:
 	with open(ROLE_CODE, 'r') as f:	role_code = f.read().splitlines()
-except: role_code = ''
+except: role_code = []
 
 try:
 	sif_code = {}
@@ -170,7 +172,7 @@ try:
 		for line in f:
 			acct_code, acct_addr = line.decode('utf-8').split(':')
 			sif_code[acct_code] = acct_addr.strip()
-except: sif_code = ''
+except: sif_code = {}
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
