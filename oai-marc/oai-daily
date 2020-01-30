@@ -13,7 +13,7 @@ FILENAME="$(date --date='yesterday' '+%Y-%m-%d').html"
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
-/usr/local/bin/oai-marc \
+oai-marc \
 	--set UCLA \
 	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
 	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
