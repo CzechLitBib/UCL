@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 
+- "Korektor" <= 1.1 2019 + ID;raw 245+5xx(500,505,520) CSV == [^$], mothly scheduler + sif@
 - 080a + 650/655 (7) + order AUT check: aleph.nkp.cz/OAI "national authority DB" 150/080/089
 - "Koha"
 - "Wayback machine"
