@@ -31,6 +31,7 @@ ERROR={}
 
 MAIL_SENDER='xxx'
 MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
 HTML_HEADER='''<!doctype html>
 <html>
@@ -89,16 +90,21 @@ def notify():
 				for error in ERROR[sif][aleph]:
 					html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 						aleph + '&local_base=AV">' + aleph + '</a> ' + ' [' + error[0] + '] ' + error[1] + '<br>')
-			try:
 				msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
 				msg['Subject'] = 'Kontrolní zpráva'
 				msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
 				msg['To'] = sif_code[sif]
+			try:
 				s = smtplib.SMTP(MAIL_SERVER)
 				s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
 				s.quit()
 			except:
-				print('Sendmail error.')
+				try:
+					s = smtplib.SMTP(MAIL_SERVER_BACKUP)
+					s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
+					s.quit()
+				except:
+					print('Sendmail error.')
 
 def write_error(id,tag,sif,code,code_text):
 	aleph = re.sub('^.*-(\d+)$', '\\1', id)
