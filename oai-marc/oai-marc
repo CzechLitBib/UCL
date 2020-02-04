@@ -241,6 +241,14 @@ for record in records:
 
 	if args.check:
 
+		# SKIP BOT ------------------
+
+		BOT=False
+		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+			if 'a' in F:
+				if re.match('BATCH', F['a']): BOT=True
+		if BOT: continue
+
 		# TEST TAG ------------------
 
 		if 'SIF' in metadata:
