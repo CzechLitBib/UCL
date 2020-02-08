@@ -240,6 +240,10 @@ for record in records:
 	# VALIDATION ------------------
 
 	if args.check:
+		
+		# SKIP OLD ------------------
+
+		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
 
 		# SKIP BOT ------------------
 
@@ -498,7 +502,7 @@ for record in records:
 					write_error(header.identifier(), '611', SIF, '067', 'Chybný kód podpole v poli 611.')
 		for F in metadata.get_fields('630'):
 			for SUB in F.subfields[0::2]:
-				if SUB not in ('a', 'l', '7', '2', 'x', 'p'):
+				if SUB not in ('a', 'l', '7', '2', 'x', 'p', 's'):
 					write_error(header.identifier(), '630', SIF, '068', 'Chybný kód podpole v poli 630.')
 		for F in metadata.get_fields('648'):
 			for SUB in F.subfields[0::2]:
@@ -538,7 +542,7 @@ for record in records:
 					write_error(header.identifier(), '787', SIF, '077', 'Chybný kód podpole v poli 787.')
 		for F in metadata.get_fields('830'):
 			for SUB in F.subfields[0::2]:
-				if SUB != 'a':
+				if SUB not in ('a', 'p', 'n'):
 					write_error(header.identifier(), '830', SIF, '078', 'Chybný kód podpole v poli 830.')
 		for F in metadata.get_fields('856'):
 			for SUB in F.subfields[0::2]:
@@ -600,11 +604,11 @@ for record in records:
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '0':
 				if 'h' in metadata['041']:
-					write_error(header.identifier(), '041', SIF, '089', "Chybné podpole 'h' v poli 041.")
+					write_error(header.identifier(), '041', SIF, '089', 'Chybná kombinace indikátoru a podpolí v poli 041.')
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '1':
 				if 'h' not in metadata['041']:
-					write_error(header.identifier(), '041', SIF, '090', "Chybné podpole 'h' v poli 041.")
+					write_error(header.identifier(), '041', SIF, '090', 'Chybná kombinace indikátoru a podpolí v poli 041.')
 		if '100' in metadata:
 			if metadata['100'].indicator1 == '0':
 				if 'a' in metadata['100']:
@@ -613,7 +617,7 @@ for record in records:
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
 					if re.match('^\[.*$', metadata['100']['c']):
-						write_error(header.identifier(), '100', SIF, '092', "Chybný znak v podpoli 'c' v poli 100.")
+						write_error(header.identifier(), '100', SIF, '092', "Chybný indikátor, v podpoli 'c' v poli 100 není vlastní jméno.")
 				#if 'a' in metadata['100']:
 				#	if re.match('^.*\..*$', metadata['100']['a']):
 				#		write_error(header.identifier(), '100', SIF, '093', "Chybný znak v podpoli 'a' v poli 100.")
@@ -679,11 +683,11 @@ for record in records:
 				DATA = metadata['008'].value()[7:11]
 				if '260' in metadata:
 					if 'c' in metadata['260']:
-						if DATA != metadata['260']['c'].strip('.'):
+						if DATA != re.sub('[\[\]]', '', metadata['260']['c'].strip('.')):
 							write_error(header.identifier(), '008', SIF, '107', 'Nesoulad mezi daty v poli 008 a 260/264.')
 				for F in metadata.get_fields('264'):
 					if 'c' in F:
-						if DATA != F['c'].strip('.'):
+						if DATA != re.sub('[\[\]]', '', F['c'].strip('.')):
 							write_error(header.identifier(), '008', SIF, '108', 'Nesoulad mezi daty v poli 008 a 260/264.')
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
@@ -714,21 +718,20 @@ for record in records:
 				for DATA in metadata['041'].subfields[1::2]:
 					if DATA not in lang_code:
 						write_error(header.identifier(), '041', SIF, '114', 'Chybný kód jazyka v poli 041.')
-			if len(metadata['041'].subfields) != 4:
+			if len(metadata['041'].subfields) <= 2:
 					write_error(header.identifier(), '041', SIF, '115', 'Pole 041 musí obsahovat 2 a více podpolí.')
 		if '044' in metadata:
 			if country_code:
 				for DATA in metadata['044'].subfields[1::2]:
 					if DATA not in country_code:
 						write_error(header.identifier(), '044', SIF, '116', 'Chybný kód země v poli 044.')
-			if len(metadata['044'].subfields) != 4:
+			if len(metadata['044'].subfields) <= 2:
 					write_error(header.identifier(), '044', SIF, '117', 'Pole 044 musí obsahovat 2 a více podpolí.')
 		if '100' in metadata:
 			if role_code:
-				if '4' in metadata['100']:
-					for DATA in metadata['100'].get_subfields('4'):
-						if DATA not in role_code:
-							write_error(header.identifier(), '100', SIF, '118', 'Chybný kód role v poli 100.')
+				for DATA in metadata['100'].get_subfields('4'):
+					if DATA not in role_code:
+						write_error(header.identifier(), '100', SIF, '118', 'Chybný kód role v poli 100.')
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
 					write_error(header.identifier(), '100', SIF, '119', 'Chybný kód role v podpoli 100j.')
@@ -736,10 +739,9 @@ for record in records:
 						write_error(header.identifier(), '100', SIF, '120', 'V poli 100 chybí podpole 4 s hodnotou "oth".')
 		for F in metadata.get_fields('700'):
 			if role_code:
-				if '4' in F:
-					for DATA in F.get_subfields('4'):
-						if DATA not in role_code:
-							write_error(header.identifier(), '700', SIF, '121', 'Chybný kód role v poli 700.')
+				for DATA in F.get_subfields('4'):
+					if DATA not in role_code:
+						write_error(header.identifier(), '700', SIF, '121', 'Chybný kód role v poli 700.')
 			if 'j' in F:
 				if F['j'] not in ('bbg', 'rej'):
 					write_error(header.identifier(), '700', SIF, '122', 'Chybný kód role v podpoli 700j.')
@@ -753,7 +755,7 @@ for record in records:
 
 		# TEST OTHER ------------------
 
-		for TAG in ('001', '003', '005', '008', '040', '041', '044', '072', '100', '110', '111', '130', '245', '260','300', '520', '910', 'OWN', 'SIF', 'ZAZ', 'ZAR'):
+		for TAG in ('001', '003', '005', '008', '040', '041', '044', '072', '100', '110', '111', '130', '245', '260', '520', '910', 'OWN', 'SIF', 'ZAZ', 'ZAR'):
 			if len(metadata.get_fields(TAG)) > 1:
 				write_error(header.identifier(), TAG, SIF, '125', 'Neplatné opakování pole ' + TAG + '.')
 		if '110' in metadata:
@@ -770,6 +772,11 @@ for record in records:
 						write_error(header.identifier(), '710', SIF, '128', "Chybný znak v podpoli 'c' v poli 710.")
 				else:
 					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 'c' v poli 710.")
+		#if '964' in metadata:
+		#	if 'a' in metadata['964']:
+		#		if metadata['964']['a'] == 'INT':
+		#			for F in metadata.get_fields('710'):
+				
 
 	COUNTER+=1
 
