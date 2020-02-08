@@ -781,9 +781,7 @@ for record in records:
 				for F in metadata.get_fields('300'):
 					for SUB in metadata['300'].subfields[0::2]:
 						if SUB != 'e': BAD=True 
-			if BAD:
-				print(header.identifier())
-				write_error(header.identifier(), '300', SIF, '130', 'Neplatné opakování pole 300.')
+			if BAD: write_error(header.identifier(), '300', SIF, '130', 'Neplatné opakování pole 300.')
 
 	COUNTER+=1
 
