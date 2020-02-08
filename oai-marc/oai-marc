@@ -772,11 +772,18 @@ for record in records:
 						write_error(header.identifier(), '710', SIF, '128', "Chybný znak v podpoli 'c' v poli 710.")
 				else:
 					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 'c' v poli 710.")
-		#if '964' in metadata:
-		#	if 'a' in metadata['964']:
-		#		if metadata['964']['a'] == 'INT':
-		#			for F in metadata.get_fields('710'):
-				
+		if len(metadata.get_fields('300')) > 1:
+			BAD=False
+			if not '964' in metadata: BAD=True
+			elif 'a' not in metadata['964']: BAD=True
+			elif metadata['964']['a'] != 'INT': BAD=True
+			else:
+				for F in metadata.get_fields('300'):
+					for SUB in metadata['300'].subfields[0::2]:
+						if SUB != 'e': BAD=True 
+			if BAD:
+				print(header.identifier())
+				write_error(header.identifier(), '300', SIF, '130', 'Neplatné opakování pole 300.')
 
 	COUNTER+=1
 
