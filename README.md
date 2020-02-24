@@ -5,10 +5,10 @@ Library support software.
 
 TODO
 
-- "Korektor" <= 1.1 2019 + ID;raw 245+5xx(500,505,520) CSV == [^$], mothly scheduler + sif@
+- oai-marc - CSV download
+- ID + raw 245 + 5xx(500,505,520).txt > 235000 SIF@ monthly
+- 1xx/6xx(-653)/700/710/711/730 "7"(2 ignore) count[no assoc.] + total => sort @
 - 080a + 650/655 (7) + order AUT check: aleph.nkp.cz/OAI "national authority DB" 150/080/089
-- "Koha"
-- "Wayback machine"
 
 FILE
 <pre>
