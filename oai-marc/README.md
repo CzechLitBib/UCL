@@ -61,7 +61,8 @@ FILE
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
-   role_code.txt - MARC core code file.
+   role_code.txt - MARC role code file.
+    sif_code.txt - MARC sif code file.
 </pre>
 SOURCE
 
