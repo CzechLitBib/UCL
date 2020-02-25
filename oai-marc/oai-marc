@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 from datetime import datetime
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
-from pymarc import marcxml,MARCWriter,JSONWriter,XMLWriter
+from pymarc import marcxml
 from lxml.etree import tostring
 
 # VAR -------------------
@@ -126,7 +126,7 @@ def write_error(id,tag,sif,code,code_text):
 # ARG -------------------
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
-listing = parser.add_argument_group('info')
+listing = parser.add_argument_group('request')
 listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
 required = parser.add_argument_group('validation')
 required.add_argument('--set', help='Records set.')
