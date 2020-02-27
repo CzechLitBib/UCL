@@ -154,7 +154,11 @@ for record in records:
 			if re.match('(1..|6..|700|710|711|730)', str(TAG)):
 				if TAG != 653 and '7' not in metadata[TAG]:
 					if 'a' in metadata[TAG]:
-						csv.write(metadata[TAG]['a'].encode('utf-8') + header.identifier() + '\n')
+						csv.write(
+							metadata[TAG]['a'].encode('utf-8') + ';' +
+							str(TAG) + ';' +
+							re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '\n'
+						)
 					MATCH+=1
 				COUNTER+=1
 		RECORD+=1
