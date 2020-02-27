@@ -58,6 +58,7 @@ FILE
       oai-weekly - Crontab weekly runner.
 
            html/ - Apache AutoIndexing HTML structure.
+           mods/ - Custom mods.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
