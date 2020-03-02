@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# OAI-PMH 2.0 MARCXML Record validator.
+# OAI-PMH 2.0 MARCXML Record text collector.
 #
 
 # INCLUDE -------------------
@@ -28,7 +28,6 @@ MAIL_SENDER='xxx'
 MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
 
-RECORD=0
 COUNTER=0
 MATCH=0
 

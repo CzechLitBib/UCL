@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Crontab daily runner
+# Crontab monthly runner
 #
 # 15 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
 #

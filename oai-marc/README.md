@@ -24,6 +24,7 @@ python -B setup.py install
 oai-marc
 oai-daily
 oai-weekly
+oai-monthly
 
 country_code.txt
 lang_code.txt
@@ -56,6 +57,7 @@ FILE
 <pre>
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
          oai-5xx - Send dumped 245/246/5xx text for correction. 
+
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
      oai-monthly - Crontab monthly runner.
