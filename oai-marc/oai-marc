@@ -95,12 +95,12 @@ def notify():
 			msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
 			msg['To'] = sif_code[sif]
 			try:
-				s = smtplib.SMTP(MAIL_SERVER)
+				s = smtplib.SMTP(MAIL_SERVER, timeout=10)
 				s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
 				s.quit()
 			except:
 				try:
-					s = smtplib.SMTP(MAIL_SERVER_BACKUP)
+					s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
 					s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
 					s.quit()
 				except:
