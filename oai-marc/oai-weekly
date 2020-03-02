@@ -6,7 +6,9 @@
 #
 
 DATA_PATH='/var/www/html/týdenní'
+
 FILENAME="$(date --date='8 days ago' '+%Y-%m-%d')_$(date --date='2 days ago' '+%Y-%m-%d').html"
+CSVNAME=".$(date --date='8 days ago' '+%Y-%m-%d')_$(date --date='2 days ago' '+%Y-%m-%d').csv"
 
 # ------------------------
 
@@ -20,7 +22,10 @@ oai-marc \
 
 mkdir -p "$DATA_PATH" 2>/dev/null
 
+sed -i "s/CSVPLACEHOLDER/$CSVNAME/" oai-marc.html 2> /dev/null
+
 mv -f oai-marc.html "$DATA_PATH/$FILENAME" 2> /dev/null
+mv -f .oai-marc.csv "$DATA_PATH/$CSVNAME" 2> /dev/null
 
 find "$DATA_PATH" -maxdepth 1 -type f -mtime +56 -delete
 

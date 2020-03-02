@@ -21,6 +21,7 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.html'
+CSV='.oai-marc.csv'
 
 COUNTRY_CODE='/usr/local/bin/country_code.txt'
 LANG_CODE='/usr/local/bin/lang_code.txt'
@@ -37,6 +38,7 @@ HTML_HEADER='''<!doctype html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="background-color:black;color:#6DAE42;">
+<br>[ <a href="CSVPLACEHOLDER" style="color:white; text-decoration:none;">CSV</a> ]<br>
 <br>
 '''
 
@@ -122,6 +124,8 @@ def write_error(id,tag,sif,code,code_text):
 		aleph + '&local_base=AV">' + aleph + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
 		' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
 	)
+	# write daily CSV
+	csv.write(aleph + ';' + sif + ';' + code + ';' + code_text + '\n')
 
 # ARG -------------------
 
@@ -158,7 +162,12 @@ try:
 	log = open(LOG, 'w', 0)
 	log.write(HTML_HEADER)
 except:
-	print('Read only FS exiting..')
+	print('LOG: Read only FS exiting..')
+	exit(1)
+try:
+	csv = open(CSV, 'w', 0)
+except:
+	print('CSV: Read only FS exiting..')
 	exit(1)
 try:
 	with open(COUNTRY_CODE, 'r') as f: country_code = f.read().splitlines()
@@ -797,4 +806,5 @@ if args.notify: notify()
 
 log.write(HTML_FOOTER)
 log.close()
+csv.close()
 
