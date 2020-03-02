@@ -1,0 +1,223 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# OAI-PMH 2.0 MARCXML Record validator.
+#
+
+# INCLUDE -------------------
+
+from __future__ import print_function
+
+import argparse,StringIO,urllib2,smtplib,sys,os,re
+
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+from oaipmh.client import Client
+from oaipmh.metadata import MetadataRegistry
+from pymarc import marcxml
+from lxml.etree import tostring
+
+# VAR -------------------
+
+URL='https://aleph.lib.cas.cz/OAI'
+SIF_CODE='/usr/local/bin/sif_code.txt'
+OUTDIR='/tmp/5xx'
+
+MAIL_SENDER='xxx'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
+
+RECORD=0
+COUNTER=0
+MATCH=0
+
+# DEF -------------------
+
+def MarcXML(xml):
+	handler = marcxml.XmlHandler()
+	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	return handler.records[0]
+
+def valid_date(s):
+	try:
+		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+	except:
+		raise argparse.ArgumentTypeError('Invalid date format.')
+
+def valid_display(s):
+	if s in ('ident', 'marc'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid display format.')
+
+def valid_request(s):
+	if s in ('record', 'ident', 'set', 'meta'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid request format.')
+
+def notify():
+	body = ('Dobrý den,<br><br>V příloze naleznete seznam textů všech záznamů za poslední měsíc.<br><br>' +
+		'Prosíme o jazykovou kontrolu a nápravu.<br>---------------------------<br><br>' +
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>'
+		)
+	for SIF in sif_code:
+		try:
+			f = open(OUTDIR + '/' + SIF + '.csv', 'r')
+			msg = MIMEMultipart()
+			msg.attach(MIMEText(body.decode('utf-8'), 'html', 'utf-8'))
+			att = MIMEText(f.read(), _charset='utf-8')
+			att['Content-Disposition'] = "attachment; filename*=utf-8''" + urllib2.quote((SIF + '.csv').encode('utf-8'))
+			msg.attach(att)
+			msg['Subject'] = 'Kontrolní zpráva'
+			msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+			msg['To'] = sif_code[SIF]
+			try:
+				s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+				s.sendmail(MAIL_SENDER, sif_code[SIF], msg.as_string())
+				s.quit()
+			except:
+				try:
+					s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+					s.sendmail(MAIL_SENDER, sif_code[SIF], msg.as_string())
+					s.quit()
+				except:
+					print('Sendmail error.')
+			f.close()
+		except:
+			pass
+
+# ARG -------------------
+
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
+listing = parser.add_argument_group('request')
+listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
+required = parser.add_argument_group('validation')
+required.add_argument('--set', help='Records set.')
+required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
+optional = parser.add_argument_group('output')
+optional.add_argument('--check', help='Validation control.', action='store_true')
+optional.add_argument('--notify', help='Validation control.', action='store_true')
+args = parser.parse_args()
+
+if args.get == 'record' or args.get == 'ident':
+	if not args.set:
+		parser.error('argument --set is required.')
+	if not args.from_date:
+		parser.error('argument --from is required.')
+	if not args.until_date:
+		parser.error('argument --until is required.')
+
+if args.get == 'ident':
+	if args.check or args.notify or args.export:
+		parser.error('Invalid optional argument.')
+	if args.display and args.display != 'ident':
+		parser.error('Invalid display argument.')
+
+# INIT -------------------
+
+try:
+	os.mkdir(OUTDIR)
+except:
+	pass
+
+try:
+	sif_code = {}
+	with open(SIF_CODE, 'r') as f:
+		for line in f:
+			acct_code, acct_addr = line.decode('utf-8').split(':')
+			sif_code[acct_code] = acct_addr.strip()
+except: sif_code = {}
+
+registry = MetadataRegistry()
+registry.registerReader('marc21', MarcXML)
+
+oai = Client(URL, registry)
+
+try:
+	if args.get == 'record':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'ident':
+		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
+except:
+	records=[]
+
+# MAIN -------------------
+
+for record in records:
+
+	if args.get == 'set' or args.get == 'meta':
+		print(record[0])
+		COUNTER+=1
+		continue
+
+	if args.get == 'ident':
+		if record.isDeleted(): continue
+		COUNTER+=1
+		continue
+
+	header = record[0]
+	metadata = record[1]
+
+	# skip deleted records
+	if header.isDeleted(): continue
+
+	# retry missing metadata(?)
+	if not metadata:
+		print(header.identifier() + ' Missing matadata. Retrying..')
+		retry = oai.getRecord(metadataPrefix='marc21', identifier=header.identifier())
+		if not retry[1]:
+			print(header.identifier() + ' Missing retry metadata.')
+			continue
+		else:
+			header = retry[0]
+			metadata = retry[1]
+
+	# VALIDATION ------------------
+
+	if args.check:
+		
+		# SKIP OLD ------------------
+
+		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
+
+		# SKIP BOT ------------------
+
+		#BOT=False
+		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+		#	if 'a' in F:
+		#		if re.match('BATCH', F['a']): BOT=True
+		#if BOT: continue
+
+		# 1xx/6xx-653/700/710/711/730 ------------------
+
+		if 'SIF' in metadata:
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
+		else:
+			SIF = ''
+
+		for TAG in [f.tag for f in metadata.fields]:
+			if TAG != '599':
+				if re.match('(245|246|5..)', str(TAG)):
+					if SIF in sif_code:
+						f = open(OUTDIR + '/' + SIF + '.csv', 'a', 0)
+						f.write(
+							re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '; ' +
+							str(TAG) + '; ' +
+							metadata[TAG].value().encode('utf-8') + '\n'
+						)
+						f.close()
+					MATCH+=1
+		COUNTER+=1
+
+# EXIT -------------------
+
+if args.notify: notify()
+
+print('TOTAL: ' + str(COUNTER))
+print('MATCH: ' + str(MATCH))
+

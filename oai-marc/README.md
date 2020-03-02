@@ -34,6 +34,7 @@ sif_code.txt
 
 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 00 6 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
+30 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
 </pre>
 APACHE
 <pre>
@@ -54,8 +55,10 @@ APACHE
 FILE
 <pre>
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
+         oai-5xx - Send dumped 245/246/5xx text for correction. 
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
+     oai-monthly - Crontab monthly runner.
 
            html/ - Apache AutoIndexing HTML structure.
            mods/ - Custom mods.

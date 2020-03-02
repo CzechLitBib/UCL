@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Crontab daily runner
+#
+# 30 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
+#
+
+DATA_PATH='/tmp/5xx'
+
+# ------------------------
+
+echo "start $(date '+%Y-%m-%d %H:%M:%S')"
+
+mkdir -p "$DATA_PATH" 2> /dev/null
+
+oai-5xx \
+	--set UCLA \
+	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
+	--until "$(date +'%Y-%m-01 00:00:00')" \
+	--check \
+	--notify
+
+rm -r "$DATA_PATH" 2> /dev/null
+
+echo "end $(date '+%Y-%m-%d %H:%M:%S')"
+
+exit 0
+
