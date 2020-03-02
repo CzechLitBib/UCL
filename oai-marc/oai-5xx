@@ -199,7 +199,7 @@ for record in records:
 		else:
 			SIF = ''
 
-		for TAG in [f.tag for f in metadata.fields]:
+		for TAG, VALUE in [(f.tag, f.value()) for f in metadata.fields]:
 			if TAG != '599':
 				if re.match('(245|246|5..)', str(TAG)):
 					if SIF in sif_code:
@@ -207,7 +207,7 @@ for record in records:
 						f.write(
 							re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '; ' +
 							str(TAG) + '; ' +
-							metadata[TAG].value().encode('utf-8') + '\n'
+							VALUE.encode('utf-8') + '\n'
 						)
 						f.close()
 					MATCH+=1
