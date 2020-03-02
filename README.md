@@ -6,7 +6,6 @@ Library support software.
 TODO
 
 - oai-marc - CSV download
-- ID + raw 245 + 5xx(500,505,520).txt > 235000 SIF@ monthly
 - 080a + 650/655 (7) + order AUT check: aleph.nkp.cz/OAI "national authority DB" 150/080/089
 
 FILE
