@@ -56,8 +56,8 @@ def valid_request(s):
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def notify():
-	body = ('Dobrý den,<br><br>V příloze naleznete seznam textů všech záznamů za poslední měsíc.<br><br>' +
-		'Prosíme o jazykovou kontrolu a nápravu.<br>---------------------------<br><br>' +
+	body = ('Dobrý den,<br><br>V příloze naleznete seznam všech textových polí z vašich záznamů za poslední měsíc.<br><br>' +
+		'Prosíme o jazykovou kontrolu (např. kontrola gramatiky ve Wordu) a opravu.<br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>'
 		)
 	for SIF in sif_code:
