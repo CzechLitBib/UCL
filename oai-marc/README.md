@@ -48,7 +48,7 @@ APACHE
 		AddIcon /icons/world2.gif ..
 		IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable IgnoreClient
 		IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
-		IndexIgnore .??* include motol
+		IndexIgnore .??* include
 		IndexStyleSheet /include/STYLE.css
 		AllowOverride Indexes
 	&lt/Directory&gt;
