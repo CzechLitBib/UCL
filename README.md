@@ -5,8 +5,6 @@ Library support software.
 
 TODO
 
-- oai-marc - CSV download(HTML inline dot CSV file)
-- oai-5xx Fix tag repeat.
 - 080a + 650/655 (7) + order AUT check: aleph.nkp.cz/OAI "national authority DB" 150/080/089
 
 FILE
