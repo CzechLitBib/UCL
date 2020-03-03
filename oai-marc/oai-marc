@@ -21,7 +21,7 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 LOG='oai-marc.html'
-CSV='.oai-marc.csv'
+CSV='oai-marc.csv'
 
 COUNTRY_CODE='/usr/local/bin/country_code.txt'
 LANG_CODE='/usr/local/bin/lang_code.txt'
