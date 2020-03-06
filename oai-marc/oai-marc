@@ -38,12 +38,11 @@ HTML_HEADER='''<!doctype html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="background-color:black;color:#6DAE42;">
-<br>[ <a href="CSVPLACEHOLDER" style="color:white; text-decoration:none;">CSV</a> ]<br>
+<br>[ <a href="CSVPLACEHOLDER" style="color:white; text-decoration:none;">CSV</a> ]
 <br>
 '''
 
-HTML_FOOTER='''<br>
-</body>
+HTML_FOOTER='''</body>
 </html>
 '''
 
@@ -800,7 +799,7 @@ print('TOTAL ' + str(COUNTER))
 
 if args.check:
 	print('MATCH ' + str(MATCH))
-	if records and MATCH == 0: log.write('<font color="white">Žádný záznam.</font>')
+	if records and MATCH == 0: log.write('<p><font color="white">Žádný záznam.</font></p>')
 
 if args.notify: notify()
 
