@@ -203,7 +203,7 @@ try:
 	if args.get == 'meta':
 		records = oai.listMetadataFormats()
 except:
-	log.write('<p><font color="white">Spojení selhalo.</font></p>')
+	log.write('<p><font color="white">Žádný záznam.</font></p>')
 	records=[]
 
 # MAIN -------------------
