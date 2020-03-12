@@ -6,10 +6,15 @@
 #
 
 DATA_PATH='/tmp/5xx'
+SEVEN_DATA_PATH='/tmp/7'
 
 # ------------------------
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
+
+#
+# "5xx"
+#
 
 mkdir -p "$DATA_PATH" 2> /dev/null
 
@@ -21,6 +26,20 @@ oai-5xx \
 	--notify
 
 rm -r "$DATA_PATH" 2> /dev/null
+
+#
+# "7"
+#
+
+mkdir -p "$SEVEN_DATA_PATH" 2> /dev/null
+
+oai-7 \
+	--set UCLA \
+	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
+	--until "$(date +'%Y-%m-01 00:00:00')" \
+	--check
+
+rm -r "$SEVEN_DATA_PATH" 2> /dev/null
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
