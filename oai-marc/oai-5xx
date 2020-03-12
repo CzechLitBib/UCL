@@ -204,13 +204,12 @@ for record in records:
 				if re.match('(245|246|5..)', str(TAG)):
 					if SIF in sif_code:
 						try:
-							f = open(OUTDIR + '/' + SIF + '.csv', 'a', 0)
-							f.write(
-								re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '; ' +
-								str(TAG) + '; ' +
-								VALUE.encode('utf-8') + '\n'
-							)
-							f.close()
+							with open(OUTDIR + '/' + SIF + '.csv', 'a', 0) as f:
+								f.write(
+									re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '; ' +
+									str(TAG) + '; ' +
+									VALUE.encode('utf-8') + '\n'
+								)
 						except: pass
 					MATCH+=1
 		COUNTER+=1
