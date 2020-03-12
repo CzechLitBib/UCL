@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# OAI-PMH 2.0 MARCXML Record validator.
+# OAI-PMH 2.0 MARCXML subfield '7' control.
 #
 
 # INCLUDE -------------------
@@ -20,7 +20,44 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-CSV='7.csv'
+OUTDIR='/tmp/7'
+WEBDIR='/var/www/html/7'
+DATADIR=WEBDIR + '/data'
+TAGFILE=WEBDIR + 'tag.txt'
+TAGLIST=[]
+
+DATA_HEADER='''!doctype html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="background-color:black;color:#6DAE42;">
+<br>
+'''
+DATA_FOOTER='''</body>
+</html>
+'''
+INDEX_TOP='''<!doctype html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="background-color:black;color:#6DAE42;">
+<br>
+<b><u>OAI-PMH 2.0 MARCXML</u></b>
+<br><br><font size="3" color="white">Výstup pravidelné kontroly podpole "7" záznamů MARCXML v databázi Aleph.</font>
+<br><br><br>
+<table border="0" cellpadding="8px" style="border-collapse:collapse;">
+<tr>
+<td width="30" bgcolor="#333333;" align="center"><font color="gold">Tag</font></td>
+<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Podpole 7</font></td>
+<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Bez podpole 7</font></td>
+</tr>
+'''
+INDEX_MID='''</table>
+<br><br>
+<table border="0" cellpadding="4px" style="border-collapse:collapse;">
+'''
+INDEX_BOTTOM='''</table>
+</body>
+</html>
+'''
 
 RECORD=0
 COUNTER=0
@@ -79,10 +116,8 @@ if args.get == 'ident':
 # INIT -------------------
 
 try:
-	csv = open(CSV, 'a', 0)
-except:
-	print('Read only FS exiting..')
-	exit(1)
+	with open(TAGFILE, 'r', 0) as f: f.read().splitlines()
+except:	TAGLIST=[]
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -141,27 +176,63 @@ for record in records:
 		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
 
 		# SKIP BOT ------------------
-
-		BOT=False
-		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
-			if 'a' in F:
-				if re.match('BATCH', F['a']): BOT=True
-		if BOT: continue
-
+		#
+		#BOT=False
+		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+		#	if 'a' in F:
+		#		if re.match('BATCH', F['a']): BOT=True
+		#if BOT: continue
+		#
 		# 1xx/6xx-653/700/710/711/730 ------------------
 
-		for TAG in [f.tag for f in metadata.fields]:
+		ALEPH = re.sub('^.*-(\d+)$', '\\1', header.identifier())
+
+		for TAG, VALUE, SEVEN in [(f.tag, f['a'], f['7']) for f in metadata.fields]:
 			if re.match('(1..|6..|700|710|711|730)', str(TAG)):
-				if TAG != 653 and '7' not in metadata[TAG]:
-					if 'a' in metadata[TAG]:
-						csv.write(
-							metadata[TAG]['a'].encode('utf-8') + ';' +
-							str(TAG) + ';' +
-							re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '\n'
-						)
-					MATCH+=1
-				COUNTER+=1
+				if TAG != 653:
+					if TAG not in TAGLIST: TAGLIST.append(TAG)
+					if not SEVEN and VALUE:
+						try:
+							# CSV
+							with open(TAG + '.csv', 'a', 0) as f:
+								f.write(VALUE.encode('iso-8859-2') + ';' + TAG + ';' + ALEPH + '\n')
+							# HTML
+							with open(TAG + '.txt', 'a', 0) as f:
+								f.write(
+									'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+									ALEPH +  '&local_base=AV">' + ALEPH + '</a> [<font color="gold">' +
+									TAG + '</font>] ' + ' <font color="white">' +
+									VALUE.encode('iso-8859-2') + '</font></p>\n'
+								)
+							except: print(ALEPH +  ' Write failed.')
+							MATCH+=1
+					if SEVEN and VALUE:
+						try:
+							# CSV
+							with open(TAG + '.7.csv', 'a', 0) as f:
+								f.write(VALUE.encode('iso-8859-2') + ';' + TAG + ';' + ALEPH + '\n')
+							# HTML
+							with open(TAG + '.7.txt', 'a', 0) as f:
+							f.write(
+								'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+								ALEPH +  '&local_base=AV">' + ALEPH + '</a> [<font color="gold">' +
+								TAG + '</font>] ' + ' <font color="white">' +
+								VALUE.encode('iso-8859-2') + '</font></p>\n'
+						
+							)
+							f.close()
+						except: print(ALEPH + ' Write failed.')
+					COUNTER+=1
 		RECORD+=1
+
+# UPDATE -------------------
+
+# update tag list
+with open(TAGFILE, 'w', 0) as f:
+	for TAG in TAGLIST: f.write(TAG + '\n')
+# update data file
+
+# update index
 
 # EXIT -------------------
 
