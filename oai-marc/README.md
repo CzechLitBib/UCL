@@ -21,6 +21,8 @@ python -B setup.py install
 
 /usr/local/bin/:
 
+oai-7
+oai-5xx
 oai-marc
 oai-daily
 oai-weekly
@@ -57,6 +59,7 @@ FILE
 <pre>
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
          oai-5xx - Send dumped 245/246/5xx text for correction. 
+           oai-7 - Evaluate subfield "7" data. 
 
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
