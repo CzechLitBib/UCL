@@ -191,8 +191,8 @@ for record in records:
 		ALEPH = re.sub('^.*-(\d+)$', '\\1', header.identifier())
 
 		for TAG, VALUE, SEVEN in [(f.tag, f['a'], f['7']) for f in metadata.fields]:
-			if re.match('(1..|6..|700|710|711|730)', str(TAG)):
-				if TAG != 653:
+			if re.match('(1..|6..|700|710|711|730)', TAG):
+				if TAG != '653':
 					if TAG not in TAGLIST: TAGLIST.append(TAG)
 					if not SEVEN and VALUE:
 						try:
