@@ -8,9 +8,8 @@
 
 from __future__ import print_function
 
-import argparse,StringIO,urllib2,smtplib,sys,os,re
+import argparse,StringIO,sys,os,re
 
-from email.mime.text import MIMEText
 from datetime import datetime
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
@@ -20,21 +19,11 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-OUTDIR='/tmp/7'
-WEBDIR='/var/www/html/7'
-DATADIR=WEBDIR + '/data'
-TAGFILE=WEBDIR + 'tag.txt'
+DATADIR='/var/www/html/7/raw/'
+TAGFILE='/var/www/html/7/tag.txt'
+INDEXFILE='/var/www/html/7/index.html'
 TAGLIST=[]
 
-DATA_HEADER='''!doctype html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="background-color:black;color:#6DAE42;">
-<br>
-'''
-DATA_FOOTER='''</body>
-</html>
-'''
 INDEX_TOP='''<!doctype html>
 <html>
 <head><meta charset="utf-8"></head>
@@ -43,18 +32,32 @@ INDEX_TOP='''<!doctype html>
 <b><u>OAI-PMH 2.0 MARCXML</u></b>
 <br><br><font size="3" color="white">Výstup pravidelné kontroly podpole "7" záznamů MARCXML v databázi Aleph.</font>
 <br><br><br>
-<table border="0" cellpadding="8px" style="border-collapse:collapse;">
+<table border="1" cellpadding="8px" style="border-collapse:collapse;">
 <tr>
 <td width="30" bgcolor="#333333;" align="center"><font color="gold">Tag</font></td>
 <td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Podpole 7</font></td>
 <td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Bez podpole 7</font></td>
 </tr>
 '''
-INDEX_MID='''</table>
+INDEX_BOTTOM='''</table>
 <br><br>
 <table border="0" cellpadding="4px" style="border-collapse:collapse;">
-'''
-INDEX_BOTTOM='''</table>
+<tr>
+<td align="right"><font color="gold">Podpole 7</font></td>
+<td width="80" align="right"><font color="white">SEVEN_ALL</font></td>
+<td width="80" align="right">SEVEN_PERCENT%</td>
+</tr>
+<tr>
+<td align="right"><font color="gold">Bez podpole 7</font></td>
+<td width="80" align="right"><font color="white">NO7_ALL</font></td>
+<td width="80" align="right">NO7_PERCENT%</td>
+</tr>
+<tr>
+<td align="right"><font color="gold">Celkem</font></td>
+<td align="right"><font color="white">ALL</font></td>
+</tr>
+</table>
+<br>
 </body>
 </html>
 '''
@@ -194,34 +197,32 @@ for record in records:
 					if not SEVEN and VALUE:
 						try:
 							# CSV
-							with open(TAG + '.csv', 'a', 0) as f:
+							with open(DATADIR + TAG + '.csv', 'a', 0) as f:
 								f.write(VALUE.encode('iso-8859-2') + ';' + TAG + ';' + ALEPH + '\n')
 							# HTML
-							with open(TAG + '.txt', 'a', 0) as f:
+							with open(DATADIR + TAG + '.txt', 'a', 0) as f:
 								f.write(
 									'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 									ALEPH +  '&local_base=AV">' + ALEPH + '</a> [<font color="gold">' +
 									TAG + '</font>] ' + ' <font color="white">' +
 									VALUE.encode('iso-8859-2') + '</font></p>\n'
 								)
-							except: print(ALEPH +  ' Write failed.')
-							MATCH+=1
+						except: print(ALEPH + ' ' + TAG + ' Write failed.')
+						MATCH+=1
 					if SEVEN and VALUE:
 						try:
 							# CSV
-							with open(TAG + '.7.csv', 'a', 0) as f:
+							with open(DATADIR + TAG + '.7.csv', 'a', 0) as f:
 								f.write(VALUE.encode('iso-8859-2') + ';' + TAG + ';' + ALEPH + '\n')
 							# HTML
-							with open(TAG + '.7.txt', 'a', 0) as f:
-							f.write(
-								'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-								ALEPH +  '&local_base=AV">' + ALEPH + '</a> [<font color="gold">' +
-								TAG + '</font>] ' + ' <font color="white">' +
-								VALUE.encode('iso-8859-2') + '</font></p>\n'
-						
-							)
-							f.close()
-						except: print(ALEPH + ' Write failed.')
+							with open(DATADIR + TAG + '.7.txt', 'a', 0) as f:
+								f.write(
+									'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+									ALEPH +  '&local_base=AV">' + ALEPH + '</a> [<font color="gold">' +
+									TAG + '</font>] ' + ' <font color="white">' +
+									VALUE.encode('iso-8859-2') + '</font></p>\n'
+								)
+						except: print(ALEPH + ' ' + TAG + ' Write failed.')
 					COUNTER+=1
 		RECORD+=1
 
@@ -230,9 +231,23 @@ for record in records:
 # update tag list
 with open(TAGFILE, 'w', 0) as f:
 	for TAG in TAGLIST: f.write(TAG + '\n')
-# update data file
-
-# update index
+# write index
+try:
+	TAGLIST.sort()
+	with open(INDEXFILE, 'w', 0) as f:
+		f.write(INDEX_TOP)
+		for TAG in TAGLIST:
+			f.write('<tr>' + '\n')
+			f.write('<td width="30" align="right"><font color="gold">' + TAG + '</font></td>' + '\n')
+			f.write('<td width="60" align="center"><a href="data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+			f.write('<td width="40" align="center"><a href="data/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+			f.write('<td width="40" align="right">' + TAG + '_7_PERCENT%</td>' + '\n')
+			f.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+			f.write('<td width="40" align="center"><a href="data/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+			f.write('<td width="40" align="right">' + TAG +'_PERCENT%</td>' + '\n')
+			f.write('</tr>' + '\n')
+		f.write(INDEX_BOTTOM)
+except: print('Index write error.')
 
 # EXIT -------------------
 

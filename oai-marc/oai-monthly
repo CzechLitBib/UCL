@@ -6,7 +6,12 @@
 #
 
 DATA_PATH='/tmp/5xx'
-SEVEN_DATA_PATH='/tmp/7'
+
+SEVEN_PATH='/var/www/html/7'
+SEVEN_DATA_PATH='/var/www/html/7/data'
+SEVEN_RAW_PATH='/var/www/html/7/raw'
+SEVEN_TAG_FILE='/var/www/html/7/tag.txt'
+SEVEN_INDEX_FILE='/var/www/html/7/index.html'
 
 # ------------------------
 
@@ -31,7 +36,9 @@ rm -r "$DATA_PATH" 2> /dev/null
 # "7"
 #
 
+mkdir -p "$SEVEN_PATH" 2> /dev/null
 mkdir -p "$SEVEN_DATA_PATH" 2> /dev/null
+mkdir -p "$SEVEN_RAW_PATH" 2> /dev/null
 
 oai-7 \
 	--set UCLA \
@@ -39,7 +46,60 @@ oai-7 \
 	--until "$(date +'%Y-%m-01 00:00:00')" \
 	--check
 
-rm -r "$SEVEN_DATA_PATH" 2> /dev/null
+while read TAG; do
+	touch "$SEVEN_RAW_PATH/$TAG.txt"
+	touch "$SEVEN_RAW_PATH/$TAG.7.txt"
+	touch "$SEVEN_RAW_PATH/$TAG.csv"
+	touch "$SEVEN_RAW_PATH/$TAG.7.csv"
+
+	COUNT_NO_7=$(cat "$SEVEN_RAW_PATH/$TAG.txt" | wc -l)
+	COUNT_7=$(cat "$SEVEN_RAW_PATH/$TAG.7.txt" | wc -l)
+	COUNT=$(cat "$SEVEN_RAW_PATH/$TAG.txt" "$SEVEN_RAW_PATH/$TAG.7.txt" | wc -l)
+
+	# No 7
+	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.html"
+		<!doctype html>
+		<html>
+		<head><meta charset="iso-8859-2"></head>
+		<body style="background-color:black;color:#6DAE42;">
+		<br>
+	EOL
+	cat "$SEVEN_RAW_PATH/$TAG.txt" >> "$SEVEN_DATA_PATH/$TAG.html"
+	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.html"
+		<br>
+		</body>
+		</html>
+	EOL
+	ln -s  "$SEVEN_RAW_PATH/$TAG.csv" "$SEVEN_DATA_PATH/$TAG.csv" 2> /dev/null
+	sed -i "s/${TAG}_PERCENT/$(printf "%.1f" $(echo "$COUNT_NO_7 * 100 / $COUNT" | bc -l))/" "$SEVEN_INDEX_FILE"
+	# 7
+	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.7.html"
+		<!doctype html>
+		<html>
+		<head><meta charset="iso-8859-2"></head>
+		<body style="background-color:black;color:#6DAE42;">
+		<br>
+	EOL
+	cat "$SEVEN_RAW_PATH/$TAG.7.txt" >> "$SEVEN_DATA_PATH/$TAG.7.html"
+	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.7.html"
+		<br>
+		</body>
+		</html>
+	EOL
+	ln -s  "$SEVEN_RAW_PATH/$TAG.7.csv" "$SEVEN_DATA_PATH/$TAG.7.csv" 2> /dev/null
+	sed -i "s/${TAG}_7_PERCENT/$(printf "%.1f" $(echo "$COUNT_7 * 100 / $COUNT" | bc -l))/" "$SEVEN_INDEX_FILE"
+
+done < $SEVEN_TAG_FILE
+
+TOTAL=$(cat "$SEVEN_RAW_PATH"/*.txt | wc -l)
+TOTAL_7=$(cat "$SEVEN_RAW_PATH"/*.7.txt | wc -l)
+TOTAL_NO_7=$(echo "$TOTAL - $TOTAL_7" | bc)
+
+sed -i "s/SEVEN_ALL/${TOTAL_7}/" "$SEVEN_INDEX_FILE"
+sed -i "s/SEVEN_PERCENT/$(printf "%.1f" $(echo "$TOTAL_7 * 100 / $TOTAL" | bc -l))/" "$SEVEN_INDEX_FILE"
+sed -i "s/NO7_ALL/${TOTAL_NO_7}/" "$SEVEN_INDEX_FILE"
+sed -i "s/NO7_PERCENT/$(printf "%.1f" $(echo "$TOTAL_NO_7  * 100 / $TOTAL" | bc -l))/" "$SEVEN_INDEX_FILE"
+sed -i "s/ALL/${TOTAL}/" "$SEVEN_INDEX_FILE"
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
