@@ -57,7 +57,7 @@ while read TAG; do
 	COUNT=$(cat "$SEVEN_RAW_PATH/$TAG.txt" "$SEVEN_RAW_PATH/$TAG.7.txt" | wc -l)
 
 	# No 7
-	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.html"
+	cat <<- EOL > "$SEVEN_DATA_PATH/$TAG.html"
 		<!doctype html>
 		<html>
 		<head><meta charset="iso-8859-2"></head>
@@ -73,7 +73,7 @@ while read TAG; do
 	ln -s  "$SEVEN_RAW_PATH/$TAG.csv" "$SEVEN_DATA_PATH/$TAG.csv" 2> /dev/null
 	sed -i "s/${TAG}_PERCENT/$(printf "%.1f" $(echo "$COUNT_NO_7 * 100 / $COUNT" | bc -l))/" "$SEVEN_INDEX_FILE"
 	# 7
-	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.7.html"
+	cat <<- EOL > "$SEVEN_DATA_PATH/$TAG.7.html"
 		<!doctype html>
 		<html>
 		<head><meta charset="iso-8859-2"></head>
