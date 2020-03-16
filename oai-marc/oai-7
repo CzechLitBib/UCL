@@ -119,7 +119,7 @@ if args.get == 'ident':
 # INIT -------------------
 
 try:
-	with open(TAGFILE, 'r', 0) as f: f.read().splitlines()
+	with open(TAGFILE, 'r', 0) as f: TAGLIST = f.read().splitlines()
 except:	TAGLIST=[]
 
 registry = MetadataRegistry()
