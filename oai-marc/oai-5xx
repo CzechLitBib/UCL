@@ -201,13 +201,13 @@ for record in records:
 
 		for TAG, VALUE in [(f.tag, f.value()) for f in metadata.fields]:
 			if TAG != '599':
-				if re.match('(245|246|5..)', str(TAG)):
+				if re.match('(245|246|5..)', TAG):
 					if SIF in sif_code:
 						try:
 							with open(OUTDIR + '/' + SIF + '.csv', 'a', 0) as f:
 								f.write(
 									re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '; ' +
-									str(TAG) + '; ' +
+									TAG + '; ' +
 									VALUE.encode('utf-8') + '\n'
 								)
 						except: pass
