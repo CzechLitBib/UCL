@@ -8,8 +8,10 @@
 DATA_PATH='/tmp/5xx'
 
 SEVEN_PATH='/var/www/html/7'
+SEVEN_ARCHIVE_PATH='/var/www/html/7/archive'
 SEVEN_DATA_PATH='/var/www/html/7/data'
 SEVEN_RAW_PATH='/var/www/html/7/raw'
+
 SEVEN_TAG_FILE='/var/www/html/7/tag.txt'
 SEVEN_INDEX_FILE='/var/www/html/7/index.html'
 
@@ -37,16 +39,32 @@ rm -r "$DATA_PATH" 2> /dev/null
 #
 
 mkdir -p "$SEVEN_PATH" 2> /dev/null
+mkdir -p "$SEVEN_ARCHIVE_PATH" 2> /dev/null
 mkdir -p "$SEVEN_DATA_PATH" 2> /dev/null
 mkdir -p "$SEVEN_RAW_PATH" 2> /dev/null
 
-oai-7 \
+# backup prev. year
+if [ $(date +'%-m') == 2 ]; then
+	tar czf "$SEVEN_ARCHIVE_PATH/$(date +'%Y').tar.gz" "$SEVEN_DATA_PATH" "$SEVEN_TAG_FILE" "$SEVEN_INDEX_FILE" 
+fi
+
+rm -f "$SEVEN_RAW_PATH"/* 2> /dev/null
+rm "$SEVEN_TAG_FILE" 2> /dev/null
+
+# catch new year
+MONTH=$([ $(date +'%-m') == 1 ] && echo 13 || echo $(date +'%-m'))
+
+for ((M=0; M < $MONTH - 1; M++)); do
+	oai-7 \
 	--set UCLA \
-	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
-	--until "$(date +'%Y-%m-01 00:00:00')" \
+	--from "$(date --date="$(date +'%Y-01-01') +$M month" +'%Y-%m-%d 00:00:00')" \
+	--until "$(date --date="$(date +'%Y-01-01') +$M month +1 month" +'%Y-%m-%d 00:00:00')" \
 	--check
+	sleep 10 
+done
 
 while read TAG; do
+	# empty set
 	touch "$SEVEN_RAW_PATH/$TAG.txt"
 	touch "$SEVEN_RAW_PATH/$TAG.7.txt"
 	touch "$SEVEN_RAW_PATH/$TAG.csv"
