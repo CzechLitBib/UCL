@@ -57,7 +57,7 @@ INDEX_BOTTOM='''</table>
 <td align="right"><font color="white">ALL</font></td>
 </tr>
 </table>
-<br>
+<br><a href="/" title="Back"><font size="3" color="white">[Domů]</font></a><br><br>
 </body>
 </html>
 '''
