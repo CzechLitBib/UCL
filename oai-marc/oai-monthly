@@ -8,7 +8,7 @@
 DATA_PATH='/tmp/5xx'
 
 SEVEN_PATH='/var/www/html/7'
-SEVEN_ARCHIVE_PATH='/var/www/html/7/archive'
+SEVEN_ARCHIVE_PATH='/var/www/html/archiv/7'
 SEVEN_DATA_PATH='/var/www/html/7/data'
 SEVEN_RAW_PATH='/var/www/html/7/raw'
 
