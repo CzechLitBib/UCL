@@ -45,7 +45,8 @@ mkdir -p "$SEVEN_RAW_PATH" 2> /dev/null
 
 # backup prev. year
 if [ $(date +'%-m') == 2 ]; then
-	tar czf "$SEVEN_ARCHIVE_PATH/$(date +'%Y').tar.gz" "$SEVEN_DATA_PATH" "$SEVEN_TAG_FILE" "$SEVEN_INDEX_FILE" 
+	tar czf "$SEVEN_ARCHIVE_PATH/$(date +'%Y').tar.gz" \
+	"$SEVEN_RAW_PATH" "$SEVEN_DATA_PATH" "$SEVEN_TAG_FILE" "$SEVEN_INDEX_FILE" 2> /dev/null
 fi
 
 rm -f "$SEVEN_RAW_PATH"/* 2> /dev/null
@@ -61,7 +62,7 @@ for ((M=0; M < $MONTH - 1; M++)); do
 	--from "$(date --date="$(date +'%Y-01-01') +$M month" +'%Y-%m-%d 00:00:00')" \
 	--until "$(date --date="$(date +'%Y-01-01') +$M month +1 month" +'%Y-%m-%d 00:00:00')" \
 	--check
-	sleep 10 
+	sleep 10
 done
 
 while read TAG; do
@@ -74,7 +75,6 @@ while read TAG; do
 	COUNT_NO_7=$(cat "$SEVEN_RAW_PATH/$TAG.txt" | wc -l)
 	COUNT_7=$(cat "$SEVEN_RAW_PATH/$TAG.7.txt" | wc -l)
 	COUNT=$(cat "$SEVEN_RAW_PATH/$TAG.txt" "$SEVEN_RAW_PATH/$TAG.7.txt" | wc -l)
-
 	# No 7
 	cat <<- EOL > "$SEVEN_DATA_PATH/$TAG.html"
 		<!doctype html>
