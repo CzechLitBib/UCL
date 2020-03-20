@@ -83,7 +83,7 @@ while read TAG; do
 	cat <<- EOL > "$SEVEN_DATA_PATH/$TAG.html"
 		<!doctype html>
 		<html>
-		<head><meta charset="iso-8859-2"></head>
+		<head><meta charset="utf-8"></head>
 		<body style="background-color:black;color:#6DAE42;">
 		<br>
 	EOL
@@ -99,7 +99,7 @@ while read TAG; do
 	cat <<- EOL > "$SEVEN_DATA_PATH/$TAG.7.html"
 		<!doctype html>
 		<html>
-		<head><meta charset="iso-8859-2"></head>
+		<head><meta charset="utf-8"></head>
 		<body style="background-color:black;color:#6DAE42;">
 		<br>
 	EOL

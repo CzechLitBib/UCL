@@ -190,7 +190,7 @@ for record in records:
 
 		ALEPH = re.sub('^.*-(\d+)$', '\\1', header.identifier())
 
-		for TAG, VALUE, SEVEN in [(f.tag, f['a'], f['7']) for f in metadata.fields]:
+		for TAG, VALUE, SEVEN in [(f.tag, f.value(), f['7']) for f in metadata.fields]:
 			if re.match('(1..|6..|700|710|711|730)', TAG):
 				if TAG != '653':
 					if TAG not in TAGLIST: TAGLIST.append(TAG)
@@ -198,13 +198,13 @@ for record in records:
 						try:
 							# CSV
 							with open(DATADIR + TAG + '.csv', 'a', 0) as f:
-								f.write(VALUE.encode('iso-8859-2') + ';' + ALEPH + '\n')
+								f.write(VALUE.encode('utf-8') + ';' + ALEPH + '\n')
 							# HTML
 							with open(DATADIR + TAG + '.txt', 'a', 0) as f:
 								f.write(
 									'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 									ALEPH +  '&local_base=AV">' + ALEPH + '</a>' +
-									' <font color="white">' + VALUE.encode('iso-8859-2') + '</font></p>\n'
+									' <font color="white">' + VALUE.encode('utf-8') + '</font></p>\n'
 								)
 						except: print(ALEPH + ' ' + TAG + ' Write failed.')
 						MATCH+=1
@@ -212,13 +212,13 @@ for record in records:
 						try:
 							# CSV
 							with open(DATADIR + TAG + '.7.csv', 'a', 0) as f:
-								f.write(VALUE.encode('iso-8859-2') + ';' + ALEPH + '\n')
+								f.write(VALUE.encode('utf-8') + ';' + ALEPH + '\n')
 							# HTML
 							with open(DATADIR + TAG + '.7.txt', 'a', 0) as f:
 								f.write(
 									'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 									ALEPH +  '&local_base=AV">' + ALEPH + '</a>' +
-									' <font color="white">' + VALUE.encode('iso-8859-2') + '</font></p>\n'
+									' <font color="white">' + VALUE.encode('utf-8') + '</font></p>\n'
 								)
 						except: print(ALEPH + ' ' + TAG + ' Write failed.')
 					COUNTER+=1
