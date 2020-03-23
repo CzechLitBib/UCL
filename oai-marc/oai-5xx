@@ -210,7 +210,7 @@ for record in records:
 									TAG + '; ' +
 									VALUE.encode('utf-8') + '\n'
 								)
-						except: pass
+						except: print(re.sub('^.*-(\d+)$', '\\1', header.identifier()) + ' Write failed.')
 					MATCH+=1
 		COUNTER+=1
 
