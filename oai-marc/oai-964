@@ -164,7 +164,7 @@ for record in records:
 				os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
 			except: pass
 			try:
-				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '.' + sub_base + '.bib', 'w', 0) as f:
+				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '.' + sub_base + '.bib', 'a', 0) as f:
 					for F in metadata:
 						try:
 							IND=''
