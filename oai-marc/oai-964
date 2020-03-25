@@ -150,9 +150,9 @@ for record in records:
 		ALEPH = re.sub('^.*-(\d+)$', '\\1', header.identifier())
 
 		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].ljust(5)
 		else:
-			SIF = ''
+			SIF = ''.ljust(5)
 
 		if '964' and '990' in metadata:# 990 -> FMT
 			base = metadata['964'].value()
@@ -182,9 +182,9 @@ for record in records:
 							else: DATA = ''
 						except: DATA = F.value()
 						if F.tag == 'LDR':
-							f.write(SIF + ';' + ALEPH + ';LDR' + IND + ' L ' + metadata.leader.encode('utf-8') + '\n')
+							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';LDR' + IND + ' L ' + metadata.leader.encode('utf-8') + '\n')
 						else:
-							f.write(SIF + ';' + ALEPH + ';' + str(F.tag) + str(IND) + ' L ' + DATA.encode('utf-8') + '\n')
+							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';' + str(F.tag) + str(IND) + ' L ' + DATA.encode('utf-8') + '\n')
 			except:
 				print(ALEPH + ' Write failed.')
 			COUNTER+=1
