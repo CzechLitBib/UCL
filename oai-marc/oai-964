@@ -181,6 +181,7 @@ for record in records:
         							DATA = '$$' + '$$'.join(VAL)
 							else: DATA = ''
 						except: DATA = F.value()
+						if F.tag == 'SYS': continue
 						if F.tag == 'LDR':
 							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';LDR' + IND + ' L ' + metadata.leader.encode('utf-8') + '\n')
 						else:
