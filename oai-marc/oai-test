@@ -1,0 +1,231 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# OAI-PMH 2.0 MARCXML Record text collector.
+#
+
+# INCLUDE -------------------
+
+from __future__ import print_function
+
+import argparse,StringIO,urllib2,smtplib,sys,os,re
+
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+from oaipmh.client import Client
+from oaipmh.metadata import MetadataRegistry
+from pymarc import marcxml
+from lxml.etree import tostring
+
+# VAR -------------------
+
+URL='https://aleph.lib.cas.cz/OAI'
+SIF_CODE='/usr/local/bin/sif_code.txt'
+OUTDIR='/tmp/5xx'
+
+MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
+MAIL_SERVER='listonos.ucl.cas.cz'
+MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
+
+COUNTER=0
+MATCH=0
+
+# DEF -------------------
+
+def MarcXML(xml):
+	handler = marcxml.XmlHandler()
+	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	return handler.records[0]
+
+def valid_date(s):
+	try:
+		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+	except:
+		raise argparse.ArgumentTypeError('Invalid date format.')
+
+def valid_display(s):
+	if s in ('ident', 'marc'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid display format.')
+
+def valid_request(s):
+	if s in ('record', 'ident', 'set', 'meta'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid request format.')
+
+# ARG -------------------
+
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
+listing = parser.add_argument_group('request')
+listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
+required = parser.add_argument_group('validation')
+required.add_argument('--set', help='Records set.')
+required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
+optional = parser.add_argument_group('output')
+optional.add_argument('--check', help='Validation control.', action='store_true')
+args = parser.parse_args()
+
+if args.get == 'record' or args.get == 'ident':
+	if not args.set:
+		parser.error('argument --set is required.')
+	if not args.from_date:
+		parser.error('argument --from is required.')
+	if not args.until_date:
+		parser.error('argument --until is required.')
+
+if args.get == 'ident':
+	if args.check or args.notify or args.export:
+		parser.error('Invalid optional argument.')
+	if args.display and args.display != 'ident':
+		parser.error('Invalid display argument.')
+
+# INIT -------------------
+
+try:
+	os.mkdir(OUTDIR)
+except:
+	pass
+
+try:
+	sif_code = {}
+	with open(SIF_CODE, 'r') as f:
+		for line in f:
+			acct_code, acct_addr = line.decode('utf-8').split(':')
+			sif_code[acct_code] = acct_addr.strip()
+except: sif_code = {}
+
+registry = MetadataRegistry()
+registry.registerReader('marc21', MarcXML)
+
+oai = Client(URL, registry)
+
+try:
+	if args.get == 'record':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'ident':
+		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
+except:
+	records=[]
+
+# MAIN -------------------
+
+for record in records:
+
+	if args.get == 'set' or args.get == 'meta':
+		print(record[0])
+		COUNTER+=1
+		continue
+
+	if args.get == 'ident':
+		if record.isDeleted(): continue
+		COUNTER+=1
+		continue
+
+	header = record[0]
+	metadata = record[1]
+
+	# skip deleted records
+	if header.isDeleted(): continue
+
+	# retry missing metadata(?)
+	if not metadata:
+		print(header.identifier() + ' Missing matadata. Retrying..')
+		retry = oai.getRecord(metadataPrefix='marc21', identifier=header.identifier())
+		if not retry[1]:
+			print(header.identifier() + ' Missing retry metadata.')
+			continue
+		else:
+			header = retry[0]
+			metadata = retry[1]
+
+	# VALIDATION ------------------
+
+	if args.check:
+		
+		# SKIP OLD ------------------
+
+		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
+
+		# SKIP BOT ------------------
+
+		#BOT=False
+		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+		#	if 'a' in F:
+		#		if re.match('BATCH', F['a']): BOT=True
+		#if BOT: continue
+
+		# 1xx/6xx-653/700/710/711/730 ------------------
+
+		if 'SIF' in metadata:
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
+		else:
+			SIF = ''
+
+		#008 -> rule 103
+
+		# CNB
+		CNB=False
+		if '008' in metadata:
+			if metadata['008'].value()[15:18].strip() == 'xr': CNB=True
+		if '044' in metadata:
+			if metadata['044'].value() == 'xr': CNB=True
+		if metadata.leader:
+			if metadata.leader[7] == 'm': CNB=True
+		if '506' in metadata:
+			if not re.match('^Bez čísla ČNB', metadata['506'].value()): CNB=True
+		if CNB and '015' not in metadata:
+			print('Chybí číslo ČNB.')
+		# CNB format
+		if '015' in metadata:
+			if not re.match('^cnb\d{9}$', metadata['015'].value()):
+				print('Chybný tvar čísla ČNB.')
+		#ISBN
+		if metadata.leader:
+			if metadata.leader[7] == 'm':
+				if '008' in metadata:
+					if int(metadata['008'].value()[7:11]) > 1989:
+						if '506' in metadata:
+							if metadata['506'].value() != 'ISBN':
+								if '020' in metadata:
+									if not 'a' in metadata['020']:
+										print('Chybí ISBN.')
+		#ISBN format
+		ISBN=False
+		if '020' in metadata:
+			for I in metadata['020'].get_subfields('a'):
+				if re.match('[0-9X]{10}', I.replace('-','')): ISBN=True
+				if re.match('[0-9X]{13}', I.replace('-','')): ISBN=True
+			if not ISBN:
+				print('Chybný tvar ISBN.')
+		# 020q
+		if '020' in metadata:
+			INT = metadata['020'].get_subfileds('q')
+			if INT:
+				if not (re.match('^\(.*', INT[0]) and re.match('.*\)$', INT[-1])):
+					print('Chybná interpunkce v poli 020q.')
+				if len(INT) >= 2:
+					for I in INT[:-1]:
+						if not re.match('.*;', I):
+							print('Chybná interpunkce v poli 020q.')
+		# 020	
+		for F in metadata.get_fields('020'):
+			for SUB in F.subfields[0::2]:
+				if SUB not in ('a', 'q', 'z'):
+					print('Chybný kód podpole v poli 020.')
+
+		# 035 / 964 + 965 / 035
+
+		# 035a
+
+		# 100c
+
+		# 110b/c
+
+# EXIT -------------------
+

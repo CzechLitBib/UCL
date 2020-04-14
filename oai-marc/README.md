@@ -63,6 +63,7 @@ FILE
          oai-964 - Generate Aleph Pseudo-Marc format file. 
            oai-7 - Evaluate subfield "7" data. 
 
+        oai-test - Test code.
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
      oai-monthly - Crontab monthly runner.
