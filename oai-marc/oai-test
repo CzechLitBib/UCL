@@ -253,34 +253,61 @@ for record in records:
 					print('Chybný zápis podpole 110c.')
 		# 110b
 		if '110' in metadata:
-			if 'c' in metadata['110'] and re.match('^\[.*', metadata['110']['c']):
-				if not 'b' in metadata:
-					print('Chybí podpole 110b.')
-		# 110b-2
-		if '110' in metadata:
 			if metadata['110'].indicator1 == 1:
-				if not 'b' in metadata:
+				if not 'b' in metadata['110']:
 					print('Chybí podpole 110b.')
 		# 710c
 		if '710' in metadata:
 			if metadata['710'].indicator1 == 0:
 				if not ('c' in metadata['710'] and re.match('^\[.*', metadata['710']['c'])):
 					print('Chybný zápis podpole 710c.')
-		
-					
-				
-						
-				
-				
-					
-
-		# 035 / 964 + 965 / 035
-
-		# 035a
-
-		# 100c
-
-		# 110b/c
+		# 710b
+		if '710' in metadata:
+			if metadata['710'].indicator1 == 1:
+				if not 'b' in metadata['710']:
+					print('Chybí podpole 710b.')
+		# 245c
+		if '254' in metadata:
+			if 'c' in metadata['245']:
+				if ';' in metadata['245']['c']:
+					if not re.match('.*(?<! ) ; (?! ).*', metadata['245']['c']):
+						print('Chybný zápis ; v 245c.')
+		# 505r
+		if '505' in metadata:
+			if 'r' in metadata['505']:
+				if ';' in metadata['505']['r']:
+					if not re.match('.*(?<! ) ; (?! ).*', metadata['505']['r']):
+						print('Chybný zápis ; v 505r.')
+		# 787n
+		if '787' in metadata:
+			if 'n' in metadata['787']:
+				if ';' in metadata['787']['n']:
+					if not re.match('.*(?<! ) ; (?! ).*', metadata['787']['n']):
+						print('Chybný zápis ; v 787n.')
+		# 787k
+		if '787' in metadata:
+			if 'k' in metadata['787']:
+				if ';' in metadata['787']['k']:
+					if not re.match('.*(?<! ) ; (?! ).*', metadata['787']['k']):
+						print('Chybný zápis ; v 787k.')
+		# 773n
+		if '773' in metadata:
+			if 'n' in metadata['773']:
+				if ';' in metadata['773']['n']:
+					if not re.match('.*(?<! ) ; (?! ).*', metadata['773']['n']):
+						print('Chybný zápis ; v 773n.')
+		# 245c
+		if '245' in metadata:
+			if 'c' in metadata['245']:
+				if re.match('.*[ .*', metadata['245']['c']):
+						print('Chybná interpunkce v 245c. Mezi [ a = je mezera.')
+		# 505r
+		if '505' in metadata:
+			if 'r' in metadata['505']:
+				if re.match('.*[ .*', metadata['505']['r']):
+						print('Chybná interpunkce v 505r. mezi [ a = je mezera.')
 
 # EXIT -------------------
+
+sys.exit(0)
 
