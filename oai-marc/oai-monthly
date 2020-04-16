@@ -55,7 +55,7 @@ fi
 
 rm -f "$SEVEN_RAW_PATH"/* 2> /dev/null
 rm -f "$SEVEN_DATA_PATH"/* 2> /dev/null
-rm "$SEVEN_TAG_FILE" 2> /dev/null
+rm -f "$SEVEN_TAG_FILE" 2> /dev/null
 
 # catch new year
 MONTH=$([ $(date +'%-m') == 1 ] && echo 13 || echo $(date +'%-m'))
