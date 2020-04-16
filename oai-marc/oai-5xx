@@ -12,7 +12,7 @@ import argparse,StringIO,urllib2,smtplib,sys,os,re
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime
+from datetime import datetime,date
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
@@ -191,6 +191,16 @@ for record in records:
 		#	if 'a' in F:
 		#		if re.match('BATCH', F['a']): BOT=True
 		#if BOT: continue
+
+		# SKIP NOT NEW ------------------
+
+		OLD = False
+		for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT/KAT
+			if 'c' in F:
+				CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
+				if CAT_DATE >= date.today().replace(day=1): OLD=True# 1st day this month
+				if CAT_DATE < date.today().replace(day=1,month=(date.today().month - 1)): OLD=True# 1st day prev. month 
+		if OLD: continue
 
 		# 1xx/6xx-653/700/710/711/730 ------------------
 
