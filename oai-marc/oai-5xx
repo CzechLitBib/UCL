@@ -194,7 +194,7 @@ for record in records:
 
 		# SKIP NOT NEW ------------------
 
-		OLD = False
+		OLD=False
 		for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT/KAT
 			if 'c' in F:
 				CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
