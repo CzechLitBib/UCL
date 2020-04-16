@@ -182,7 +182,7 @@ for record in records:
 		
 		# SKIP OLD ------------------
 
-		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
+		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
 
 		# SKIP BOT ------------------
 
