@@ -34,6 +34,8 @@ oai-5xx \
 
 rm -r "$DATA_PATH" 2> /dev/null
 
+echo "5xx done."
+
 #
 # "7"
 #
@@ -53,6 +55,8 @@ if [ $(date +'%-m') == 2 ]; then
 	gzip "$SEVEN_ARCHIVE_PATH/$(($(date +'%Y') - 1)).7.tar"
 fi
 
+echo "7-Backup done."
+
 rm -f "$SEVEN_RAW_PATH"/* 2> /dev/null
 rm -f "$SEVEN_DATA_PATH"/* 2> /dev/null
 rm -f "$SEVEN_TAG_FILE" 2> /dev/null
@@ -68,6 +72,8 @@ for ((M=0; M < $MONTH - 1; M++)); do
 	--check
 	sleep 10
 done
+
+echo "7-Harvest done."
 
 while read TAG; do
 	# empty set
@@ -114,6 +120,8 @@ while read TAG; do
 
 done < $SEVEN_TAG_FILE
 
+echo "7-HTML gen done."
+
 TOTAL=$(cat "$SEVEN_RAW_PATH"/*.txt | wc -l)
 TOTAL_7=$(cat "$SEVEN_RAW_PATH"/*.7.txt | wc -l)
 TOTAL_NO_7=$(echo "$TOTAL - $TOTAL_7" | bc)
@@ -124,6 +132,7 @@ sed -i "s/NO7_ALL/${TOTAL_NO_7}/" "$SEVEN_INDEX_FILE"
 sed -i "s/NO7_PERCENT/$(printf "%.1f" $(echo "$TOTAL_NO_7  * 100 / $TOTAL" | bc -l))/" "$SEVEN_INDEX_FILE"
 sed -i "s/ALL/${TOTAL}/" "$SEVEN_INDEX_FILE"
 
+echo "7-Stat done."
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
 exit 0
