@@ -306,6 +306,22 @@ for record in records:
 			if 'r' in metadata['505']:
 				if re.match('.*[ .*', metadata['505']['r']):
 						print('Chybná interpunkce v 505r. mezi [ a = je mezera.')
+		# 505r
+		if '505' in metadata:
+			if 'r' in metadata['505']:
+				if len(re.findall('\[', metadata['505']['r'])) != len(re.findall('\]', metadata['505']['r'])):
+						print('Odlišný počet [ a ] v poli 505r.')
+		# 245c
+		if '245' in metadata:
+			if 'c' in metadata['245']:
+				if len(re.findall('\[', metadata['245']['c'])) != len(re.findall('\]', metadata['245']['c'])):
+						print('Odlišný počet [ a ] v poli 245c.')
+		# 245
+		if '245' in metadata:
+			if metadata['245'].indicator1 == 0:
+				if '700' not in metadata and '500' in metadata:
+					if metadata['500'].value() != 'Nepodepsáno.':
+						print('Chybný 1. indikátor pole 245c')
 
 # EXIT -------------------
 
