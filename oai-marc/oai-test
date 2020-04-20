@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# OAI-PMH 2.0 MARCXML Record text collector.
+# OAI-PMH 2.0 MARCXML Record validator.
 #
 
 # INCLUDE -------------------
@@ -11,7 +11,6 @@ from __future__ import print_function
 import argparse,StringIO,urllib2,smtplib,sys,os,re
 
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
@@ -21,12 +20,22 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-SIF_CODE='/usr/local/bin/sif_code.txt'
-OUTDIR='/tmp/5xx'
+LOG='oai-test.html'
+CSV='oai-test.csv'
 
-MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
-MAIL_SERVER='listonos.ucl.cas.cz'
-MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
+ERROR={}
+
+HTML_HEADER='''<!doctype html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="background-color:black;color:#6DAE42;">
+<br>[ <a href="CSVPLACEHOLDER" style="color:white; text-decoration:none;">CSV</a> ]
+<br>
+'''
+
+HTML_FOOTER='''</body>
+</html>
+'''
 
 COUNTER=0
 MATCH=0
@@ -53,6 +62,33 @@ def valid_request(s):
 	if s in ('record', 'ident', 'set', 'meta'): return s
 	else:
 		raise argparse.ArgumentTypeError('Invalid request format.')
+
+def url_response(url):
+	try:
+		req = urllib2.Request(url)
+		req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0')
+		if urllib2.urlopen(req, timeout=10).getcode() == 200: return 1
+	except: pass
+	return 0
+
+def write_error(id,tag,sif,code,code_text):
+	aleph = re.sub('^.*-(\d+)$', '\\1', id)
+	SIF = sif.decode('utf-8').lower()
+	# error counter
+	global MATCH
+	MATCH+=1
+	# update errors
+	if SIF not in ERROR: ERROR[SIF] = {}
+	if aleph not in ERROR[SIF]: ERROR[SIF][aleph] = []
+	ERROR[SIF][aleph].append((code,code_text))
+	# write daily HTML
+	log.write(
+		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+		aleph+ '&local_base=AV">' + aleph + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
+		' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
+	)
+	# write daily CSV
+	csv.write(aleph + ';' + sif + ';' + code + ';' + code_text + '\n')
 
 # ARG -------------------
 
@@ -84,17 +120,16 @@ if args.get == 'ident':
 # INIT -------------------
 
 try:
-	os.mkdir(OUTDIR)
+	log = open(LOG, 'w', 0)
+	log.write(HTML_HEADER)
 except:
-	pass
-
+	print('LOG: Read only FS exiting..')
+	exit(1)
 try:
-	sif_code = {}
-	with open(SIF_CODE, 'r') as f:
-		for line in f:
-			acct_code, acct_addr = line.decode('utf-8').split(':')
-			sif_code[acct_code] = acct_addr.strip()
-except: sif_code = {}
+	csv = open(CSV, 'w', 0)
+except:
+	print('CSV: Read only FS exiting..')
+	exit(1)
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -111,6 +146,7 @@ try:
 	if args.get == 'meta':
 		records = oai.listMetadataFormats()
 except:
+	log.write('<p><font color="white">Žádný záznam.</font></p>')
 	records=[]
 
 # MAIN -------------------
@@ -154,37 +190,38 @@ for record in records:
 
 		# SKIP BOT ------------------
 
-		#BOT=False
-		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
-		#	if 'a' in F:
-		#		if re.match('BATCH', F['a']): BOT=True
-		#if BOT: continue
+		BOT=False
+		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+			if 'a' in F:
+				if re.match('BATCH', F['a']): BOT=True
+		if BOT: continue
 
-		# 1xx/6xx-653/700/710/711/730 ------------------
+		# TEST ------------------
 
 		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
-		else:
-			SIF = ''
+                        if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+                else:
+                        SIF = ''
 
 		#008 -> rule 103
 
 		# CNB
-		CNB=False
+		CNB=True
 		if '008' in metadata:
-			if metadata['008'].value()[15:18].strip() == 'xr': CNB=True
+			if metadata['008'].value()[15:18].strip() != 'xr': CNB=False
 		if '044' in metadata:
-			if metadata['044'].value() == 'xr': CNB=True
+			if metadata['044'].value() != 'xr': CNB=False
 		if metadata.leader:
-			if metadata.leader[7] == 'm': CNB=True
+			if metadata.leader[7] != 'm': CNB=False
 		if '506' in metadata:
-			if not re.match('^Bez čísla ČNB', metadata['506'].value()): CNB=True
-		if CNB and '015' not in metadata:
-			print('Chybí číslo ČNB.')
+			if re.match('^Bez čísla ČNB.*', metadata['506'].value()): CNB=False
+		if CNB:
+			if '015' not in metadata:
+				write_error(header.identifier(), '506', SIF, '132', 'Chybí číslo ČNB.')
 		# CNB format
 		if '015' in metadata:
 			if not re.match('^cnb\d{9}$', metadata['015'].value()):
-				print('Chybný tvar čísla ČNB.')
+				write_error(header.identifier(), '015', SIF, '133', 'Chybný tvar čísla ČNB.')
 		#ISBN
 		if metadata.leader:
 			if metadata.leader[7] == 'm':
@@ -194,7 +231,7 @@ for record in records:
 							if metadata['506'].value() != 'ISBN':
 								if '020' in metadata:
 									if not 'a' in metadata['020']:
-										print('Chybí ISBN.')
+										write_error(header.identifier(), '020', SIF, '134', 'Chybí ISBN.')
 		#ISBN format
 		ISBN=False
 		if '020' in metadata:
@@ -202,31 +239,31 @@ for record in records:
 				if re.match('[0-9X]{10}', I.replace('-','')): ISBN=True
 				if re.match('[0-9X]{13}', I.replace('-','')): ISBN=True
 			if not ISBN:
-				print('Chybný tvar ISBN.')
+				write_error(header.identifier(), '020', SIF, '135', 'Chybný tvar ISBN.')
 		# 020q
 		if '020' in metadata:
-			INT = metadata['020'].get_subfileds('q')
+			INT = metadata['020'].get_subfields('q')
 			if INT:
 				if not (re.match('^\(.*', INT[0]) and re.match('.*\)$', INT[-1])):
-					print('Chybná interpunkce v poli 020q.')
+					write_error(header.identifier(), '020', SIF, '136', 'Chybná interpunkce v poli 020q.')
 				if len(INT) >= 2:
 					for I in INT[:-1]:
 						if not re.match('.*;', I):
-							print('Chybná interpunkce v poli 020q.')
+							write_error(header.identifier(), '020', SIF, '136', 'Chybná interpunkce v poli 020q.')
 		# 020	
 		for F in metadata.get_fields('020'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'q', 'z'):
-					print('Chybný kód podpole v poli 020.')
+					write_error(header.identifier(), '020', SIF, '137', 'Chybný kód podpole v poli 020.')
 		# 035
 		if 964 in metadata:
 			if metadata['964'].value() not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' in metadata:
-					print('Chybné označení báze v 964.')
+					write_error(header.identifier(), '964', SIF, '138', 'Chybné označení báze v 964.')
 		if 964 in metadata:
 			if metadata['964'].value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' not in metadata:
-					print('Chybí pole 035.')
+					write_error(header.identifier(), '035', SIF, '139', 'Chybí pole 035.')
 		# 035a
 		BASE=False 
 		if '035' in metadata:
@@ -238,6 +275,7 @@ for record in records:
 					if re.match('ISIS-' + BS, B[0]): BASE=True
 					if re.match('ISIS-' + BS, B[1]): BASE=True
 			if BASE:
+				write_error(header.identifier(), '035', SIF, '140', 'Chybí pole 035.')
 				print('Chybná hodnota v 035a.')
 		# 100c
 		if 100 in metadata:
@@ -245,85 +283,146 @@ for record in records:
 				if 773 in metadata:
 					if 't' in metadata['773']:
 						if re.sub('\[(.*)\]', '\\1', metadata['100']['c']) != metadata['773']['t']:
-							print('Nesoulad mezi názvem zdrojového dokument v 100c a 773t.')
+							write_error(header.identifier(), '773', SIF, '141', 'Nesoulad názvu zdrojového dokumentu 100c/773t.')
 		# 110c
 		if '110' in metadata:
 			if metadata['110'].indicator1 == 0:
 				if not ('c' in metadata['110'] and re.match('^\[.*', metadata['110']['c'])):
-					print('Chybný zápis podpole 110c.')
+					write_error(header.identifier(), '110', SIF, '142', 'Chybný zápis podpole 110c.')
 		# 110b
 		if '110' in metadata:
 			if metadata['110'].indicator1 == 1:
 				if not 'b' in metadata['110']:
-					print('Chybí podpole 110b.')
+					write_error(header.identifier(), '110', SIF, '143', 'Chybí podpole 110b.')
 		# 710c
 		if '710' in metadata:
 			if metadata['710'].indicator1 == 0:
 				if not ('c' in metadata['710'] and re.match('^\[.*', metadata['710']['c'])):
-					print('Chybný zápis podpole 710c.')
+					write_error(header.identifier(), '710', SIF, '144', 'Chybný zápis podpole 710c.')
 		# 710b
 		if '710' in metadata:
 			if metadata['710'].indicator1 == 1:
 				if not 'b' in metadata['710']:
-					print('Chybí podpole 710b.')
+					write_error(header.identifier(), '710', SIF, '145', 'Chybí podpole 710b.')
 		# 245c
 		if '254' in metadata:
 			if 'c' in metadata['245']:
 				if ';' in metadata['245']['c']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['245']['c']):
-						print('Chybný zápis ; v 245c.')
+						write_error(header.identifier(), '245', SIF, '146', 'Chybný zápis ; v 245c.')
 		# 505r
 		if '505' in metadata:
 			if 'r' in metadata['505']:
 				if ';' in metadata['505']['r']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['505']['r']):
-						print('Chybný zápis ; v 505r.')
+						write_error(header.identifier(), '505', SIF, '147', 'Chybný zápis ; v 505r.')
 		# 787n
 		if '787' in metadata:
 			if 'n' in metadata['787']:
 				if ';' in metadata['787']['n']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['787']['n']):
-						print('Chybný zápis ; v 787n.')
+						write_error(header.identifier(), '787', SIF, '148', 'Chybný zápis ; v 787n.')
 		# 787k
 		if '787' in metadata:
 			if 'k' in metadata['787']:
 				if ';' in metadata['787']['k']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['787']['k']):
-						print('Chybný zápis ; v 787k.')
+						write_error(header.identifier(), '787', SIF, '149', 'Chybný zápis ; v 787k.')
 		# 773n
 		if '773' in metadata:
 			if 'n' in metadata['773']:
 				if ';' in metadata['773']['n']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['773']['n']):
-						print('Chybný zápis ; v 773n.')
+						write_error(header.identifier(), '773', SIF, '150', 'Chybný zápis ; v 773n.')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				if re.match('.*[ .*', metadata['245']['c']):
-						print('Chybná interpunkce v 245c. Mezi [ a = je mezera.')
+				if re.match('.*\[ .*', metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '151', 'Chybná interpunkce v 245c. Mezi [ a = je mezera.')
 		# 505r
 		if '505' in metadata:
 			if 'r' in metadata['505']:
-				if re.match('.*[ .*', metadata['505']['r']):
-						print('Chybná interpunkce v 505r. mezi [ a = je mezera.')
+				if re.match('.*\[ .*', metadata['505']['r']):
+					write_error(header.identifier(), '505', SIF, '152', 'Chybná interpunkce v 505r. mezi [ a = je mezera.')
 		# 505r
 		if '505' in metadata:
 			if 'r' in metadata['505']:
 				if len(re.findall('\[', metadata['505']['r'])) != len(re.findall('\]', metadata['505']['r'])):
-						print('Odlišný počet [ a ] v poli 505r.')
+					write_error(header.identifier(), '505', SIF, '153', 'Odlišný počet [ a ] v poli 505r.')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if len(re.findall('\[', metadata['245']['c'])) != len(re.findall('\]', metadata['245']['c'])):
-						print('Odlišný počet [ a ] v poli 245c.')
+					write_error(header.identifier(), '245', SIF, '154', 'Odlišný počet [ a ] v poli 245c.')
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == 0:
 				if '700' not in metadata and '500' in metadata:
 					if metadata['500'].value() != 'Nepodepsáno.':
-						print('Chybný 1. indikátor pole 245c')
+						write_error(header.identifier(), '245', SIF, '155', 'Chybný 1. indikátor pole 245c.')
+		# 245c
+		GER=False
+		if '008' in metadata:
+				if metadata['008'].value()[36:39] == 'ger': GER=True
+		if '041' in metadata:
+				if 'ger' in metadata['041'].value(): GER=True
+		if not GER:
+			if '245' in metadata:
+				if 'c' in metadata['245']:
+					if re.match('.*; [A-Z].*', metadata['245']['c']):
+						write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c po ; následuje velké písmeno.')
+		# 245c
+		if '245' in metadata:
+			if metadata['245'].indicator1 == 0:
+				if 'c' in metadata['245']:
+					if re.match('^[A-Z].*', metadata['245']['c']):
+						for S in ('ed.', 'edd.', 'eds.', 'hg.'):
+							if S not in metadata['245']['c']:
+								write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1. indikátor je 0, pole začíná velkým písmenem.')
+		# 245b
+		if '245' in metadata:
+			if 'b' in metadata['245']:
+				if re.match('^\(.*', metadata['245']['b']):
+					write_error(header.identifier(), '245', SIF, '158', 'Chyba podpole 245b začíná na (.')
+		# 245 
+		if '245' in metadata:
+			if 'a' in metadata['245']:
+				if re.match('.*(\D[1-9]\D|\D[1][0-9]\D|\D20\D).*', metadata['245']['a']):
+					write_error(header.identifier(), '245', SIF, '159', 'Chyba v poli 245a, označení části je třeba zapsat do pole 245n.')
+			if 'b' in metadata['245']:
+				if re.match('.*(\D[1-9]\D|\D[1][0-9]\D|\D20\D).*', metadata['245']['b']):
+					write_error(header.identifier(), '245', SIF, '160', 'Chyba v poli 245b, označení části je třeba zapsat do pole 245n.')
+		# 245
+		if '245' in metadata:
+			if re.match('.*(?<!\.\.)\. :.*', metadata['245'].value()):
+				write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
+		# 245c
+		if '245' in metadata:
+			if 'c' in metadata['245']:
+				if metadata['245'].indicator1 == 1 and re.match('^[a-z].*', metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1. indikátor 1, začíná na malé písmeno.')
+		# 245
+		if '245' in metadata:
+			if metadata['245'].indicator1 == 1:
+				if not 'c' in metadata['245']:
+					write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1. indikátoru, chybí podpole "c".')
+		#
+
+		# fix I,II, Roman
+		# fix [A-Z], [a-z] test + diacritic.. 
+		# obecne '=' + ','
+	
+	COUNTER+=1
 
 # EXIT -------------------
 
-sys.exit(0)
+print('TOTAL ' + str(COUNTER))
+
+if args.check:
+	print('MATCH ' + str(MATCH))
+	if records and MATCH == 0: log.write('<p><font color="white">Žádný záznam.</font></p>')
+
+log.write(HTML_FOOTER)
+log.close()
+csv.close()
 
