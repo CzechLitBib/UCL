@@ -385,13 +385,13 @@ for record in records:
 				if re.match('^\(.*', metadata['245']['b']):
 					write_error(header.identifier(), '245', SIF, '158', 'Chyba podpole 245b začíná na (.')
 		# 245 
-		if '245' in metadata:
-			if 'a' in metadata['245']:
-				if re.match('.*(\D[1-9]\D|\D[1][0-9]\D|\D20\D).*', metadata['245']['a']):
-					write_error(header.identifier(), '245', SIF, '159', 'Chyba v poli 245a, označení části je třeba zapsat do pole 245n.')
-			if 'b' in metadata['245']:
-				if re.match('.*(\D[1-9]\D|\D[1][0-9]\D|\D20\D).*', metadata['245']['b']):
-					write_error(header.identifier(), '245', SIF, '160', 'Chyba v poli 245b, označení části je třeba zapsat do pole 245n.')
+		#if '245' in metadata:
+		#	if 'a' in metadata['245']:
+		#		if re.match('.*(\D[1-9]\D|\D[1][0-9]\D|\D20\D).*', metadata['245']['a']):
+		#			write_error(header.identifier(), '245', SIF, '159', 'Chyba v poli 245a, označení části je třeba zapsat do pole 245n.')
+		#	if 'b' in metadata['245']:
+		#		if re.match('.*(\D[1-9]\D|\D[1][0-9]\D|\D20\D).*', metadata['245']['b']):
+		#			write_error(header.identifier(), '245', SIF, '160', 'Chyba v poli 245b, označení části je třeba zapsat do pole 245n.')
 		# 245
 		if '245' in metadata:
 			if re.match('.*(?<!\.\.)\. :.*', metadata['245'].value()):
