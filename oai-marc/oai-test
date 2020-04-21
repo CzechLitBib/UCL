@@ -228,7 +228,7 @@ for record in records:
 				if '008' in metadata:
 					if int(metadata['008'].value()[7:11]) > 1989:
 						if '506' in metadata:
-							if metadata['506'].value() != 'ISBN':
+							if not re.match('.*ISBN.*', metadata['506'].value()):
 								if '020' in metadata:
 									if not 'a' in metadata['020']:
 										write_error(header.identifier(), '020', SIF, '134', 'Chybí ISBN.')
@@ -248,7 +248,7 @@ for record in records:
 					write_error(header.identifier(), '020', SIF, '136', 'Chybná interpunkce v poli 020q.')
 				if len(INT) >= 2:
 					for I in INT[:-1]:
-						if not re.match('.*;', I):
+						if not re.match('.*;$', I):
 							write_error(header.identifier(), '020', SIF, '136', 'Chybná interpunkce v poli 020q.')
 		# 020	
 		for F in metadata.get_fields('020'):
@@ -271,18 +271,16 @@ for record in records:
 			if len(B) != 2:
 				BASE=True
 			else:
-				for BS in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
-					if re.match('ISIS-' + BS, B[0]): BASE=True
-					if re.match('ISIS-' + BS, B[1]): BASE=True
+				if re.sub('ISIS-(.*)', '\\1', B[0]) not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
+				if re.sub('ISIS-(.*)', '\\1', B[1]) not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
 			if BASE:
-				write_error(header.identifier(), '035', SIF, '140', 'Chybí pole 035.')
-				print('Chybná hodnota v 035a.')
+				write_error(header.identifier(), '035', SIF, '140', 'Chybná hodnota v 035a.')
 		# 100c
 		if 100 in metadata:
 			if 'c' in metadata['100']:
 				if 773 in metadata:
 					if 't' in metadata['773']:
-						if re.sub('\[(.*)\]', '\\1', metadata['100']['c']) != metadata['773']['t']:
+						if re.sub('^\[(.*)\]$', '\\1', metadata['100']['c']) != metadata['773']['t']:
 							write_error(header.identifier(), '773', SIF, '141', 'Nesoulad názvu zdrojového dokumentu 100c/773t.')
 		# 110c
 		if '110' in metadata:
@@ -337,12 +335,12 @@ for record in records:
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				if re.match('.*\[ .*', metadata['245']['c']):
+				if re.match('.*\[ =.*', metadata['245']['c']):
 					write_error(header.identifier(), '245', SIF, '151', 'Chybná interpunkce v 245c. Mezi [ a = je mezera.')
 		# 505r
 		if '505' in metadata:
 			if 'r' in metadata['505']:
-				if re.match('.*\[ .*', metadata['505']['r']):
+				if re.match('.*\[ =.*', metadata['505']['r']):
 					write_error(header.identifier(), '505', SIF, '152', 'Chybná interpunkce v 505r. mezi [ a = je mezera.')
 		# 505r
 		if '505' in metadata:
@@ -363,7 +361,7 @@ for record in records:
 		# 245c
 		GER=False
 		if '008' in metadata:
-				if metadata['008'].value()[36:39] == 'ger': GER=True
+				if metadata['008'].value()[35:39] == 'ger': GER=True
 		if '041' in metadata:
 				if 'ger' in metadata['041'].value(): GER=True
 		if not GER:
@@ -377,7 +375,7 @@ for record in records:
 				if 'c' in metadata['245']:
 					if re.match('^[A-Z].*', metadata['245']['c']):
 						for S in ('ed.', 'edd.', 'eds.', 'hg.'):
-							if S not in metadata['245']['c']:
+							if S not in metadata['245']['c'].lower():
 								write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1. indikátor je 0, pole začíná velkým písmenem.')
 		# 245b
 		if '245' in metadata:
