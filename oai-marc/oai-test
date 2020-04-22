@@ -204,6 +204,9 @@ for record in records:
                         SIF = ''
 
 		#008 -> rule 103
+		#
+		# repeatable: 015, 020, 035, 505, 787
+		#             020q, 787k, 787x, 787z, 260a, 260b, 264a, 264b
 
 		# CNB
 		CNB=True
@@ -219,8 +222,8 @@ for record in records:
 			if '015' not in metadata:
 				write_error(header.identifier(), '506', SIF, '132', 'Chybí číslo ČNB.')
 		# CNB format
-		if '015' in metadata:
-			if not re.match('^cnb\d{9}$', metadata['015'].value()):
+		for F in metadata.get_fields('015'):
+			if not re.match('^cnb\d{9}$', F.value()):
 				write_error(header.identifier(), '015', SIF, '133', 'Chybný tvar čísla ČNB.')
 		#ISBN
 		if metadata.leader:
@@ -229,20 +232,20 @@ for record in records:
 					if int(metadata['008'].value()[7:11]) > 1989:
 						if '506' in metadata:
 							if not re.match('.*ISBN.*', metadata['506'].value()):
-								if '020' in metadata:
-									if not 'a' in metadata['020']:
+								for F in metadata.get_fields('020'):
+									if not 'a' in F:
 										write_error(header.identifier(), '020', SIF, '134', 'Chybí ISBN.')
 		#ISBN format
-		ISBN=False
-		if '020' in metadata:
-			for I in metadata['020'].get_subfields('a'):
+		for F in metadata.get_fields('020'):
+			for I in F.get_subfields('a'):
+				ISBN=False
 				if re.match('[0-9X]{10}', I.replace('-','')): ISBN=True
 				if re.match('[0-9X]{13}', I.replace('-','')): ISBN=True
-			if not ISBN:
-				write_error(header.identifier(), '020', SIF, '135', 'Chybný tvar ISBN.')
+				if not ISBN:
+					write_error(header.identifier(), '020', SIF, '135', 'Chybný tvar ISBN.')
 		# 020q
-		if '020' in metadata:
-			INT = metadata['020'].get_subfields('q')
+		for F in metadata.get_fields('020'):
+			INT = F.get_subfields('q')
 			if INT:
 				if not (re.match('^\(.*', INT[0]) and re.match('.*\)$', INT[-1])):
 					write_error(header.identifier(), '020', SIF, '136', 'Chybná interpunkce v poli 020q.')
@@ -266,8 +269,8 @@ for record in records:
 					write_error(header.identifier(), '035', SIF, '139', 'Chybí pole 035.')
 		# 035a
 		BASE=False 
-		if '035' in metadata:
-			B = metadata['035'].get_subfields()
+		for F in metadata.get_fields('035'):
+			B = F.get_subfields()
 			if len(B) != 2:
 				BASE=True
 			else:
@@ -309,22 +312,22 @@ for record in records:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['245']['c']):
 						write_error(header.identifier(), '245', SIF, '146', 'Chybný zápis ; v 245c.')
 		# 505r
-		if '505' in metadata:
-			if 'r' in metadata['505']:
-				if ';' in metadata['505']['r']:
+		for F in metadata.get_fields('505'):
+			if 'r' in F:
+				if ';' in F['r']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['505']['r']):
 						write_error(header.identifier(), '505', SIF, '147', 'Chybný zápis ; v 505r.')
 		# 787n
-		if '787' in metadata:
-			if 'n' in metadata['787']:
-				if ';' in metadata['787']['n']:
-					if not re.match('.*(?<! ) ; (?! ).*', metadata['787']['n']):
+		for F in metadata.get_fields('787'):
+			if 'n' in F:
+				if ';' in F['n']:
+					if not re.match('.*(?<! ) ; (?! ).*', F['n']):
 						write_error(header.identifier(), '787', SIF, '148', 'Chybný zápis ; v 787n.')
 		# 787k
-		if '787' in metadata:
-			if 'k' in metadata['787']:
-				if ';' in metadata['787']['k']:
-					if not re.match('.*(?<! ) ; (?! ).*', metadata['787']['k']):
+		for F in metadata.get_fields('787'):
+			for SUB in F.get_subfields('k'):
+				if ';' in SUB:
+					if not re.match('.*(?<! ) ; (?! ).*', SUB):
 						write_error(header.identifier(), '787', SIF, '149', 'Chybný zápis ; v 787k.')
 		# 773n
 		if '773' in metadata:
@@ -338,14 +341,14 @@ for record in records:
 				if re.match('.*\[ =.*', metadata['245']['c']):
 					write_error(header.identifier(), '245', SIF, '151', 'Chybná interpunkce v 245c. Mezi [ a = je mezera.')
 		# 505r
-		if '505' in metadata:
-			if 'r' in metadata['505']:
-				if re.match('.*\[ =.*', metadata['505']['r']):
+		for F in metadata.get_fields('505'):
+			if 'r' in F:
+				if re.match('.*\[ =.*', F['r']):
 					write_error(header.identifier(), '505', SIF, '152', 'Chybná interpunkce v 505r. mezi [ a = je mezera.')
 		# 505r
-		if '505' in metadata:
-			if 'r' in metadata['505']:
-				if len(re.findall('\[', metadata['505']['r'])) != len(re.findall('\]', metadata['505']['r'])):
+		for F in metadata.get_fields('505'):
+			if 'r' in F:
+				if len(re.findall('\[', F['r'])) != len(re.findall('\]', F['r'])):
 					write_error(header.identifier(), '505', SIF, '153', 'Odlišný počet [ a ] v poli 505r.')
 		# 245c
 		if '245' in metadata:
