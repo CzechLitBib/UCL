@@ -63,6 +63,8 @@ FILE
          oai-964 - Generate Aleph Pseudo-Marc format file. 
            oai-7 - Evaluate subfield "7" data. 
 
+        773to756 - Covert Aleph record 773 to 756.
+
         oai-test - Test code.
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
@@ -70,6 +72,7 @@ FILE
 
            html/ - Apache AutoIndexing HTML structure.
            mods/ - Custom mods.
+            773/ - Covert Aleph record 773 to 756.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
