@@ -486,16 +486,24 @@ for record in records:
 					if SUB[SUB.index(F) - 1] == 'a':
 						if not re.match('.*=$', metadata['490'].subfields[1::2][SUB.index(F) - 1]):
 							write_error(header.identifier(), '490', SIF, '173', "Chybné oddělení opakovaného podpole 'a' (má být rovnítko).")
-		# 245c generic
+		# 245c / 505r generic
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				if re.match('.*,[^ ].*', metadata['245']['c']) or re.match('.*[^0-9\[ ]=.*', metadata['245']['c']):
-					write_error(header.identifier(), '245', SIF, '174', 'Chybí mezera za čárkou, nebo chybný znak před znakem =.')
-		# 505r generic
+				if re.match('.*,[^ ].*', metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '174', 'Chybí mezera za čárkou.')
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
-				if re.match('.*,[^ ].*', F['r']) or re.match('.*[^0-9\[ ]=.*', F['r']):
-					write_error(header.identifier(), '505', SIF, '175', 'Chybí mezera za čárkou, nebo chybný znak před znakem =.')
+				if re.match('.*,[^ ].*', F['r']):
+					write_error(header.identifier(), '505', SIF, '174', 'Chybí mezera za čárkou.')
+		# 245c / 505r generic
+		if '245' in metadata:
+			if 'c' in metadata['245']:
+				if re.match('.*[^0-9\[ ]=.*', metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '175', 'Chybný znak před znakem =.')
+		for F in metadata.get_fields('505'):
+			if 'r' in F:
+				if re.match('.*[^0-9\[ ]=.*', F['r']):
+					write_error(header.identifier(), '505', SIF, '175', 'Chybný znak před znakem =.')
 	
 	COUNTER+=1
 
