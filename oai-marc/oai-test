@@ -415,13 +415,13 @@ for record in records:
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				for S in re.findall('(\[.+\] | \[.+\]| \[.+\] )', metadata['245']['c']):
+				for S in re.findall('\[.*?\]', metadata['245']['c']):
 					if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
 						write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
 		# 505r
 		if '505' in metadata:
 			if 'r' in metadata['505']:
-				for S in re.findall('(\[.+\] | \[.+\]| \[.+\] )', metadata['505']['r']):
+				for S in re.findall('\[.*?\]', metadata['505']['r']):
 					if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
 						write_error(header.identifier(), '505', SIF, '165', 'Chybný zápis dešifrovaného jména v 505r.')
 		# 245c			
@@ -464,10 +464,12 @@ for record in records:
 		# 300e
 		if '300' in metadata:
 			if metadata['300'].subfields[0::2][0] == 'e':
-				if '964' in metadata:
-					if 'a' in metadata['964']:
-						if metadata['964']['a'] != 'INT':
-							write_error(header.identifier(), '300', SIF, '171', 'Chybný zápis pole 300 (nebo v 964 chybí kód INT).')
+				INT=False
+				for F in metadata.get_fields('964'):
+					if 'a' in F:
+						if F['a'] == 'INT': INT=True
+				if not INT:
+					write_error(header.identifier(), '300', SIF, '171', 'Chybný zápis pole 300 (nebo v 964 chybí kód INT).')
 		# 490
 		if '490' in metadata:
 			SUB = metadata['490'].subfields[0::2]
