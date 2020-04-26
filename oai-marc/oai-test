@@ -3,7 +3,11 @@
 #
 # OAI-PMH 2.0 MARCXML Record validator.
 #
-
+# TODO:
+#
+# fix I,II, Roman
+# fix [A-Z], [a-z] test + diacritic.. 
+	
 # INCLUDE -------------------
 
 from __future__ import print_function
@@ -190,11 +194,11 @@ for record in records:
 
 		# SKIP BOT ------------------
 
-		BOT=False
-		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
-			if 'a' in F:
-				if re.match('BATCH', F['a']): BOT=True
-		if BOT: continue
+		#BOT=False
+		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+		#	if 'a' in F:
+		#		if re.match('BATCH', F['a']): BOT=True
+		#if BOT: continue
 
 		# TEST ------------------
 
@@ -408,11 +412,88 @@ for record in records:
 			if metadata['245'].indicator1 == 1:
 				if not 'c' in metadata['245']:
 					write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1. indikátoru, chybí podpole "c".')
-		#
-
-		# fix I,II, Roman
-		# fix [A-Z], [a-z] test + diacritic.. 
-		# obecne '=' + ','
+		# 245c
+		if '245' in metadata:
+			if 'c' in metadata['245']:
+				for S in re.findall('(\[.+\] | \[.+\]| \[.+\] )', metadata['245']['c']):
+					if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
+						write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
+		# 505r
+		if '505' in metadata:
+			if 'r' in metadata['505']:
+				for S in re.findall('(\[.+\] | \[.+\]| \[.+\] )', metadata['505']['r']):
+					if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
+						write_error(header.identifier(), '505', SIF, '165', 'Chybný zápis dešifrovaného jména v 505r.')
+		# 245c			
+		if '245' in metadata:
+			if 'c' in metadata['245']:
+				if re.match('.*s\. [0-9]+.*', metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '166', 'Nenáležitý zápis stran v 245c.')
+		# 264a
+		if '264' in metadata:
+			SUB = metadata['264'].subfields[0::2]
+			for F in SUB:
+				if F == 'a' and SUB.index(F) != 0:
+					if not re.match('.*;$', metadata['264'].subfields[1::2][SUB.index(F) - 1]):
+						write_error(header.identifier(), '264', SIF, '167', "Chybná interpunkce před podpolem 'a' (má být středník).")
+		# 260a
+		if '260' in metadata:
+			SUB = metadata['260'].subfields[0::2]
+			for F in SUB:
+				if F == 'a' and SUB.index(F) != 0:
+					if not re.match('.*;$', metadata['260'].subfields[1::2][SUB.index(F) - 1]):
+						write_error(header.identifier(), '260', SIF, '168', "Chybná interpunkce před podpolem 'a' (má být středník).")
+		# 264b
+		if '260' in metadata:
+			SUB = metadata['264'].subfields[0::2]
+			for F in SUB:
+				if F == 'b' and SUB.index(F) == 0:
+					write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
+				if F == 'b' and SUB.index(F) != 0:
+					if not re.match('.*:$', metadata['264'].subfields[1::2][SUB.index(F) - 1]):
+						write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
+		# 260b
+		if '260' in metadata:
+			SUB = metadata['260'].subfields[0::2]
+			for F in SUB:
+				if F == 'b' and SUB.index(F) == 0:
+					write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
+				if F == 'b' and SUB.index(F) != 0:
+					if not re.match('.*:$', metadata['260'].subfields[1::2][SUB.index(F) - 1]):
+						write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
+		# 300e
+		if '300' in metadata:
+			if metadata['300'].subfields[0::2][0] == 'e':
+				if '964' in metadata:
+					if 'a' in metadata['964']:
+						if metadata['964']['a'] != 'INT':
+							write_error(header.identifier(), '300', SIF, '171', 'Chybný zápis pole 300 (nebo v 964 chybí kód INT).')
+		# 490
+		if '490' in metadata:
+			SUB = metadata['490'].subfields[0::2]
+			for F in SUB:
+				if F == 'a' and SUB.index(F) != 0:
+					if SUB[SUB.index(F) - 1] == 'v':
+						if not re.match('.*\.$', metadata['490'].subfields[1::2][SUB.index(F) - 1]):
+							write_error(header.identifier(), '490', SIF, '172', "Chybné oddělení opakovaného podpole 'a' (má být tečka).")
+		# 490
+		if '490' in metadata:
+			SUB = metadata['490'].subfields[0::2]
+			for F in SUB:
+				if F == 'a' and SUB.index(F) != 0:
+					if SUB[SUB.index(F) - 1] == 'a':
+						if not re.match('.*=$', metadata['490'].subfields[1::2][SUB.index(F) - 1]):
+							write_error(header.identifier(), '490', SIF, '173', "Chybné oddělení opakovaného podpole 'a' (má být rovnítko).")
+		# 245c generic
+		if '245' in metadata:
+			if 'c' in metadata['245']:
+				if re.match('.*,[^ ].*', metadata['245']['c']) or re.match('.*[^0-9\[ ]=.*', metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '174', 'Chybí mezera za čárkou, nebo chybný znak před znakem =.')
+		# 505r generic
+		for F in metadata.get_fields('505'):
+			if 'r' in F:
+				if re.match('.*,[^ ].*', F['r']) or re.match('.*[^0-9\[ ]=.*', F['r']):
+					write_error(header.identifier(), '505', SIF, '175', 'Chybí mezera za čárkou, nebo chybný znak před znakem =.')
 	
 	COUNTER+=1
 
