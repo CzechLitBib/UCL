@@ -702,7 +702,7 @@ for record in records:
 				DATA1 = metadata['008'].value()[7:15].strip()
 				if '773' in metadata:
 					if '9' in metadata['773']:
-						DATA2 = re.sub('^(\d+u?).*$','\\1', metadata['773']['9'])
+						DATA2 = re.sub('^([0-9u]+).*$','\\1', metadata['773']['9'])
 						if DATA1[0:4] != DATA2 and DATA1[4:8] != DATA2 and DATA1 != DATA2:
 							write_error(header.identifier(), '008', SIF, '109', 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
