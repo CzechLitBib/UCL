@@ -19,9 +19,12 @@
 # http://archiv.ucl.cas.cz/index.php?path=RudePravo/1950/3/5/5.png
 #
 
-import re,sys
+import urllib2,sys,re
 
-f = open('773.txt', 'r')
+#----------------------------------
+
+IN='773.txt'
+PREFIX='http://archiv.ucl.cas.cz/index.php?path=RudePravo/'
 
 TOTAL=0
 MATCH=0
@@ -31,6 +34,17 @@ ATTCH=0
 MANUA=0
 RUBBI=0
 
+#----------------------------------
+
+def url_response(url):
+	try:
+		req = urllib2.Request(url)
+		req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0')
+		data = urllib2.urlopen(req, timeout=10)
+		if data.getcode() == 200:
+			if 'Tisk' in data.read(): return 1
+	except: pass
+	return 0
 
 def convert_regular(g):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), č\. \d+, \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\2', g)
@@ -38,11 +52,12 @@ def convert_regular(g):
 	M = re.sub('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. (\d+)\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\2', g)
 	part = re.sub('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\2', g)
 	S = re.sub('^\[?(\d+)\]?.*', '\\1', part.strip())
-	print(
-		ID + ' L $$ uhttp://archiv.ucl.cas.cz/index.php?path=RudePravo/' +
-		Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S +
-		'.png $$y Digitální archiv časopisů $$ 4 N'
-	)
+	URL = PREFIX + Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S + '.png'
+	if int(Y) > 1949:
+		if url_response(URL):
+			print(ID + ' 86541 L $$u' + URL + '$$yDigitální archiv časopisů$$4N')
+		else:
+			print('BAD: ' + URL)
 
 def convert_noroc(g):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\2', g)
@@ -50,34 +65,36 @@ def convert_noroc(g):
 	M = re.sub('^Roč\. (\d+|\[\d+\]), \d+, \d+\. (\d+)\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\2', g)
 	part = re.sub('^Roč\. (\d+|\[\d+\]), \d+, \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\2', g)
 	S = re.sub('^\[?(\d+)\]?.*', '\\1', part.strip())
-	print(
-		ID + ' L $$ uhttp://archiv.ucl.cas.cz/index.php?path=RudePravo/' +
-		Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S +
-		'.png $$y Digitální archiv časopisů $$ 4 N'
-	)
+	URL = PREFIX + Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S + '.png'
+	if int(Y) > 1949:
+		if url_response(URL):
+			print(ID + ' 86541 L $$u' + URL + '$$yDigitální archiv časopisů$$4N')
+		else:
+			print('BAD: ' + URL)
 
 def convert_nos(g,q):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), č\. \d+, \d+\. \d+\.?$', '\\2', g)
 	D = re.sub('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, (\d+)\. \d+\.?$', '\\2', g)
 	M = re.sub('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. (\d+)\.?$', '\\2', g)
 	S = re.sub('\d+:\d+<(\d+)', '\\1', q).strip()
-	print(
-		ID + ' L $$ uhttp://archiv.ucl.cas.cz/index.php?path=RudePravo/' +
-		Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S +
-		'.png $$y Digitální archiv časopisů $$ 4 N'
-	)
-
+	URL = PREFIX + Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S + '.png'
+	if int(Y) > 1949:
+		if url_response(URL):
+			print(ID + ' 86541 L $$u' + URL + '$$yDigitální archiv časopisů$$4N')
+		else:
+			print('BAD: ' + URL)
 
 def convert_noroc_nos(g,q):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), \d+\. \d+\.?$', '\\2', g)
 	D = re.sub('^Roč\. (\d+|\[\d+\]), \d+, (\d+)\. \d+\.?$', '\\2', g)
 	M = re.sub('^Roč\. (\d+|\[\d+\]), \d+, \d+\. (\d+)\.?$', '\\2', g)
 	S = re.sub('\d+:\d+<(\d+)', '\\1', q).strip()
-	print(
-		ID + ' L $$ uhttp://archiv.ucl.cas.cz/index.php?path=RudePravo/' +
-		Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S +
-		'.png $$y Digitální archiv časopisů $$ 4 N'
-	)
+	URL = PREFIX + Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S + '.png'
+	if int(Y) > 1949:
+		if url_response(URL):
+			print(ID + ' 86541 L $$u' + URL + '.png$$yDigitální archiv časopisů$$4N')
+		else:
+			print('BAD: ' + URL)
 
 def convert_att(g):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), č\. \d+, \d+\. \d+\.?,.*', '\\2', g)
@@ -85,14 +102,16 @@ def convert_att(g):
 	M = re.sub('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. (\d+)\.?,.*', '\\2', g)
 	part = re.sub('.*s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\1', g)
 	S = re.sub('^\[?(\d+)\]?.*', '\\1', part.strip())
-	print(
-		ID + ' L $$ uhttp://archiv.ucl.cas.cz/index.php?path=RudePravo/' +
-		Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S +
-		'_.png $$y Digitální archiv časopisů $$ 4 N'
-	)
+	URL = PREFIX + Y.strip() + '/' + M.strip() + '/' + D.strip() + '/' + S + '_.png'
+	if int(Y) > 1949:
+		if url_response(URL):
+			print(ID + ' 86541 L $$u' + URL + '$$yDigitální archiv časopisů$$4N')
+		else:
+			print('BAD: ' + URL)
 
+#----------------------------------
 
-
+f = open(IN, 'r')
 
 for LINE in f:
 	if re.match('.*L \$\$tRudé právo.*', LINE):
@@ -105,12 +124,12 @@ for LINE in f:
 		#                                   R              D     M                              S	
 		if re.match('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', G):
 			MATCH+=1
-			#convert_regular(G)
+			convert_regular(G)
 			continue
 		# NO C.
 		if re.match('^Roč\. (\d+|\[\d+\]), \d+, \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', G):
 			NOROC+=1
-			#convert_noroc(G)
+			convert_noroc(G)
 			continue
 		# MULTI
 		if re.match('.*;.*', G):
@@ -122,17 +141,17 @@ for LINE in f:
 				continue
 			if re.match('.*s\..*', SPART) or '<' in Q:
 				if re.match('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', SPART):
-					#convert_regular(SPART)
+					convert_regular(SPART)
 					continue
 				if re.match('^Roč\. (\d+|\[\d+\]), \d+, \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', SPART):
-					#convert_noroc(SPART)
+					convert_noroc(SPART)
 					continue
 				if re.match('^Roč\. (\d+|\[\d+\]), \d+, \d+\. \d+\.?$', SPART) and re.match('.*<\d+', Q):
-					#convert_noroc_nos(SPART,Q)
+					convert_noroc_nos(SPART,Q)
 					continue
 				
 				if re.match('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. \d+\.?', SPART) and re.match('.*<\d+', Q):
-					#convert_nos(SPART,Q)
+					convert_nos(SPART,Q)
 					continue
 			#print(LINE).strip()# 5
 			continue
@@ -140,7 +159,7 @@ for LINE in f:
 		if re.match('.* [Pp]říl.*', G):
 			ATTCH+=1
 			if re.match('^Roč\. (\d+|\[\d+\]), \d+, č\. \d+, \d+\. \d+\.?,.* s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', G):
-				#convert_att(G)
+				convert_att(G)
 				continue
 			else:
 				#print(LINE).strip()# 9
@@ -162,7 +181,7 @@ for LINE in f:
 			continue
 		# RUBBISH
 		RUBBI+=1
-		print(LINE).strip()# 164
+		#print(LINE).strip()# 164
 
 #print('-----------------------')
 #print('TOTAL: ' + str(TOTAL))
