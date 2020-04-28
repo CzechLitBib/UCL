@@ -68,7 +68,7 @@ def valid_display(s):
 		raise argparse.ArgumentTypeError('Invalid display format.')
 
 def valid_request(s):
-	if s in ('record', 'ident', 'set', 'meta'): return s
+	if s in ('record', 'list', 'ident', 'set', 'meta'): return s
 	else:
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
@@ -130,9 +130,10 @@ def write_error(id,tag,sif,code,code_text):
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
 listing = parser.add_argument_group('request')
-listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
+listing.add_argument('--get', help='Request type. [record] [list] [ident] [set] [meta]', type=valid_request, default='list')
 required = parser.add_argument_group('validation')
 required.add_argument('--set', help='Records set.')
+required.add_argument('--ident', help='Record identifier.')
 required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
 required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 optional = parser.add_argument_group('output')
@@ -142,6 +143,10 @@ optional.add_argument('--display', help='Display output format. [ident] [marc]',
 args = parser.parse_args()
 
 if args.get == 'record' or args.get == 'ident':
+	if not args.ident:
+		parser.error('argument --ident is required.')
+
+if args.get == 'list' or args.get == 'ident':
 	if not args.set:
 		parser.error('argument --set is required.')
 	if not args.from_date:
@@ -193,8 +198,12 @@ registry.registerReader('marc21', MarcXML)
 
 oai = Client(URL, registry)
 
+record,header,about='','',''
+records=[]
 try:
 	if args.get == 'record':
+		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
+	if args.get == 'list':
 		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
 	if args.get == 'ident':
 		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
@@ -204,9 +213,14 @@ try:
 		records = oai.listMetadataFormats()
 except:
 	log.write('<p><font color="white">Žádný záznam.</font></p>')
-	records=[]
 
 # MAIN -------------------
+
+if args.get == 'record':
+	if header:
+		print(header.identifier())
+	if record:
+		print(record)
 
 for record in records:
 
@@ -801,7 +815,8 @@ for record in records:
 
 # EXIT -------------------
 
-print('TOTAL ' + str(COUNTER))
+if args.get != 'record':
+	print('TOTAL ' + str(COUNTER))
 
 if args.check:
 	print('MATCH ' + str(MATCH))
