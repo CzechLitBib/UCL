@@ -63,7 +63,8 @@ FILE
          oai-964 - Generate Aleph Pseudo-Marc format file. 
            oai-7 - Evaluate subfield "7" data. 
 
-        773to756 - Covert Aleph record 773 to 756.
+     773to756.py - Covert Aleph record 773 to 756.
+        Z3950.py - Z39.50 yaz-client wrapper.
 
         oai-test - Test code.
        oai-daily - Crontab daily runner.
