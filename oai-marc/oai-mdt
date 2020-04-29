@@ -31,7 +31,6 @@ def get_mdt(val,mdt,tag,ident):
 		with open('z3950.cfg', 'w') as f:
 			f.write('open tcp:aleph.nkp.cz:9991/AUT-UTF\n')
 			f.write('set_marcdump rec.bin\n')
-			#f.write('find "' + mdt + '"\n')
 			f.write('find @attr 1=12 "' + mdt + '"\n')# sys. number http://aleph.nkp.cz/web/Z39_NK_cze.htm
 			f.write('show 1\n')
 			f.write('close\n')
@@ -40,39 +39,29 @@ def get_mdt(val,mdt,tag,ident):
 		data = subprocess.check_output(['yaz-client', '-f', 'z3950.cfg'])
 		# paprse output
 		reader = MARCReader(open('rec.bin','rb'))
-		#print(reader)
-		#print('mdt -> ' + mdt)
 		for rec in reader:
-		# FIX DOUBLE RECORD PACKET
-			#print(rec)
 			if tag == '650':
 				if '150' in rec:
 					if 'a' in rec['150']:
-			#			print('mdt 150a -> ' + rec['150']['a'])
 						if rec['150']['a'] != val:
 							print(ident + ' mdt "' + mdt + '" 150 not match.')
-				if '080' in rec:
-					if 'a' in rec['080']:
-			#			print('mdt 080a -> ' + rec['080']['a'])
-						ret = rec['080']['a']
-				if '089' in rec:
-					if 'a' in rec['089']:
-			#			print('mdt 089a -> ' + rec['089']['a'])
-						ret = rec['089']['a']
 			if tag == '655':
 				if '155' in rec:
 					if 'a' in rec['155']:
-			#			print('mdt 155a -> ' + rec['155']['a'])
 						if rec['155']['a'] != val:
 							print(ident + 'mdt "' + mdt + '" 155 not match.')
-				if '080' in rec:
-					if 'a' in rec['080']:
-			#			print('mdt 080a -> ' + rec['080']['a'])
-						ret = rec['080']['a']
-				if '089' in rec:
-					if 'a' in rec['089']:
-			#			print('mdt 089a -> ' + rec['089']['a'])
-						ret = rec['089']['a']
+			# get MDT list
+			ret=''#[]
+			if '080' in rec:
+			#	for f in metadata.get_fields('080'):
+			#		if 'a' in f: ret.append(f['a'])
+				if 'a' in rec['080']:
+					ret=rec['080']['a']	
+			if '089' in rec:
+			#	for f in metadata.get_fields('089'):
+			#		if 'a' in f: ret.append(f['a'])
+				if 'a' in rec['089']:
+					ret=rec['089']['a']	
 		# cleanup
 		os.remove('z3950.cfg')		
 		os.remove('rec.bin')
@@ -223,50 +212,25 @@ for record in records:
 		else:
 			SIF = ''
 
-		#print(header.identifier())
-
 		BASE=True
 		for B in metadata.get_fields('964'):
 			if B.value() not in ('B12', 'B45', 'INT', 'SMZ'): BASE=False
 		if BASE:
-		#	for F in metadata.get_fields('080'):
-		#		print(metadata['080'])
-		#		if '7' in metadata['080']:
-		#			print(metadata['080'])
-		#	for F in metadata.get_fields('089'):
-		#		print(metadata['089'])
-		#		if '7' in metadata['089']:
-		#			print(metadata['089'])
-	
 			E=[]
 			for M in metadata.get_fields('080'):
 				if 'a' in M: E.append(M['a'])
-	
+		
 			for F1 in metadata.get_fields('650'):
 				if 'a' in F1 and '7' in F1:
-				#	print('--------------')
-				#	print('650a ->' + F1['a'])
-				#	print('6507 ->' + F1['7'])
 					ret = get_mdt(F1['a'],F1['7'],'650',header.identifier())
-				#	if ret not in E:
-				#		print(header.identifier())
-				#		print('MDF not match ' + F1['7'] + ' -> ' + ret)
-				#		print(E)
-				#		sys.exit(1)
-
+					if ret not in E:
+						print(header.identifier() + ' MDF not match ' + F1['7'] + ' -> ' + ret)
 
 			for F2 in metadata.get_fields('655'):
 				if 'a' in F2 and '7' in F2:
-				#	print('--------------')
-				#	print('655a -> ' + F2['a'])
-				#	print('6557 ->' + F2['7'])
 					ret = get_mdt(F2['a'],F2['7'],'655',header.identifier())
-				#	if ret not in E:
-				#		print(header.identifier())
-				#		print('MDF not match ' + F2['7']  + ' -> '  + ret)
-				#		print(E)
-				#		sys.exit(1)
-		#	sys.exit(1)
+					if ret not in E:
+						print(header.identifier() + ' MDF not match ' + F2['7'] + ' -> ' + ret)
 
 # EXIT -------------------
 
