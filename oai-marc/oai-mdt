@@ -1,0 +1,272 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# OAI-PMH 2.0 MARCXML Record text collector.
+#
+
+# INCLUDE -------------------
+
+from __future__ import print_function
+
+import subprocess,argparse,StringIO,urllib2,smtplib,sys,os,re
+
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime,date
+from oaipmh.client import Client
+from oaipmh.metadata import MetadataRegistry
+from pymarc import marcxml,MARCReader
+from lxml.etree import tostring
+
+# VAR -------------------
+
+URL='https://aleph.lib.cas.cz/OAI'
+
+# DEF -------------------
+
+def get_mdt(val,mdt,tag):
+		ret=''
+	#try:
+		# create config, bin
+		with open('z3950.cfg', 'w') as f:
+			f.write('open tcp:aleph.nkp.cz:9991/AUT-UTF\n')
+			f.write('set_marcdump rec.bin\n')
+			f.write('find "' + mdt + '"\n')
+			f.write('show 1\n')
+			f.write('quit')
+		# call client
+		data = subprocess.check_output(['yaz-client', '-f', 'z3950.cfg'])
+		# paprse output
+		reader = MARCReader(open('rec.bin','rb'))
+		#print(reader)
+		#print('mdt -> ' + mdt)
+		for rec in reader:
+		# FIX DOUBLE RECORD PACKET
+			#print(rec)
+			if tag == '650':
+				if '150' in rec:
+					if 'a' in rec['150']:
+			#			print('mdt 150a -> ' + rec['150']['a'])
+						if rec['150']['a'] != val:
+							print('mdt 150 not match.')
+				if '080' in rec:
+					if 'a' in rec['080']:
+			#			print('mdt 080a -> ' + rec['080']['a'])
+						ret = rec['080']['a']
+				if '089' in rec:
+					if 'a' in rec['089']:
+			#			print('mdt 089a -> ' + rec['089']['a'])
+						ret = rec['089']['a']
+			if tag == '655':
+				if '155' in rec:
+					if 'a' in rec['155']:
+			#			print('mdt 155a -> ' + rec['155']['a'])
+						if rec['155']['a'] != val:
+							print('mdt 155 not match.')
+				if '080' in rec:
+					if 'a' in rec['080']:
+			#			print('mdt 080a -> ' + rec['080']['a'])
+						ret = rec['080']['a']
+				if '089' in rec:
+					if 'a' in rec['089']:
+			#			print('mdt 089a -> ' + rec['089']['a'])
+						ret = rec['089']['a']
+		# cleanup
+		os.remove('z3950.cfg')		
+		os.remove('rec.bin')
+		# return
+		return ret
+	#except: pass
+	#return 0
+
+def MarcXML(xml):
+	handler = marcxml.XmlHandler()
+	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	return handler.records[0]
+
+def valid_date(s):
+	try:
+		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+	except:
+		raise argparse.ArgumentTypeError('Invalid date format.')
+
+def valid_display(s):
+	if s in ('ident', 'marc'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid display format.')
+
+def valid_request(s):
+	if s in ('record', 'ident', 'set', 'meta'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid request format.')
+
+# ARG -------------------
+
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
+listing = parser.add_argument_group('request')
+listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
+required = parser.add_argument_group('validation')
+required.add_argument('--set', help='Records set.')
+required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
+optional = parser.add_argument_group('output')
+optional.add_argument('--check', help='Validation control.', action='store_true')
+args = parser.parse_args()
+
+if args.get == 'record' or args.get == 'ident':
+	if not args.set:
+		parser.error('argument --set is required.')
+	if not args.from_date:
+		parser.error('argument --from is required.')
+	if not args.until_date:
+		parser.error('argument --until is required.')
+
+if args.get == 'ident':
+	if args.check or args.notify or args.export:
+		parser.error('Invalid optional argument.')
+	if args.display and args.display != 'ident':
+		parser.error('Invalid display argument.')
+
+# INIT -------------------
+
+try:
+	os.mkdir(OUTDIR)
+except:
+	pass
+
+try:
+	sif_code = {}
+	with open(SIF_CODE, 'r') as f:
+		for line in f:
+			acct_code, acct_addr = line.decode('utf-8').split(':')
+			sif_code[acct_code] = acct_addr.strip()
+except: sif_code = {}
+
+registry = MetadataRegistry()
+registry.registerReader('marc21', MarcXML)
+
+oai = Client(URL, registry)
+
+try:
+	if args.get == 'record':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'ident':
+		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
+except:
+	records=[]
+
+# MAIN -------------------
+
+for record in records:
+
+	if args.get == 'set' or args.get == 'meta':
+		print(record[0])
+		COUNTER+=1
+		continue
+
+	if args.get == 'ident':
+		if record.isDeleted(): continue
+		COUNTER+=1
+		continue
+
+	header = record[0]
+	metadata = record[1]
+
+	# skip deleted records
+	if header.isDeleted(): continue
+
+	# retry missing metadata(?)
+	if not metadata:
+		print(header.identifier() + ' Missing matadata. Retrying..')
+		retry = oai.getRecord(metadataPrefix='marc21', identifier=header.identifier())
+		if not retry[1]:
+			print(header.identifier() + ' Missing retry metadata.')
+			continue
+		else:
+			header = retry[0]
+			metadata = retry[1]
+
+	# VALIDATION ------------------
+
+	if args.check:
+		
+		# SKIP OLD ------------------
+
+		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
+
+		# SKIP BOT ------------------
+
+		#BOT=False
+		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+		#	if 'a' in F:
+		#		if re.match('BATCH', F['a']): BOT=True
+		#if BOT: continue
+
+		# SKIP NOT NEW ------------------
+		#OUTDATE = False
+		#for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT/KAT
+		#	if 'c' in F:
+		#		CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
+		#		if CAT_DATE >= date.today().replace(day=1): OUTDATE=True# last day of month
+		#		if CAT_DATE < date.today().replace(day=1,month=(date.today().month - 1)): OUTDATE=True# fist day of month 
+		#if OUTDATE: continue
+		# 1xx/6xx-653/700/710/711/730 ------------------
+
+		if 'SIF' in metadata:
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
+		else:
+			SIF = ''
+
+		#print(header.identifier())
+
+		BASE=True
+		for B in metadata.get_fields('964'):
+			if B.value() not in ('B12', 'B45', 'INT', 'SMZ'): BASE=False
+		if BASE:
+		#	for F in metadata.get_fields('080'):
+		#		print(metadata['080'])
+		#		if '7' in metadata['080']:
+		#			print(metadata['080'])
+		#	for F in metadata.get_fields('089'):
+		#		print(metadata['089'])
+		#		if '7' in metadata['089']:
+		#			print(metadata['089'])
+	
+			E=[]
+			for M in metadata.get_fields('080'):
+				if 'a' in M:
+					E.append(M['a'])
+		
+			#print(E)
+			for F1 in metadata.get_fields('650'):
+				if 'a' in F1 and '7' in F1:
+				#	print('--------------')
+				#	print('650a ->' + F1['a'])
+				#	print('6507 ->' + F1['7'])
+					ret = get_mdt(F1['a'],F1['7'],'650')
+					if ret not in E:
+						print(header.identifier())
+						print('MDF not match ' + F1['7'] + ' -> ' + ret)
+						print(E)
+						sys.exit(1)
+
+
+			for F2 in metadata.get_fields('655'):
+				if 'a' in F2 and '7' in F2:
+				#	print('--------------')
+				#	print('655a -> ' + F2['a'])
+				#	print('6557 ->' + F2['7'])
+					ret = get_mdt(F2['a'],F2['7'],'655')
+					if ret not in E:
+						print(header.identifier())
+						print('MDF not match ' + F2['7']  + ' -> '  + ret)
+						print(E)
+						sys.exit(1)
+		#	sys.exit(1)
+
+# EXIT -------------------
+

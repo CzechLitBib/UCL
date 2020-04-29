@@ -64,8 +64,8 @@ FILE
            oai-7 - Evaluate subfield "7" data. 
 
         773to756 - Convert record 773 to 756.
-           Z3950 - Z39.50 yaz-client wrapper.
 
+        oai-mdt -  Z39.50 yaz-client wrapper.
         oai-test - Test code.
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
