@@ -55,6 +55,7 @@ def url_response(url,i,log):
 				return 1
 	except:
 		log.write(i + ' URL check failed.\n')
+	log.write(i + ' BAD ' + url)
 	return 0
 
 def write_record(bib,url,i,log):
@@ -96,7 +97,7 @@ def convert_regular(g,i,out,log):
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
 	else:
-		log.write(i + ' BAD ' +  URL + '\n')
+		log.write(i + ' OLDNEW ' +  URL + '\n')
 
 def convert_noroc(g,i,out,log):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), \d+\. \d+\.?, s\. (\d+\.?|\[\d+\]\.?|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\2', g)
@@ -109,7 +110,7 @@ def convert_noroc(g,i,out,log):
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
 	else:
-		log.write(i + ' BAD ' +  URL + '\n')
+		log.write(i + ' OLDNEW ' +  URL + '\n')
 
 def convert_nos(g,q,i,out,log):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), č\. \d+, \d+\. \d+\.?$', '\\2', g)
@@ -121,7 +122,7 @@ def convert_nos(g,q,i,out,log):
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
 	else:
-		log.write(i + ' BAD ' +  URL + '\n')
+		log.write(i + ' OLDNEW ' +  URL + '\n')
 
 def convert_noroc_nos(g,q,i,out,log):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), \d+\. \d+\.?$', '\\2', g)
@@ -133,7 +134,7 @@ def convert_noroc_nos(g,q,i,out,log):
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
 	else:
-		log.write(i + ' BAD ' +  URL + '\n')
+		log.write(i + ' OLDNEW ' +  URL + '\n')
 
 def convert_att(g,i,out,log):
 	Y = re.sub('^Roč\. (\d+|\[\d+\]), (\d+), č\. \d+, \d+\. \d+\.?,.*', '\\2', g)
@@ -146,7 +147,7 @@ def convert_att(g,i,out,log):
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
 	else:
-		log.write(i + ' BAD ' +  URL + '\n')
+		log.write(i + ' OLDNEW ' +  URL + '\n')
 
 # INIT ----------------------------------
 
@@ -227,14 +228,12 @@ for LINE in in_file:
 			#if re.match('.*<\d+',Q):
 			#	print(LINE).strip()
 			#	continue
-		
 			#print(LINE).strip()# 21
 			continue
 		# RUBBISH
 		RUBBI+=1
 		#print(LINE).strip()# 164
 
-#print('-----------------------')
 print('TOTAL: ' + str(TOTAL))
 print('MATCH: ' + str(MATCH))
 print('NOROC: ' + str(NOROC))
