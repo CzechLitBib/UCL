@@ -55,7 +55,7 @@ def url_response(url,i,log):
 				return 1
 	except:
 		log.write(i + ' URL check failed.\n')
-	log.write(i + ' BAD ' + url)
+	log.write(i + ' BAD ' + url + '\n')
 	return 0
 
 def write_record(bib,url,i,log):
