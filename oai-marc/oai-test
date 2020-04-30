@@ -400,8 +400,9 @@ for record in records:
 		#			write_error(header.identifier(), '245', SIF, '160', 'Chyba v poli 245b, označení části je třeba zapsat do pole 245n.')
 		# 245
 		if '245' in metadata:
-			if re.match('.*(?<!\.\.)\. :.*', metadata['245'].value()):
-				write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
+			if not re.match('.*[MDCLVI]\. :.*', metadata['245'].value()):
+				if re.match('.*(?<!\.\.)\. :.*', metadata['245'].value()):
+					write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
@@ -415,9 +416,10 @@ for record in records:
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				for S in re.findall('\[.*?\]', metadata['245']['c']):
-					if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
-						write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
+				if not (len(re.findall('[]', metadata['245']['c'])) == 2 and re.match('^\[.*\]$', metadata['245']['c'])):
+					for S in re.findall('\[.*?\]', metadata['245']['c']):
+						if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
+							write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
@@ -490,20 +492,20 @@ for record in records:
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if re.match('.*,[^ ].*', metadata['245']['c']):
-					write_error(header.identifier(), '245', SIF, '174', 'Chybí mezera za čárkou.')
+					write_error(header.identifier(), '245', SIF, '174', 'Chybí mezera za čárkou v podpoli 245c.')
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if re.match('.*,[^ ].*', F['r']):
-					write_error(header.identifier(), '505', SIF, '174', 'Chybí mezera za čárkou.')
+					write_error(header.identifier(), '505', SIF, '174', 'Chybí mezera za čárkou v podpoli 505r.')
 		# 245c / 505r generic
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if re.match('.*[^0-9\[ ]=.*', metadata['245']['c']):
-					write_error(header.identifier(), '245', SIF, '175', 'Chybný znak před znakem =.')
+					write_error(header.identifier(), '245', SIF, '175', 'Chybný znak před znakem = v podpoli 245c.')
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if re.match('.*[^0-9\[ ]=.*', F['r']):
-					write_error(header.identifier(), '505', SIF, '175', 'Chybný znak před znakem =.')
+					write_error(header.identifier(), '505', SIF, '175', 'Chybný znak před znakem = v podpoli 505r.')
 	
 	COUNTER+=1
 
