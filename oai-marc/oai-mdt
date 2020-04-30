@@ -231,8 +231,6 @@ for record in records:
 						log.write(aleph + ';' + F.tag + ';' + SIF + ';178;Hodnota MDF není v AUT ' + F['7'].encode('utf-8') + '.\n')
 						MDT_ERR+=1
 
-		sys.exit(1)
-
 log.close()
 
 print('------------------')
