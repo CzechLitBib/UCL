@@ -3,11 +3,7 @@
 #
 # OAI-PMH 2.0 MARCXML Record validator.
 #
-# TODO:
-#
-# 159/160 - fix I,II, Roman
-# 156/162 - fix [A-Z], [a-z] test + diacritic.. 
-	
+
 # INCLUDE -------------------
 
 from __future__ import print_function
