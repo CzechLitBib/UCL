@@ -22,11 +22,17 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 
+TOTAL=0
+MDT_CNT=0
+MDF_CNT=0
+ERROR=0
+
 # DEF -------------------
 
 def get_mdt(val,mdt,tag,ident):
-		ret=''
-	#try:
+	global MDF_CNT
+	ret=[]
+	try:
 		# create config, bin
 		with open('z3950.cfg', 'w') as f:
 			f.write('open tcp:aleph.nkp.cz:9991/AUT-UTF\n')
@@ -44,31 +50,24 @@ def get_mdt(val,mdt,tag,ident):
 				if '150' in rec:
 					if 'a' in rec['150']:
 						if rec['150']['a'] != val:
+							MDF_CNT+=1
 							print(ident + ' mdt "' + mdt + '" 150 not match.')
 			if tag == '655':
 				if '155' in rec:
 					if 'a' in rec['155']:
 						if rec['155']['a'] != val:
+							MDF_CNT+=1
 							print(ident + 'mdt "' + mdt + '" 155 not match.')
 			# get MDT list
-			ret=''#[]
-			if '080' in rec:
-			#	for f in metadata.get_fields('080'):
-			#		if 'a' in f: ret.append(f['a'])
-				if 'a' in rec['080']:
-					ret=rec['080']['a']	
-			if '089' in rec:
-			#	for f in metadata.get_fields('089'):
-			#		if 'a' in f: ret.append(f['a'])
-				if 'a' in rec['089']:
-					ret=rec['089']['a']	
+			for f in metadata.get_fields('080','089'):
+				if 'a' in f:
+					ret.append(f['a'])
 		# cleanup
 		os.remove('z3950.cfg')		
 		os.remove('rec.bin')
-		# return
-		return ret
-	#except: pass
-	#return 0
+	except:
+		print(ident + ' mdt "' + ' " Z39.50 error.')
+	return ret
 
 def MarcXML(xml):
 	handler = marcxml.XmlHandler()
@@ -212,25 +211,32 @@ for record in records:
 		else:
 			SIF = ''
 
+		TOTAL+=1
+
 		BASE=True
 		for B in metadata.get_fields('964'):
 			if B.value() not in ('B12', 'B45', 'INT', 'SMZ'): BASE=False
 		if BASE:
-			E=[]
-			for M in metadata.get_fields('080'):
-				if 'a' in M: E.append(M['a'])
-		
-			for F1 in metadata.get_fields('650'):
-				if 'a' in F1 and '7' in F1:
-					ret = get_mdt(F1['a'],F1['7'],'650',header.identifier())
-					if ret not in E:
-						print(header.identifier() + ' MDF not match ' + F1['7'] + ' -> ' + ret)
+			MDT = [F['a'] for F in metadata.get_fields('080','089') if 'a' in F]
+			MDF = [F for F in metadata.get_fields('650','655') if 'a' in F and '7' in F]
+			SKIP=False
+			if len(MDT) != len(MDF):
+				print(header.identifier() + ' MDT/MDF length not match.')
+				SKIP=True
+				MDT_CNT+=1
+			for F in MDF:
+				ret = get_mdt(F['a'], F['7'], F.tag, header.identifier())
+				if not SKIP:
+					if not ret:
+						print(header.identifier() + ' Empty set. ' + F['7'])
+						ERROR+=1
+					elif MDT[MDF.index(F)] not in ret:
+						print(header.identifier() + ' MDF not match. ' + F['7'])
 
-			for F2 in metadata.get_fields('655'):
-				if 'a' in F2 and '7' in F2:
-					ret = get_mdt(F2['a'],F2['7'],'655',header.identifier())
-					if ret not in E:
-						print(header.identifier() + ' MDF not match ' + F2['7'] + ' -> ' + ret)
+print(TOTAL)
+print(MDT_CNT)
+print(MDF_CNT)
+print(ERROR)
 
 # EXIT -------------------
 
