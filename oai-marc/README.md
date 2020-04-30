@@ -5,7 +5,7 @@ Harverst OAI-PMH 2.0 record set and validate data.
 
 INSTALL
 <pre>
-apt-get install python-setuptools python-lxml python-six
+apt-get install python-setuptools python-lxml python-six yaz-client
 
 <a href="https://pypi.org/project/pyoai/#files">pyoai-2.5.0.tar.gz</a>
 
@@ -63,7 +63,7 @@ FILE
          oai-964 - Generate Aleph Pseudo-Marc format file. 
            oai-7 - Evaluate subfield "7" data. 
 
-        773to756 - Convert record 773 to 756.
+        773to856 - Convert record 773 to 856.
 
         oai-mdt -  Z39.50 yaz-client wrapper.
         oai-test - Test code.
