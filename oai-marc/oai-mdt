@@ -68,7 +68,7 @@ def get_mdt(val,mdt,tag,ident,SIF):
 		os.remove('z3950.cfg')		
 		os.remove('rec.bin')
 	except:
-		print(ident + ' mdt "' + ' " Z39.50 error.')
+		print(ident + ' ' + mdt + ' Z39.50 error.')
 	return ret
 
 def MarcXML(xml):
