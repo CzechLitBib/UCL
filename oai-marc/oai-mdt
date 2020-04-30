@@ -53,13 +53,13 @@ def get_mdt(val,mdt,tag,ident,SIF):
 					if 'a' in rec['150']:
 						if rec['150']['a'] != val:
 							MDF_CNT+=1
-							log.write(ident + ';650;' + SIF + ';179;Nesoulad pole 650a a AUT/150a ' + mdt.encode('utf-8') + '.\n')
+							log.write(ident + ';650;' + SIF + ';179;Nesoulad pole 650 a AUT/150 ' + mdt.encode('utf-8') + '.\n')
 			if tag == '655':
 				if '155' in rec:
 					if 'a' in rec['155']:
 						if rec['155']['a'] != val:
 							MDF_CNT+=1
-							log.write(ident + ';655;' + SIF + ';180;Nesoulad pole 655a a AUT/150a ' + mdt.encode('utf-8') + '.\n')
+							log.write(ident + ';655;' + SIF + ';180;Nesoulad pole 655 a AUT/150 ' + mdt.encode('utf-8') + '.\n')
 			# get MDT list
 			for f in metadata.get_fields('080','089'):
 				if 'a' in f:
@@ -225,7 +225,7 @@ for record in records:
 				ret = get_mdt(F['a'], F['7'], F.tag, aleph, SIF)
 				if not SKIP:
 					if not ret:
-						log.write(aleph + ';' + F.tag + ';' + SIF + ';177;Neznamé MDF ' + F['7'].encode('utf-8')+ '.\n')
+						log.write(aleph + ';' + F.tag + ';' + SIF + ';177;Neznamé MDF ' + F['7'].encode('utf-8') + '.\n')
 						ERROR+=1
 					elif MDT[MDF.index(F)] not in ret:
 						log.write(aleph + ';' + F.tag + ';' + SIF + ';178;Hodnota MDF není v AUT ' + F['7'].encode('utf-8') + '.\n')
