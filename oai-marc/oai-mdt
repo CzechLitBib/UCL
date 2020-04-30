@@ -57,7 +57,7 @@ def get_mdt(val,mdt,tag,ident):
 					if 'a' in rec['155']:
 						if rec['155']['a'] != val:
 							MDF_CNT+=1
-							print(ident + 'mdt "' + mdt + '" 155 not match.')
+							print(ident + ' mdt "' + mdt + '" 155 not match.')
 			# get MDT list
 			for f in metadata.get_fields('080','089'):
 				if 'a' in f:
@@ -228,10 +228,10 @@ for record in records:
 				ret = get_mdt(F['a'], F['7'], F.tag, header.identifier())
 				if not SKIP:
 					if not ret:
-						print(header.identifier() + ' Empty set. ' + F['7'])
+						print(header.identifier() + ' Empty set "' + F['7'] + '".')
 						ERROR+=1
 					elif MDT[MDF.index(F)] not in ret:
-						print(header.identifier() + ' MDF not match. ' + F['7'])
+						print(header.identifier() + ' MDF not match "' + F['7'] + '".')
 
 print(TOTAL)
 print(MDT_CNT)
