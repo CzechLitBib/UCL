@@ -423,9 +423,10 @@ for record in records:
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
-				for S in re.findall('\[.*?\]', F['r']):
-					if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
-						write_error(header.identifier(), '505', SIF, '165', 'Chybný zápis dešifrovaného jména v 505r.')
+				if not (len(re.findall('[]', F['r'])) == 2 and re.match('^\[.*\]$', F['r'])):
+					for S in re.findall('\[.*?\]', F['r']):
+						if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
+							write_error(header.identifier(), '505', SIF, '165', 'Chybný zápis dešifrovaného jména v 505r.')
 		# 245c			
 		if '245' in metadata:
 			if 'c' in metadata['245']:
