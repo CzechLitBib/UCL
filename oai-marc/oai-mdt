@@ -21,15 +21,17 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
+OUT='MDT.csv'
 
 TOTAL=0
 MDT_CNT=0
+MDT_ERR=0
 MDF_CNT=0
 ERROR=0
 
 # DEF -------------------
 
-def get_mdt(val,mdt,tag,ident):
+def get_mdt(val,mdt,tag,ident,SIF):
 	global MDF_CNT
 	ret=[]
 	try:
@@ -51,13 +53,13 @@ def get_mdt(val,mdt,tag,ident):
 					if 'a' in rec['150']:
 						if rec['150']['a'] != val:
 							MDF_CNT+=1
-							print(ident + ' mdt "' + mdt + '" 150 not match.')
+							log.write(ident + ';650;' + SIF + ';179;Nesoulad pole 650a a AUT/150a ' + mdt + '.\n')
 			if tag == '655':
 				if '155' in rec:
 					if 'a' in rec['155']:
 						if rec['155']['a'] != val:
 							MDF_CNT+=1
-							print(ident + ' mdt "' + mdt + '" 155 not match.')
+							log.write(ident + ';655;' + SIF + ';180;Nesoulad pole 655a a AUT/150a ' + mdt + '.\n')
 			# get MDT list
 			for f in metadata.get_fields('080','089'):
 				if 'a' in f:
@@ -118,6 +120,12 @@ if args.get == 'ident':
 		parser.error('Invalid display argument.')
 
 # INIT -------------------
+
+try:
+	log = open(OUT, 'w')
+except:
+	print("Failed to open log file.")
+	sys.exit(1)
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -194,11 +202,13 @@ for record in records:
 		# 1xx/6xx-653/700/710/711/730 ------------------
 
 		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
 		else:
 			SIF = ''
 
 		TOTAL+=1
+		
+		aleph = re.sub('^.*-(\d+)$', '\\1', header.identifier())
 
 		BASE=True
 		for B in metadata.get_fields('964'):
@@ -208,21 +218,26 @@ for record in records:
 			MDF = [F for F in metadata.get_fields('650','655') if 'a' in F and '7' in F]
 			SKIP=False
 			if len(MDT) != len(MDF):
-				print(header.identifier() + ' MDT/MDF length not match.')
+				log.write(aleph + ';080;' + SIF + ';176;Nesoulad počtu polí 080 a 650/655.\n')
 				SKIP=True
 				MDT_CNT+=1
 			for F in MDF:
-				ret = get_mdt(F['a'], F['7'], F.tag, header.identifier())
+				ret = get_mdt(F['a'], F['7'], F.tag, aleph, SIF)
 				if not SKIP:
 					if not ret:
-						print(header.identifier() + ' Empty set "' + F['7'] + '".')
+						log.write(aleph + ';' + F.tag + ';' + SIF + ';177;Neznamé MDF ' + F['7'] + '.\n')
 						ERROR+=1
 					elif MDT[MDF.index(F)] not in ret:
-						print(header.identifier() + ' MDF not match "' + F['7'] + '".')
+						log.write(aleph + ';' + F.tag + ';' + SIF + ';178;Hodnota MDF není v AUT ' + F['7'] + '.\n')
+						MDT_ERR+=1
 
+log.close()
+
+print('------------------')
 print(TOTAL)
 print(MDT_CNT)
 print(MDF_CNT)
+print(MDT_ERR)
 print(ERROR)
 
 # EXIT -------------------
