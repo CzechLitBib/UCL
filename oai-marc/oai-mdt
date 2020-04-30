@@ -119,19 +119,6 @@ if args.get == 'ident':
 
 # INIT -------------------
 
-try:
-	os.mkdir(OUTDIR)
-except:
-	pass
-
-try:
-	sif_code = {}
-	with open(SIF_CODE, 'r') as f:
-		for line in f:
-			acct_code, acct_addr = line.decode('utf-8').split(':')
-			sif_code[acct_code] = acct_addr.strip()
-except: sif_code = {}
-
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
 
