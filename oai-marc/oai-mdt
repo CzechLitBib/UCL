@@ -24,10 +24,11 @@ URL='https://aleph.lib.cas.cz/OAI'
 OUT='MDT.csv'
 
 TOTAL=0
-MDT_CNT=0
+MDT_OUT=0
 MDT_ERR=0
+MDF_OUT=0
 MDF_CNT=0
-ERROR=0
+MDF_ERR=0
 
 # DEF -------------------
 
@@ -53,15 +54,15 @@ def get_mdt(val,mdt,tag,ident,SIF):
 					if 'a' in rec['150']:
 						if rec['150']['a'] != val:
 							MDF_CNT+=1
-							log.write(ident + ';650;' + SIF + ';179;Nesoulad pole 650 a AUT/150 ' + mdt.encode('utf-8') + '.\n')
+							log.write(ident + ';650;' + SIF + ';183;Nesoulad pole 650 a AUT/150 ' + mdt.encode('utf-8') + '.\n')
 			if tag == '655':
 				if '155' in rec:
 					if 'a' in rec['155']:
 						if rec['155']['a'] != val:
 							MDF_CNT+=1
-							log.write(ident + ';655;' + SIF + ';180;Nesoulad pole 655 a AUT/150 ' + mdt.encode('utf-8') + '.\n')
+							log.write(ident + ';655;' + SIF + ';184;Nesoulad pole 655 a AUT/155 ' + mdt.encode('utf-8') + '.\n')
 			# get MDT list
-			for f in metadata.get_fields('080','089'):
+			for f in rec.get_fields('080','089'):
 				if 'a' in f:
 					ret.append(f['a'])
 		# cleanup
@@ -214,31 +215,58 @@ for record in records:
 		for B in metadata.get_fields('964'):
 			if B.value() not in ('B12', 'B45', 'INT', 'SMZ'): BASE=False
 		if BASE:
-			MDT = [F['a'] for F in metadata.get_fields('080','089') if 'a' in F]
-			MDF = [F for F in metadata.get_fields('650','655') if 'a' in F and '7' in F]
-			SKIP=False
-			if len(MDT) != len(MDF):
-				log.write(aleph + ';080;' + SIF + ';176;Nesoulad počtu polí 080 a 650/655.\n')
-				SKIP=True
-				MDT_CNT+=1
-			for F in MDF:
-				ret = get_mdt(F['a'], F['7'], F.tag, aleph, SIF)
-				if not SKIP:
-					if not ret:
-						log.write(aleph + ';' + F.tag + ';' + SIF + ';177;Neznamé MDF ' + F['7'].encode('utf-8') + '.\n')
-						ERROR+=1
-					elif MDT[MDF.index(F)] not in ret:
-						log.write(aleph + ';' + F.tag + ';' + SIF + ';178;Hodnota MDF není v AUT ' + F['7'].encode('utf-8') + '.\n')
-						MDT_ERR+=1
+			MDT_650 = [F['a'] for F in metadata.get_fields('080','089') if 'a' in F and not re.match('^\(.*\)$', F['a'])]
+			MDT_655 = [F['a'] for F in metadata.get_fields('080','089') if 'a' in F and re.match('^\(.*\)$', F['a'])]
+		
+			MDF_650 = [F for F in metadata.get_fields('650') if 'a' in F and '7' in F]
+			MDF_655 = [F for F in metadata.get_fields('655') if 'a' in F and '7' in F]
+		
+			if len(MDT_650) > len(MDF_650):
+				log.write(aleph + ';080;' + SIF + ';176;Out of bounds 080(650).\n')
+				MDT_OUT+=1
+			if len(MDT_655) > len(MDF_655):
+				log.write(aleph + ';080;' + SIF + ';177;Out of bounds 080(655).\n')
+				MDT_OUT+=1
 
+			for F in MDF_650:
+				ret = get_mdt(F['a'], F['7'], F.tag, aleph, SIF)
+				if not ret:
+					log.write(aleph + ';' + F.tag + ';' + SIF + ';178;Neznamé MDF ' + F['7'].encode('utf-8') + '.\n')
+					MDT_ERR+=1
+					continue
+				if MDF_650.index(F) <= len(MDT_650) - 1:
+					if  MDT_650[MDF_650.index(F)] not in ret:
+						log.write(aleph + ';' + F.tag + ';' + SIF + ';179;Hodnota MDF(650) není v AUT ' + F['7'].encode('utf-8') + '.\n')
+						MDF_ERR+=1
+						continue
+				if MDF_650.index(F) > len(MDT_650) - 1:
+						log.write(aleph + ';' + F.tag + ';' + SIF + ';180;Out of bounds 650 ' + F['7'].encode('utf-8') + '.\n')
+						MDF_OUT+=1
+						continue
+			for F in MDF_655:
+				ret = get_mdt(F['a'], F['7'], F.tag, aleph, SIF)
+				if not ret:
+					log.write(aleph + ';' + F.tag + ';' + SIF + ';178;Neznamé MDF ' + F['7'].encode('utf-8') + '.\n')
+					MDT_ERR+=1
+					continue
+				if MDF_655.index(F) <= len(MDT_655) - 1:
+					if  MDT_655[MDF_655.index(F)] not in ret:
+						log.write(aleph + ';' + F.tag + ';' + SIF + ';181;Hodnota MDF(655) není v AUT ' + F['7'].encode('utf-8') + '.\n')
+						MDF_ERR+=1
+						continue
+				if MDF_655.index(F) > len(MDT_655) - 1:
+						log.write(aleph + ';' + F.tag + ';' + SIF + ';182;Out of bounds 655 ' + F['7'].encode('utf-8') + '.\n')
+						MDF_OUT+=1
+						continue
 log.close()
 
 print('------------------')
 print(TOTAL)
-print(MDT_CNT)
-print(MDF_CNT)
+print(MDT_OUT)
 print(MDT_ERR)
-print(ERROR)
+print(MDF_OUT)
+print(MDF_CNT)
+print(MDF_ERR)
 
 # EXIT -------------------
 
