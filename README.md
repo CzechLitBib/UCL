@@ -6,8 +6,6 @@ Library support software.
 TODO
 <pre>
 773to856 -
-           Divadelní noviny I - path=DivN   (ISSN v 773x = 1802-3592)
-           Divadelní noviny II - path=DivNII (ISSN v 773x =1802-3614)
            Kmen - path=Kmen
            KUltura - path=Kult
            KUlturní noviny - path=KultN
