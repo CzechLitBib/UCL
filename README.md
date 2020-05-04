@@ -5,12 +5,7 @@ Library support software.
 
 TODO
 <pre>
-                                                          R   Y  C S
-773to856 - http://archiv.ucl.cas.cz/index.php?path=CesLit/2.1954/1/1.png
-                                                    R   Y       C              S      R C S     Y
-           |t Česká literatura |x 0009-0468 |g Roč. 2, 1954, č. 1, 30. 3., s. 1-29 |q 2:1<1 |9 19540330
-
-           Česká literatura - path=CesLit
+773to856 -
            Divadelní noviny I - path=DivN   (ISSN v 773x = 1802-3592)
            Divadelní noviny II - path=DivNII (ISSN v 773x =1802-3614)
            Kmen - path=Kmen
