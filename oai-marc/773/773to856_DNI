@@ -1,0 +1,139 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# Aleph MARC 773 -> 856 convertor
+#
+# Divadelni noviny
+#                                                        R          Y        C                   S
+# 002090233 7730  L $$tDivadelní noviny$$x1802-3592$$gRoč. [1], 1957/1958, č. 3, 11. 12. 1957, s. 5$$q1:3<5$$919571211
+#                                              R     Y     C S
+# http://archiv.ucl.cas.cz/index.php?path=DivN/1.1957-1958/1/1.png 
+#    ID                  URL      
+# XXXXXXXXX 85641 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
+#
+
+from __future__ import print_function
+
+import StringIO,requests,sys,os,re
+
+from oaipmh.client import Client
+from oaipmh.metadata import MetadataRegistry
+from pymarc import marcxml,Field
+from lxml.etree import tostring
+
+# VAR ----------------------------------
+
+IN='773.txt'
+OUT='773to856.bib'
+LOG='773to856.log'
+
+PREFIX='http://archiv.ucl.cas.cz/index.php?path=DivN/'
+URL='https://aleph.lib.cas.cz/OAI'
+
+TOTAL=0
+MATCH=0
+MANUA=0
+
+# DEF ----------------------------------
+
+def MarcXML(xml):
+	handler = marcxml.XmlHandler()
+	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	return handler.records[0]
+
+def url_response(url,i,log):
+	try:
+		req = session.get(url)
+		if req.status_code == 200:
+			if 'Tisk' in req.text:
+				return 1
+	except:
+		log.write(i + ' URL check failed.\n')
+	log.write(i + ' BAD ' + url + '\n')
+	return 0
+
+def write_record(bib,url,i,log):
+	try:
+		#oai:aleph22.lib.cas.cz:KNA01-001394011
+		record,header,about='','',''
+		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier='oai:aleph22.lib.cas.cz:KNA01-' + i)
+		if record:
+			# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
+			field = Field(
+				tag = '856',
+				indicators = ['4','1'],
+				subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
+			)
+			record.add_ordered_field(field)
+			# =964 \\$aDGARCH
+			record.remove_fields('964')
+			field = Field(
+				tag = '964',
+				indicators = [' ',' '],
+				subfields = ['a', 'DGARCH']
+			)
+			record.add_ordered_field(field)
+			bib.write(record.__str__())
+			bib.write('\n')
+		else:
+			log.write( i + 'No record.\n')
+	except:
+		log.write(i + ' Write failed.\n')
+
+def convert_regular(g,i,out,log):
+	r_part = re.sub('^Roč\. (\d+|\[\d+\]), \d+\/\d+, č\. (\d+|\d+\/\d+), .*. s\. (\d+|\d+-\d+|\d+, \d+|\[\d+\])$', '\\1', g)
+	R = r_part.replace('[','').replace(']','').strip()
+	y_part = re.sub('^Roč\. (\d+|\[\d+\]), (\d+\/\d+), č\. (\d+|\d+\/\d+), .*. s\. (\d+|\d+-\d+|\d+, \d+|\[\d+\])$', '\\2', g)
+	Y = y_part.replace('/','-').strip()
+	c_part = re.sub('^Roč\. (\d+|\[\d+\]), \d+\/\d+, č\. (\d+|\d+\/\d+), .*. s\. (\d+|\d+-\d+|\d+, \d+|\[\d+\])$', '\\2', g)
+	C = c_part.split('/')[0].strip()
+	s_part = re.sub('^Roč\. (\d+|\[\d+\]), \d+\/\d+, č\. (\d+|\d+\/\d+), .*. s\. (\d+|\d+-\d+|\d+, \d+|\[\d+\])$', '\\3', g)
+	S = s_part.split('-')[0].split(', ')[0].replace('[','').replace(']','').strip()
+	
+	URL = PREFIX + R + '.' + Y + '/' + C + '/' + S + '.png'
+
+	if url_response(URL,i,log):
+		write_record(out,URL,i,log)
+
+# INIT ----------------------------------
+
+registry = MetadataRegistry()
+
+registry.registerReader('marc21', MarcXML)
+
+oai = Client(URL, registry)
+
+session = requests.Session()
+
+# MAIN ----------------------------------
+
+in_file = open(IN, 'r')
+out_file = open(OUT, 'w')
+log_file = open(LOG, 'w', 0)
+
+for LINE in in_file:
+	if re.match('.*L \$\$tDivadelní noviny\$\$x1802-3592\$\$.*', LINE):
+		TOTAL+=1
+		ID = LINE[:9]
+		G = re.sub('^.*\$\$g(.*)\$\$q.*$', '\\1', LINE)
+		Q = re.sub('^.*\$\$q(.*)\$\$.*$', '\\1', LINE)
+		# REGULAR
+		# 002090233 7730  L $$tDivadelní noviny$$x1802-3592$$gRoč. [1], 1957/1958, č. 3, 11. 12. 1957, s. 5$$q1:3<5$$919571211
+		#  Roč. [1], 1957/1958, č. 3, 11. 12. 1957, s. 5
+		if re.match('^Roč\. (\d+|\[\d+\]), \d+\/\d+, č\. (\d+|\d+\/\d+), .*. s\. (\d+|\d+-\d+|\d+, \d+|\[\d+\])$', G):
+			MATCH+=1
+			convert_regular(G,ID,out_file,log_file)
+			continue
+		# MANUAL
+		MANUA+=1
+		print(LINE)
+		continue
+
+print('TOTAL: ' + str(TOTAL))
+print('MATCH: ' + str(MATCH))
+print('MANUA: ' + str(MANUA))
+
+in_file.close()
+out_file.close()
+log_file.close()
+
