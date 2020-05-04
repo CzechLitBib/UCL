@@ -260,12 +260,12 @@ for record in records:
 				if SUB not in ('a', 'q', 'z'):
 					write_error(header.identifier(), '020', SIF, '137', 'Chybný kód podpole v poli 020.')
 		# 035
-		if 964 in metadata:
-			if metadata['964'].value() not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
+		for F in metadata.get_fields('964'):
+			if F.value() not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' in metadata:
 					write_error(header.identifier(), '964', SIF, '138', 'Chybné označení báze v 964.')
-		if 964 in metadata:
-			if metadata['964'].value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
+		for F in metadata.get_fields('964'):
+			if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' not in metadata:
 					write_error(header.identifier(), '035', SIF, '139', 'Chybí pole 035.')
 		# 035a
@@ -463,11 +463,7 @@ for record in records:
 		# 300e
 		if '300' in metadata:
 			if metadata['300'].subfields[0::2][0] == 'e':
-				INT=False
-				for F in metadata.get_fields('964'):
-					if 'a' in F:
-						if F['a'] == 'INT': INT=True
-				if not INT:
+				if metadata.get_fields('964')[-1:].value() != 'INT':# last 964 value
 					write_error(header.identifier(), '300', SIF, '171', 'Chybný zápis pole 300 (nebo v 964 chybí kód INT).')
 		# 490
 		if '490' in metadata:

@@ -30,9 +30,9 @@ SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
-MAIL_SENDER='xxx'
-MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
+MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
+MAIL_SERVER='listonos.ucl.cas.cz'
+MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
 
 HTML_HEADER='''<!doctype html>
 <html>
@@ -796,14 +796,11 @@ for record in records:
 					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 'c' v poli 710.")
 		if len(metadata.get_fields('300')) > 1:
 			BAD=False
-			if not '964' in metadata: BAD=True
-			elif 'a' not in metadata['964']: BAD=True
-			elif metadata['964']['a'] != 'INT': BAD=True
-			else:
-				for F in metadata.get_fields('300'):
-					for SUB in metadata['300'].subfields[0::2]:
-						if SUB != 'e': BAD=True 
-			if BAD: write_error(header.identifier(), '300', SIF, '130', 'Neplatné opakování pole 300.')
+			if metadata.get_fields('964')[-1:].value() != 'INT': BAD=True
+			for F in metadata.get_fields('300'):
+				if F.subfields[0] != 'e': BAD = True
+			if BAD:
+				 write_error(header.identifier(), '300', SIF, '130', 'Neplatné opakování pole 300.')
 		if '008' in metadata:
 			for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT
 				if 'c' in F:

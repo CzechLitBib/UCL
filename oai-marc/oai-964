@@ -155,7 +155,7 @@ for record in records:
 			SIF = ''.ljust(5)
 
 		if '964' and '990' in metadata:# 990 -> FMT
-			base = metadata['964'].value()
+			base = metadata.get_fields('964')[-1:].value()# last one
 			sub_base = metadata['990'].value()
 			try:
 				os.mkdir(DATADIR + '/'+ base)
