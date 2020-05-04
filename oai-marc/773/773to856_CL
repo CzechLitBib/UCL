@@ -84,9 +84,9 @@ def write_record(bib,url,i,log):
 
 def convert_regular(g,i,out,log):
 	R =  re.sub('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), s.*$', '\\1', g).strip()
-	Y =  re.sub('^[Rr]oč\. \d+, (\d+), č\. (\d+|\d+\/\d+), s.*$', '\\1', G).strip()
-	C =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), s.*$', '\\1', G).split('/')[0].strip()
-	part =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), s\.(.*)$', '\\2', G).strip()
+	Y =  re.sub('^[Rr]oč\. \d+, (\d+), č\. (\d+|\d+\/\d+), s.*$', '\\1', g).strip()
+	C =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), s.*$', '\\1', g).split('/')[0].strip()
+	part =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), s\.(.*)$', '\\2', g).strip()
 	S = part.split('-')[0].split('/')[0].replace('[','').replace(']','').strip()
 
 	URL = PREFIX + R + '.' + Y + '/' + C + '/' + S + '.png'
@@ -97,10 +97,10 @@ def convert_regular(g,i,out,log):
 		log.write(i + ' OLDNEW ' +  URL + '\n')
 
 def convert_month(g,i,out,log):
-	R = re.sub('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', G).strip()
-	Y = re.sub('^[Rr]oč\. \d+, (\d+), č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', G).strip()
-	C = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', G).split('/')[0].strip()
-	part = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\.(.*)$', '\\2', G)
+	R = re.sub('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', g).strip()
+	Y = re.sub('^[Rr]oč\. \d+, (\d+), č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', g).strip()
+	C = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', g).split('/')[0].strip()
+	part = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\.(.*)$', '\\2', g)
 	S = part.split('-')[0].strip()
 
 	URL = PREFIX + R + '.' + Y + '/' + C + '/' + S + '.png'
