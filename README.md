@@ -5,8 +5,7 @@ Library support software.
 
 TODO
 <pre>
-773to856 - Kulturní noviny - path=KultN
-           Kulturní politika - path=KulP
+773to856 - Kulturní politika - path=KulP
            Kulturní tvorba - path=KultT
            Listy - path=Listy
            Literární listy - path=LitL
