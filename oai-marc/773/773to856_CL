@@ -33,7 +33,9 @@ URL='https://aleph.lib.cas.cz/OAI'
 
 TOTAL=0
 MATCH=0
+DOUBL=0
 MONTH=0
+MDBLE=0
 MANUA=0
 
 # DEF ----------------------------------
@@ -83,10 +85,10 @@ def write_record(bib,url,i,log):
 		log.write(i + ' Write failed.\n')
 
 def convert_regular(g,i,out,log):
-	R =  re.sub('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), s.*$', '\\1', g).strip()
-	Y =  re.sub('^[Rr]oč\. \d+, (\d+), č\. (\d+|\d+\/\d+), s.*$', '\\1', g).strip()
-	C =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), s.*$', '\\1', g).split('/')[0].strip()
-	part =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), s\.(.*)$', '\\2', g).strip()
+	R =  re.sub('^[Rr]oč\. (\d+), \d+, č\. \d+, s.*$', '\\1', g).strip()
+	Y =  re.sub('^[Rr]oč\. \d+, (\d+), č\. \d+, s.*$', '\\1', g).strip()
+	C =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+), s.*$', '\\1', g).strip()
+	part =  re.sub('^[Rr]oč\. \d+, \d+, č\. \d+, s\.(.*)$', '\\1', g).strip()
 	S = part.split('-')[0].split('/')[0].replace('[','').replace(']','').strip()
 
 	URL = PREFIX + R + '.' + Y + '/' + C + '/' + S + '.png'
@@ -96,14 +98,42 @@ def convert_regular(g,i,out,log):
 	else:
 		log.write(i + ' OLDNEW ' +  URL + '\n')
 
+def convert_double(g,i,out,log):
+	R =  re.sub('^[Rr]oč\. (\d+), \d+, č\. \d+\/\d+, s.*$', '\\1', g).strip()
+	Y =  re.sub('^[Rr]oč\. \d+, (\d+), č\. \d+\/\d+, s.*$', '\\1', g).strip()
+	C =  re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+\/\d+), s.*$', '\\1', g).split('/')
+	part =  re.sub('^[Rr]oč\. \d+, \d+, č\. \d+\/\d+, s\.(.*)$', '\\1', g).strip()
+	S = part.split('-')[0].split('/')[0].replace('[','').replace(']','').strip()
+
+	URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
+	if int(Y) > 1952 and int(Y) < 1999:
+		if url_response(URL,i,log):
+			write_record(out,URL,i,log)
+	else:
+		log.write(i + ' OLDNEW ' +  URL + '\n')
+
 def convert_month(g,i,out,log):
-	R = re.sub('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', g).strip()
-	Y = re.sub('^[Rr]oč\. \d+, (\d+), č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', g).strip()
-	C = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\..*$', '\\1', g).split('/')[0].strip()
-	part = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\.(.*)$', '\\2', g)
+	R = re.sub('^[Rr]oč\. (\d+), \d+, č\. \d+, .*, s\..*$', '\\1', g).strip()
+	Y = re.sub('^[Rr]oč\. \d+, (\d+), č\. \d+, .*, s\..*$', '\\1', g).strip()
+	C = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+), .*, s\..*$', '\\1', g).strip()
+	part = re.sub('^[Rr]oč\. \d+, \d+, č\. \d+, .*, s\.(.*)$', '\\1', g)
 	S = part.split('-')[0].strip()
 
 	URL = PREFIX + R + '.' + Y + '/' + C + '/' + S + '.png'
+	if int(Y) > 1952 and int(Y) < 1999:
+		if url_response(URL,i,log):
+			write_record(out,URL,i,log)
+	else:
+		log.write(i + ' OLDNEW ' +  URL + '\n')
+
+def convert_month_double(g,i,out,log):
+	R = re.sub('^[Rr]oč\. (\d+), \d+, č\. \d+\/\d+, .*, s\..*$', '\\1', g).strip()
+	Y = re.sub('^[Rr]oč\. \d+, (\d+), č\. \d+\/\d+, .*, s\..*$', '\\1', g).strip()
+	C = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+\/\d+), .*, s\..*$', '\\1', g).split('/')
+	part = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+\/\d+), .*, s\.(.*)$', '\\2', g)
+	S = part.split('-')[0].strip()
+
+	URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
 	if int(Y) > 1952 and int(Y) < 1999:
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
@@ -137,15 +167,28 @@ for LINE in in_file:
 		# REGULAR
 		# 000989117 7730  L $$tČeská literatura$$x0009-0468$$gRoč. 1, 1953, č. 1, 31. 3., s. 45-46.$$q1:1$$919530331
 		#                      Roč. 1, 1953, č. 1, 31. 3., s. 45-46.
-		if re.match('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), s\..*$', G):
+		#if re.match('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), s\..*$', G):
+		if re.match('^[Rr]oč\. (\d+), \d+, č\. \d+, s\..*$', G):
 			MATCH+=1
-			#convert_regular(G,ID,out_file,log_file)
+			convert_regular(G,ID,out_file,log_file)
+			continue
+		# DOUBLE
+		if re.match('^[Rr]oč\. (\d+), \d+, č\. \d+\/\d+, s\..*$', G):
+			DOUBL+=1
+			convert_double(G,ID,out_file,log_file)
 			continue
 		# MONTH
-		if re.match('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), .*, s\..*$', G):
+		if re.match('^[Rr]oč\. (\d+), \d+, č\. \d+, .*, s\..*$', G):
 			MONTH+=1
-			#convert_month(G,ID,out_file,log_file)
+			convert_month(G,ID,out_file,log_file)
 			continue
+		# MONTH DOUBLE
+		if re.match('^[Rr]oč\. (\d+), \d+, č\. \d+\/\d+, .*, s\..*$', G):
+			MDBLE+=1
+			convert_month_double(G,ID,out_file,log_file)
+			continue
+		# MONTH DOUBLE
+
 		# MANUAL
 		MANUA+=1
 		#print(LINE)
@@ -153,7 +196,9 @@ for LINE in in_file:
 
 print('TOTAL: ' + str(TOTAL))
 print('MATCH: ' + str(MATCH))
+print('DOUBL: ' + str(DOUBL))
 print('MONTH: ' + str(MONTH))
+print('MDBLE: ' + str(MDBLE))
 print('MANUA: ' + str(MANUA))
 
 in_file.close()
