@@ -463,7 +463,8 @@ for record in records:
 		# 300e
 		if '300' in metadata:
 			if metadata['300'].subfields[0::2][0] == 'e':
-				if metadata.get_fields('964')[-1:].value() != 'INT':# last 964 value
+				for F in metadata.get_fields('964')[-1:]:
+					if F.value() != 'INT':# last 964 value
 					write_error(header.identifier(), '300', SIF, '171', 'Chybný zápis pole 300 (nebo v 964 chybí kód INT).')
 		# 490
 		if '490' in metadata:
