@@ -155,39 +155,40 @@ for record in records:
 			SIF = ''.ljust(5)
 
 		if '964' and '990' in metadata:# 990 -> FMT
-			base = metadata.get_fields('964')[-1:].value()# last one
-			sub_base = metadata['990'].value()
-			try:
-				os.mkdir(DATADIR + '/'+ base)
-			except: pass
-			try:
-				os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
-			except: pass
-			try:
-				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '.' + sub_base + '.bib', 'a', 0) as f:
-					for F in metadata:
-						try:
-							IND=''
-							if F.indicator1: IND += F.indicator1
-							else: IND += ' '
-							if F.indicator2: IND += F.indicator2
-							else: IND += ' '
-						except: IND = '  '
-						try:
-							VAL=[]
-							if F.subfields:
-								for sub in F:
-									VAL.append(''.join(sub).strip())
-        							DATA = '$$' + '$$'.join(VAL)
-							else: DATA = ''
-						except: DATA = F.value()
-						if F.tag == 'SYS': continue
-						if F.tag == 'LDR':
-							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';LDR' + IND + ' L ' + metadata.leader.encode('utf-8') + '\n')
-						else:
-							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';' + str(F.tag) + str(IND) + ' L ' + DATA.encode('utf-8') + '\n')
-			except:
-				print(ALEPH + ' Write failed.')
+			for F in metadata.get_fields('964'):
+				base = F.value()
+				sub_base = metadata['990'].value()
+				try:
+					os.mkdir(DATADIR + '/'+ base)
+				except: pass
+				try:
+					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+				except: pass
+				try:
+					with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '.' + sub_base + '.bib', 'a', 0) as f:
+						for F in metadata:
+							try:
+								IND=''
+								if F.indicator1: IND += F.indicator1
+								else: IND += ' '
+								if F.indicator2: IND += F.indicator2
+								else: IND += ' '
+							except: IND = '  '
+							try:
+								VAL=[]
+								if F.subfields:
+									for sub in F:
+										VAL.append(''.join(sub).strip())
+        								DATA = '$$' + '$$'.join(VAL)
+								else: DATA = ''
+							except: DATA = F.value()
+							if F.tag == 'SYS': continue
+							if F.tag == 'LDR':
+								f.write(SIF.encode('utf-8') + ';' + ALEPH + ';LDR' + IND + ' L ' + metadata.leader.encode('utf-8') + '\n')
+							else:
+								f.write(SIF.encode('utf-8') + ';' + ALEPH + ';' + str(F.tag) + str(IND) + ' L ' + DATA.encode('utf-8') + '\n')
+				except:
+					print(ALEPH + ' Write failed.')
 			COUNTER+=1
 		else:
 			print(ALEPH + 'Do not match.')
