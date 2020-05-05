@@ -796,7 +796,7 @@ for record in records:
 					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 'c' v poli 710.")
 		if len(metadata.get_fields('300')) > 1:
 			BAD=False
-			for F in metadata.get_fields('964')[-1:]:
+			for F in metadata.get_fields('964'):
 				if F.value() != 'INT': BAD=True
 			for F in metadata.get_fields('300'):
 				if F.subfields[0] != 'e': BAD = True
