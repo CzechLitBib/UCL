@@ -5,7 +5,8 @@ Library support software.
 
 TODO
 <pre>
-773to856 - FIX: 964 append(!)
+773to856   FIX: 964 -> 651(append)
+           FIX: 964 append(!)
            FIX: doubles..
 
             Kulturní tvorba - path=KultT
