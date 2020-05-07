@@ -120,7 +120,6 @@ out_file = open(OUT, 'w')
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
-	#if re.match('.*L \$\$tListy\$\$.*', LINE):
 	if re.match('.*L \$\$tListy\$\$.*', LINE):
 		TOTAL+=1
 		ID = LINE[:9]
