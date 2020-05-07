@@ -65,10 +65,9 @@ def write_record(bib,url,i,log):
 				subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
 			)
 			record.add_ordered_field(field)
-			# =964 \\$aDGARCH
-			record.remove_fields('964')
+			# =651 \\$aDGARCH
 			field = Field(
-				tag = '964',
+				tag = '651',
 				indicators = [' ',' '],
 				subfields = ['a', 'DGARCH']
 			)
