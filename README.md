@@ -7,7 +7,6 @@ TODO
 <pre>
 773to856   FIX: doubles..
 
-           Listy - path=Listy
            Literární listy - path=LitL
            Literární noviny I - path=LitN (ISSN v 773x = 1804-820X)
            Literární noviny II - path=LitNII (ISSN v 773x = 0459-5203 )
