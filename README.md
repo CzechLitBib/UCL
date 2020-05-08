@@ -11,8 +11,7 @@ TODO
            Literární noviny II - path=LitNII (ISSN v 773x = 0459-5203 )
            Literární noviny III - path=LitNIII (ISSN = 1210-0021)
            Tvar - path=Tvar
-           TVorba - path=Tvorba
-           Zítřek - path=Zitrek
+           Tvorba - path=Tvorba
 
            DATA: https://data.ucl.cas.cz/index.php/s/UQkuO3AghA5nvO4
 
