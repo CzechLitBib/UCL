@@ -69,6 +69,8 @@ FILE
       oai-weekly - Crontab weekly runner.
      oai-monthly - Crontab monthly runner.
 
+   oai-test-file - File based testing.
+
            html/ - Apache AutoIndexing HTML structure.
            mods/ - Custom mods.
             773/ - Covert Aleph record 773 to 856.
