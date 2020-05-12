@@ -443,7 +443,7 @@ for record in records:
 					if not re.match('.*;$', metadata['260'].subfields[1::2][SUB.index(F) - 1]):
 						write_error(header.identifier(), '260', SIF, '168', "Chybná interpunkce před podpolem 'a' (má být středník).")
 		# 264b
-		if '260' in metadata:
+		if '264' in metadata:
 			SUB = metadata['264'].subfields[0::2]
 			for F in SUB:
 				if F == 'b' and SUB.index(F) == 0:
