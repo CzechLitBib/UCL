@@ -9,13 +9,13 @@ TODO
            FIX: rebuild 651 DGARCH
            CHECK: [\d+] URL
 
-           DATA: https://data.ucl.cas.cz/index.php/s/UQkuO3AghA5nvO4
-
 MARC -
            - 159/160 - fix I,II, Roman
            - 156/162 - fix [A-Z], [a-z] test + diacritic..
            - 260/264 a/b table.
-           - oai-test + oai-marc - https://data.ucl.cas.cz/index.php/s/GKdL5QzSlwv87LW
+           - oai-test + oai-marc -
+	   - fix 773t(g)
+
 </pre>
 FILE
 <pre>
