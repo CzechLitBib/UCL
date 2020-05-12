@@ -316,7 +316,7 @@ for record in records:
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if ';' in F['r']:
-					if not re.match('.*(?<! ) ; (?! ).*', metadata['505']['r']):
+					if not re.match('.*(?<! ) ; (?! ).*', F['r']):
 						write_error(header.identifier(), '505', SIF, '147', 'Chybný zápis ; v 505r.')
 		# 787n
 		for F in metadata.get_fields('787'):
