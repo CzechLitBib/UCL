@@ -319,25 +319,25 @@ for record in records:
 			if 'r' in F:
 				if ';' in F['r']:
 					if not re.match('.*(?<! ) ; (?! ).*', F['r']):
-						write_error(header.identifier(), '505', SIF, '147', 'Chybný zápis ; v 505r.')
+						write_error(header.identifier(), '505', SIF, '147', 'Chybný zápis středníku v 505r.')
 		# 787n
 		for F in metadata.get_fields('787'):
 			if 'n' in F:
 				if ';' in F['n']:
 					if not re.match('.*(?<! ) ; (?! ).*', F['n']):
-						write_error(header.identifier(), '787', SIF, '148', 'Chybný zápis ; v 787n.')
+						write_error(header.identifier(), '787', SIF, '148', 'Chybný zápis středníku v 787n.')
 		# 787k
 		for F in metadata.get_fields('787'):
 			for SUB in F.get_subfields('k'):
 				if ';' in SUB:
 					if not re.match('.*(?<! ) ; (?! ).*', SUB):
-						write_error(header.identifier(), '787', SIF, '149', 'Chybný zápis ; v 787k.')
+						write_error(header.identifier(), '787', SIF, '149', 'Chybný zápis středníku v 787k.')
 		# 773n
 		if '773' in metadata:
 			if 'n' in metadata['773']:
 				if ';' in metadata['773']['n']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['773']['n']):
-						write_error(header.identifier(), '773', SIF, '150', 'Chybný zápis ; v 773n.')
+						write_error(header.identifier(), '773', SIF, '150', 'Chybný zápis středníku v 773n.')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
@@ -374,7 +374,7 @@ for record in records:
 			if '245' in metadata:
 				if 'c' in metadata['245']:
 					if re.match('.*; [A-Z].*', metadata['245']['c']):
-						write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c po ; následuje velké písmeno.')
+						write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c po středníku následuje velké písmeno.')
 		# 245c
 		if '245' in metadata:
 			if metadata['245'].indicator1 == 0:
