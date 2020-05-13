@@ -171,6 +171,7 @@ def validate(record):
 			if len(F.get_subfields('4')) == 0:
 				write_error(IDENT, '710', SIF, '022', 'Chybí podpole 710-4.')
 		for F in metadata.get_fields('773'):
+			G=''
 			if 'g' in F: G = F['g']
 			if len(F.get_subfields('t')) != 1:
 				write_error(IDENT, '773', SIF, '023', 'Chybí podpole 773t.')
@@ -486,13 +487,13 @@ def validate(record):
 						write_error(IDENT, TAG, SIF, '098', 'Chybný 2.indikátor v poli ' + TAG + '.')
 					if '2' in F and '7' in F:
 						if F['2'] != 'czenas':
-							write_error(IDENT, TAG, SIF, '099', 'Chybný 2.indikátor v poli ' + TAG + '.')
+							write_error(IDENT, TAG, SIF, '099', 'Chybný 2.indikátor v poli ' + TAG + '(czenas).')
 				if F.indicator2 == '4':
-					if '7' in F:
-						write_error(IDENT, TAG, SIF, '100', 'Chybný 2.indikátor v poli ' + TAG + '.')
-					if '2' in F:
-						if F['2'] == 'czenas':
-							write_error(IDENT, TAG, SIF, '101', 'Chybný 2.indikátor v poli ' + TAG + '.')
+					if '7' in F or '2' in F and F['2'] == 'czenas':
+						write_error(IDENT, TAG, SIF, '100', 'Chybný 1.indikátor v poli ' + TAG + '.')
+					#if '2' in F:
+					#	if F['2'] == 'czenas':
+					#		write_error(IDENT, TAG, SIF, '101', 'Chybný 1.indikátor v poli ' + TAG + '.')
 	
 		# TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
@@ -590,7 +591,7 @@ def validate(record):
 
 		# TEST OTHER ------------------
 
-		for TAG in ('001', '003', '005', '008', '040', '041', '044', '072', '100', '110', '111', '130', '245', '260', '520', '910', 'OWN', 'SIF', 'ZAZ', 'ZAR'):
+		for TAG in ('001', '003', '005', '008', '040', '041', '044', '072', '100', '110', '111', '130', '245', '260', '520', '910', 'OWN', 'SIF', 'ZAZ'):
 			if len(metadata.get_fields(TAG)) > 1:
 				write_error(IDENT, TAG, SIF, '125', 'Neplatné opakování pole ' + TAG + '.')
 		if '110' in metadata:
@@ -638,6 +639,12 @@ def validate(record):
 		if CNB:
 			if '015' not in metadata:
 				write_error(IDENT, '506', SIF, '132', 'Chybí číslo ČNB.')
+				print(metadata)
+				if '008' in metadata:
+					print("008: " + metadata['008'].value()[15:18].strip())
+				if metadata.leader:
+					print("LDR: " + metadata.leader[7])
+				sys.exit(1)
 		# CNB format
 		for F in metadata.get_fields('015'):
 			if not re.match('^cnb\d{9}$', F.value()):
@@ -677,10 +684,12 @@ def validate(record):
 				if SUB not in ('a', 'q', 'z'):
 					write_error(IDENT, '020', SIF, '137', 'Chybný kód podpole v poli 020.')
 		# 035
-		for F in metadata.get_fields('964'):
-			if F.value() not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
-				if '035' in metadata:
-					write_error(IDENT, '964', SIF, '138', 'Chybné označení báze v 964.')
+		if '035' in metadata:
+			BASE=False
+			for F in metadata.get_fields('964'):
+				if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
+			if not BASE:
+				write_error(IDENT, '964', SIF, '138', 'Chybné označení báze v 964.')
 		for F in metadata.get_fields('964'):
 			if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' not in metadata:
@@ -730,25 +739,25 @@ def validate(record):
 			if 'c' in metadata['245']:
 				if ';' in metadata['245']['c']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['245']['c']):
-						write_error(IDENT, '245', SIF, '146', 'Chybný zápis ; v 245c.')
+						write_error(IDENT, '245', SIF, '146', 'Chybný zápis středníku v 245c.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if ';' in F['r']:
 					if not re.match('.*(?<! ) ; (?! ).*', F['r']):
-						write_error(IDENT, '505', SIF, '147', 'Chybný zápis ; v 505r.')
+						write_error(IDENT, '505', SIF, '147', 'Chybný zápis středníku v 505r.')
 		# 787n
 		for F in metadata.get_fields('787'):
 			if 'n' in F:
 				if ';' in F['n']:
 					if not re.match('.*(?<! ) ; (?! ).*', F['n']):
-						write_error(IDENT, '787', SIF, '148', 'Chybný zápis ; v 787n.')
+						write_error(IDENT, '787', SIF, '148', 'Chybný zápis středníku v 787n.')
 		# 787k
 		for F in metadata.get_fields('787'):
 			for SUB in F.get_subfields('k'):
 				if ';' in SUB:
 					if not re.match('.*(?<! ) ; (?! ).*', SUB):
-						write_error(IDENT, '787', SIF, '149', 'Chybný zápis ; v 787k.')
+						write_error(IDENT, '787', SIF, '149', 'Chybný zápis středníku v 787k.')
 		# 773n
 		if '773' in metadata:
 			if 'n' in metadata['773']:
@@ -791,7 +800,7 @@ def validate(record):
 			if '245' in metadata:
 				if 'c' in metadata['245']:
 					if re.match('.*; [A-Z].*', metadata['245']['c']):
-						write_error(IDENT, '245', SIF, '156', 'Chyba v poli 245c po ; následuje velké písmeno.')
+						write_error(IDENT, '245', SIF, '156', 'Chyba v poli 245c po středníku následuje velké písmeno.')
 		# 245c
 		if '245' in metadata:
 			if metadata['245'].indicator1 == 0:
@@ -833,14 +842,14 @@ def validate(record):
 			if 'c' in metadata['245']:
 				if not (len(re.findall('[\[\]]', metadata['245']['c'])) == 2 and re.match('^\[.*\]$', metadata['245']['c'])):
 					for S in re.findall('\[.*?\]', metadata['245']['c']):
-						if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
+						if re.match('\[=.*\]', S) and ',' not in S:
 							write_error(IDENT, '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if not (len(re.findall('[\[\]]', F['r'])) == 2 and re.match('^\[.*\]$', F['r'])):
 					for S in re.findall('\[.*?\]', F['r']):
-						if re.match('.*[A-Z][^,]+ [A-Z].*', S.strip().replace('[','').replace(']','')):
+						if re.match('\[=.*\]', S) and ',' not in S:
 							write_error(IDENT, '505', SIF, '165', 'Chybný zápis dešifrovaného jména v 505r.')
 		# 245c			
 		if '245' in metadata:
