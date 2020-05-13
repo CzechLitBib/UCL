@@ -490,10 +490,10 @@ def validate(record):
 							write_error(IDENT, TAG, SIF, '099', 'Chybný 2.indikátor v poli ' + TAG + '(czenas).')
 				if F.indicator2 == '4':
 					if '7' in F or '2' in F and F['2'] == 'czenas':
-						write_error(IDENT, TAG, SIF, '100', 'Chybný 1.indikátor v poli ' + TAG + '.')
+						write_error(IDENT, TAG, SIF, '100', 'Chybný 2.indikátor v poli ' + TAG + '.')
 					#if '2' in F:
 					#	if F['2'] == 'czenas':
-					#		write_error(IDENT, TAG, SIF, '101', 'Chybný 1.indikátor v poli ' + TAG + '.')
+					#		write_error(IDENT, TAG, SIF, '101', 'Chybný 2.indikátor v poli ' + TAG + '.')
 	
 		# TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
