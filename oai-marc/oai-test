@@ -260,10 +260,12 @@ for record in records:
 				if SUB not in ('a', 'q', 'z'):
 					write_error(header.identifier(), '020', SIF, '137', 'Chybný kód podpole v poli 020.')
 		# 035
-		for F in metadata.get_fields('964'):
-			if F.value() not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
-				if '035' in metadata:
-					write_error(header.identifier(), '964', SIF, '138', 'Chybné označení báze v 964.')
+		if '035' in metadata:
+			BASE=False
+			for F in metadata.get_fields('964'):
+				if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
+			if not BASE:
+				write_error(IDENT, '964', SIF, '138', 'Chybné označení báze v 964.')
 		for F in metadata.get_fields('964'):
 			if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' not in metadata:
