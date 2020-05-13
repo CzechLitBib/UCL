@@ -639,12 +639,6 @@ def validate(record):
 		if CNB:
 			if '015' not in metadata:
 				write_error(IDENT, '506', SIF, '132', 'Chybí číslo ČNB.')
-				print(metadata)
-				if '008' in metadata:
-					print("008: " + metadata['008'].value()[15:18].strip())
-				if metadata.leader:
-					print("LDR: " + metadata.leader[7])
-				sys.exit(1)
 		# CNB format
 		for F in metadata.get_fields('015'):
 			if not re.match('^cnb\d{9}$', F.value()):
