@@ -15,7 +15,13 @@ MARC -
            - 260/264 a/b table.
            - oai-test + oai-marc -
 	   - fix 773t(g)
-
+           - 138 - Fix B80 regexp.
+           - 100(600) join error code.
+           - 125(ZAR) repeatability
+           - 164 comma regexp fix
+           - 148/149/156 CSV split fix
+           - 98 error join?
+           - 132 CNB regexp check.
 </pre>
 FILE
 <pre>
