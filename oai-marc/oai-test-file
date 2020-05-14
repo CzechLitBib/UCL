@@ -14,20 +14,20 @@ from email.mime.text import MIMEText
 from datetime import datetime
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
-from pymarc import marcxml
+from pymarc import marcxml,Field
+from pymarc.record import Record
 from lxml.etree import tostring
 
 # VAR -------------------
 
-DATA='ucl.xml'
-LOG='oai-test.html'
-CSV='oai-test.csv'
+#DATA='ucl.xml'
+#LOG='oai-test.html'
+#CSV='oai-test.csv'
 
 COUNTRY_CODE='/usr/local/bin/country_code.txt'
 LANG_CODE='/usr/local/bin/lang_code.txt'
 ROLE_CODE='/usr/local/bin/role_code.txt'
 SIF_CODE='/usr/local/bin/sif_code.txt'
-
 
 ERROR={}
 
@@ -61,17 +61,19 @@ def write_error(ident,tag,sif,code,code_text):
 	global MATCH
 	MATCH+=1
 	# update errors
-	if SIF not in ERROR: ERROR[SIF] = {}
-	if ident not in ERROR[SIF]: ERROR[SIF][ident] = []
-	ERROR[SIF][ident].append((code,code_text))
+	#if SIF not in ERROR: ERROR[SIF] = {}
+	#if ident not in ERROR[SIF]: ERROR[SIF][ident] = []
+	#ERROR[SIF][ident].append((code,code_text))
 	# write daily HTML
-	log.write(
-		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-		ident + '&local_base=AV">' + ident + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
-		' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
-	)
+	#log.write(
+	#	'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+	#	ident + '&local_base=AV">' + ident + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
+	#	' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
+	#)
 	# write daily CSV
-	csv.write(ident + ';' + sif + ';' + code + ';' + code_text + '\n')
+	#csv.write(ident + ';' + sif + ';' + code + ';' + code_text + '\n')
+	# print
+	print(ident + ' ' + code + ' ' + code_text)
 
 def validate(record):
 
@@ -94,12 +96,11 @@ def validate(record):
 		else:
 			SIF = ''
 			write_error(IDENT, 'SIF', SIF, '000', 'Chybí pole SIF.')
-	#	for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'OWN'):
-		for TAG in ('001', '003', '008', '040', '080', '245', '520', '655', '910', '964', 'OWN'):
+		for TAG in ('001', '003', '005', '008', '040', '080', '245', '520', '655', '910', '964', 'OWN'):
 			if TAG not in metadata:
 				write_error(IDENT, TAG, SIF, '001', 'Chybí pole ' + TAG + '.')
-		#if 'KAT' not in metadata and 'CAT' not in metadata:
-		#	write_error(IDENT, 'CAT/KAT', SIF, '002', 'Chybí pole KAT/CAT.')
+		if 'KAT' not in metadata and 'CAT' not in metadata:
+			write_error(IDENT, 'CAT/KAT', SIF, '002', 'Chybí pole KAT/CAT.')
 		if not metadata.leader:
 			write_error(IDENT, 'LDR', SIF, '003', 'Chybí pole LDR.')
 	
@@ -933,17 +934,17 @@ args = parser.parse_args()
 
 # INIT -------------------
 
-try:
-	log = open(LOG, 'w', 0)
-	log.write(HTML_HEADER)
-except:
-	print('LOG: Read only FS exiting..')
-	exit(1)
-try:
-	csv = open(CSV, 'w', 0)
-except:
-	print('CSV: Read only FS exiting..')
-	exit(1)
+#try:
+#	log = open(LOG, 'w', 0)
+#	log.write(HTML_HEADER)
+#except:
+#	print('LOG: Read only FS exiting..')
+#	exit(1)
+#try:
+#	csv = open(CSV, 'w', 0)
+#except:
+#	print('CSV: Read only FS exiting..')
+#	exit(1)
 
 try:
 	with open(COUNTRY_CODE, 'r') as f: country_code = f.read().splitlines()
@@ -968,18 +969,79 @@ except: sif_code = {}
 
 # MAIN -------------------
 
+record = Record()
+
+#leader
+record.leader = '     nab a22     4i 4500'
+# control field
+field = Field(tag = '001', data='002524717')
+record.add_ordered_field(field)
+# control field
+field = Field(tag = '003', data='CZ PrUCL')
+record.add_ordered_field(field)
+# control field
+field = Field(tag = '005', data='20200513155735.0')
+record.add_ordered_field(field)
+# control field
+field = Field(tag = '008', data='191204e20191120xr            ||| ||cze d')
+record.add_ordered_field(field)
+#
+field = Field(tag = '040', indicators = [' ',' '], subfields = ['a', 'ABB060', 'b', 'cze', 'e', 'rda'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '080', indicators = [' ',' '], subfields = ['a', '06.05NOBEL','2', 'MRF'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '100', indicators = ['1',' '], subfields = ['a', 'Dokonaly zaznam.'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '245', indicators = ['1','0'], subfields = ['a', 'Dokonaly zaznam.'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '520', indicators = ['2',' '], subfields = ['a', 'Dokonaly zaznam.'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '651', indicators = [' ','4'], subfields = ['a', 'DGARCH'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '655', indicators = [' ','7'], subfields = ['a', 'Dokonaly zaznam.','2','czenas','7','Perfektni zaznam.'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '773', indicators = ['0',' '], subfields = ['a', 'Dokonaly zaznam.','t', 'Dokonaly zaznam.','9','20191120'])
+record.add_ordered_field(field)
+
+#
+field = Field(tag = '910', indicators = [' ',' '], subfields = ['a', 'ABB060'])
+record.add_ordered_field(field)
+#
+field = Field(tag = '964', indicators = [' ','7'], subfields = ['a', 'B12'])
+record.add_ordered_field(field)
+#
+field = Field(tag = 'OWN', indicators = [' ',' '], subfields = ['a', 'UCLA'])
+record.add_ordered_field(field)
+#
+field = Field(tag = 'KAT', indicators = [' ',' '], subfields = ['a', 'UCLJF'])
+record.add_ordered_field(field)
+
+#
+field = Field(tag = 'SIF', indicators = [' ',' '], subfields = ['a', 'moo'])
+record.add_ordered_field(field)
+
+print(record)
+validate(record)
+
 #try:
-marcxml.map_xml(validate, DATA)
+#marcxml.map_xml(validate, DATA)
 #except:
 #	log.write('<p><font color="white">Žádný záznam.</font></p>')
 
 # EXIT -------------------
 
-print('TOTAL ' + str(COUNTER))
+#print('TOTAL ' + str(COUNTER))
 
-if args.check: print('MATCH ' + str(MATCH))
+#if args.check: print('MATCH ' + str(MATCH))
 
-log.write(HTML_FOOTER)
-log.close()
-csv.close()
+#log.write(HTML_FOOTER)
+#log.close()
+#csv.close()
 
