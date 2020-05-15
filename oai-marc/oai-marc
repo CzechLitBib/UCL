@@ -330,7 +330,7 @@ for record in records:
 
 		# TEST SUBFIELD ------------------
 
-		for TAG in ('072', '100', '245', '520'):
+		for TAG in ('022', '072', '100', '245', '520'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
 					write_error(header.identifier(), TAG, SIF, '014', 'Chybí podpole ' + TAG + 'a.')
@@ -338,9 +338,9 @@ for record in records:
 			for F in metadata.get_fields(TAG):
 				if len(F.get_subfields('a')) != 1:
 					write_error(header.identifier(), TAG, SIF, '015', 'Chybí podpole ' + TAG + 'a.')
-		for F in metadata.get_fields('022'):
-			if len(F.get_subfields('a')) == 0:
-				write_error(header.identifier(), '022', SIF, '016', 'Chybí podpole 022a.')
+		#for F in metadata.get_fields('022'):
+		#	if len(F.get_subfields('a')) == 0:
+		#		write_error(header.identifier(), '022', SIF, '016', 'Chybí podpole 022a.')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
 				write_error(header.identifier(), '072', SIF, '017', 'Chybí podpole 072x.')
