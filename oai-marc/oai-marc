@@ -635,14 +635,14 @@ for record in records:
 		if '100' in metadata:
 			if metadata['100'].indicator1 == '0':
 				if 'a' in metadata['100']:
-					if re.match('^.+\..+,.+$', metadata['100']['a']):
+					if re.match('^.*,.+$', metadata['100']['a']):
 						write_error(header.identifier(), '100', SIF, '091', "Chybný znak v podpoli 'a' v poli 100.")
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
 					if re.match('^\[.*$', metadata['100']['c']):
 						write_error(header.identifier(), '100', SIF, '092', "Chybný indikátor, v podpoli 'c' v poli 100 není vlastní jméno.")
 				#if 'a' in metadata['100']:
-				#	if re.match('^.*\..*$', metadata['100']['a']):
+				#	if '.' in metadata['100']['a']:
 				#		write_error(header.identifier(), '100', SIF, '093', "Chybný znak v podpoli 'a' v poli 100.")
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
