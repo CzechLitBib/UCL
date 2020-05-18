@@ -645,16 +645,13 @@ for record in records:
 				#	if '.' in metadata['100']['a']:
 				#		write_error(header.identifier(), '100', SIF, '093', "Chybný znak v podpoli 'a' v poli 100.")
 		if '245' in metadata:
+			N=0
+			for TAG in ('100', '110', '111', '130'):
+				if TAG in metadata: N+=1
 			if metadata['245'].indicator1 == '1':
-				N=0
-				for TAG in ('100', '110', '111', '130'):
-					if TAG in metadata: N+=1
-				if N != 1:
+				if not N >= 1:
 					write_error(header.identifier(), '245', SIF, '094', 'Neplatné pole, chybný indikátor v poli 245.')
 			if metadata['245'].indicator1 == '0':
-				N=0
-				for TAG in ('100', '110', '111', '130'):
-					if TAG in metadata: N+=1
 				if N != 0:
 					write_error(header.identifier(), '245', SIF, '095', 'Neplatné pole, chybný indikátor v poli 245.')
 			if metadata['245'].indicator2 == '0':
