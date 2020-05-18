@@ -13,7 +13,6 @@ MARC -
            - 159/160 - fix I,II, Roman
            - 156/162 - fix [A-Z], [a-z] test + diacritic..
            - 260/264 a/b table.
-           - Subfiled test -> "chybi pole.." => "chybne opakovani pole.." (!= 1..)
 </pre>
 FILE
 <pre>
