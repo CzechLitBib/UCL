@@ -333,48 +333,48 @@ for record in records:
 		for TAG in ('022', '072', '100', '245', '520'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
-					write_error(header.identifier(), TAG, SIF, '014', 'Chybí podpole ' + TAG + 'a.')
+					write_error(header.identifier(), TAG, SIF, '014', 'Chybné opakování podpole ' + TAG + 'a.')
 		for TAG in ('080', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			for F in metadata.get_fields(TAG):
 				if len(F.get_subfields('a')) != 1:
-					write_error(header.identifier(), TAG, SIF, '015', 'Chybí podpole ' + TAG + 'a.')
+					write_error(header.identifier(), TAG, SIF, '015', 'Chybné opakování podpole ' + TAG + 'a.')
 		#for F in metadata.get_fields('022'):
 		#	if len(F.get_subfields('a')) == 0:
 		#		write_error(header.identifier(), '022', SIF, '016', 'Chybí podpole 022a.')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
-				write_error(header.identifier(), '072', SIF, '017', 'Chybí podpole 072x.')
+				write_error(header.identifier(), '072', SIF, '017', 'Chybné opakování podpole 072x.')
 			if len(metadata['072'].get_subfields('2')) != 1:
-				write_error(header.identifier(), '072', SIF, '018', 'Chybí podpole 072-2.')
+				write_error(header.identifier(), '072', SIF, '018', 'Chybné opakování podpole 072-2.')
 			if len(metadata['072'].get_subfields('9')) != 1:
-				write_error(header.identifier(), '072', SIF, '019', 'Chybí podpole 072-9.')
+				write_error(header.identifier(), '072', SIF, '019', 'Chybné opakování podpole 072-9.')
 		for F in metadata.get_fields('080'):
 			if len(F.get_subfields('2')) != 1:
-				write_error(header.identifier(), '080', SIF, '020', 'Chybí podpole 080-2.')
+				write_error(header.identifier(), '080', SIF, '020', 'Chybné opakování podpole 080-2.')
 		for F in metadata.get_fields('700'):
 			if len(F.get_subfields('4')) == 0:
-				write_error(header.identifier(), '700', SIF, '021', 'Chybí podpole 700-4.')
+				write_error(header.identifier(), '700', SIF, '021', 'Chybné opakování podpole 700-4.')
 		for F in metadata.get_fields('710'):
 			if len(F.get_subfields('4')) == 0:
-				write_error(header.identifier(), '710', SIF, '022', 'Chybí podpole 710-4.')
+				write_error(header.identifier(), '710', SIF, '022', 'Chybné opakování podpole 710-4.')
 		VAL=''
 		for F in metadata.get_fields('773'):
 			if 'g' in F: VAL = F['g']
 			if len(F.get_subfields('t')) != 1:
-				write_error(header.identifier(), '773', SIF, '023', 'Chybí podpole 773t.')
+				write_error(header.identifier(), '773', SIF, '023', 'Chybné opakovéní podpole 773t.')
 			elif 'g' not in F:
 				if VAL and not re.match('.*' + F['t'] + '.*', VAL):
 					write_error(header.identifier(), '773', SIF, '024', 'Neplatné pole 773.')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
-				write_error(header.identifier(), '787', SIF, '025', 'Chybí podpole 787t.')
+				write_error(header.identifier(), '787', SIF, '025', 'Chybné opakování podpole 787t.')
 			if len(F.get_subfields('4')) != 1:
-				write_error(header.identifier(), '787', SIF, '026', 'Chybí podpole 787-4.')
+				write_error(header.identifier(), '787', SIF, '026', 'Chybné opakování podpole 787-4.')
 		for F in metadata.get_fields('856'):
 			if len(F.get_subfields('u')) != 1:
-				write_error(header.identifier(), '856', SIF, '027', 'Chybí podpole 856u.')
+				write_error(header.identifier(), '856', SIF, '027', 'Chybné opakování podpole 856u.')
 			if len(F.get_subfields('y')) != 1:
-				write_error(header.identifier(), '856', SIF, '028', 'Chybí podpole 856y.')
+				write_error(header.identifier(), '856', SIF, '028', 'Chybné opakování podpole 856y.')
 
 		# TEST VALID LINK ------------------
 
