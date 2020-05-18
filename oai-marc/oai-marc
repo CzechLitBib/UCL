@@ -448,7 +448,7 @@ for record in records:
 		for TAG in ('250', '490', '830'):
 			if TAG in metadata:
 				if metadata.leader[7] != 'm':
-					write_error(header.identifier(), TAG, SIF, '098', 'Chybný typ záznamu (pole ' + TAG + ').')
+					write_error(header.identifier(), TAG, SIF, '049', 'Chybný typ záznamu (pole ' + TAG + ').')
 		if metadata.leader[7] in ('a', 'b'):
 			if '773' not in metadata:
 				write_error(header.identifier(), '773', SIF, '050', 'Chybný typ záznamu (pole 773).')
