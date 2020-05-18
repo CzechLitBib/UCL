@@ -362,8 +362,8 @@ for record in records:
 			if 'g' in F: VAL = F['g']
 			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '773', SIF, '023', 'Chybí podpole 773t.')
-			if len(F.get_subfields('9')) != 1:
-				if 't' in F and not re.match('.*' + F['t'] + '.*', VAL):
+			elif 'g' not in F:
+				if VAL and not re.match('.*' + F['t'] + '.*', VAL):
 					write_error(header.identifier(), '773', SIF, '024', 'Neplatné pole 773.')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
