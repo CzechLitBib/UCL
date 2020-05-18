@@ -585,37 +585,37 @@ for record in records:
 		# TEST SUBFIELD REPEAT ------------------
 		
 		if '041' in metadata:
-			for SUB in metadata['041'].subfields[0::2]:
+			for SUB in list(set(metadata['041'].subfields[0::2])):
 				if SUB not in ('a', 'b', 'k', 'h'):
 					if len(metadata['041'].get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '041', SIF, '082', 'Neplatné opakování podpolí v poli 041.')
 		if '044' in metadata:
-			for SUB in metadata['044'].subfields[0::2]:
+			for SUB in list(set(metadata['044'].subfields[0::2])):
 				if SUB != 'a':
 					if len(metadata['044'].get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '044', SIF, '083', 'Neplatné opakování podpolí v poli 044.')
 		if '245' in metadata:
-			for SUB in metadata['245'].subfields[0::2]:
+			for SUB in list(set(metadata['245'].subfields[0::2])):
 				if SUB not in ('n', 'p'):
 					if len(metadata['245'].get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '245', SIF, '084', 'Neplatné opakování podpolí v poli 245.')
 		if '260' in metadata:
-			for SUB in metadata['260'].subfields[0::2]:
+			for SUB in list(set(metadata['260'].subfields[0::2])):
 				if SUB not in ('a', 'b'):
 					if len(metadata['260'].get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '260', SIF, '085', 'Neplatné opakování podpolí v poli 260.')
 		for F in metadata.get_fields('264'):
-			for SUB in F.subfields[0::2]:
+			for SUB in list(set(F.subfields[0::2])):
 				if SUB not in ('a', 'b'):
 					if len(F.get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '264', SIF, '086', 'Neplatné opakování podpolí v poli 264.')
 		for F in metadata.get_fields('773'):
-			for SUB in F.subfields[0::2]:
+			for SUB in list(set(F.subfields[0::2])):
 				if SUB  != 'z':
 					if len(F.get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '773', SIF, '087', 'Neplatné opakování podpolí v poli 773.')
 		for F in metadata.get_fields('787'):
-			for SUB in F.subfields[0::2]:
+			for SUB in list(set(F.subfields[0::2])):
 				if SUB not in ('k', 'z'):
 					if len(F.get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '787', SIF, '088', 'Neplatné opakování podpolí v poli 787.')
