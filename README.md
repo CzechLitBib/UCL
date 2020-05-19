@@ -13,6 +13,7 @@ MARC -
            - 159/160 - fix I,II, Roman
            - 156/162 - fix [A-Z], [a-z] test + diacritic..
            - 260/264 a/b table.
+           -oai:aleph22.lib.cas.cz:KNA01-002482699: 20191214 -> 201901214
 </pre>
 FILE
 <pre>
