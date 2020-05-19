@@ -13,6 +13,7 @@ MARC -
            - 156/162 - fix [A-Z], [a-z] test + diacritic..
            - 260/264_a.txt/_b.txt file.
 	   - 773t/x.txt(base RS/RD)
+           - 300e - [964 fix + 130/171 cleanup.] 
 </pre>
 FILE
 <pre>
