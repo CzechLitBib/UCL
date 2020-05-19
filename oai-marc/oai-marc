@@ -443,7 +443,7 @@ for record in records:
 		# TEST DEPENDENCE ------------------
 
 		if metadata.leader[7] == 'm':
-			if '260' not in metadata or '264' not in metadata:
+			if '260' not in metadata and '264' not in metadata:
 				write_error(header.identifier(), '260/264', SIF, '048', 'Chybný typ záznamu (pole 260/264).')
 		for TAG in ('250', '490', '830'):
 			if TAG in metadata:
