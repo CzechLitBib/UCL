@@ -463,11 +463,12 @@ for record in records:
 					if not re.match('.*:$', metadata['260'].subfields[1::2][SUB.index(F) - 1]):
 						write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
 		# 300e
-		if '300' in metadata:
-			if metadata['300'].subfields[0::2][0] == 'e':
-				for F in metadata.get_fields('964'):
-					if F.value() != 'INT':
-						write_error(header.identifier(), '300', SIF, '171', 'Chybný zápis pole 300 (nebo v 964 chybí kód INT).')
+		E=False
+		for F in metadata.get_fields('300'):
+			if 'e' in F: E=True
+		if E:
+			if not 'INT' in [F.value() for F in metadata.get_fields('964')]:
+				write_error(header.identifier(), '300', SIF, '171', 'Chybný zápis pole 300 (nebo v 964 chybí kód INT).')
 		# 490
 		if '490' in metadata:
 			SUB = metadata['490'].subfields[0::2]
