@@ -8,12 +8,11 @@ TODO
 773to856   FIX: doubles..
            FIX: rebuild 651 DGARCH
            CHECK: [\d+] URL
-
 MARC -
            - 159/160 - fix I,II, Roman
            - 156/162 - fix [A-Z], [a-z] test + diacritic..
-           - 260/264 a/b table.
-           -oai:aleph22.lib.cas.cz:KNA01-002482699: 20191214 -> 201901214
+           - 260/264_a.txt/_b.txt file.
+	   - 773t/x.txt(base RS/RD)
 </pre>
 FILE
 <pre>
