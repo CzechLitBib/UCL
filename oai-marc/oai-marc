@@ -723,7 +723,7 @@ for record in records:
 				if DATA not in country_code:
 					write_error(header.identifier(), '008', SIF, '110', 'Chybný kód země v poli 008.')
 				if '044' in metadata:
-					if DATA != metadata['044'].subfields[1::2][:1]:
+					if DATA != metadata['044'].subfields[1::2][0]:
 						write_error(header.identifier(), '008', SIF, '111', 'Nesoulad mezi kódy zemí v poli 008 a 044.')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[35:38].strip()
@@ -731,7 +731,7 @@ for record in records:
 				if DATA not in lang_code:
 					write_error(header.identifier(), '008', SIF, '112', 'Chybný kód jazyka v poli 008.')
 				if '041' in metadata:
-					if DATA != metadata['041'].subfields[1::2][:1]:
+					if DATA != metadata['041'].subfields[1::2][0]:
 						write_error(header.identifier(), '008', SIF, '113', 'Nesoulad mezi kódy jazyků v poli 008 a 041.')
 		if '041' in metadata:
 			if lang_code:
