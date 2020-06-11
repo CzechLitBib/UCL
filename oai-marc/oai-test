@@ -226,16 +226,17 @@ for record in records:
 			if not re.match('^cnb\d{9}$', F.value()):
 				write_error(header.identifier(), '015', SIF, '133', 'Chybný tvar čísla ČNB.')
 		#ISBN
+		ISBN=True
 		if metadata.leader:
-			if metadata.leader[7] == 'm':
-				if '008' in metadata:
-					if metadata['008'].value()[7:11].isdigit():
-						if int(metadata['008'].value()[7:11]) > 1989:
-							if '506' in metadata:
-								if not re.match('.*ISBN.*', metadata['506'].value()):
-									for F in metadata.get_fields('020'):
-										if not 'a' in F:
-											write_error(header.identifier(), '020', SIF, '134', 'Chybí ISBN.')
+			if metadata.leader[7] != 'm': ISBN=False
+		if '008' in metadata:
+			if metadata['008'].value()[7:11].isdigit():
+				if int(metadata['008'].value()[7:11]) < 1989: ISBN=False
+		if '506' in metadata:
+			if re.match('.*ISBN.*', metadata['506'].value()): ISBN=False
+		if ISBN:
+			if '020' not in metadata:
+				write_error(header.identifier(), '020', SIF, '134', 'Chybí ISBN.')
 		#ISBN format
 		for F in metadata.get_fields('020'):
 			for I in F.get_subfields('a'):
