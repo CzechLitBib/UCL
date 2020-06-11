@@ -241,8 +241,8 @@ for record in records:
 		for F in metadata.get_fields('020'):
 			for I in F.get_subfields('a'):
 				ISBN=False
-				if re.match('[0-9X]{10}', I.replace('-','')): ISBN=True
-				if re.match('[0-9X]{13}', I.replace('-','')): ISBN=True
+				if re.match('^[0-9X]{10}$', I.replace('-','')): ISBN=True
+				if re.match('^[0-9X]{13}$', I.replace('-','')): ISBN=True
 				if not ISBN:
 					write_error(header.identifier(), '020', SIF, '135', 'Chybný tvar ISBN.')
 		# 020q
