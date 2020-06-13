@@ -411,7 +411,7 @@ for record in records:
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
 				if not 'c' in metadata['245']:
-					write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1.indikátoru, chybí podpole "c".')
+					write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1.indikátoru pole 245, chybí podpole "c".')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
