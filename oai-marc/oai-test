@@ -283,12 +283,12 @@ for record in records:
 			if BASE:
 				write_error(header.identifier(), '035', SIF, '140', 'Chybná hodnota v 035a.')
 		# 100c
-		if 100 in metadata:
+		if '100' in metadata:
 			if 'c' in metadata['100']:
-				if 773 in metadata:
-					if 't' in metadata['773']:
-						if re.sub('^\[(.*)\]$', '\\1', metadata['100']['c']) != metadata['773']['t']:
-							write_error(header.identifier(), '773', SIF, '141', 'Nesoulad názvu zdrojového dokumentu 100c/773t.')
+				if re.match('^\[.*\]$', metadata['100']['c']):
+					C = re.sub('^\[(.*)\]$', '\\1', metadata['100']['c'])
+					if C not in [F['t'] for F in metadata.get_fields('773') if 't' in F]:
+						write_error(header.identifier(), '100', SIF, '141', 'Nesoulad názvu zdrojového dokumentu 100c/773t.')
 		# 110c
 		if '110' in metadata:
 			if metadata['110'].indicator1 == 0:
