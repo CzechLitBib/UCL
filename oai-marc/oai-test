@@ -297,7 +297,7 @@ for record in records:
 		# 110b
 		if '110' in metadata:
 			if metadata['110'].indicator1 == '1':
-				if not 'b' in metadata['110']:
+				if 'b' not in metadata['110']:
 					write_error(header.identifier(), '110', SIF, '143', 'Chybí podpole 110b.')
 		# 710c
 		#for F in metadata.get_fields('710'):
@@ -305,9 +305,9 @@ for record in records:
 		#		if not ('c' in F and re.match('^\[.*', F['c'])):
 		#			write_error(header.identifier(), '710', SIF, '144', 'Chybný zápis podpole 710c.')
 		# 710b
-		if '710' in metadata:
-			if metadata['710'].indicator1 == '1':
-				if not 'b' in metadata['710']:
+		for F in metadata.get_fields('710'):
+			if F.indicator1 == '1':
+				if 'b' not in F:
 					write_error(header.identifier(), '710', SIF, '145', 'Chybí podpole 710b.')
 		# 245c
 		if '254' in metadata:
