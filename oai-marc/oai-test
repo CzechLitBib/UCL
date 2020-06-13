@@ -266,7 +266,7 @@ for record in records:
 			for F in metadata.get_fields('964'):
 				if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
 			if not BASE:
-				write_error(IDENT, '964', SIF, '138', 'Chybné označení báze v 964.')
+				write_error(header.identifier(), '035', SIF, '138', 'Chybné označení báze v 964.')
 		for F in metadata.get_fields('964'):
 			if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' not in metadata:
