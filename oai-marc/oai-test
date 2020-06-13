@@ -290,20 +290,20 @@ for record in records:
 					if C not in [F['t'] for F in metadata.get_fields('773') if 't' in F]:
 						write_error(header.identifier(), '100', SIF, '141', 'Nesoulad názvu zdrojového dokumentu 100c/773t.')
 		# 110c
-		if '110' in metadata:
-			if metadata['110'].indicator1 == '0':
-				if not ('c' in metadata['110'] and re.match('^\[.*', metadata['110']['c'])):
-					write_error(header.identifier(), '110', SIF, '142', 'Chybný zápis podpole 110c.')
+		#if '110' in metadata:
+		#	if metadata['110'].indicator1 == '0':
+		#		if not ('c' in metadata['110'] and re.match('^\[.*', metadata['110']['c'])):
+		#			write_error(header.identifier(), '110', SIF, '142', 'Chybný zápis podpole 110c.')
 		# 110b
 		if '110' in metadata:
 			if metadata['110'].indicator1 == '1':
 				if not 'b' in metadata['110']:
 					write_error(header.identifier(), '110', SIF, '143', 'Chybí podpole 110b.')
 		# 710c
-		for F in metadata.get_fields('710'):
-			if F.indicator1 == '0':
-				if not ('c' in F and re.match('^\[.*', F['c'])):
-					write_error(header.identifier(), '710', SIF, '144', 'Chybný zápis podpole 710c.')
+		#for F in metadata.get_fields('710'):
+		#	if F.indicator1 == '0':
+		#		if not ('c' in F and re.match('^\[.*', F['c'])):
+		#			write_error(header.identifier(), '710', SIF, '144', 'Chybný zápis podpole 710c.')
 		# 710b
 		if '710' in metadata:
 			if metadata['710'].indicator1 == '1':
