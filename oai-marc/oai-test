@@ -383,7 +383,7 @@ for record in records:
 					if re.match('^[A-Z].*', metadata['245']['c']):
 						for S in ('ed.', 'edd.', 'eds.', 'hg.'):
 							if S not in metadata['245']['c'].lower():
-								write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1. indikátor je 0, pole začíná velkým písmenem.')
+								write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1.indikátor je 0, pole začíná velkým písmenem.')
 		# 245b
 		if '245' in metadata:
 			if 'b' in metadata['245']:
@@ -406,12 +406,12 @@ for record in records:
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if metadata['245'].indicator1 == '1' and re.match('^[a-z].*', metadata['245']['c']):
-					write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1. indikátor 1, začíná na malé písmeno.')
+					write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
 				if not 'c' in metadata['245']:
-					write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1. indikátoru, chybí podpole "c".')
+					write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1.indikátoru, chybí podpole "c".')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
