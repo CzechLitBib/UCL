@@ -370,11 +370,11 @@ for record in records:
 		if '008' in metadata:
 				if metadata['008'].value()[35:39] == 'ger': GER=True
 		if '041' in metadata:
-				if 'ger' in metadata['041'].value(): GER=True
+				if 'ger' in metadata['041'].subfields[1::2]: GER=True
 		if not GER:
 			if '245' in metadata:
 				if 'c' in metadata['245']:
-					if re.match('.*; [A-Z].*', metadata['245']['c']):
+					if re.findall('; [A-Z]', metadata['245']['c']):
 						write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c po středníku následuje velké písmeno.')
 		# 245c
 		if '245' in metadata:
