@@ -342,13 +342,13 @@ for record in records:
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				if re.match('.*\[ =.*', metadata['245']['c']):
-					write_error(header.identifier(), '245', SIF, '151', 'Chybná interpunkce v 245c. Mezi [ a = je mezera.')
+				if re.findall('\[ =', metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '151', 'Chybná interpunkce v 245c mezi [ a = je mezera.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
-				if re.match('.*\[ =.*', F['r']):
-					write_error(header.identifier(), '505', SIF, '152', 'Chybná interpunkce v 505r. mezi [ a = je mezera.')
+				if re.findall('\[ =', F['r']):
+					write_error(header.identifier(), '505', SIF, '152', 'Chybná interpunkce v 505r mezi [ a = je mezera.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
