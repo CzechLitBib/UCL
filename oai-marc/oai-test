@@ -401,7 +401,7 @@ for record in records:
 		#			write_error(header.identifier(), '245', SIF, '160', 'Chyba v poli 245b, označení části je třeba zapsat do pole 245n.')
 		# 245
 		if '245' in metadata:
-			if not re.match('.*[MDCLVI]\. :.*', metadata['245'].value()):
+			if not re.match('.*[MDXCLVI]\. :.*', metadata['245'].value()):
 				if re.match('.*(?<!\.\.)\. :.*', metadata['245'].value()):
 					write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
 		# 245c
