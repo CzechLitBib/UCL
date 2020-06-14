@@ -362,9 +362,9 @@ for record in records:
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0':
-				if '700' not in metadata and '500' in metadata:
-					if metadata['500'].value() != 'Nepodepsáno.':
-						write_error(header.identifier(), '245', SIF, '155', 'Chybný 1. indikátor pole 245c.')
+				if '700' not in metadata:
+					if not ('500' in metadata and metadata['500'].value() == u'Nepodepsáno.'):
+						write_error(header.identifier(), '245', SIF, '155', 'Chybný 1.indikátor pole 245c.')
 		# 245c
 		GER=False
 		if '008' in metadata:
