@@ -381,9 +381,11 @@ for record in records:
 			if metadata['245'].indicator1 == '0':
 				if 'c' in metadata['245']:
 					if re.match('^[A-Z].*', metadata['245']['c']):
-						for S in ('ed.', 'edd.', 'eds.', 'hg.'):
-							if S not in metadata['245']['c'].lower():
-								write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1.indikátor je 0, pole začíná velkým písmenem.')
+						EDIT=False
+						for E in ('ed.', 'edd.', 'eds.', 'hg.'):
+							if E in metadata['245']['c'].lower(): EDIT=True
+						if not EDIT:
+							write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1.indikátor je 0, pole začíná velkým písmenem.')
 		# 245b
 		if '245' in metadata:
 			if 'b' in metadata['245']:
