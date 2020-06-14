@@ -313,31 +313,31 @@ for record in records:
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if ';' in metadata['245']['c']:
-					if not re.match('.*(?<! ) ; (?! ).*', metadata['245']['c']):
+					if re.findall('(?<![^ ] );|;(?! [^ ])', metadata['245']['c']):
 						write_error(header.identifier(), '245', SIF, '146', 'Chybný zápis středníku v 245c.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if ';' in F['r']:
-					if not re.match('.*(?<! ) ; (?! ).*', F['r']):
+					if re.findall('(?<![^ ] );|;(?! [^ ])', F['r']):
 						write_error(header.identifier(), '505', SIF, '147', 'Chybný zápis středníku v 505r.')
 		# 787n
 		for F in metadata.get_fields('787'):
 			if 'n' in F:
 				if ';' in F['n']:
-					if not re.match('.*(?<! ) ; (?! ).*', F['n']):
+					if re.findall('(?<![^ ] );|;(?! [^ ])', F['n']):
 						write_error(header.identifier(), '787', SIF, '148', 'Chybný zápis středníku v 787n.')
 		# 787k
 		for F in metadata.get_fields('787'):
 			for SUB in F.get_subfields('k'):
 				if ';' in SUB:
-					if not re.match('.*(?<! ) ; (?! ).*', SUB):
+					if re.findall('(?<![^ ] );|;(?! [^ ])', SUB):
 						write_error(header.identifier(), '787', SIF, '149', 'Chybný zápis středníku v 787k.')
 		# 773n
 		for F in metadata.get_fields('773'):
 			if 'n' in F:
 				if ';' in F['n']:
-					if not re.match('.*(?<! ) ; (?! ).*', metadata['773']['n']):
+					if re.findall('(?<![^ ] );|;(?! [^ ])', F['n']):
 						write_error(header.identifier(), '773', SIF, '150', 'Chybný zápis středníku v 773n.')
 		# 245c
 		if '245' in metadata:
