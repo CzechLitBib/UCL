@@ -310,11 +310,11 @@ for record in records:
 				if 'b' not in F:
 					write_error(header.identifier(), '710', SIF, '145', 'Chybí podpole 710b.')
 		# 245c
-		if '254' in metadata:
+		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if ';' in metadata['245']['c']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['245']['c']):
-						write_error(header.identifier(), '245', SIF, '146', 'Chybný zápis ; v 245c.')
+						write_error(header.identifier(), '245', SIF, '146', 'Chybný zápis středníku v 245c.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
@@ -334,9 +334,9 @@ for record in records:
 					if not re.match('.*(?<! ) ; (?! ).*', SUB):
 						write_error(header.identifier(), '787', SIF, '149', 'Chybný zápis středníku v 787k.')
 		# 773n
-		if '773' in metadata:
-			if 'n' in metadata['773']:
-				if ';' in metadata['773']['n']:
+		for F in metadata.get_fields('773'):
+			if 'n' in F:
+				if ';' in F['n']:
 					if not re.match('.*(?<! ) ; (?! ).*', metadata['773']['n']):
 						write_error(header.identifier(), '773', SIF, '150', 'Chybný zápis středníku v 773n.')
 		# 245c
