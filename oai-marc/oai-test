@@ -275,11 +275,13 @@ for record in records:
 		BASE=False
 		SUB = metadata.get_fields('035')
 		if SUB:
-			if len(SUB) != 2:
-				BASE=True
-			else:
-				if re.sub('.*ISIS-(.*)-MFN.*', '\\1', SUB[0].value()) not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
-				if re.sub('.*ISIS-(.*)-ID.*', '\\1', SUB[1].value()) not in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
+			if len(SUB) == 1:
+				B1 = re.sub('.*\(ISIS-(...)-MFN\).*', '\\1', SUB[0].value())
+				if B1 != 'CLE': BASE=True
+			if len(SUB) == 2:
+				B1 = re.sub('.*\(ISIS-(...)-MFN\).*', '\\1', SUB[0].value())
+				B2 = re.sub('.*\(ISIS-(...)-ID\).*', '\\1', SUB[1].value())
+				if not (B1 and B2) in ('B70', 'B80', 'B97', 'ECS', 'ECR', 'RET'): BASE=True
 			if BASE:
 				write_error(header.identifier(), '035', SIF, '140', 'Chybná hodnota v 035a.')
 		# 100c
