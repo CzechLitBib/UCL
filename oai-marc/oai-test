@@ -503,16 +503,16 @@ for record in records:
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if re.match('.*,[^ ].*', F['r']):
-					write_error(header.identifier(), '505', SIF, '174', 'Chybí mezera za čárkou v podpoli 505r.')
+					write_error(header.identifier(), '505', SIF, '175', 'Chybí mezera za čárkou v podpoli 505r.')
 		# 245c / 505r generic
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				if re.match('.*[^0-9\[ ]=.*', metadata['245']['c']):
-					write_error(header.identifier(), '245', SIF, '175', 'Chybný znak před znakem = v podpoli 245c.')
+				if re.findall('(?<![0-9\[ ])=',, metadata['245']['c']):
+					write_error(header.identifier(), '245', SIF, '176', 'Chybný znak před znakem = v podpoli 245c.')
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
-				if re.match('.*[^0-9\[ ]=.*', F['r']):
-					write_error(header.identifier(), '505', SIF, '175', 'Chybný znak před znakem = v podpoli 505r.')
+				if re.findall('(?<![0-9\[ ])=', F['r']):
+					write_error(header.identifier(), '505', SIF, '177', 'Chybný znak před znakem = v podpoli 505r.')
 	
 	COUNTER+=1
 
