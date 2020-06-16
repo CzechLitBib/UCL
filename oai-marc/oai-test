@@ -420,17 +420,15 @@ for record in records:
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				if not (len(re.findall('[\[\]]', metadata['245']['c'])) == 2 and re.match('^\[.*\]$', metadata['245']['c'])):
-					for S in re.findall('\[.*?\]', metadata['245']['c']):
-						if re.match('\[=.*\]', S) and ',' not in S:
-							write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
+				for S in re.findall('\[.*?\]', metadata['245']['c']):
+					if re.match('\[=.*\]', S) and ',' not in S:
+						write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
-				if not (len(re.findall('[\[\]]', F['r'])) == 2 and re.match('^\[.*\]$', F['r'])):
-					for S in re.findall('\[.*?\]', F['r']):
-						if re.match('\[=.*\]', S) and ',' not in S:
-							write_error(header.identifier(), '505', SIF, '165', 'Chybný zápis dešifrovaného jména v 505r.')
+				for S in re.findall('\[.*?\]', F['r']):
+					if re.match('\[=.*\]', S) and ',' not in S:
+						write_error(header.identifier(), '505', SIF, '165', 'Chybný zápis dešifrovaného jména v 505r.')
 		# 245c			
 		if '245' in metadata:
 			if 'c' in metadata['245']:
