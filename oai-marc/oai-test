@@ -452,22 +452,24 @@ for record in records:
 				IND+=1
 		# 264b
 		if '264' in metadata:
-			SUB = metadata['264'].subfields[0::2]
-			for F in SUB:
-				if F == 'b' and SUB.index(F) == 0:
-					write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
-				if F == 'b' and SUB.index(F) != 0:
-					if not re.match('.*:$', metadata['264'].subfields[1::2][SUB.index(F) - 1]):
-						write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
+			IND=0
+			for F in metadata['264'].subfields[0::2]:
+				if F == 'b' and IND == 0:
+					write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce 264b, před podpolem 'b' má být dvojtečka.")
+				if F == 'b' and IND > 0:
+					if not re.match('.*:$', metadata['264'].subfields[1::2][IND - 1]):
+						write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce 264b, před podpolem 'b' má být dvojtečka.")
+				IND+=1
 		# 260b
 		if '260' in metadata:
-			SUB = metadata['260'].subfields[0::2]
-			for F in SUB:
-				if F == 'b' and SUB.index(F) == 0:
-					write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
-				if F == 'b' and SUB.index(F) != 0:
-					if not re.match('.*:$', metadata['260'].subfields[1::2][SUB.index(F) - 1]):
-						write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce před podpolem 'b' (má být dvojtečka).")
+			IND=0
+			for F in metadata['260'].subfields[0::2]:
+				if F == 'b' and IND == 0:
+					write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce 260b, před podpolem 'b' má být dvojtečka.")
+				if F == 'b' and IND > 0:
+					if not re.match('.*:$', metadata['260'].subfields[1::2][IND - 1]):
+						write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce 260b, před podpolem 'b' má být dvojtečka.")
+				IND+=1
 		# 300e
 		E=False
 		for F in metadata.get_fields('300'):
