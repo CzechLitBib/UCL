@@ -507,7 +507,7 @@ for record in records:
 		# 245c / 505r generic
 		if '245' in metadata:
 			if 'c' in metadata['245']:
-				if re.findall('(?<![0-9\[ ])=',, metadata['245']['c']):
+				if re.findall('(?<![0-9\[ ])=', metadata['245']['c']):
 					write_error(header.identifier(), '245', SIF, '176', 'Chybný znak před znakem = v podpoli 245c.')
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
