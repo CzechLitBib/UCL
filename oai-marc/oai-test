@@ -428,9 +428,13 @@ for record in records:
 									write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
 		# 245
 		if '245' in metadata:
-			if metadata['245'].indicator1 == '1':
-				if 'c' not in metadata['245']:
-					write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1.indikátoru pole 245, chybí podpole "c".')
+                        if metadata['245'].indicator1 == '1':
+                                if'c' not in metadata['245']:
+                                        SKIP=False
+                                        for F in  metadata.get_fields('506'):
+                                                if '163' in F.get_subfields('a'): SKIP=True
+                                        if not SKIP:
+						write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1.indikátoru pole 245, chybí podpole "c".')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
