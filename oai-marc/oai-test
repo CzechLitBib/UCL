@@ -376,7 +376,7 @@ for record in records:
                                                                         u'bibliografické poznámky',
                                                                         u'bio-bibliografické poznámky'
                                                                         ):
-										write_error(header.identifier(), '245', SIF, '155', 'Chybný 1.indikátor pole 245c, chybí hodnota v poli 700, nebo "Nepodepsáno." v poli 500.')
+										write_error(header.identifier(), '245', SIF, '155', 'Chybný 1.indikátor pole 245c, chybná hodnota v poli 700, 500, nebo 655.')
 		# 245c
 		GER=False
 		if '008' in metadata:
