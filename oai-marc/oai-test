@@ -367,10 +367,16 @@ for record in records:
 					write_error(header.identifier(), '245', SIF, '154', 'Odlišný počet [ a ] v poli 245c.')
 		# 245
 		if '245' in metadata:
-			if metadata['245'].indicator1 == '0':
-				if '700' not in metadata:
-					if not ('500' in metadata and metadata['500'].value() == u'Nepodepsáno.'):
-						write_error(header.identifier(), '245', SIF, '155', 'Chybný 1.indikátor pole 245c, chybí hodnota v poli 700, nebo "Nepodepsáno." v poli 500.')
+                        if metadata['245'].indicator1 == '0':
+                                if '700' not in metadata:
+                                        if not ('500' in metadata and metadata['500'].value() == u'Nepodepsáno.'):
+                                                if '655' in metadata and 'a' in metadata['655']:
+                                                        if metadata['655']['a'] not in (
+                                                                        u'biografické poznámky',
+                                                                        u'bibliografické poznámky',
+                                                                        u'bio-bibliografické poznámky'
+                                                                        ):
+										write_error(header.identifier(), '245', SIF, '155', 'Chybný 1.indikátor pole 245c, chybí hodnota v poli 700, nebo "Nepodepsáno." v poli 500.')
 		# 245c
 		GER=False
 		if '008' in metadata:
