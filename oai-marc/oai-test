@@ -393,7 +393,7 @@ for record in records:
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0':
 				if 'c' in metadata['245']:
-					if re.match('^[A-Z].*', metadata['245']['c']):
+					if metadata['245']['c'][:1].isupper():
 						EDIT=False
 						for E in ('ed.', 'edd.', 'eds.', 'hg.'):
 							if E in metadata['245']['c'].lower(): EDIT=True
