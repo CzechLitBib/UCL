@@ -425,7 +425,7 @@ for record in records:
 					if '100' in metadata:
 						if 'a' in metadata['100']:
 							if metadata['100']['a'] != metadata['245']['c'].strip('.'):
-								if re.match('^[a-z].*', metadata['245']['c']):
+								if metadata['245']['c'][:1].islower():
 									write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
 		# 245
 		if '245' in metadata:
