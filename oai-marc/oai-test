@@ -386,8 +386,9 @@ for record in records:
 		if not GER:
 			if '245' in metadata:
 				if 'c' in metadata['245']:
-					if re.findall('; [A-Z]', metadata['245']['c']):
-						write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c po středníku následuje velké písmeno.')
+					for S in re.findall('; \S', metadata['245']['c']):
+						if S[2].isupper():
+							write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c po středníku následuje velké písmeno.')
 		# 245c
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0':
