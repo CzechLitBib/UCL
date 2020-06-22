@@ -371,6 +371,7 @@ for record in records:
 								u'biografické poznámky',
 								u'bibliografické poznámky',
 								u'bio-bibliografické poznámky'
+								u'biograficko-bibliografické poznámky'
 							): BIO=True
 						if not BIO:
 							write_error(header.identifier(), '245', SIF, '155', 'Chybný 1.indikátor pole 245c, nebo chybí pole 700, "Nepodepsáno." v 500, či nejde o bbp.')
