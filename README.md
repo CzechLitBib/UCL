@@ -13,6 +13,7 @@ MARC
            - 159/160 - fix I,II, Roman
            - 260/264_a.txt/_b.txt file.
 	   - 773t/x.txt(base RS/RD)
+           - Check rule 109/100 ..
 </pre>
 FILE
 <pre>
