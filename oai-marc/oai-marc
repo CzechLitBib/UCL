@@ -722,8 +722,12 @@ for record in records:
 				DATA1 = metadata['008'].value()[7:15].strip()
 				if '773' in metadata:
 					if '9' in metadata['773']:
-						DATA2 = re.sub('^([0-9u]+).*$','\\1', metadata['773']['9'])
-						if DATA1 != DATA2:
+						NINE=False
+						if DATA == metadata['773']['9']: NINE=True
+						if '-' in metadata['773']['9']:
+							if DATA == re.sub('^(.*)-.*','\\1', metadata['773']['9']): NINE=True
+							if DATA == metadata['773']['9'].replace('-',''): NINE=True
+						if not NINE:
 							write_error(header.identifier(), '008', SIF, '109', 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[15:18].strip()
