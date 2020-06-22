@@ -689,7 +689,15 @@ for record in records:
 				write_error(header.identifier(), '008', SIF, '102', 'Chybný kód data v poli 008.')
 			if not re.match('^[0-9u]+$', DATE) or len(DATE) not in (4, 6, 8):
 					write_error(header.identifier(), '008', SIF, '103', 'Neplatné datum v poli 008.')
-			if metadata['008'].value()[6] in ('s', 'q'):
+			if metadata['008'].value()[6] == 'q':
+				if len(DATE) != 4:
+					Q=False
+					if len(DATE) in (6, 8):
+						if '773' in metadata and 'g' in metadata['773']:
+							if re.match('^\[.*\]$', metadata['773']['g']): Q=True
+					if not Q:
+						write_error(IDENT, '008', SIF, '104', 'Nesoulad mezi kódem data a datem (má být RRRR).')
+			if metadata['008'].value()[6] == 's':
 				if len(DATE) != 4:
 					write_error(header.identifier(), '008', SIF, '104', 'Nesoulad mezi kódem data a datem (má být RRRR).')
 			if metadata['008'].value()[6] == 'e':
