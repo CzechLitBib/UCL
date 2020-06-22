@@ -370,7 +370,7 @@ for record in records:
 							if B in (
 								u'biografické poznámky',
 								u'bibliografické poznámky',
-								u'bio-bibliografické poznámky'
+								u'bio-bibliografické poznámky',
 								u'biograficko-bibliografické poznámky'
 							): BIO=True
 						if not BIO:
