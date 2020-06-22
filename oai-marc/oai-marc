@@ -30,9 +30,9 @@ SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
-MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
-MAIL_SERVER='listonos.ucl.cas.cz'
-MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
+MAIL_SENDER='xxx'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
 HTML_HEADER='''<!doctype html>
 <html>

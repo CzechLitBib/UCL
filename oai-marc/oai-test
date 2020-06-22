@@ -419,11 +419,13 @@ for record in records:
 		if '245' in metadata:
 			if 'c' in metadata['245'] and metadata['245'].indicator1 == '1':
 				if '[=' not in re.sub('(^[^;,]+).*','\\1', metadata['245']['c']):
-					if '100' in metadata:
-						if 'a' in metadata['100']:
-							if metadata['100']['a'].strip('.') != metadata['245']['c'].strip('.'):
-								if metadata['245']['c'][:1].islower():
-									write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
+					if '100' in metadata and 'a' in metadata['100']:
+						DOT=False
+						if metadata['100']['a'] == metadata['245']['c']: DOT=True
+						if metadata['100']['a'] == metadata['245']['c'].strip('.'): DOT=True
+						if not DOT:
+							if metadata['245']['c'][:1].islower():
+								write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
