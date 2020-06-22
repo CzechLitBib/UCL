@@ -719,7 +719,7 @@ for record in records:
 							write_error(header.identifier(), '008', SIF, '108', 'Nesoulad mezi daty v poli 008 a 260/264.')
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
-				DATA1 = metadata['008'].value()[7:15].strip()
+				DATA = metadata['008'].value()[7:15].strip()
 				if '773' in metadata:
 					if '9' in metadata['773']:
 						NINE=False
