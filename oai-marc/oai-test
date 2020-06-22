@@ -412,8 +412,11 @@ for record in records:
 		# 245
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[1::2]:
-				if '. :' in SUB:
-					if re.findall('(?<!\.\.)(?<![MDXCLVI])\. :', SUB):
+				if re.findall('(?<!\.\.)\. :', SUB):
+					DC=False
+					for R in re.findall('(?<!\.)(.|^)\. :', SUB):
+						if not R.isupper(): DC=True
+					if DC:
 						write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
 		# 245c
 		if '245' in metadata:
