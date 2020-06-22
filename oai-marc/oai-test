@@ -392,7 +392,7 @@ for record in records:
 				if 'c' in metadata['245']:
 					if metadata['245']['c'][:1].isupper():
 						EDIT=False
-						for E in ('ed.', 'edd.', 'eds.', 'hg.'):
+						for E in ('ed.', 'edd.', 'eds.', 'hg.', '.)'):
 							if E in metadata['245']['c'].lower(): EDIT=True
 						if not EDIT:
 							write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1.indikátor je 0, pole začíná velkým písmenem.')
