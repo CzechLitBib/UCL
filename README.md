@@ -10,10 +10,12 @@ TODO
            FIX: rebuild 651 DGARCH
            CHECK: [\d+] URL
 MARC
-           - 159/160 - fix I,II, Roman
            - 260/264_a.txt/_b.txt file.
 	   - 773t/x.txt(base RS/RD)
+
+           - 159/160 - fix I,II, Roman
            - Check rule 109/100 ..
+           - 167/ 169 fix 264 repeat
 </pre>
 FILE
 <pre>
