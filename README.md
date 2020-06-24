@@ -10,8 +10,8 @@ TODO
            FIX: rebuild 651 DGARCH
            CHECK: [\d+] URL
 MARC
-           - 260/264_a.txt/_b.txt file.
-	   - 773t/x.txt(base RS/RD)
+           - 260/264_a.txt/_b.txt file. -> ! aaaa ,:;
+	   - 773t/x.txt(base RS/RD) aaaa -> ! FMT 990 LDR(8b)
 
            - 159/160 - fix I,II, Roman
            - Check rule 109/100 ..
