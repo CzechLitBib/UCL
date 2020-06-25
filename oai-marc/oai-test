@@ -285,8 +285,8 @@ for record in records:
 				if re.match('^\[.*\]$', metadata['100']['c']):
 					C = re.sub('^\[(.*)\]$', '\\1', metadata['100']['c']).strip()
 					CS = re.sub('^([^(]+).*', '\\1', C).strip()
-					F = [F['t'] for F in metadata.get_fields('773') if 't' in F]
-					FS = [re.sub('^([^\[]+).*','\\1', S['t']).strip() for S in metadata.get_fields('773') if 't' in S]
+					F = [F['t'] for F in metadata.get_fields('773')[:1] if 't' in F]
+					FS = [re.sub('^([^\[]+).*','\\1', S['t']).strip() for S in metadata.get_fields('773')[:1] if 't' in S]
 					if C not in F:
 						if CS not in FS:
 							write_error(header.identifier(), '100', SIF, '141', 'Nesoulad názvu zdrojového dokumentu 100c/773t.')
