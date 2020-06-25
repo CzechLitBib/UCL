@@ -16,6 +16,7 @@ MARC
            - 159/160 - fix I,II, Roman
            - Check rule 109/100 ..
            - 167/ 169 fix 264 repeat
+           - check get_subfields('123') 'for F' loops ( F != metadata['123']..)
 </pre>
 FILE
 <pre>
