@@ -20,7 +20,7 @@ from lxml.etree import tostring
 
 # VAR -------------------
 
-CSV='ucl.csv'
+#CSV='ucl.csv'
 DATA='uclall.xml'
 
 COUNTRY_CODE='/usr/local/bin/country_code.txt'
@@ -30,17 +30,8 @@ SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
-HTML_HEADER='''<!doctype html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="background-color:black;color:#6DAE42;">
-<br>[ <a href="CSVPLACEHOLDER" style="color:white; text-decoration:none;">CSV</a> ]
-<br>
-'''
+COUNTER=0
 
-HTML_FOOTER='''</body>
-</html>
-'''
 # DEF -------------------
 
 def url_response(url):
@@ -61,11 +52,13 @@ def write_error(ident,tag,sif,code,code_text):
 	# ident
 	ident = str(ident.strip())
 	# print
-	print(ident + ' ' + code + ' ' + code_text)
+	#print(ident + ' ' + code + ' ' + code_text)
 	# write daily CSV
-	#csv.write(ident + ';' + sif + ';' + code + ';' + code_text + '\n')
+	csv.write(ident + ';' + sif + ';' + code + ';' + code_text + '\n')
 
 def validate(record):
+
+	global COUNTER
 
 	metadata = record
 	IDENT = record['001'].value()
@@ -73,6 +66,30 @@ def validate(record):
 	# VALIDATION ------------------
 
 	if args.check:
+
+		#for F in metadata.get_fields('260'):
+		#	for VAL in F.get_subfields('a'):
+		#		VAL = re.sub('( +,| +;| +:)$','', VAL).strip().strip('[').strip(']')
+		#		csv_260a.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+		#	for VAL in F.get_subfields('b'):
+		#		VAL = re.sub('( ?,| ?;| ?:)$','', VAL).strip().strip('[').strip(']')
+		#		csv_260b.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+
+		#for F in metadata.get_fields('264'):
+		#	for VAL in F.get_subfields('a'):
+		#		VAL = re.sub('( +,| +;| +:)$','', VAL).strip().strip('[').strip(']')
+		#		csv_264a.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+		#	for VAL in F.get_subfields('b'):
+		#		VAL = re.sub('( ?,| ?;| ?:)$','', VAL).strip().strip('[').strip(']')
+		#		csv_264b.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+		
+		#if metadata.leader[7]  == 'b':
+		#	for F in metadata.get_fields('773'):
+		#		for VAL in F.get_subfields('t'):
+		#			csv_773t.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+		#		for VAL in F.get_subfields('x'):
+		#			csv_773x.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+		#return
 
 		# TEST TAG ------------------
 
@@ -201,8 +218,11 @@ def validate(record):
 			if metadata['245'].indicator1 not in ('0', '1'):
 				write_error(IDENT, '245', SIF, '034', 'Chybný indikátor v poli 245.')
 		if '520' in metadata:
-			if metadata['520'].indicator1 + metadata['520'].indicator2 != '2 ':
-				write_error(IDENT, '520', SIF, '035', 'Chybný indikátor v poli 520.')
+			try:
+				if metadata['520'].indicator1 + metadata['520'].indicator2 != '2 ':
+					write_error(IDENT, '520', SIF, '035', 'Chybný indikátor v poli 520.')
+			except:
+				write_error(IDENT, '520', SIF, '179', 'Chybí indikátory v poli 520.')
 		for F in metadata.get_fields('600'):
 			if F.indicator1 + F.indicator2 not in ('34', '37', '14', '17', '04', '07'):
 				write_error(IDENT, '600', SIF, '036', 'Chybný indikátor v poli 600.')
@@ -789,7 +809,8 @@ def validate(record):
 							if B in (
 								u'biografické poznámky',
 								u'bibliografické poznámky',
-								u'bio-bibliografické poznámky'
+								u'bio-bibliografické poznámky',
+								u'biograficko-bibliografické poznámky'
 								): BIO= True
 						if not BIO:
 							write_error(IDENT, '245', SIF, '155', 'Chybný 1.indikátor pole 245c, nebo chybí pole 700, "Nepodepsáno." v 500, či nejde o bbp.')
@@ -1107,16 +1128,28 @@ record.add_ordered_field(field)
 #field = Field(tag = '856', indicators = [' ',' '], subfields = ['4', 'N', 'y','Webarchiv'])
 #record.add_ordered_field(field)
 
-print(record)
-validate(record)
+#print(record)
+#validate(record)
 
-#try:
-#	csv = open(CSV, 'a', 0)
-#except:
-#	print('CSV: Read only FS exiting.')
-#	exit(1)
+try:
+	csv_260a = open('260a.txt', 'a', 0)
+	csv_260b = open('260b.txt', 'a', 0)
+	csv_264a = open('264a.txt', 'a', 0)
+	csv_264b = open('264b.txt', 'a', 0)
+	csv_773t = open('773t.txt', 'a', 0)
+	csv_773x = open('773x.txt', 'a', 0)
+except:
+	print('CSV: Read only FS exiting.')
+	exit(1)
 
-#marcxml.map_xml(validate, DATA)
+marcxml.map_xml(validate, DATA)
+
+csv_260a.close()
+csv_260b.close()
+csv_264a.close()
+csv_264b.close()
+csv_773t.close()
+csv_773x.close()
 
 # EXIT -------------------
 
