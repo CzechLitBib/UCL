@@ -427,6 +427,9 @@ for record in records:
 						DOT=False
 						if metadata['100']['a'] == metadata['245']['c']: DOT=True
 						if metadata['100']['a'] == metadata['245']['c'].strip('.'): DOT=True
+						if re.match('^(text|napsal).*', metadata['245']['c']): DOT=True
+						if metadata['100'].indicator1 == '0':
+							if metadata['100']['a'] == re.sub('^([^,]+).*', '\\1',metadata['245']['c']): DOT=True
 						if not DOT:
 							if metadata['245']['c'][:1].islower():
 								write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
