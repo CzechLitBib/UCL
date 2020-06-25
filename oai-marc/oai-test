@@ -299,7 +299,7 @@ for record in records:
 		if '110' in metadata:
 			if metadata['110'].indicator1 == '1':
 				if 'b' not in metadata['110']:
-					write_error(header.identifier(), '110', SIF, '143', 'Chybí podpole 110b.')
+					write_error(header.identifier(), '110', SIF, '143', 'Chybí podpole 110b, nebo chybný indikátor.')
 		# 710c
 		#for F in metadata.get_fields('710'):
 		#	if F.indicator1 == '0':
@@ -309,7 +309,7 @@ for record in records:
 		for F in metadata.get_fields('710'):
 			if F.indicator1 == '1':
 				if 'b' not in F:
-					write_error(header.identifier(), '710', SIF, '145', 'Chybí podpole 710b.')
+					write_error(header.identifier(), '710', SIF, '145', 'Chybí podpole 710b, nebo chybný indikátor.')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
