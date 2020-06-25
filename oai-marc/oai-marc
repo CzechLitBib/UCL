@@ -530,7 +530,8 @@ for record in records:
 		for F in metadata.get_fields('630'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'l', '7', '2', 'x', 'p', 's'):
-					write_error(header.identifier(), '630', SIF, '068', 'Chybný kód podpole v poli 630.')
+					if not ('a' in F and 'Bible' in F['a'] and SUB == 'f'):
+						write_error(header.identifier(), '630', SIF, '068', 'Chybný kód podpole v poli 630.')
 		for F in metadata.get_fields('648'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
