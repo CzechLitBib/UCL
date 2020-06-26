@@ -11,7 +11,6 @@ TODO
            CHECK: [\d+] URL
 MARC
            - 159/160 - fix I,II, Roman
-           - Check rule 109/100 ..
 </pre>
 FILE
 <pre>
