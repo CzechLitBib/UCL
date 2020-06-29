@@ -58,22 +58,21 @@ APACHE
 </pre>
 FILE
 <pre>
-        oai-marc - OAI-OMH 2.0 MARCXML record validation.
-         oai-5xx - Send dumped 245/246/5xx text for correction. 
-         oai-964 - Generate Aleph Pseudo-Marc format file. 
-           oai-7 - Evaluate subfield "7" data. 
-
-         oai-mdt -  Z39.50 yaz-client wrapper.
-        oai-test - Test code.
-       oai-daily - Crontab daily runner.
-      oai-weekly - Crontab weekly runner.
-     oai-monthly - Crontab monthly runner.
-
-   oai-test-file - File based testing.
-
            html/ - Apache AutoIndexing HTML structure.
            mods/ - Custom mods.
             773/ - Covert Aleph record 773 to 856.
+
+        oai-marc - OAI-OMH 2.0 MARCXML record validation.
+         oai-5xx - Send dumped 245/246/5xx text for correction. 
+         oai-964 - Generate Aleph Pseudo-Marc format file. 
+         oai-mdt - Z39.50 yaz-client wrapper.
+           oai-7 - Evaluate subfield "7" data. 
+      
+       oai-debug - Debug & testing.
+
+       oai-daily - Crontab daily runner.
+      oai-weekly - Crontab weekly runner.
+     oai-monthly - Crontab monthly runner.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
