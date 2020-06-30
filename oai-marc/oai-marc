@@ -665,7 +665,7 @@ for record in records:
 						if re.match('^' + S + '.*', metadata['245']['a']):
 							write_error(header.identifier(), '245', SIF, '096', 'Neplatný prefix, chybný 2.indikátor v poli 245.')
 		for F in metadata.get_fields('600'):
-			if F.indicator1 == '0':
+			if F.indicator1 == '0' and F.indicator2 != '7':
 				if 'a' in F:
 					if re.match('^.*,.+$', F['a']):
 						write_error(header.identifier(), '600', SIF, '097', "Chybný znak v podpoli 'a' v poli 600.")
