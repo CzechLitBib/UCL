@@ -9,8 +9,6 @@ TODO
            FIX: doubles..
            FIX: rebuild 651 DGARCH
            CHECK: [\d+] URL
-MARC
-           - 159/160 - fix I,II, Roman
 </pre>
 FILE
 <pre>
