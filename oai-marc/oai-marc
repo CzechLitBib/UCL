@@ -787,8 +787,8 @@ for record in records:
 		if '100' in metadata:
 			if '4' in metadata['100']:
 				DATA = metadata['100'].get_subfields('4')
-				if 'aut' not in DATA and 'ive' not in DATA:
-					write_error(header.identifier(), '100', SIF, '124', 'V poli 100 chybí kód role "aut" nebo "ive".')
+				if 'aut' not in DATA and 'ive' not in DATA and 'crp' not in DATA:
+					write_error(header.identifier(), '100', SIF, '124', 'V poli 100 chybí kód role "aut", "ive" nebo "crp".')
 
 		# TEST OTHER ------------------
 
