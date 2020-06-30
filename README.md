@@ -6,9 +6,9 @@ Library support software.
 TODO
 <pre>
 773to856
-           FIX: doubles..
-           FIX: rebuild 651 DGARCH
-           CHECK: [\d+] URL
+           CHECK: all doubles..
+           REMOVE: DGARCH
+           CHECK: Has 856 already..
 </pre>
 FILE
 <pre>
