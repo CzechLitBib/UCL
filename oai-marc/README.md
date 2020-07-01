@@ -59,7 +59,6 @@ APACHE
 FILE
 <pre>
            html/ - Apache AutoIndexing HTML structure.
-           mods/ - Custom mods.
             773/ - Covert Aleph record 773 to 856.
 
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
