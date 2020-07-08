@@ -3,13 +3,6 @@ DESCRIPTION
 
 Library support software.
 
-TODO
-<pre>
-773to856
-           CHECK: all doubles..
-           REMOVE: DGARCH
-           CHECK: Has 856 already..
-</pre>
 FILE
 <pre>
  oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
