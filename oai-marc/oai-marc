@@ -1036,12 +1036,10 @@ for record in records:
 		# 245
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[1::2]:
-				if re.findall('(?<!\.\.)\. :', SUB):
-					DC=False
-					for R in re.findall('(?<!\.)(.|^)\. :', SUB):
-						if not R.isupper(): DC=True
-					if DC:
-						write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
+				for R in re.findall('([^ ]+). :', SUB):
+					if not R in ('..', 'ml', 'st', 'kol', 'spol', 'min', 'Dr', 'atp', 'etc'):
+						if not R[-1:].isupper():
+							write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245'] and metadata['245'].indicator1 == '1':
