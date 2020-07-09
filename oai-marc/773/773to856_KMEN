@@ -23,16 +23,16 @@ from lxml.etree import tostring
 
 # VAR ----------------------------------
 
-IN='773.txt'
-OUT='773to856.bib'
-LOG='773to856.log'
+IN='data.txt'
+OUT='773to856_KMEN.bib'
+LOG='773to856_KMEN.log'
 
 PREFIX='http://archiv.ucl.cas.cz/index.php?path=Kmen/'
 URL='https://aleph.lib.cas.cz/OAI'
 
 TOTAL=0
 MATCH=0
-MANUA=0
+MAN=0
 
 # DEF ----------------------------------
 
@@ -49,8 +49,6 @@ def url_response(url,i,log):
 				return 1
 	except:
 		log.write(i + ' URL check failed.\n')
-	log.write(i + ' BAD ' + url + '\n')
-	return 0
 
 def write_record(bib,url,i,log):
 	try:
@@ -58,41 +56,41 @@ def write_record(bib,url,i,log):
 		record,header,about='','',''
 		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier='oai:aleph22.lib.cas.cz:KNA01-' + i)
 		if record:
-			# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
-			field = Field(
-				tag = '856',
-				indicators = ['4','1'],
-				subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
-			)
-			record.add_ordered_field(field)
-			# =651 \\$aDGARCH
-			field = Field(
-				tag = '651',
-				indicators = [' ',' '],
-				subfields = ['a', 'DGARCH']
-			)
-			record.add_ordered_field(field)
-			bib.write(record.__str__())
-			bib.write('\n')
+			if '856' in record:
+				log.write(i + ' Has 856.')
+			else:
+				# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
+				field = Field(
+					tag = '856',
+					indicators = ['4','1'],
+					subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
+				)
+				record.add_ordered_field(field)
+				bib.write(record.__str__())
+				bib.write('\n')
 		else:
 			log.write( i + 'No record.\n')
 	except:
 		log.write(i + ' Write failed.\n')
 
-def convert_regular(g,i,out,log):
-	Y = re.sub('^Roč\. \d+, (\d+), č\. \d+, .*, s\.? ?(\d+|\d+, |\d+-).*$', '\\1', g).strip()
-	C = re.sub('^Roč\. \d+, \d+, č\. (\d+), .*, s\.? ?(\d+|\d+, |\d+-).*$', '\\1', g).strip()
-	s_part = re.sub('^Roč\. \d+, \d+, č\. \d+, .*, s\.? ?(\d+|\d+, |\d+-).*$', '\\1', g)
-	S = s_part.replace('-','').replace(', ','').strip()
+def convert_q(q,g,i,out,log):
+	Y = re.sub('^Roč\. \d+, (\d+), .*$', '\\1', g).strip()
+	R = re.sub('(\d+):(\d+|\d+\/\d+)<\d+', '\\1', q).strip()
+	C = re.sub('\d+:(\d+|\d+\/\d+)<\d+', '\\1', q).strip().split('/')
+	S = re.sub('\d+:(\d+|\d+\/\d+)<(\d+)', '\\2', q).strip()
 
-	SUFFIX=''
-	if Y == '1988': SUFFIX = '1.'
-	if Y == '1989': SUFFIX = '2.'
-	if Y == '1990': SUFFIX = '3.'
-	URL = PREFIX + SUFFIX + Y + '/' + C + '/' + S + '.png'
+	if Y in ('1988', '1989', '1990'):
+		if len(C) == 1:
+			URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '/' + S + '.png'
+		if len(C) == 2:
+			URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
 
-	if url_response(URL,i,log):
-		write_record(out,URL,i,log)
+		if url_response(URL,i,log):
+			write_record(out,URL,i,log)
+		else:
+			log.write(i + ' BAD ' + URL + ' => ' + g)
+	else:
+		log.write(i + ' YEAR ' + g)
 
 # INIT ----------------------------------
 
@@ -116,21 +114,20 @@ for LINE in in_file:
 		ID = LINE[:9]
 		G = re.sub('^.*\$\$g(.*)\$\$q.*$', '\\1', LINE)
 		Q = re.sub('^.*\$\$q(.*)\$\$.*$', '\\1', LINE)
-		# REGULAR
-		# 001464128 7730  L $$tKmen$$x0231-553X$$gRoč. 1, 1988, č. 48, 1. 12., s. 3$$q1:48<3$$919881201
-		# Roč. 1, 1988, č. 48, 1. 12., s. 3
-		if re.match('^Roč\. \d+, \d+, č\. \d+, .*, s\.? ?(\d+|\d+, |\d+-).*$', G):
+
+		#Q
+		if re.match('\d+:(\d+|\d+\/\d+)<\d+', Q):
 			MATCH+=1
-			convert_regular(G,ID,out_file,log_file)
+			convert_q(Q,G,ID,out_file,log_file)
 			continue
 		# MANUAL
-		MANUA+=1
+		MAN+=1
+		log_file.write(ID + ' MANUAL ' + G)
 		#print(LINE.strip())
-		continue
 
 print('TOTAL: ' + str(TOTAL))
 print('MATCH: ' + str(MATCH))
-print('MANUA: ' + str(MANUA))
+print('MAN: ' + str(MAN))
 
 in_file.close()
 out_file.close()
