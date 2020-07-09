@@ -23,16 +23,17 @@ from lxml.etree import tostring
 
 # VAR ----------------------------------
 
-IN='773.txt'
-OUT='773to856.bib'
-LOG='773to856.log'
+IN='data.txt'
+OUT='773to856_KULP.bib'
+LOG='773to856_KULP.log'
 
 PREFIX='http://archiv.ucl.cas.cz/index.php?path=KulP/'
 URL='https://aleph.lib.cas.cz/OAI'
 
 TOTAL=0
 MATCH=0
-MANUA=0
+BROKEN=0
+MAN=0
 
 # DEF ----------------------------------
 
@@ -49,8 +50,6 @@ def url_response(url,i,log):
 				return 1
 	except:
 		log.write(i + ' URL check failed.\n')
-	log.write(i + ' BAD ' + url + '\n')
-	return 0
 
 def write_record(bib,url,i,log):
 	try:
@@ -58,71 +57,65 @@ def write_record(bib,url,i,log):
 		record,header,about='','',''
 		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier='oai:aleph22.lib.cas.cz:KNA01-' + i)
 		if record:
-			# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
-			field = Field(
-				tag = '856',
-				indicators = ['4','1'],
-				subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
-			)
-			record.add_ordered_field(field)
-			# =651 \\$aDGARCH
-			field = Field(
-				tag = '651',
-				indicators = [' ',' '],
-				subfields = ['a', 'DGARCH']
-			)
-			record.add_ordered_field(field)
-			bib.write(record.__str__())
-			bib.write('\n')
+			if '856' in record:
+				log.write(i + ' Has 856.')
+			else:
+				# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
+				field = Field(
+					tag = '856',
+					indicators = ['4','1'],
+					subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
+				)
+				record.add_ordered_field(field)
+				bib.write(record.__str__())
+				bib.write('\n')
 		else:
-			log.write( i + 'No record.\n')
+			log.write(i + ' No record.\n')
 	except:
 		log.write(i + ' Write failed.\n')
 
-def convert_regular(g,i,out,log):
-	Y = re.sub('^Roč\. \d+, (\d+/\d+), č\. \d+, .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', '\\1', g).split('/')
-	C = re.sub('^Roč\. \d+, \d+/\d+, č\. (\d+), .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', '\\1', g).strip()
-	s_part = re.sub('^Roč\. \d+, \d+/\d+, č\. \d+, .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', '\\1', g)
-	S = s_part.split(' a ')[0].split(', ')[0].split('-')[0].strip()
+def convert_q(q,g,i,out,log):
+	Y = re.sub('^Roč\. \d+, (\d+/\d+), .*$', '\\1', g).strip().split('/')
+	R = re.sub('(\d+):(\d+|\d+\/\d+)<\d+', '\\1', q).strip()
+	C = re.sub('\d+:(\d+|\d+\/\d+)<\d+', '\\1', q).strip().split('/')
+	S = re.sub('\d+:(\d+|\d+\/\d+)<(\d+)', '\\2', q).strip()
 
-	SUFFIX=''
-	if Y[0] == '1945': SUFFIX = '1.1945-1946'
-	if Y[0] == '1946': SUFFIX = '2.1946-1947'
-	if Y[0] == '1947': SUFFIX = '3.1947-1948'
-	URL = PREFIX + SUFFIX + '/' + C + '/' + S + '.png'
+	if R == '1': R = '1.1945-1946'
+	if R == '2': R = '2.1946-1947'
+	if R == '3': R = '3.1947-1948'
+	if R == '4': R = '4.1949'
 
-	if url_response(URL,i,log):
-		write_record(out,URL,i,log)
-
-def convert_double(g,i,out,log):
-	Y = re.sub('^Roč\. \d+, (\d+/\d+), č\. \d+\/\d+, .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', '\\1', g).split('/')
-	C = re.sub('^Roč\. \d+, \d+/\d+, č\. (\d+\/\d+), .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', '\\1', g).split('/')
-	s_part = re.sub('^Roč\. \d+, \d+/\d+, č\. \d+\/\d+, .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', '\\1', g)
-	S = s_part.split(' a ')[0].split(', ')[0].split('-')[0].strip()
-
-	SUFFIX=''
-	if Y[0] == '1945': SUFFIX = '1.1945-1946'
-	if Y[0] == '1946': SUFFIX = '2.1946-1947'
-	if Y[0] == '1947': SUFFIX = '3.1947-1948'
-	URL = PREFIX + SUFFIX + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
+	if len(C) == 1:
+		URL = PREFIX + R + '/' + C[0].strip() + '/' + S + '.png'
+	if len(C) == 2:
+		URL = PREFIX + R + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
 
 	if url_response(URL,i,log):
 		write_record(out,URL,i,log)
-
-def convert_single(g,i,out,log):
-	Y = re.sub('^Roč\. \d+, (\d+), č\. \d+, .*, s\. (\d+|\d+ a \d+|\d+-\d+|\[\d+\])', '\\1', g).strip()
-	C = re.sub('^Roč\. \d+, \d+, č\. (\d+), .*, s\. (\d+|\d+ a \d+|\d+-\d+|\[\d+\])', '\\1', g).strip()
-	s_part = re.sub('^Roč\. \d+, \d+, č\. \d+, .*, s\. (\d+|\d+ a \d+|\d+-\d+|\[\d+\])', '\\1', g)
-	S = s_part.split(' a ')[0].split('-')[0].replace('[','').replace(']','').strip()
-
-	URL = PREFIX + '4.1949' + '/' + C + '/' + S + '.png'
-
-	if Y == '1949':
-		if url_response(URL,i,log):
-			write_record(out,URL,i,log)
 	else:
-		log.write(i + ' OLDNEW ' + URL + '\n')
-		
+		log.write(i + ' BAD ' + URL + ' => ' + g)
+
+def convert_broken(g,i,out,log):
+	R = re.sub('^Roč\. \d+, (\d+/\d+), .*$', '\\1', g).strip().split('/')
+	C = re.sub('^Roč\. \d+, \d+/\d+, č\. (\d+|\d+\/\d+), .*$', '\\1', g).strip().split('/')
+	s_part = re.sub('^.*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', '\\1', g)
+	S = s_part.split(' a ')[0].split(', ')[0].split('-')[0].strip()
+
+	if R[0] == '1945': R = '1.1945-1946'
+	if R[0] == '1946': R = '2.1946-1947'
+	if R[0] == '1947': R = '3.1947-1948'
+	if R[0] == '1949': R = '4.1949'
+
+	if len(C) == 1:
+		URL = PREFIX + R + '/' + C[0].strip() + '/' + S + '.png'
+	if len(C) == 2:
+		URL = PREFIX + R + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
+
+	if url_response(URL,i,log):
+		write_record(out,URL,i,log)
+	else:
+		log.write(i + ' BAD ' + URL + ' => ' + g)
+	
 # INIT ----------------------------------
 
 registry = MetadataRegistry()
@@ -145,31 +138,26 @@ for LINE in in_file:
 		ID = LINE[:9]
 		G = re.sub('^.*\$\$g(.*)\$\$q.*$', '\\1', LINE)
 		Q = re.sub('^.*\$\$q(.*)\$\$.*$', '\\1', LINE)
-		# REGULAR
-		# 001924275 7730  L $$tKulturní politika$$x2336-1247$$gRoč. 2, 1946/1947, č. 52, 12. 9. 1947, s. 3$$q2:52<3$$919470912
-		# Roč. 2, 1946/1947, č. 52, 12. 9. 1947, s. 3
-		if re.match('^Roč\. \d+, \d+/\d+, č\. \d+, .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', G):
-			MATCH+=1
-			convert_regular(G,ID,out_file,log_file)
-			continue
-		# DOUBLE
-		if re.match('^Roč\. \d+, \d+/\d+, č\. (\d+\/\d+), .*, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', G):
-			MATCH+=1
-			convert_double(G,ID,out_file,log_file)
-			continue
-		# SINGLE
-		if re.match('^Roč\. \d+, \d+, č\. \d+, .*, s\. (\d+|\d+ a \d+|\d+-\d+|\[\d+\])', G):
-			MATCH+=1
-			convert_single(G,ID,out_file,log_file)
-			continue
-		# MANUAL
-		MANUA+=1
-		#print(LINE.strip())
-		continue
 
-#print('TOTAL: ' + str(TOTAL))
-#print('MATCH: ' + str(MATCH))
-#print('MANUA: ' + str(MANUA))
+		# Q
+		if re.match('\d+:(\d+|\d+\/\d+)<\d+', Q):
+			MATCH+=1
+			convert_q(Q,G,ID,out_file,log_file)
+			continue
+		# BROKEN
+		if re.match('^Roč\. \d+, \d+/\d+, č\. (\d+|\d+\/\d+), \d+\. \d+\. \d+, s\. (\d+|\d+ a \d+|\d+, \d+|\d+-\d+)$', G):
+			BROKEN+=1
+			convert_broken(G,ID,out_file,log_file)
+			continue
+		# MAN
+		MAN+=1
+		log_file.write(ID + ' MANUAL ' + G)
+		#print(LINE.strip())
+
+print('TOTAL: ' + str(TOTAL))
+print('MATCH: ' + str(MATCH))
+print('BROKEN: ' + str(BROKEN))
+print('MAN: ' + str(MAN))
 
 in_file.close()
 out_file.close()
