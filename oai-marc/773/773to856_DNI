@@ -118,7 +118,8 @@ for LINE in in_file:
 			continue
 		# MANUAL
 		MAN+=1
-		print(LINE.strip())
+		log_file.write(ID + ' MANUAL ' + G)
+		#print(LINE.strip())
 
 print('TOTAL: ' + str(TOTAL))
 print('MATCH: ' + str(MATCH))
