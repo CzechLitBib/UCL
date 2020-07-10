@@ -93,16 +93,6 @@ def convert_q(q,g,i,out,log):
 	else:
 		log.write(i + ' YEAR ' + g)
 
-def convert_regular(g,i,out,log):
-	Y = re.sub('^Roč\. \d+, (\d+), č\. \d+, .*, s\. \d+$', '\\1' , g).strip()
-	C = re.sub('^Roč\. \d+, \d+, č\. (\d+), .*, s\. \d+$', '\\1' , g).strip()
-	S = re.sub('^Roč\. \d+, \d+, č\. \d+, .*, s\. (\d+)$', '\\1' , g).strip()
-
-	URL = PREFIX + '1.' + Y + '/' + C + '/' + S + '.png'
-
-	if url_response(URL,i,log):
-		write_record(out,URL,i,log)
-
 # INIT ----------------------------------
 
 registry = MetadataRegistry()
