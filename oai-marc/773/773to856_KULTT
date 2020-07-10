@@ -94,7 +94,7 @@ def convert_q(q,g,i,out,log):
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
 		else:
-			log.write(i + ' BAD ' + g)
+			log.write(i + ' BAD ' + URL + ' => ' + g)
 	else:
 		log.write(i + ' YEAR ' + g)
 
