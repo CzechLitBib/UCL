@@ -142,7 +142,7 @@ out_file = open(OUT, 'w')
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
-	if re.match('.*L \$\$tKultura\$\$.*', LINE):
+	if re.match('.*L \$\$tKultura\$\$x0452-7984\$\$.*', LINE):
 		TOTAL+=1
 		ID = LINE[:9]
 		G = re.sub('^.*\$\$g(.*)\$\$q.*$', '\\1', LINE)

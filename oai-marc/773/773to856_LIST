@@ -114,7 +114,7 @@ out_file = open(OUT, 'w')
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
-	if re.match('.*L \$\$tListy\$\$.*', LINE):
+	if re.match('.*L \$\$tListy\$\$x1210-1222\$\$.*', LINE):
 		TOTAL+=1
 		ID = LINE[:9]
 		G = re.sub('^.*\$\$g(.*)\$\$q.*$', '\\1', LINE)

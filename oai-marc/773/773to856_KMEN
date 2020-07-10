@@ -74,16 +74,20 @@ def write_record(bib,url,i,log):
 		log.write(i + ' Write failed.\n')
 
 def convert_q(q,g,i,out,log):
-	Y = re.sub('^Roč\. \d+, (\d+), .*$', '\\1', g).strip()
 	R = re.sub('(\d+):(\d+|\d+\/\d+)<\d+', '\\1', q).strip()
 	C = re.sub('\d+:(\d+|\d+\/\d+)<\d+', '\\1', q).strip().split('/')
 	S = re.sub('\d+:(\d+|\d+\/\d+)<(\d+)', '\\2', q).strip()
 
-	if Y in ('1988', '1989', '1990'):
+	if R in ('1', '2', '3'):
+
+		if R == '1': R = '1.1988'
+		if R == '2': R = '2.1989'
+		if R == '3': R = '3.1990'
+
 		if len(C) == 1:
-			URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '/' + S + '.png'
+			URL = PREFIX + R + '/' + C[0].strip() + '/' + S + '.png'
 		if len(C) == 2:
-			URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
+			URL = PREFIX + R + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
 
 		if url_response(URL,i,log):
 			write_record(out,URL,i,log)
@@ -109,12 +113,11 @@ out_file = open(OUT, 'w')
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
-	if re.match('.*L \$\$tKmen\$\$.*', LINE):
+	if re.match('.*L \$\$tKmen\$\$x0231-553X\$\$.*', LINE):
 		TOTAL+=1
 		ID = LINE[:9]
 		G = re.sub('^.*\$\$g(.*)\$\$q.*$', '\\1', LINE)
 		Q = re.sub('^.*\$\$q(.*)\$\$.*$', '\\1', LINE)
-
 		#Q
 		if re.match('\d+:(\d+|\d+\/\d+)<\d+', Q):
 			MATCH+=1

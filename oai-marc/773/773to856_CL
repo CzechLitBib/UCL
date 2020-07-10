@@ -132,7 +132,7 @@ out_file = open(OUT, 'w', 0)
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
-	if re.match('.*L \$\$tČeská literatura\$\$x0009-0468.*', LINE):
+	if re.match('.*L \$\$tČeská literatura\$\$x0009-0468\$\$.*', LINE):
 		TOTAL+=1
 		ID = LINE[:9]
 
