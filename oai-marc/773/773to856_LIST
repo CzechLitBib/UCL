@@ -97,30 +97,6 @@ def convert_q(q,g,i,out,log):
 	else:
 		log.write(i + ' YEAR ' + g)
 
-#def convert_regular(g,i,out,log):
-#	Y = re.sub('^Roč\. \d+, (\d+), č\. \d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g).strip()
-#	R = re.sub('^Roč\. (\d+), \d+, č\. \d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g).strip()
-#	C = re.sub('^Roč\. \d+, \d+, č\. (\d+), .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g).strip()
-#	s_part = re.sub('^Roč\. \d+, \d+, č\. \d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g)
-#	S = s_part.split(' a ')[0].split(', ')[0].split('-')[0].strip()
-#
-#	URL = PREFIX + R + '.' + Y + '/' + C + '/' + S + '.png'
-#
-#	if url_response(URL,i,log):
-#		write_record(out,URL,i,log)
-
-#def convert_double(g,i,out,log):
-#	Y = re.sub('^Roč\. \d+, (\d+), č\. \d+\/\d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g).strip()
-#	R = re.sub('^Roč\. (\d+), \d+, č\. \d+\/\d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g).strip()
-#	C = re.sub('^Roč\. \d+, \d+, č\. (\d+\/\d+), .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g).split('/')
-#	s_part = re.sub('^Roč\. \d+, \d+, č\. \d+\/\d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', '\\1', g)
-#	S = s_part.split(' a ')[0].split(', ')[0].split('-')[0].strip()
-
-#	URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
-
-#	if url_response(URL,i,log):
-#		write_record(out,URL,i,log)
-
 # INIT ----------------------------------
 
 registry = MetadataRegistry()
@@ -149,18 +125,6 @@ for LINE in in_file:
 			MATCH+=1
 			convert_q(Q,G,ID,out_file,log_file)
 			continue
-		# REGULAR
-		# 001418856 7730  L $$tListy$$x1210-1222$$gRoč. 1, 1968, č. 1, 7. 11., s. 1$$q1:1<1$$919681107
-		# Roč. 1, 1968, č. 1, 7. 11., s. 1
-		#if re.match('^Roč\. \d+, \d+, č\. \d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', G):
-		#	MATCH+=1
-		#	convert_regular(G,ID,out_file,log_file)
-		#	continue
-		# DOUBLE
-		#if re.match('^Roč\. \d+, \d+, č\. \d+\/\d+, .*, s\. (\d+|\d+-|\d+ a |\d+, ).*$', G):
-		#	MATCH+=1
-		#	convert_double(G,ID,out_file,log_file)
-		#	continue
 		# MANUAL
 		MAN+=1
 		#print(LINE.strip())
