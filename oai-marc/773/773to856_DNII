@@ -86,12 +86,12 @@ def convert_q(q,g,i,out,log):
 		URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
 
 	if int(Y) > 1991 and int(Y) < 2007:
-                if url_response(URL,i,log):
-                        write_record(out,URL,i,log)
+		if url_response(URL,i,log):
+			write_record(out,URL,i,log)
 		else:
 			log.write(i + ' BAD ' + URL + ' => ' + g)
-        else:
-                log.write(i + ' OLDNEW ' +  URL + '\n')
+	else:
+		log.write(i + ' OLDNEW ' +  URL + '\n')
 
 # INIT ----------------------------------
 
