@@ -93,14 +93,14 @@ def convert_q(q,g,i,out,log):
 		else:
 			log.write(i + ' BAD ' + URL + ' => ' + g)
 	else:
-		log.write(i + ' OLDNEW ' +  URL + '\n')
+		log.write(i + ' YEAR ' +  g)
 
 def convert_month(g,i,out,log):
-	R = re.sub('^[Rr]oč\. (\d+), \d+, č\. (\d+|\d+\/\d+), .*, s\. .*$', '\\1', g).strip()
-	Y = re.sub('^[Rr]oč\. \d+, (\d+), č\. (\d+|\d+\/\d+), .*, s\. .*$', '\\1', g).strip()
-	C = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\. .*$', '\\1', g).strip().split('/')
-	part = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*, s\. (.*)$', '\\2', g)
-	S = part.split('-')[0].strip()
+	R = re.sub('^[Rr]oč\. (\d+), .*$', '\\1', g).strip()
+	Y = re.sub('^[Rr]oč\. \d+, (\d+), .*$', '\\1', g).strip()
+	C = re.sub('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), .*$', '\\1', g).strip().split('/')
+	part = re.sub('^.*, s\. (\d+|\d+-\d+|\d+\/\d+)$', '\\1', g)
+	S = part.split('-')[0].split('/')[0].strip()
 
 	if len(C) == 1:
 		URL = PREFIX + R + '.' + Y + '/' + C[0].strip() + '/' + S + '.png'
@@ -113,7 +113,7 @@ def convert_month(g,i,out,log):
 		else:
 			log.write(i + ' BAD ' + URL + ' => ' + g)
 	else:
-		log.write(i + ' OLDNEW ' +  URL + '\n')
+		log.write(i + ' YEAR ' +  g)
 
 # INIT ----------------------------------
 
@@ -132,7 +132,7 @@ out_file = open(OUT, 'w', 0)
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
-	if re.match('.*L \$\$tČeská literatura\$\$.*', LINE):
+	if re.match('.*L \$\$tČeská literatura\$\$x0009-0468.*', LINE):
 		TOTAL+=1
 		ID = LINE[:9]
 
@@ -145,7 +145,7 @@ for LINE in in_file:
 			convert_q(Q,G,ID,out_file,log_file)
 			continue
 		# MONTH LITERAL
-		if re.match('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), [\S]+, s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
+		if re.match('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), \D+, s\. (\d+|\d+-\d+|\d+\/\d+)$', G, flags=re.UNICODE):
 			MONTH+=1
 			convert_month(G,ID,out_file,log_file)
 			continue
