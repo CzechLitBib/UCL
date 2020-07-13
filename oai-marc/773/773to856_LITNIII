@@ -93,7 +93,6 @@ def convert_q(q,g,i,out,log):
 		else:
 			log.write(i + ' BAD ' + URL + ' => ' + g)
 	else:
-		C = C[0].strip()
 		log.write(i + ' YEAR ' + g)
 
 def convert_broken(g,i,out,log):
