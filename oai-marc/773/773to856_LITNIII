@@ -58,7 +58,7 @@ def write_record(bib,url,i,log):
 		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier='oai:aleph22.lib.cas.cz:KNA01-' + i)
 		if record:
 			if '856' in record:
-				log.write(i + ' Has 856.')
+				log.write(i + ' Has 856.\n')
 			else:
 				# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
 				field = Field(
