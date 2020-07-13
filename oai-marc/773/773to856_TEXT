@@ -84,7 +84,7 @@ def convert_q(q,g,i,out,log):
 	if R == '1998': R = '3'
 	if R == '1999': R = '4'
 
-	if R in [str(r) for r in range(1,12)]:
+	if R in [str(r) for r in range(1,13)]:
 		if R == '12':
 			R = '12.2007-2009'
 		else:
