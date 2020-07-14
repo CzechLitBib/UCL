@@ -23,16 +23,16 @@ from lxml.etree import tostring
 
 # VAR ----------------------------------
 
-IN='773.txt'
-OUT='773to856.bib'
-LOG='773to856.log'
+IN='data.txt'
+OUT='773to856_ZITREK.bib'
+LOG='773to856_ZITREK.log'
 
 PREFIX='http://archiv.ucl.cas.cz/index.php?path=Zitrek/'
 URL='https://aleph.lib.cas.cz/OAI'
 
 TOTAL=0
 MATCH=0
-MANUA=0
+MAN=0
 
 # DEF ----------------------------------
 
@@ -49,8 +49,6 @@ def url_response(url,i,log):
 				return 1
 	except:
 		log.write(i + ' URL check failed.\n')
-	log.write(i + ' BAD ' + url + '\n')
-	return 0
 
 def write_record(bib,url,i,log):
 	try:
@@ -58,38 +56,43 @@ def write_record(bib,url,i,log):
 		record,header,about='','',''
 		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier='oai:aleph22.lib.cas.cz:KNA01-' + i)
 		if record:
-			# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
-			field = Field(
-				tag = '856',
-				indicators = ['4','1'],
-				subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
-			)
-			record.add_ordered_field(field)
-			# =651 \\$aDGARCH
-			field = Field(
-				tag = '651',
-				indicators = [' ',' '],
-				subfields = ['a', 'DGARCH']
-			)
-			record.add_ordered_field(field)
-			bib.write(record.__str__())
-			bib.write('\n')
+			if '856' in record:
+				log.write(i + ' Has 856.\n')
+			else:
+				# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
+				field = Field(
+					tag = '856',
+					indicators = ['4','1'],
+					subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
+				)
+				record.add_ordered_field(field)
+				bib.write(record.__str__())
+				bib.write('\n')
 		else:
-			log.write( i + 'No record.\n')
+			log.write(i + ' No record.\n')
 	except:
 		log.write(i + ' Write failed.\n')
 
-def convert_regular(g,i,out,log):
-	Y = re.sub('^Roč\. \d+, (\d+), č\. \d+, .*, s\. (\d+|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\1', g).strip()
-	R = re.sub('^Roč\. (\d+), \d+, č\. \d+, .*, s\. (\d+|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\1', g).strip()
-	C = re.sub('^Roč\. \d+, \d+, č\. (\d+), .*, s\. (\d+|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\1', g).strip()
-	s_part = re.sub('^Roč\. \d+, \d+, č\. \d+, .*, s\. (\d+|\d+, \d+|\d+-\d+|\d+ a \d+)$', '\\1', g)
-	S = s_part.split(', ')[0].split('-')[0].split(' a ')[0].strip()
+def convert_q(q,g,i,out,log):
+	R = re.sub('(\d+):(\d+|\d+\/\d+)<\d+', '\\1', q).strip()
+	C = re.sub('\d+:(\d+|\d+\/\d+)<\d+', '\\1', q).strip().split('/')
+	S = re.sub('\d+:(\d+|\d+\/\d+)<(\d+)', '\\2', q).strip()
 
-	URL = PREFIX + R + '.' + Y + '/' + C + '/' + S + '.png'
+	if R in ('1', '2'):
+		if R == '1': R = '1.1968'
+		if R == '2': R = '2.1969'
 
-	if url_response(URL,i,log):
-		write_record(out,URL,i,log)
+		if len(C) == 1:
+			URL = PREFIX + R + '/' + C[0].strip() + '/' + S + '.png'
+		if len(C) == 2:
+			URL = PREFIX + R + '/' + C[0].strip() + '-' + C[1].strip() + '/' + S + '.png'
+
+		if url_response(URL,i,log):
+			write_record(out,URL,i,log)
+		else:
+			log.write(i + ' BAD ' + URL + ' => ' + g)
+	else:
+		log.write(i + ' YEAR ' + g)
 
 # INIT ----------------------------------
 
@@ -108,25 +111,24 @@ out_file = open(OUT, 'w')
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
-	if re.match('.*L \$\$tZítřek\$\$.*', LINE):
+	if re.match('.*L \$\$tZítřek\$\$x1804-0233\$\$*', LINE):
 		TOTAL+=1
 		ID = LINE[:9]
 		G = re.sub('^.*\$\$g(.*)\$\$q.*$', '\\1', LINE)
 		Q = re.sub('^.*\$\$q(.*)\$\$.*$', '\\1', LINE)
-		# REGULAR
-		# 001426885 7730  L $$tZítřek$$x1804-0233$$gRoč. 2, 1969, č. 8, 26. 2., s. 9$$q2:8<9$$919690226
-		# Roč. 2, 1969, č. 8, 26. 2., s. 9
-		if re.match('^Roč\. \d+, \d+, č\. \d+, .*, s\. (\d+|\d+, \d+|\d+-\d+|\d+ a \d+)$', G):
+		#Q
+		if re.match('\d+:(\d+|\d+\/\d+)<\d+', Q):
 			MATCH+=1
-			convert_regular(G,ID,out_file,log_file)
+			convert_q(Q,G,ID,out_file,log_file)
 			continue
-		MANUA+=1
+		# MANUAL
+		MAN+=1
 		#print(LINE.strip())
-		continue
+		log_file.write(ID + ' MANUAL ' + G)
 
-#print('TOTAL: ' + str(TOTAL))
-#print('MATCH: ' + str(MATCH))
-#print('MANUA: ' + str(MANUA))
+print('TOTAL: ' + str(TOTAL))
+print('MATCH: ' + str(MATCH))
+print('MAN: ' + str(MAN))
 
 in_file.close()
 out_file.close()
