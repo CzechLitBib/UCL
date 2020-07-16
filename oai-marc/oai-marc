@@ -1039,8 +1039,8 @@ for record in records:
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[1::2]:
 				for R in re.findall('([^ ]+)\. :', SUB):
-					if not R in ('ml', 'st', 'kol', 'spol', 'min', 'Dr', 'atp', 'etc'):
-						if not R[-1:].isupper() or R[-2:] == '..':
+					if R not in ('ml', 'st', 'kol', 'spol', 'min', 'Dr', 'atp', 'etc'):
+						if not R[-1:].isupper() and R[-2:] != '..':
 							write_error(header.identifier(), '245', SIF, '161', 'Nepovolená kombinace . : v poli 245.')
 		# 245c
 		if '245' in metadata:
