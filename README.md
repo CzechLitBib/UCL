@@ -3,6 +3,10 @@ DESCRIPTION
 
 Library support software.
 
+TODO
+
+-7 all.xml += monthly; month archiving; string stat; string uniq + @; 600
+
 FILE
 <pre>
  oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
