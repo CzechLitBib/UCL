@@ -61,15 +61,8 @@ def write_record(bib,url,i,log):
 			if '856' in record:
 				log.write(i + ' Has 856.\n')
 			else:
-				# XXXXXXXXX 85642 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
-				field = Field(
-					tag = '856',
-					indicators = ['4','1'],
-					subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
-				)
-				record.add_ordered_field(field)
-				bib.write(record.__str__())
-				bib.write('\n')
+				# XXXXXXXXX 85641 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
+				bib.write(i + ' 85641 L $$u' + url + u'$$yDigitální archiv časopisů'.encode('utf-8') + '$$4N\n')
 		else:
 			log.write(i + ' No record.\n')
 	except:
