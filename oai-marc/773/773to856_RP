@@ -17,13 +17,15 @@ import StringIO,requests,sys,os,re
 
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
-from pymarc import marcxml,Field
+from pymarc import marcxml,Field,record_to_xml_node
+import xml.etree.ElementTree as ET
 from lxml.etree import tostring
 
 # VAR ----------------------------------
 
 IN='data.txt'
-OUT='773to856_RP.bib'
+OUT='773to856.bib'
+XML='773to856.xml'
 LOG='773to856_RP.log'
 
 PREFIX='http://archiv.ucl.cas.cz/index.php?path=RudePravo/'
@@ -60,7 +62,19 @@ def write_record(bib,url,i,log):
 				log.write(i + ' Has 856.\n')
 			else:
 				# XXXXXXXXX 85641 L $$ uYYY $$y Digitální archiv časopisů $$ 4 N
-				bib.write(i + ' 85641 L $$u' + url + u'$$yDigitální archiv časopisů'.encode('utf-8') + '$$4N\n')
+				# ALEPH
+				#bib.write(i + ' 85641 L $$u' + url + u'$$yDigitální archiv časopisů'.encode('utf-8') + '$$4N\n')
+				# XML
+				xml_file.write(ET.tostring(record_to_xml_node(record), encoding='utf-8'))
+				# MARC
+				field = Field(
+					tag = '856',
+					indicators = ['4','1'],
+					subfields = ['u', url, 'y', u'Digitální archiv časopisů', '4', 'N']
+				)
+				record.add_ordered_field(field)
+				bib.write(record.__str__())
+				bib.write('\n')
 		else:
 			log.write(i + ' No record.\n')
 	except:
@@ -114,7 +128,8 @@ session = requests.Session()
 # MAIN ----------------------------------
 
 in_file = open(IN, 'r')
-out_file = open(OUT, 'w')
+out_file = open(OUT, 'a', 0)
+xml_file = open(XML, 'a', 0)
 log_file = open(LOG, 'w', 0)
 
 for LINE in in_file:
@@ -146,5 +161,6 @@ print('MAN: ' + str(MAN))
 
 in_file.close()
 out_file.close()
+xml_file.close()
 log_file.close()
 
