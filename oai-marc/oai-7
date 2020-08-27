@@ -19,10 +19,24 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-DATADIR='/var/www/html/7/raw/'
-TAGFILE='/var/www/html/7/tag.txt'
-INDEXFILE='/var/www/html/7/index.html'
-TAGLIST=[]
+
+SEVEN_PATH='/var/www/html/7/'
+RAW_PATH='/var/www/html/7/raw/'
+
+TAGLIST = []
+
+HTML_TOP='''
+<!doctype html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="background-color:black;color:#6DAE42;">
+<br>
+'''
+HTML_BOTTOM='''
+<br>
+</body>
+</html>
+'''
 
 INDEX_TOP='''<!doctype html>
 <html>
@@ -31,15 +45,6 @@ INDEX_TOP='''<!doctype html>
 <br>
 <b><u>OAI-PMH 2.0 MARCXML</u></b>
 <br><br><font size="3" color="white">Výstup kontroly podpole "7" záznamů MARCXML v databázi Aleph.</font>
-<br><br><br>
-<table border="1" cellpadding="8px" style="border-collapse:collapse;">
-<tr>
-<td width="30" bgcolor="#333333;" align="center"><font color="gold">Pole</font></td>
-<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Podpole 7</font></td>
-<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Bez podpole 7</font></td>
-</tr>
-'''
-INDEX_BOTTOM='''</table>
 <br><br>
 <table border="0" cellpadding="4px" style="border-collapse:collapse;">
 <tr>
@@ -57,14 +62,27 @@ INDEX_BOTTOM='''</table>
 <td align="right"><font color="white">ALL</font></td>
 </tr>
 </table>
-<br><a href="/" title="Back"><font size="3" color="white">[Domů]</font></a><br><br>
+<br><br>
+<table border="1" cellpadding="8px" style="border-collapse:collapse;">
+<tr>
+<td width="30" bgcolor="#333333;" align="center"><font color="gold">Pole</font></td>
+<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Podpole 7</font></td>
+<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Bez podpole 7</font></td>
+</tr>
+'''
+
+INDEX_BOTTOM='''</table>
+<br><br>
+<a href="/" title="Back"><font size="3" color="white">[Domů]</font></a>
+<br><br>
 </body>
 </html>
 '''
 
-RECORD=0
-COUNTER=0
-MATCH=0
+HAVE_SEVEN=0
+HAVE_NO_SEVEN=0
+FIELD=0
+TOTAL=0
 
 # DEF -------------------
 
@@ -118,10 +136,6 @@ if args.get == 'ident':
 
 # INIT -------------------
 
-try:
-	with open(TAGFILE, 'r', 0) as f: TAGLIST = f.read().splitlines()
-except:	TAGLIST=[]
-
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
 
@@ -170,22 +184,12 @@ for record in records:
 			header = retry[0]
 			metadata = retry[1]
 
-	# VALIDATION ------------------
-
 	if args.check:
 		
 		# SKIP OLD ------------------
 
 		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
 
-		# SKIP BOT ------------------
-		#
-		#BOT=False
-		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
-		#	if 'a' in F:
-		#		if re.match('BATCH', F['a']): BOT=True
-		#if BOT: continue
-		#
 		# 1xx/6xx-653/700/710/711/730 ------------------
 
 		ALEPH = re.sub('^.*-(\d+)$', '\\1', header.identifier())
@@ -193,43 +197,43 @@ for record in records:
 		for TAG, VALUE, SEVEN in [(f.tag, f.value().encode('utf-8'), f['7']) for f in metadata.fields]:
 			if re.match('(1..|6..|700|710|711|730)', TAG):
 				if TAG != '653':
+					# update tag list
 					if TAG not in TAGLIST: TAGLIST.append(TAG)
+					# write data
 					if not SEVEN and VALUE:
-						try:
-							# CSV
-							with open(DATADIR + TAG + '.csv', 'a', 0) as f:
-								f.write(VALUE + ';' + ALEPH + '\n')
-							# HTML
-							with open(DATADIR + TAG + '.txt', 'a', 0) as f:
-								f.write(
-									'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-									ALEPH +  '&local_base=AV">' + ALEPH + '</a>' +
-									' <font color="white">' + VALUE + '</font></p>\n'
-								)
-						except: print(ALEPH + ' ' + TAG + ' Write failed.')
-						MATCH+=1
+						# CSV
+						with open(RAW_PATH + TAG + '.csv', 'a', 0) as f:
+							f.write(VALUE + ';' + ALEPH + '\n')
+						# HTML
+						with open(RAW_PATH + TAG + '.html', 'a', 0) as f:
+							f.write(
+								'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+								ALEPH +  '&local_base=AV">' + ALEPH + '</a>' +
+								' <font color="white">' + VALUE + '</font></p>\n'
+							)
+						HAVE_NO_SEVEN+=1
 					if SEVEN and VALUE:
-						try:
-							# CSV
-							with open(DATADIR + TAG + '.7.csv', 'a', 0) as f:
-								f.write(VALUE + ';' + ALEPH + '\n')
-							# HTML
-							with open(DATADIR + TAG + '.7.txt', 'a', 0) as f:
-								f.write(
-									'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-									ALEPH +  '&local_base=AV">' + ALEPH + '</a>' +
-									' <font color="white">' + VALUE + '</font></p>\n'
-								)
-						except: print(ALEPH + ' ' + TAG + ' Write failed.')
-					COUNTER+=1
-		RECORD+=1
+						# CSV
+						with open(DATADIR + TAG + '.7.csv', 'a', 0) as f:
+							f.write(VALUE + ';' + ALEPH + '\n')
+						# HTML
+						with open(DATADIR + TAG + '.7.txt', 'a', 0) as f:
+							f.write(
+								'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+								ALEPH +  '&local_base=AV">' + ALEPH + '</a>' +
+								' <font color="white">' + VALUE + '</font></p>\n'
+							)
+						HAVE_SEVEN+=1
+					RECORD+=1
+		TOTAL+=1
 
-# UPDATE -------------------
+# GENERATE FREQ files
+# https://vufind.ucl.cas.cz/Search/Results?lookfor=XXX&type=Author
 
-# update tag list
-with open(TAGFILE, 'w', 0) as f:
-	for TAG in TAGLIST: f.write(TAG + '\n')
-# write index
+
+
+# GENRATE INDEX
+
 try:
 	TAGLIST.sort()
 	with open(INDEXFILE, 'w', 0) as f:
