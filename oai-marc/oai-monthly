@@ -7,13 +7,8 @@
 
 DATA_PATH='/tmp/5xx'
 
-SEVEN_PATH='/var/www/html/7'
-SEVEN_ARCHIVE_PATH='/var/www/html/archiv/7'
-SEVEN_DATA_PATH='/var/www/html/7/data'
-SEVEN_RAW_PATH='/var/www/html/7/raw'
-
-SEVEN_TAG_FILE='/var/www/html/7/tag.txt'
-SEVEN_INDEX_FILE='/var/www/html/7/index.html'
+SEVEN_RAW="/var/www/html/7/raw"
+SEVEN_DATA="/var/www/html/7/archive/$(date +'%Y/%m')/data"
 
 # ------------------------
 
@@ -26,7 +21,7 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 mkdir -p "$DATA_PATH" 2> /dev/null
 
 oai-5xx \
-	--set UCLA \
+	--set 'UCLA' \
 	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
 	--until "$(date +'%Y-%m-01 00:00:00')" \
 	--check \
@@ -40,99 +35,21 @@ echo "5xx done."
 # "7"
 #
 
-mkdir -p "$SEVEN_PATH" 2> /dev/null
-mkdir -p "$SEVEN_ARCHIVE_PATH" 2> /dev/null
-mkdir -p "$SEVEN_DATA_PATH" 2> /dev/null
-mkdir -p "$SEVEN_RAW_PATH" 2> /dev/null
+mkdir -p "$SEVEN" 2> /dev/null
+mkdir -p "$SEVEN_ARCHIVE" 2> /dev/null
+mkdir -p "$SEVEN_DATA" 2> /dev/null
+mkdir -p "$SEVEN_RAW" 2> /dev/null
 
-# backup prev. year
-if [ $(date +'%-m') == 2 ]; then
-	while read TAG; do
-		tar -rf "$SEVEN_ARCHIVE_PATH/$(($(date +'%Y') - 1)).tar" -C "$SEVEN_RAW_PATH" "$TAG.csv"
-		tar -rf "$SEVEN_ARCHIVE_PATH/$(($(date +'%Y') - 1)).7.tar" -C "$SEVEN_RAW_PATH" "$TAG.7.csv"
-	done < $SEVEN_TAG_FILE
-	gzip "$SEVEN_ARCHIVE_PATH/$(($(date +'%Y') - 1)).tar"
-	gzip "$SEVEN_ARCHIVE_PATH/$(($(date +'%Y') - 1)).7.tar"
-fi
-
-echo "7-Backup done."
-
-rm -f "$SEVEN_RAW_PATH"/* 2> /dev/null
-rm -f "$SEVEN_DATA_PATH"/* 2> /dev/null
-rm -f "$SEVEN_TAG_FILE" 2> /dev/null
-
-# catch new year
-MONTH=$([ $(date +'%-m') == 1 ] && echo 13 || echo $(date +'%-m'))
-
-for ((M=0; M < $MONTH - 1; M++)); do
-	oai-7 \
-	--set UCLA \
-	--from "$(date --date="$(date +'%Y-01-01') +$M month" +'%Y-%m-%d 00:00:00')" \
-	--until "$(date --date="$(date +'%Y-01-01') +$M month +1 month" +'%Y-%m-%d 00:00:00')" \
+oai-7 \
+	--set 'UCLA' \
+	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
+	--until "$(date +'%Y-%m-01 00:00:00')" \
 	--check
-	sleep 10
-done
+
+mv "$SEVEN_RAW/*" "$SEVEN_DATA" 2> /dev/null
 
 echo "7-Harvest done."
 
-while read TAG; do
-	# empty set
-	touch "$SEVEN_RAW_PATH/$TAG.txt"
-	touch "$SEVEN_RAW_PATH/$TAG.7.txt"
-	touch "$SEVEN_RAW_PATH/$TAG.csv"
-	touch "$SEVEN_RAW_PATH/$TAG.7.csv"
-
-	COUNT_NO_7=$(cat "$SEVEN_RAW_PATH/$TAG.txt" | wc -l)
-	COUNT_7=$(cat "$SEVEN_RAW_PATH/$TAG.7.txt" | wc -l)
-	COUNT=$(cat "$SEVEN_RAW_PATH/$TAG.txt" "$SEVEN_RAW_PATH/$TAG.7.txt" | wc -l)
-	# No 7
-	cat <<- EOL > "$SEVEN_DATA_PATH/$TAG.html"
-		<!doctype html>
-		<html>
-		<head><meta charset="utf-8"></head>
-		<body style="background-color:black;color:#6DAE42;">
-		<br>
-	EOL
-	cat "$SEVEN_RAW_PATH/$TAG.txt" >> "$SEVEN_DATA_PATH/$TAG.html"
-	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.html"
-		<br>
-		</body>
-		</html>
-	EOL
-	ln -s  "$SEVEN_RAW_PATH/$TAG.csv" "$SEVEN_DATA_PATH/$TAG.csv" 2> /dev/null
-	sed -i "s/${TAG}_PERCENT/$(printf "%.1f" $(echo "$COUNT_NO_7 * 100 / $COUNT" | bc -l))/" "$SEVEN_INDEX_FILE"
-	# 7
-	cat <<- EOL > "$SEVEN_DATA_PATH/$TAG.7.html"
-		<!doctype html>
-		<html>
-		<head><meta charset="utf-8"></head>
-		<body style="background-color:black;color:#6DAE42;">
-		<br>
-	EOL
-	cat "$SEVEN_RAW_PATH/$TAG.7.txt" >> "$SEVEN_DATA_PATH/$TAG.7.html"
-	cat <<- EOL >> "$SEVEN_DATA_PATH/$TAG.7.html"
-		<br>
-		</body>
-		</html>
-	EOL
-	ln -s  "$SEVEN_RAW_PATH/$TAG.7.csv" "$SEVEN_DATA_PATH/$TAG.7.csv" 2> /dev/null
-	sed -i "s/${TAG}_7_PERCENT/$(printf "%.1f" $(echo "$COUNT_7 * 100 / $COUNT" | bc -l))/" "$SEVEN_INDEX_FILE"
-
-done < $SEVEN_TAG_FILE
-
-echo "7-HTML gen done."
-
-TOTAL=$(cat "$SEVEN_RAW_PATH"/*.txt | wc -l)
-TOTAL_7=$(cat "$SEVEN_RAW_PATH"/*.7.txt | wc -l)
-TOTAL_NO_7=$(echo "$TOTAL - $TOTAL_7" | bc)
-
-sed -i "s/SEVEN_ALL/${TOTAL_7}/" "$SEVEN_INDEX_FILE"
-sed -i "s/SEVEN_PERCENT/$(printf "%.1f" $(echo "$TOTAL_7 * 100 / $TOTAL" | bc -l))/" "$SEVEN_INDEX_FILE"
-sed -i "s/NO7_ALL/${TOTAL_NO_7}/" "$SEVEN_INDEX_FILE"
-sed -i "s/NO7_PERCENT/$(printf "%.1f" $(echo "$TOTAL_NO_7  * 100 / $TOTAL" | bc -l))/" "$SEVEN_INDEX_FILE"
-sed -i "s/ALL/${TOTAL}/" "$SEVEN_INDEX_FILE"
-
-echo "7-Stat done."
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
 exit 0
