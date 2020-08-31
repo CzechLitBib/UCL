@@ -21,14 +21,16 @@ from lxml.etree import tostring
 URL='https://aleph.lib.cas.cz/OAI'
 
 SEVEN_PATH='/var/www/html/7/'
-RAW_PATH='/var/www/html/7/raw/'
+RAW='/var/www/html/7/raw/'
 
-DATA_SEVEN={}
-DATA_NO_SEVEN={}
-TAGLIST = []
+DB='/var/www/html/7/data.db'
+DB7='/var/www/html/7/data7.db'
 
-HAVE_SEVEN=0
-HAVE_NO_SEVEN=0
+DATA={}
+DATA7={}
+
+HAVE_7=0
+HAVE_NO_7=0
 TOTAL=0
 RECORD=0
 
@@ -136,6 +138,9 @@ if args.get == 'ident':
 
 # INIT -------------------
 
+db = open(DB, 'a')
+db7 = open(DB7, 'a')
+
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
 
@@ -197,47 +202,63 @@ for record in records:
 		for TAG, VALUE, SEVEN in [(f.tag, f.value().encode('utf-8'), f['7']) for f in metadata.fields]:
 			if re.match('(1..|6..|700|710|711|730)', TAG):
 				if TAG != '653':
-					# write data asoc. array
 					if not SEVEN and VALUE:
-						if TAG not in DATA_NO_SEVEN: DATA_NO_SEVEN[TAG] = {}
-						if VALUE not in DATA_NO_SEVEN[TAG]: DATA_NO_SEVEN[TAG][VALUE] = []
-						DATA_NO_SEVEN[TAG][VALUE].append(ALEPH)
-						HAVE_NO_SEVEN+=1
+						db.write(TAG + ';' + VALUE + ';' + ALEPH + '\n')
+						HAVE_NO_7+=1
 					if SEVEN and VALUE:
-						if TAG not in DATA_SEVEN: DATA_SEVEN[TAG] = {}
-						if VALUE not in DATA_SEVEN[TAG]: DATA_SEVEN[TAG][VALUE] = []
-						DATA_SEVEN[TAG][VALUE].append(ALEPH)
-						HAVE_SEVEN+=1
+						db7.write(TAG + ';' + VALUE + ';' + ALEPH + '\n')
+						HAVE_7+=1
 					TOTAL+=1
 		RECORD+=1
 
-# generate global CSV/HTML
+print("Data updated..")
 
-for TAG in sorted(DATA_NO_SEVEN.keys()):
+db.close()
+db7.close()
+db = open(DB, 'r')
+db7 = open(DB7, 'r')
 
-	csv = open(RAW_PATH + '/' + TAG + '.csv', 'a') 
-	html = open(RAW_PATH + '/' + TAG + '.html', 'a') 
+for line in db:
+	tag,value,aleph = line.split(';')
+	if tag not in DATA: DATA[tag] = {}
+	if value not in DATA[tag]: DATA[tag][value] = []
+	DATA[tag][value].append(aleph.strip())
+
+print("No seven data loaded..")
+
+for line in db7:
+	tag, value, aleph = line.split(';')
+	if tag not in DATA7: DATA7[tag] = {}
+	if value not in DATA7[tag]: DATA7[tag][value] = []
+	DATA7[tag][value].append(aleph.strip())
+
+print("Seven data loaded..")
+
+# generate no 7 files
+for tag in sorted(DATA.keys()):
+	csv = open(RAW + '/' + tag + '.csv', 'a') 
+	html = open(RAW + '/' + tag + '.html', 'a') 
+
 	html.write(HTML_TOP)
 
-	for V in DATA_NO_SEVEN[TAG]:
-		for A in DATA_NO_SEVEN[TAG][V]:
-			csv.write(V + ';' + ALEPH + '\n')
+	for value in DATA[tag]:
+		for aleph in DATA[tag][value]:
+			csv.write(value + ';' + aleph + '\n')
 			html.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-				ALEPH +  '&local_base=AV">' + ALEPH + '</a><font color="white">' + V + '</font></p>\n'
+				aleph + '&local_base=AV">' + aleph + '</a><font color="white">' + value + '</font></p>\n'
 			)
+
 	html.write(HTML_BOTTOM)	
 	html.close()
 	csv.close()
 
+# generate 7 files
+
 # GENERATE FREQ
 # https://vufind.ucl.cas.cz/Search/Results?lookfor=XXX&type=Author
 
-
-
-# GENERATE INDEX
-
 # EXIT -------------------
 
-print('TOTAL RECORD: ' + str(RECORD))
-print('TOTAL    TAG: ' + str(TOTAL))
+db.close()
+db7.close()
 
