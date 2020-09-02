@@ -66,6 +66,7 @@ FILE
          oai-964 - Generate Aleph Pseudo-Marc format file. 
          oai-mdt - Z39.50 yaz-client wrapper.
            oai-7 - Evaluate subfield "7" data. 
+       oai-7-xml - Evaluate subfield "7" datafrom file.
       
        oai-debug - Debug & testing.
 
