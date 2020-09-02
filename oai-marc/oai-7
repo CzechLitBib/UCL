@@ -10,29 +10,18 @@ from __future__ import print_function
 
 import argparse,StringIO,sys,os,re
 
-from datetime import datetime
-from oaipmh.client import Client
-from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
-from lxml.etree import tostring
 
 # VAR -------------------
 
-URL='https://aleph.lib.cas.cz/OAI'
+IN='/home/bruna/test/uclall.xml'
 
-SEVEN_PATH='/var/www/html/7/'
-RAW='/var/www/html/7/raw/'
+RAW='/var/www/html/7/ucl/raw/'
+OUT='/var/www/html/7/ucl/data/'
 
-DB='/var/www/html/7/data.db'
-DB7='/var/www/html/7/data7.db'
+INDEX='/var/www/html/7/ucl/index.html'
 
-DATA={}
-DATA7={}
-
-HAVE_7=0
-HAVE_NO_7=0
-TOTAL=0
-RECORD=0
+TAGLIST=[]
 
 HTML_TOP='''<!doctype html>
 <html>
@@ -40,10 +29,15 @@ HTML_TOP='''<!doctype html>
 <body style="background-color:black;color:#6DAE42;">
 <br>
 '''
-HTML_BOTTOM='''<br>
-</body>
-</html>
+HTML_BOTTOM='<br></body></html>'
+
+SRT_TOP='''<!doctype html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="background-color:black;color:#6DAE42;">
+<br><table>
 '''
+SRT_BOTTOM='</table><br></body></html>'
 
 INDEX_TOP='''<!doctype html>
 <html>
@@ -53,31 +47,13 @@ INDEX_TOP='''<!doctype html>
 <b><u>OAI-PMH 2.0 MARCXML</u></b>
 <br><br><font size="3" color="white">Výstup kontroly podpole "7" záznamů MARCXML v databázi Aleph.</font>
 <br><br>
-<table border="0" cellpadding="4px" style="border-collapse:collapse;">
-<tr>
-<td align="right"><font color="gold">Podpole 7</font></td>
-<td width="80" align="right"><font color="white">SEVEN_ALL</font></td>
-<td width="80" align="right">SEVEN_PERCENT%</td>
-</tr>
-<tr>
-<td align="right"><font color="gold">Bez podpole 7</font></td>
-<td width="80" align="right"><font color="white">NO7_ALL</font></td>
-<td width="80" align="right">NO7_PERCENT%</td>
-</tr>
-<tr>
-<td align="right"><font color="gold">Celkem</font></td>
-<td align="right"><font color="white">ALL</font></td>
-</tr>
-</table>
-<br><br>
 <table border="1" cellpadding="8px" style="border-collapse:collapse;">
 <tr>
 <td width="30" bgcolor="#333333;" align="center"><font color="gold">Pole</font></td>
-<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Podpole 7</font></td>
-<td width="140" bgcolor="#333333;" align="center" colspan="3"><font color="gold">Bez podpole 7</font></td>
+<td width="200" bgcolor="#333333;" align="center" colspan="4"><font color="gold">Podpole 7</font></td>
+<td width="200" bgcolor="#333333;" align="center" colspan="4"><font color="gold">Bez podpole 7</font></td>
 </tr>
 '''
-
 INDEX_BOTTOM='''</table>
 <br><br>
 <a href="/" title="Back"><font size="3" color="white">[Domů]</font></a>
@@ -93,172 +69,165 @@ def MarcXML(xml):
 	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
 	return handler.records[0]
 
-def valid_date(s):
-	try:
-		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
-	except:
-		raise argparse.ArgumentTypeError('Invalid date format.')
+def validate(record):
 
-def valid_display(s):
-	if s in ('ident', 'marc'): return s
-	else:
-		raise argparse.ArgumentTypeError('Invalid display format.')
+	metadata = record
 
-def valid_request(s):
-	if s in ('record', 'ident', 'set', 'meta'): return s
-	else:
-		raise argparse.ArgumentTypeError('Invalid request format.')
+	ALEPH = record['001'].value()
 
-# ARG -------------------
+	for TAG, VALUE, SEVEN in [(f.tag, f.value(), f['7']) for f in metadata.fields]:
+		if re.match('(1..|6..|700|710|711|730)', TAG):
+			if TAG != '653':
+				if TAG not in TAGLIST: TAGLIST.append(TAG)
+				if not SEVEN and VALUE:
+					try:
+						with open(RAW + TAG + '.csv', 'a') as f:
+							f.write(VALUE.encode('utf-8')+ ';' + str(ALEPH) + '\n')
+					except:
+						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
+				if SEVEN and VALUE:
+					try:
+						with open(RAW + TAG + '.7.csv', 'a') as f:
+							f.write(VALUE.encode('utf-8') + ';' + str(ALEPH) + '\n')
+					except:
+						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
 
-parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
-listing = parser.add_argument_group('request')
-listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
-required = parser.add_argument_group('validation')
-required.add_argument('--set', help='Records set.')
-required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
-required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
-optional = parser.add_argument_group('output')
-optional.add_argument('--check', help='Validation control.', action='store_true')
-args = parser.parse_args()
+print("Processing data..")
 
-if args.get == 'record' or args.get == 'ident':
-	if not args.set:
-		parser.error('argument --set is required.')
-	if not args.from_date:
-		parser.error('argument --from is required.')
-	if not args.until_date:
-		parser.error('argument --until is required.')
+marcxml.map_xml(validate, IN)
 
-if args.get == 'ident':
-	if args.check or args.notify or args.export:
-		parser.error('Invalid optional argument.')
-	if args.display and args.display != 'ident':
-		parser.error('Invalid display argument.')
+print("Done.")
+print("Generating statistic..")
 
-# INIT -------------------
+ALL = 0
+ALL_7 = 0
 
-db = open(DB, 'a')
-db7 = open(DB7, 'a')
+ind = open(INDEX, 'a', 0)
+ind.write(INDEX_TOP)
 
-registry = MetadataRegistry()
-registry.registerReader('marc21', MarcXML)
+for TAG in sorted(TAGLIST):
 
-oai = Client(URL, registry)
+	CNT = 0
+	CNT_7 = 0
 
-try:
-	if args.get == 'record':
-		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-	if args.get == 'ident':
-		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-	if args.get == 'set':
-		records = oai.listSets()
-	if args.get == 'meta':
-		records = oai.listMetadataFormats()
-except:
-	records=[]
+	# NO SEVEN
 
-# MAIN -------------------
+	DB = {}
+	SORT = {}
 
-for record in records:
-
-	if args.get == 'set' or args.get == 'meta':
-		print(record[0])
-		COUNTER+=1
-		continue
-
-	if args.get == 'ident':
-		if record.isDeleted(): continue
-		COUNTER+=1
-		continue
-
-	header = record[0]
-	metadata = record[1]
-
-	# skip deleted records
-	if header.isDeleted(): continue
-
-	# retry missing metadata(?)
-	if not metadata:
-		print(header.identifier() + ' Missing matadata. Retrying..')
-		retry = oai.getRecord(metadataPrefix='marc21', identifier=header.identifier())
-		if not retry[1]:
-			print(header.identifier() + ' Missing retry metadata.')
-			continue
-		else:
-			header = retry[0]
-			metadata = retry[1]
-
-	if args.check:
-		
-		# SKIP OLD ------------------
-
-		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
-
-		# 1xx/6xx-653/700/710/711/730 ------------------
-
-		ALEPH = re.sub('^.*-(\d+)$', '\\1', header.identifier())
-
-		for TAG, VALUE, SEVEN in [(f.tag, f.value().encode('utf-8'), f['7']) for f in metadata.fields]:
-			if re.match('(1..|6..|700|710|711|730)', TAG):
-				if TAG != '653':
-					if not SEVEN and VALUE:
-						db.write(TAG + ';' + VALUE + ';' + ALEPH + '\n')
-						HAVE_NO_7+=1
-					if SEVEN and VALUE:
-						db7.write(TAG + ';' + VALUE + ';' + ALEPH + '\n')
-						HAVE_7+=1
-					TOTAL+=1
-		RECORD+=1
-
-print("Data updated..")
-
-db.close()
-db7.close()
-db = open(DB, 'r')
-db7 = open(DB7, 'r')
-
-for line in db:
-	tag,value,aleph = line.split(';')
-	if tag not in DATA: DATA[tag] = {}
-	if value not in DATA[tag]: DATA[tag][value] = []
-	DATA[tag][value].append(aleph.strip())
-
-print("No seven data loaded..")
-
-for line in db7:
-	tag, value, aleph = line.split(';')
-	if tag not in DATA7: DATA7[tag] = {}
-	if value not in DATA7[tag]: DATA7[tag][value] = []
-	DATA7[tag][value].append(aleph.strip())
-
-print("Seven data loaded..")
-
-# generate no 7 files
-for tag in sorted(DATA.keys()):
-	csv = open(RAW + '/' + tag + '.csv', 'a') 
-	html = open(RAW + '/' + tag + '.html', 'a') 
-
-	html.write(HTML_TOP)
-
-	for value in DATA[tag]:
-		for aleph in DATA[tag][value]:
-			csv.write(value + ';' + aleph + '\n')
-			html.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+	htm = open(OUT + TAG + '.html', 'a')
+	htm.write(HTML_TOP)
+	srt = open(OUT + TAG + '.stat.html', 'a')
+	srt.write(HTML_TOP)
+	
+	#load raw data
+	print("Loading ' + TAG + ' ..")
+	with open(RAW + TAG + '.csv', 'r') as f:
+		for line in f:
+			value,aleph = line.split(';')
+			if value not in DB: DB[tag] = []
+			DB[value].append(aleph.strip())
+	print("Done.")
+	print("Generating html file..")
+	for value in DB:
+		SORT[value] = len(DB[value])
+		for aleph in DB[value]:
+			htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 				aleph + '&local_base=AV">' + aleph + '</a><font color="white">' + value + '</font></p>\n'
 			)
+			CNT+=1
+	htm.write(HTML_BOTTOM)	
+	htm.close()
+	print("Done.")
+	print("Generating stat file..")
+	for value in sorted(SORT, key=SORT.get, reverse=True):
+		print(value, SORT[value])
+			srt.write('<tr><td align="right"><font color="white">' + SORT[value] + '</font></td>' +
+			'<td><a style="color:#6DAE42;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
+			'&type=Author"></td>\n'
+			)
+	srt.write(HTML_BOTTOM)	
+	srt.close()
+	print("Done.")
 
-	html.write(HTML_BOTTOM)	
-	html.close()
-	csv.close()
+	# SEVEN
 
-# generate 7 files
+	DB = {}
+	SORT = {}
 
-# GENERATE FREQ
-# https://vufind.ucl.cas.cz/Search/Results?lookfor=XXX&type=Author
+	htm = open(OUT + TAG + '.7.html', 'a')
+	htm.write(HTML_TOP)
+	srt = open(OUT + TAG + '.7.stat.html', 'a')
+	srt.write(HTML_TOP)
+	
+	#load raw data
+	print("Loading 7 ' + TAG + ' ..")
+	with open(RAW + TAG + '.7.csv', 'r') as f:
+		for line in f:
+			value,aleph = line.split(';')
+			if value not in DB: DB[tag] = []
+			DB[value].append(aleph.strip())
+	print("Done.")
+	print("Generating 7 html file..")
+	for value in DB:
+		SORT[value] = len(DB[value])
+		for aleph in DB[value]:
+			htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+				aleph + '&local_base=AV">' + aleph + '</a><font color="white">' + value + '</font></p>\n'
+			)
+			CNT_7+=1
+	htm.write(HTML_BOTTOM)	
+	htm.close()
+	print("Done.")
+	print("Generating 7 stat file..")
+	for value in sorted(SORT, key=SORT.get, reverse=True):
+		print(value, SORT[value])
+			srt.write('<tr><td align="right"><font color="white">' + SORT[value] + '</font></td>' +
+			'<td><a style="color:#6DAE42;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
+			'&type=Author"></td>\n'
+			)
+	srt.write(HTML_BOTTOM)	
+	srt.close()
+	print("Done.")
+	print("Writing global index ..")
+	ind.write('<tr>' + '\n')
+	ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	ind.write('<td width="40" align="center"><a href="ucl/raw/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+	ind.write('<td width="40" align="right">'+ str(CNT) + '</td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	ind.write('<td width="40" align="center"><a href="ucl/raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+	ind.write('<td width="40" align="right">' + str(CNT_7) + '</td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.stat.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	ind.write('</tr>' + '\n')
 
-# EXIT -------------------
+	# global counter
+	ALL+=CNT
+	ALL_7+=CNT_7
 
-db.close()
-db7.close()
+# EXIT
+
+print("Writing index stat..")
+
+ind.write('</table><br><br>')
+ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
+ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
+ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td></tr>')
+ind.write('<td width="80" align="right"> ' + str((ALL + ALL_7)/100*ALL_7) + '%</td>')
+ind.write('<tr>')
+ind.write('<td align="right"><font color="gold">Bez podpole 7</font></td>')
+ind.write('<td width="80" align="right"><font color="white">' + str(ALL) + '</font></td>')
+ind.write('<td width="80" align="right">' + str((ALL + ALL_7)/100*ALL) + '%</td>')
+ind.write('</tr>')
+ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
+ind.write('<td align="right"><font color="white">' + str(ALL + ALL_7) + '</font></td></tr>')
+ind.write('</table>')
+ind.write('<br><br>')
+ind.write('<a href="/" title="Back"><font size="3" color="white">[Domů]</font></a>')
+ind.write('<br><br></body></html>')
+
+ind.close()
+
+print("Exit.")
 
