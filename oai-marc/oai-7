@@ -62,32 +62,39 @@ def MarcXML(xml):
 	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
 	return handler.records[0]
 
+def get_value(field):
+	ret = []
+	for sub in field:
+		if sub[0] != '4':
+			ret.append(sub[1].strip())
+	return ' '.join(ret)
+	
 def validate(record):
 
 	metadata = record
 
 	ALEPH = record['001'].value()
 
-	for TAG, VALUE, SEVEN in [(f.tag, f.value(), f['7']) for f in metadata.fields]:
+	for TAG, VALUE, SEVEN in [(f.tag, get_value(f), f['7']) for f in metadata.fields]:
 		if re.match('(1..|6..|700|710|711|730)', TAG):
 			if TAG != '653':
 				if TAG not in TAGLIST: TAGLIST.append(TAG)
 				if not SEVEN and VALUE:
 					try:
 						with open(RAW + TAG + '.csv', 'a') as f:
-							f.write(VALUE.encode('utf-8')+ '|' + str(ALEPH) + '\n')
+							f.write(VALUE.encode('utf-8')+ '||' + str(ALEPH) + '\n')
 					except:
 						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
 				if SEVEN and VALUE:
 					try:
 						with open(RAW + TAG + '.7.csv', 'a') as f:
-							f.write(VALUE.encode('utf-8') + '|' + str(ALEPH) + '\n')
+							f.write(VALUE.encode('utf-8') + '||' + str(ALEPH) + '\n')
 					except:
 						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
 
 print("Processing data (this may take a while).. ", end='')
 
-#marcxml.map_xml(validate, IN)
+marcxml.map_xml(validate, IN)
 
 print("Done.")
 print("Generating statistic:")
@@ -98,7 +105,7 @@ ALL_7 = 0
 ind = open(INDEX, 'a', 0)
 ind.write(INDEX_TOP)
 
-TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
+#TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
 
 for TAG in sorted(TAGLIST):
 
