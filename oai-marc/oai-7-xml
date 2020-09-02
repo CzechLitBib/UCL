@@ -94,7 +94,7 @@ def validate(record):
 
 print("Processing data (this may take a while).. ", end='')
 
-marcxml.map_xml(validate, IN)
+#marcxml.map_xml(validate, IN)
 
 print("Done.")
 print("Generating statistic:")
@@ -105,7 +105,7 @@ ALL_7 = 0
 ind = open(INDEX, 'a', 0)
 ind.write(INDEX_TOP)
 
-#TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
+TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
 
 for TAG in sorted(TAGLIST):
 
@@ -151,7 +151,8 @@ for TAG in sorted(TAGLIST):
 	if re.match('655', TAG): TYPE='Genre'
 	for value in sorted(SORT, key=SORT.get, reverse=True):
 		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
-			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
 			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
 		)
 		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
@@ -194,7 +195,8 @@ for TAG in sorted(TAGLIST):
 	if re.match('655', TAG): TYPE='Genre'
 	for value in sorted(SORT, key=SORT.get, reverse=True):
 		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
-			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
 			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
 		)
 		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
