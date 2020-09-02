@@ -50,8 +50,8 @@ INDEX_TOP='''<!doctype html>
 <table border="1" cellpadding="8px" style="border-collapse:collapse;">
 <tr>
 <td width="30" bgcolor="#333333;" align="center"><font color="gold">Pole</font></td>
-<td width="200" bgcolor="#333333;" align="center" colspan="4"><font color="gold">Podpole 7</font></td>
-<td width="200" bgcolor="#333333;" align="center" colspan="4"><font color="gold">Bez podpole 7</font></td>
+<td width="240" bgcolor="#333333;" align="center" colspan="5"><font color="gold">Podpole 7</font></td>
+<td width="240" bgcolor="#333333;" align="center" colspan="5"><font color="gold">Bez podpole 7</font></td>
 </tr>
 '''
 
@@ -85,12 +85,12 @@ def validate(record):
 					except:
 						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
 
-print("Processing data.. [this may take a while]")
+print("Processing data (this may take a while).. ", end='')
 
-marcxml.map_xml(validate, IN)
+#marcxml.map_xml(validate, IN)
 
 print("Done.")
-print("Generating statistic..")
+print("Generating statistic:")
 
 ALL = 0
 ALL_7 = 0
@@ -98,12 +98,14 @@ ALL_7 = 0
 ind = open(INDEX, 'a', 0)
 ind.write(INDEX_TOP)
 
-#TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
+TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
 
 for TAG in sorted(TAGLIST):
 
 	CNT = 0
 	CNT_7 = 0
+
+	print('Generating ' + TAG + '.. ', end='')
 
 	# NO SEVEN
 
@@ -114,16 +116,17 @@ for TAG in sorted(TAGLIST):
 	htm.write(HTML_TOP)
 	srt = open(OUT + TAG + '.stat.html', 'a')
 	srt.write(SRT_TOP)
-	
+	srt_csv = open(OUT + TAG + '.stat.csv', 'a')
+
 	#load raw data
-	print('Loading ' + TAG + ' ..')
-	with open(RAW + TAG + '.csv', 'r') as f:
-		for line in f:
-			value,aleph = line.split('|')
-			if value not in DB: DB[value] = []
-			DB[value].append(aleph.strip())
-	print("Done.")
-	print("Generating html file..")
+	try:
+		with open(RAW + TAG + '.csv', 'r') as f:
+			for line in f:
+				value,aleph = line.split('||')
+				if value not in DB: DB[value] = []
+				DB[value].append(aleph.strip())
+	except:	pass
+	# gen html
 	for value in DB:
 		SORT[value] = len(DB[value])
 		for aleph in DB[value]:
@@ -133,16 +136,16 @@ for TAG in sorted(TAGLIST):
 			CNT+=1
 	htm.write(HTML_BOTTOM)	
 	htm.close()
-	print("Done.")
-	print("Generating stat file..")
+	# gen stat
 	for value in sorted(SORT, key=SORT.get, reverse=True):
 		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
 			'<td><a style="color:#6DAE42;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
-			'&type=Author"></td>\n'
+			'&type=Author">' + value + '</td>\n'
 		)
+		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
 	srt.write(SRT_BOTTOM)	
 	srt.close()
-	print("Done.")
+	srt_csv.close()
 
 	# SEVEN
 
@@ -153,16 +156,17 @@ for TAG in sorted(TAGLIST):
 	htm.write(HTML_TOP)
 	srt = open(OUT + TAG + '.7.stat.html', 'a')
 	srt.write(SRT_TOP)
+	srt_csv = open(OUT + TAG + '.7.stat.csv', 'a')
 	
 	#load raw data
-	print('Loading 7 ' + TAG + ' ..')
-	with open(RAW + TAG + '.7.csv', 'r') as f:
-		for line in f:
-			value,aleph = line.split('|')
-			if value not in DB: DB[value] = []
-			DB[value].append(aleph.strip())
-	print("Done.")
-	print("Generating 7 html file..")
+	try:
+		with open(RAW + TAG + '.7.csv', 'r') as f:
+			for line in f:
+				value,aleph = line.split('||')
+				if value not in DB: DB[value] = []
+				DB[value].append(aleph.strip())
+	except: pass
+	# gen html
 	for value in DB:
 		SORT[value] = len(DB[value])
 		for aleph in DB[value]:
@@ -172,47 +176,50 @@ for TAG in sorted(TAGLIST):
 			CNT_7+=1
 	htm.write(HTML_BOTTOM)	
 	htm.close()
-	print("Done.")
-	print("Generating 7 stat file..")
+	# gen stat
 	for value in sorted(SORT, key=SORT.get, reverse=True):
 		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
 			'<td><a style="color:#6DAE42;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
-			'&type=Author"></td>\n'
+			'&type=Author">' + value + '</td>\n'
 		)
+		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
 	srt.write(SRT_BOTTOM)	
 	srt.close()
-	print("Done.")
+	srt_csv.close()
 
-	print("Writing global index ..")
+	# write index
 	ind.write('<tr>' + '\n')
 	ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
-	ind.write('<td width="40" align="center"><a href="ucl/raw/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="right">'+ str(CNT) + '</td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
-	ind.write('<td width="40" align="center"><a href="ucl/raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="right">' + str(CNT_7) + '</td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="ucl/data/' + TAG + '.stat.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+	ind.write('<td width="40" align="right">'+ str(CNT_7) + '</td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+	ind.write('<td width="40" align="center"><a href="data/' + TAG + '.7.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+	ind.write('<td width="40" align="right">' + str(CNT) + '</td>' + '\n')
+	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+	ind.write('<td width="40" align="center"><a href="data/' + TAG + '.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
 	ind.write('</tr>' + '\n')
 
 	# global counter
 	ALL+=CNT
 	ALL_7+=CNT_7
 
+	print("Done.")
 # EXIT
 
-print("Writing index stat..")
+print("Writing index.. ", end='')
 
 ind.write('</table><br><br>')
 ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
 ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
-ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td></tr>')
-ind.write('<td width="80" align="right"> ' + str((ALL + ALL_7)/100*ALL_7) + '%</td>')
-ind.write('<tr>')
-ind.write('<td align="right"><font color="gold">Bez podpole 7</font></td>')
+ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td>')
+ind.write('<td width="80" align="center">' + str(ALL_7*100/(ALL + ALL_7)) + '%</td>')
+ind.write('</tr>')
+ind.write('<tr><td align="right"><font color="gold">Bez podpole 7</font></td>')
 ind.write('<td width="80" align="right"><font color="white">' + str(ALL) + '</font></td>')
-ind.write('<td width="80" align="right">' + str((ALL + ALL_7)/100*ALL) + '%</td>')
+ind.write('<td width="80" align="center">' + str(ALL*100/(ALL + ALL_7)) + '%</td>')
 ind.write('</tr>')
 ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
 ind.write('<td align="right"><font color="white">' + str(ALL + ALL_7) + '</font></td></tr>')
@@ -223,5 +230,4 @@ ind.write('<br><br></body></html>')
 
 ind.close()
 
-print("Exit.")
-
+print("Done.")
