@@ -10,18 +10,36 @@ from __future__ import print_function
 
 import argparse,StringIO,sys,os,re
 
+from datetime import datetime,timedelta
+from oaipmh.client import Client
+from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
+from lxml.etree import tostring
 
 # VAR -------------------
 
-IN='/home/bruna/test/uclall.xml'
+URL='https://aleph.lib.cas.cz/OAI'
 
-RAW='/var/www/html/7/ucl/raw/'
-OUT='/var/www/html/7/ucl/data/'
+#LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
+#LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
 
-INDEX='/var/www/html/7/ucl/index.html'
+LAST_MONTH='2001'
+LAST_MONTH_DIR='2020/01'
 
-TAGLIST=[]
+BRIG='/var/www/html/nkp/4tbre4g5/' + LAST_MONTH_DIR + '/data/'
+BRIG_INDEX='/var/www/html/nkp/4tbre4g5/' + LAST_MONTH_DIR + '/index.html'
+
+MONTHLY='/var/www/html/7/monthly/' + LAST_MONTH_DIR + '/data/'
+MONTHLY_INDEX='/var/www/html/7/monthly/' + LAST_MONTH_DIR + '/index.html'
+
+DATA={}
+DATA_7={}
+DATA_OLD={}
+DATA_OLD_7={}
+BRIG_DATA={}
+BRIG_DATA_7={}
+BRIG_DATA_OLD={}
+BRIG_DATA_OLD_7={}
 
 HTML_TOP='''<!doctype html>
 <html>
@@ -46,8 +64,8 @@ INDEX_TOP='''<!doctype html>
 <br>
 <b><u>OAI-PMH 2.0 MARCXML</u></b>
 <br><br><font size="3" color="white">Výstup kontroly podpole "7" záznamů MARCXML.</font>
-<br><br>
-<table border="1" cellpadding="8px" style="border-collapse:collapse;">
+'''
+INDEX_HEADER='''<table border="1" cellpadding="8px" style="border-collapse:collapse;">
 <tr>
 <td width="30" bgcolor="#333333;" align="center"><font color="gold">Pole</font></td>
 <td width="280" bgcolor="#333333;" align="center" colspan="6"><font color="gold">Podpole 7</font></td>
@@ -62,189 +80,677 @@ def MarcXML(xml):
 	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
 	return handler.records[0]
 
+def valid_date(s):
+	try:
+		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+	except:
+		raise argparse.ArgumentTypeError('Invalid date format.')
+
+def valid_display(s):
+	if s in ('ident', 'marc'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid display format.')
+
+def valid_request(s):
+	if s in ('record', 'ident', 'set', 'meta'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid request format.')
+
 def get_value(field):
 	ret = []
 	for sub in field:
 		if sub[0] != '4':
 			ret.append(sub[1].strip())
-	return ' '.join(ret)
+	return ' '.join(ret).encode('utf-8')
+
+def is_worker(metadata):
+	for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+		if 'a' in F:
+			if F['a'] in ['UCLRE', 'UCLJCH']: return True
+	return False
 	
-def validate(record):
+# ARG -------------------
 
-	metadata = record
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
+listing = parser.add_argument_group('request')
+listing.add_argument('--get', help='Request type. [record] [ident] [set] [meta]', type=valid_request, default='record')
+required = parser.add_argument_group('validation')
+required.add_argument('--set', help='Records set.')
+required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
+optional = parser.add_argument_group('output')
+optional.add_argument('--check', help='Validation control.', action='store_true')
+args = parser.parse_args()
 
-	ALEPH = record['001'].value()
+if args.get == 'record' or args.get == 'ident':
+	if not args.set:
+		parser.error('argument --set is required.')
+	if not args.from_date:
+		parser.error('argument --from is required.')
+	if not args.until_date:
+		parser.error('argument --until is required.')
 
-	for TAG, VALUE, SEVEN in [(f.tag, get_value(f), f['7']) for f in metadata.fields]:
-		if re.match('(1..|6..|700|710|711|730)', TAG):
-			if TAG != '653':
-				if TAG not in TAGLIST: TAGLIST.append(TAG)
-				if not SEVEN and VALUE:
-					try:
-						with open(RAW + TAG + '.csv', 'a') as f:
-							f.write(VALUE.encode('utf-8')+ '||' + str(ALEPH) + '\n')
-					except:
-						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
-				if SEVEN and VALUE:
-					try:
-						with open(RAW + TAG + '.7.csv', 'a') as f:
-							f.write(VALUE.encode('utf-8') + '||' + str(ALEPH) + '\n')
-					except:
-						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
+if args.get == 'ident':
+	if args.check or args.notify or args.export:
+		parser.error('Invalid optional argument.')
+	if args.display and args.display != 'ident':
+		parser.error('Invalid display argument.')
 
-print("Processing data (this may take a while).. ", end='')
+# INIT -------------------
 
-marcxml.map_xml(validate, IN)
+registry = MetadataRegistry()
+registry.registerReader('marc21', MarcXML)
+
+oai = Client(URL, registry)
+
+try:
+	if args.get == 'record':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'ident':
+		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
+except:
+	records=[]
+
+# MAIN -------------------
+
+print("Harvesting & processing data (this may take a while).. ", end='')
+
+for record in records:
+
+	if args.get == 'set' or args.get == 'meta':
+		print(record[0])
+		COUNTER+=1
+		continue
+
+	if args.get == 'ident':
+		if record.isDeleted(): continue
+		COUNTER+=1
+		continue
+
+	header = record[0]
+	metadata = record[1]
+
+	# skip deleted records
+	if header.isDeleted(): continue
+
+	# retry missing metadata(?)
+	if not metadata:
+		print(header.identifier() + ' Missing matadata. Retrying..')
+		retry = oai.getRecord(metadataPrefix='marc21', identifier=header.identifier())
+		if not retry[1]:
+			print(header.identifier() + ' Missing retry metadata.')
+			continue
+		else:
+			header = retry[0]
+			metadata = retry[1]
+
+	if args.check:
+
+		aleph = re.sub('^.*-(\d+)$', '\\1', header.identifier()).encode('utf-8')
+
+		# 1xx/6xx-653/700/710/711/730 ------------------
+		for tag, value, seven in [(f.tag, get_value(f), f['7']) for f in metadata.fields]:
+			if re.match('(100|110|111|600|610|611|700|710|711)', tag):
+				# NEW
+				if re.match(LAST_MONTH, metadata['008'].value()[0:4]):
+					if not seven and value:
+						if is_worker(metadata):
+							if tag not in BRIG_DATA: BRIG_DATA[tag] = {}
+							if value not in BRIG_DATA[tag]: BRIG_DATA[tag][value] = []
+							BRIG_DATA[tag][value].append(aleph)
+						if tag not in DATA: DATA[tag] = {}
+						if value not in DATA[tag]: DATA[tag][value] = []
+						DATA[tag][value].append(aleph)
+					if seven and value:
+						if is_worker(metadata):
+							if tag not in BRIG_DATA_7: BRIG_DATA_7[tag] = {}
+							if value not in BRIG_DATA_7[tag]: BRIG_DATA_7[tag][value] = []
+							BRIG_DATA_7[tag][value].append(aleph)
+						if tag not in DATA_7: DATA_7[tag] = {}
+						if value not in DATA_7[tag]: DATA_7[tag][value] = []
+						DATA_7[tag][value].append(aleph)
+				# OLD
+				else:
+					if not seven and value:
+						if is_worker(metadata):
+							if tag not in BRIG_DATA_OLD: BRIG_DATA_OLD[tag] = {}
+							if value not in BRIG_DATA_OLD[tag]: BRIG_DATA_OLD[tag][value] = []
+							BRIG_DATA_OLD[tag][value].append(aleph)
+						if tag not in DATA_OLD: DATA_OLD[tag] = {}
+						if value not in DATA_OLD[tag]: DATA_OLD[tag][value] = []
+						DATA_OLD[tag][value].append(aleph)
+					if seven and value:
+						if is_worker(metadata):
+							if tag not in BRIG_DATA_OLD_7: BRIG_DATA_OLD_7[tag] = {}
+							if value not in BRIG_DATA_OLD_7[tag]: BRIG_DATA_OLD_7[tag][value] = []
+							BRIG_DATA_OLD_7[tag][value].append(aleph)
+						if tag not in DATA_OLD_7: DATA_OLD_7[tag] = {}
+						if value not in DATA_OLD_7[tag]: DATA_OLD_7[tag][value] = []
+						DATA_OLD_7[tag][value].append(aleph)
 
 print("Done.")
-print("Generating statistic:")
+print("Generating new statistic:")
 
 ALL = 0
 ALL_7 = 0
 
-ind = open(INDEX, 'a', 0)
+BRIG_ALL = 0
+BRIG_ALL_7 = 0
+
+ind = open(MONTHLY_INDEX, 'a', 0)
 ind.write(INDEX_TOP)
+ind.write('<br></br>')
+ind.write('<font color="white">NOVÁ DATA</font>')
+ind.write('<br></br>')
+ind.write(INDEX_HEADER)
 
-#TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
+brig_ind = open(BRIG_INDEX, 'a', 0)
+brig_ind.write(INDEX_TOP)
+brig_ind.write('<br></br>')
+brig_ind.write('<font color="white">NOVÁ DATA</font>')
+brig_ind.write('<br></br>')
+brig_ind.write(INDEX_HEADER)
 
-for TAG in sorted(TAGLIST):
+for TAG in ['100','110','111','600','610','611','700','710','711']:
 
 	TYPE='Author'
 
 	CNT = 0
 	CNT_7 = 0
 
+	BRIG_CNT = 0
+	BRIG_CNT_7 = 0
+
 	print('Generating ' + TAG + '.. ', end='')
 
 	# NO SEVEN
 
-	DB = {}
 	SORT = {}
+	BRIG_SORT = {}
 
-	htm = open(OUT + TAG + '.html', 'a')
+	htm = open(MONTHLY + TAG + '.html', 'a')
 	htm.write(HTML_TOP)
-	srt = open(OUT + TAG + '.stat.html', 'a')
-	srt.write(SRT_TOP)
-	srt_csv = open(OUT + TAG + '.stat.csv', 'a')
 
-	#load raw data
-	try:
-		with open(RAW + TAG + '.csv', 'r') as f:
-			for line in f:
-				value,aleph = line.split('||')
-				if value not in DB: DB[value] = []
-				DB[value].append(aleph.strip())
-	except:	pass
+	brig_htm = open(BRIG + TAG + '.html', 'a')
+	brig_htm.write(HTML_TOP)
+
+	srt = open(MONTHLY + TAG + '.stat.html', 'a')
+	srt.write(SRT_TOP)
+	srt_csv = open(MONTHLY + TAG + '.stat.csv', 'a')
+
+	brig_srt = open(BRIG + TAG + '.stat.html', 'a')
+	brig_srt.write(SRT_TOP)
+	brig_srt_csv = open(BRIG + TAG + '.stat.csv', 'a')
+
 	# gen html
-	for value in DB:
-		SORT[value] = len(DB[value])
-		for aleph in DB[value]:
-			htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-				aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
-			)
-			CNT+=1
+	try:
+		for value in DATA[TAG]:
+			SORT[value] = len(DATA[TAG][value])
+			for aleph in DATA[TAG][value]:
+				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				CNT+=1
+	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
+	# brig gen html
+	try:
+		for value in BRIG_DATA[TAG]:
+			BRIG_SORT[value] = len(BRIG_DATA[TAG][value])
+			for aleph in BRIG_DATA[TAG][value]:
+				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				BRIG_CNT+=1
+	except: pass
+	brig_htm.write(HTML_BOTTOM)	
+	brig_htm.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
 	if re.match('655', TAG): TYPE='Genre'
 	for value in sorted(SORT, key=SORT.get, reverse=True):
 		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
-			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
 			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
 		)
 		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
 	srt.write(SRT_BOTTOM)	
 	srt.close()
 	srt_csv.close()
+	# brig gen stat
+	if re.match('6..', TAG): TYPE='Subject'
+	if re.match('630', TAG): TYPE='LinkedResource'
+	if re.match('655', TAG): TYPE='Genre'
+	for value in sorted(BRIG_SORT, key=BRIG_SORT.get, reverse=True):
+		brig_srt.write('<tr><td align="right"><font color="white">' + str(BRIG_SORT[value]) + '</font></td>' +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
+			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
+		)
+		brig_srt_csv.write(str(BRIG_SORT[value]) + '||' + value + '\n')
+	brig_srt.write(SRT_BOTTOM)	
+	brig_srt.close()
+	brig_srt_csv.close()
 
 	# SEVEN
 
-	DB = {}
 	SORT = {}
+	BRIG_SORT = {}
 
-	htm = open(OUT + TAG + '.7.html', 'a')
+	htm = open(MONTHLY + TAG + '.7.html', 'a')
 	htm.write(HTML_TOP)
-	srt = open(OUT + TAG + '.7.stat.html', 'a')
+
+	brig_htm = open(BRIG + TAG + '.7.html', 'a')
+	brig_htm.write(HTML_TOP)
+
+	srt = open(MONTHLY + TAG + '.7.stat.html', 'a')
 	srt.write(SRT_TOP)
-	srt_csv = open(OUT + TAG + '.7.stat.csv', 'a')
+	srt_csv = open(MONTHLY + TAG + '.7.stat.csv', 'a')
+
+	brig_srt = open(BRIG + TAG + '.7.stat.html', 'a')
+	brig_srt.write(SRT_TOP)
+	brig_srt_csv = open(BRIG + TAG + '.7.stat.csv', 'a')
 	
-	#load raw data
-	try:
-		with open(RAW + TAG + '.7.csv', 'r') as f:
-			for line in f:
-				value,aleph = line.split('||')
-				if value not in DB: DB[value] = []
-				DB[value].append(aleph.strip())
-	except: pass
 	# gen html
-	for value in DB:
-		SORT[value] = len(DB[value])
-		for aleph in DB[value]:
-			htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-				aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
-			)
-			CNT_7+=1
+	try:
+		for value in DATA_7[TAG]:
+			SORT[value] = len(DATA_7[TAG][value])
+			for aleph in DATA_7[TAG][value]:
+				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				CNT_7+=1
+	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
+	# brig gen html
+	try:
+		for value in BRIG_DATA_7[TAG]:
+			BRIG_SORT[value] = len(BRIG_DATA_7[TAG][value])
+			for aleph in BRIG_DATA_7[TAG][value]:
+				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				BRIG_CNT_7+=1
+	except: pass
+	brig_htm.write(HTML_BOTTOM)	
+	brig_htm.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
 	if re.match('655', TAG): TYPE='Genre'
 	for value in sorted(SORT, key=SORT.get, reverse=True):
 		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
-			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' + value +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
 			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
 		)
 		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
 	srt.write(SRT_BOTTOM)	
 	srt.close()
 	srt_csv.close()
+	# brig gen stat
+	if re.match('6..', TAG): TYPE='Subject'
+	if re.match('630', TAG): TYPE='LinkedResource'
+	if re.match('655', TAG): TYPE='Genre'
+	for value in sorted(BRIG_SORT, key=BRIG_SORT.get, reverse=True):
+		brig_srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
+			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
+		)
+		brig_srt_csv.write(str(SORT[value]) + '||' + value + '\n')
+	brig_srt.write(SRT_BOTTOM)	
+	brig_srt.close()
+	brig_srt_csv.close()
 
 	# write index
-	ind.write('<tr>' + '\n')
-	ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
-	ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="right">'+ str(CNT_7) + '</td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
-	ind.write('<td width="40" align="center"><a href="data/' + TAG + '.7.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="center">' + str(CNT_7*100/(CNT + CNT_7)) + '%</td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
-	ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="right">' + str(CNT) + '</td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
-	ind.write('<td width="40" align="center"><a href="data/' + TAG + '.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="center">' + str(CNT*100/(CNT + CNT_7)) + '%</td>' + '\n')
-	ind.write('</tr>' + '\n')
+	if CNT or CNT_7:
+		ind.write('<tr>' + '\n')
+		ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="right">'+ str(CNT_7) + '</td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="data/' + TAG + '.7.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="center">' + str(CNT_7*100/(CNT + CNT_7)) + '%</td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="right">' + str(CNT) + '</td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="data/' + TAG + '.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="center">' + str(CNT*100/(CNT + CNT_7)) + '%</td>' + '\n')
+		ind.write('</tr>' + '\n')
+	# brig write index
+	if BRIG_CNT or BRIG_CNT_7:
+		brig_ind.write('<tr>' + '\n')
+		brig_ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="right">'+ str(BRIG_CNT_7) + '</td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="data/' + TAG + '.7.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center">' + str(BRIG_CNT_7*100/(BRIG_CNT + BRIG_CNT_7)) + '%</td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="right">' + str(BRIG_CNT) + '</td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="data/' + TAG + '.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center">' + str(BRIG_CNT*100/(BRIG_CNT + BRIG_CNT_7)) + '%</td>' + '\n')
+		brig_ind.write('</tr>' + '\n')
 
 	# global counter
+
 	ALL+=CNT
 	ALL_7+=CNT_7
+
+	BRIG_ALL+=BRIG_CNT
+	BRIG_ALL_7+=BRIG_CNT_7
 
 	print("Done.")
 # EXIT
 
 print("Writing index.. ", end='')
 
-ind.write('</table><br><br>')
-ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
-ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
-ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td>')
-ind.write('<td width="80" align="center">' + str(ALL_7*100/(ALL + ALL_7)) + '%</td>')
-ind.write('</tr>')
-ind.write('<tr><td align="right"><font color="gold">Bez podpole 7</font></td>')
-ind.write('<td width="80" align="right"><font color="white">' + str(ALL) + '</font></td>')
-ind.write('<td width="80" align="center">' + str(ALL*100/(ALL + ALL_7)) + '%</td>')
-ind.write('</tr>')
-ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
-ind.write('<td align="right"><font color="white">' + str(ALL + ALL_7) + '</font></td></tr>')
-ind.write('</table>')
-ind.write('<br><br>')
-ind.write('<a href="/" title="Back"><font size="3" color="white">[Domů]</font></a>')
-ind.write('<br><br></body></html>')
+if ALL or ALL_7:
+	ind.write('</table><br><br>')
+	ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
+	ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
+	ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td>')
+	ind.write('<td width="80" align="center">' + str(ALL_7*100/(ALL + ALL_7)) + '%</td>')
+	ind.write('</tr>')
+	ind.write('<tr><td align="right"><font color="gold">Bez podpole 7</font></td>')
+	ind.write('<td width="80" align="right"><font color="white">' + str(ALL) + '</font></td>')
+	ind.write('<td width="80" align="center">' + str(ALL*100/(ALL + ALL_7)) + '%</td>')
+	ind.write('</tr>')
+	ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
+	ind.write('<td align="right"><font color="white">' + str(ALL + ALL_7) + '</font></td></tr>')
+	ind.write('</table>')
+	ind.write('<br><br>')
+	ind.write('<font color="white">STARÁ DATA</font>')
+	ind.write('<br><br>')
+
+if BRIG_ALL or BRIG_ALL_7:
+	brig_ind.write('</table><br><br>')
+	brig_ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
+	brig_ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
+	brig_ind.write('<td width="80" align="right"><font color="white">' + str(BRIG_ALL_7) + '</font></td>')
+	brig_ind.write('<td width="80" align="center">' + str(BRIG_ALL_7*100/(BRIG_ALL + BRIG_ALL_7)) + '%</td>')
+	brig_ind.write('</tr>')
+	brig_ind.write('<tr><td align="right"><font color="gold">Bez podpole 7</font></td>')
+	brig_ind.write('<td width="80" align="right"><font color="white">' + str(BRIG_ALL) + '</font></td>')
+	brig_ind.write('<td width="80" align="center">' + str(BRIG_ALL*100/(BRIG_ALL + BRIG_ALL_7)) + '%</td>')
+	brig_ind.write('</tr>')
+	brig_ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
+	brig_ind.write('<td align="right"><font color="white">' + str(BRIG_ALL + BRIG_ALL_7) + '</font></td></tr>')
+	brig_ind.write('</table>')
+	brig_ind.write('<br><br>')
+	brig_ind.write('<font color="white">STARÁ DATA</font>')
+	brig_ind.write('<br><br>')
+
+print("Generating old statistic:")
+
+ALL = 0
+ALL_7 = 0
+
+BRIG_ALL = 0
+BRIG_ALL_7 = 0
+
+ind = open(MONTHLY_INDEX, 'a', 0)
+ind.write(INDEX_HEADER)
+
+brig_ind = open(BRIG_INDEX, 'a', 0)
+brig_ind.write(INDEX_HEADER)
+
+for TAG in ['100','110','111','600','610','611','700','710','711']:
+
+	TYPE='Author'
+
+	CNT = 0
+	CNT_7 = 0
+
+	BRIG_CNT = 0
+	BRIG_CNT_7 = 0
+
+	print('Generating ' + TAG + '.. ', end='')
+
+	# NO SEVEN
+
+	SORT = {}
+	BRIG_SORT = {}
+
+	htm = open(MONTHLY + TAG + '.old.html', 'a')
+	htm.write(HTML_TOP)
+
+	brig_htm = open(BRIG + TAG + '.old.html', 'a')
+	brig_htm.write(HTML_TOP)
+
+	srt = open(MONTHLY + TAG + '.old.stat.html', 'a')
+	srt.write(SRT_TOP)
+	srt_csv = open(MONTHLY + TAG + '.old.stat.csv', 'a')
+
+	brig_srt = open(BRIG + TAG + '.old.stat.html', 'a')
+	brig_srt.write(SRT_TOP)
+	brig_srt_csv = open(BRIG + TAG + '.old.stat.csv', 'a')
+
+	# gen html
+	try:
+		for value in DATA_OLD[TAG]:
+			SORT[value] = len(DATA_OLD[TAG][value])
+			for aleph in DATA_OLD[TAG][value]:
+				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				CNT+=1
+	except: pass
+	htm.write(HTML_BOTTOM)	
+	htm.close()
+	# brig gen html
+	try:
+		for value in BRIG_DATA_OLD[TAG]:
+			BRIG_SORT[value] = len(BRIG_DATA_OLD[TAG][value])
+			for aleph in BRIG_DATA_OLD[TAG][value]:
+				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				BRIG_CNT+=1
+	except: pass
+	brig_htm.write(HTML_BOTTOM)	
+	brig_htm.close()
+	# gen stat
+	if re.match('6..', TAG): TYPE='Subject'
+	if re.match('630', TAG): TYPE='LinkedResource'
+	if re.match('655', TAG): TYPE='Genre'
+	for value in sorted(SORT, key=SORT.get, reverse=True):
+		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
+			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
+		)
+		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
+	srt.write(SRT_BOTTOM)	
+	srt.close()
+	srt_csv.close()
+	# brig gen stat
+	if re.match('6..', TAG): TYPE='Subject'
+	if re.match('630', TAG): TYPE='LinkedResource'
+	if re.match('655', TAG): TYPE='Genre'
+	for value in sorted(BRIG_SORT, key=BRIG_SORT.get, reverse=True):
+		brig_srt.write('<tr><td align="right"><font color="white">' + str(BRIG_SORT[value]) + '</font></td>' +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
+			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
+		)
+		brig_srt_csv.write(str(BRIG_SORT[value]) + '||' + value + '\n')
+	brig_srt.write(SRT_BOTTOM)	
+	brig_srt.close()
+	brig_srt_csv.close()
+
+	# SEVEN
+
+	SORT = {}
+	BRIG_SORT = {}
+
+	htm = open(MONTHLY + TAG + '.old.7.html', 'a')
+	htm.write(HTML_TOP)
+
+	brig_htm = open(BRIG + TAG + '.old.7.html', 'a')
+	brig_htm.write(HTML_TOP)
+
+	srt = open(MONTHLY + TAG + '.old.7.stat.html', 'a')
+	srt.write(SRT_TOP)
+	srt_csv = open(MONTHLY + TAG + '.old.7.stat.csv', 'a')
+
+	brig_srt = open(BRIG + TAG + '.old.7.stat.html', 'a')
+	brig_srt.write(SRT_TOP)
+	brig_srt_csv = open(BRIG + TAG + '.old.7.stat.csv', 'a')
+	
+	# gen html
+	try:
+		for value in DATA_OLD_7[TAG]:
+			SORT[value] = len(DATA_OLD_7[TAG][value])
+			for aleph in DATA_OLD_7[TAG][value]:
+				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				CNT_7+=1
+	except: pass
+	htm.write(HTML_BOTTOM)	
+	htm.close()
+	# brig gen html
+	try:
+		for value in BRIG_DATA_OLD_7[TAG]:
+			BRIG_SORT[value] = len(BRIG_DATA_OLD_7[TAG][value])
+			for aleph in BRIG_DATA_OLD_7[TAG][value]:
+				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+				)
+				BRIG_CNT_7+=1
+	except: pass
+	brig_htm.write(HTML_BOTTOM)	
+	brig_htm.close()
+	# gen stat
+	if re.match('6..', TAG): TYPE='Subject'
+	if re.match('630', TAG): TYPE='LinkedResource'
+	if re.match('655', TAG): TYPE='Genre'
+	for value in sorted(SORT, key=SORT.get, reverse=True):
+		srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
+			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
+		)
+		srt_csv.write(str(SORT[value]) + '||' + value + '\n')
+	srt.write(SRT_BOTTOM)	
+	srt.close()
+	srt_csv.close()
+	# brig gen stat
+	if re.match('6..', TAG): TYPE='Subject'
+	if re.match('630', TAG): TYPE='LinkedResource'
+	if re.match('655', TAG): TYPE='Genre'
+	for value in sorted(BRIG_SORT, key=BRIG_SORT.get, reverse=True):
+		brig_srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
+			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
+			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
+			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
+		)
+		brig_srt_csv.write(str(SORT[value]) + '||' + value + '\n')
+	brig_srt.write(SRT_BOTTOM)	
+	brig_srt.close()
+	brig_srt_csv.close()
+
+	# write index
+	if CNT or CNT_7:
+		ind.write('<tr>' + '\n')
+		ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.old.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="right">'+ str(CNT_7) + '</td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="data/' + TAG + '.old.7.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="center">' + str(CNT_7*100/(CNT + CNT_7)) + '%</td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.old.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="right">' + str(CNT) + '</td>' + '\n')
+		ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		ind.write('<td width="40" align="center"><a href="data/' + TAG + '.old.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		ind.write('<td width="40" align="center">' + str(CNT*100/(CNT + CNT_7)) + '%</td>' + '\n')
+		ind.write('</tr>' + '\n')
+	# brig write index
+	if BRIG_CNT or BRIG_CNT_7:
+		brig_ind.write('<tr>' + '\n')
+		brig_ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.old.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="right">'+ str(BRIG_CNT_7) + '</td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="data/' + TAG + '.old.7.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center">' + str(BRIG_CNT_7*100/(BRIG_CNT + BRIG_CNT_7)) + '%</td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.old.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="right">' + str(BRIG_CNT) + '</td>' + '\n')
+		brig_ind.write('<td width="60" align="center"><a href="data/' + TAG + '.old.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center"><a href="data/' + TAG + '.old.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
+		brig_ind.write('<td width="40" align="center">' + str(BRIG_CNT*100/(BRIG_CNT + BRIG_CNT_7)) + '%</td>' + '\n')
+		brig_ind.write('</tr>' + '\n')
+
+	# global counter
+
+	ALL+=CNT
+	ALL_7+=CNT_7
+
+	BRIG_ALL+=BRIG_CNT
+	BRIG_ALL_7+=BRIG_CNT_7
+
+	print("Done.")
+
+print("Writing index.. ", end='')
+
+if ALL or ALL_7:
+	ind.write('</table><br><br>')
+	ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
+	ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
+	ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td>')
+	ind.write('<td width="80" align="center">' + str(ALL_7*100/(ALL + ALL_7)) + '%</td>')
+	ind.write('</tr>')
+	ind.write('<tr><td align="right"><font color="gold">Bez podpole 7</font></td>')
+	ind.write('<td width="80" align="right"><font color="white">' + str(ALL) + '</font></td>')
+	ind.write('<td width="80" align="center">' + str(ALL*100/(ALL + ALL_7)) + '%</td>')
+	ind.write('</tr>')
+	ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
+	ind.write('<td align="right"><font color="white">' + str(ALL + ALL_7) + '</font></td></tr>')
+	ind.write('</table>')
+	ind.write('<br><br>')
+
+if BRIG_ALL or BRIG_ALL_7:
+	brig_ind.write('</table><br><br>')
+	brig_ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
+	brig_ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
+	brig_ind.write('<td width="80" align="right"><font color="white">' + str(BRIG_ALL_7) + '</font></td>')
+	brig_ind.write('<td width="80" align="center">' + str(BRIG_ALL_7*100/(BRIG_ALL + BRIG_ALL_7)) + '%</td>')
+	brig_ind.write('</tr>')
+	brig_ind.write('<tr><td align="right"><font color="gold">Bez podpole 7</font></td>')
+	brig_ind.write('<td width="80" align="right"><font color="white">' + str(BRIG_ALL) + '</font></td>')
+	brig_ind.write('<td width="80" align="center">' + str(BRIG_ALL*100/(BRIG_ALL + BRIG_ALL_7)) + '%</td>')
+	brig_ind.write('</tr>')
+	brig_ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
+	brig_ind.write('<td align="right"><font color="white">' + str(BRIG_ALL + BRIG_ALL_7) + '</font></td></tr>')
+	brig_ind.write('</table>')
+	brig_ind.write('<br><br>')
+
+#EXIT 
+
+ind.write('</body></html>')
+brig_ind.write('</body></html>')
 
 ind.close()
+brig_ind.close()
 
 print("Done.")
+

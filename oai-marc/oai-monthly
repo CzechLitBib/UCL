@@ -7,8 +7,8 @@
 
 DATA_PATH='/tmp/5xx'
 
-SEVEN_RAW="/var/www/html/7/raw"
-SEVEN_DATA="/var/www/html/7/archive/$(date +'%Y/%m')/data"
+SEVEN_DATA="/var/www/html/7/monthly/$(date --date="$(date) -1 day" +'%Y/%m')/data"
+SEVEN_BRIG_DATA="/var/www/html/nkp/4tbre4g5/$(date --date="$(date) -1 day" +'%Y/%m')/data"
 
 # ------------------------
 
@@ -35,8 +35,8 @@ echo "5xx done."
 # "7"
 #
 
-mkdir -p "$SEVEN_RAW" 2> /dev/null
 mkdir -p "$SEVEN_DATA" 2> /dev/null
+mkdir -p "$SEVEN_BRIG_DATA" 2> /dev/null
 
 oai-7 \
 	--set 'UCLA' \
@@ -44,17 +44,7 @@ oai-7 \
 	--until "$(date +'%Y-%m-01 00:00:00')" \
 	--check
 
-# statistic
-for FILE in $(ls "$SEVEN_RAW"/*.csv); do
-	DATA=$( cut -d\; -f1 "$FILE" | sort | uniq)
-	while read LINE; do
-		echo "$(grep -F -- "$LINE" "$FILE" | wc -l);$LINE"
-	done <<< "$DATA" | sort -r -n >> "${SEVEN_RAW/.csv/_stat.csv}"
-done
-
-mv "$SEVEN_RAW"/* "$SEVEN_DATA" 2> /dev/null
-
-echo "7-Harvest done."
+echo "7 done."
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
