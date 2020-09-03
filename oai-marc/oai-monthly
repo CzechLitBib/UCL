@@ -7,8 +7,8 @@
 
 DATA_PATH='/tmp/5xx'
 
-SEVEN_DATA="/var/www/html/7/monthly/$(date --date="$(date) -1 day" +'%Y/%m')/data"
-SEVEN_BRIG_DATA="/var/www/html/nkp/4tbre4g5/$(date --date="$(date) -1 day" +'%Y/%m')/data"
+SEVEN_DATA="/var/www/html/7/monthly/$(date --date="$(date) -2 day" +'%Y/%m')/data"
+SEVEN_BRIG_DATA="/var/www/html/nkp/4tbre4g5/$(date --date="$(date) -2 day" +'%Y/%m')/data"
 
 # ------------------------
 
@@ -42,7 +42,8 @@ oai-7 \
 	--set 'UCLA' \
 	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
 	--until "$(date +'%Y-%m-01 00:00:00')" \
-	--check
+	--check \
+	--notify
 
 echo "7 done."
 

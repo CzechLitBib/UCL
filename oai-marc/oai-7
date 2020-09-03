@@ -8,8 +8,9 @@
 
 from __future__ import print_function
 
-import argparse,StringIO,sys,os,re
+import argparse,StringIO,smtplib,sys,os,re
 
+from email.mime.text import MIMEText
 from datetime import datetime,timedelta
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
@@ -20,11 +21,13 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 
-#LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
-#LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
+MAIL_SENDER='xxx'
+MAIL_TARGET='xxx'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
-LAST_MONTH='2001'
-LAST_MONTH_DIR='2020/01'
+LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
+LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
 
 BRIG='/var/www/html/nkp/4tbre4g5/' + LAST_MONTH_DIR + '/data/'
 BRIG_INDEX='/var/www/html/nkp/4tbre4g5/' + LAST_MONTH_DIR + '/index.html'
@@ -108,6 +111,27 @@ def is_worker(metadata):
 		if 'a' in F:
 			if F['a'] in ['UCLRE', 'UCLJCH']: return True
 	return False
+
+def notify():
+	html = ('Dobrý den,<br><br>Výstupní data kontroly za uplynulý měsíc:<br><br>' +
+		'<a href="http://pokuston.ucl.cas.cz:38080/nkp/4tbre4g5/' + LAST_MONTH_DIR +
+		'">http://pokuston.ucl.cas.cz:38080/nkp/4tbre4g5/' + LAST_MONTH_DIR + '</a><br><br>' +
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+	msg = MIMEText(html.decode('utf-8'), 'html', 'utf-8')
+	msg['Subject'] = 'UCL - Kontrolní zpráva'
+	msg['From'] = 'UCL Kontrola <' + MAIL_SENDER + '>'
+	msg['To'] = MAIL_TARGET
+	try:
+		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+		s.quit()
+	except:
+		try:
+			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+			s.quit()
+		except:
+			print('Sendmail error.')
 	
 # ARG -------------------
 
@@ -120,6 +144,7 @@ required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type
 required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 optional = parser.add_argument_group('output')
 optional.add_argument('--check', help='Validation control.', action='store_true')
+optional.add_argument('--notify', help='Enable notification.', action='store_true')
 args = parser.parse_args()
 
 if args.get == 'record' or args.get == 'ident':
@@ -156,8 +181,6 @@ except:
 	records=[]
 
 # MAIN -------------------
-
-print("Harvesting & processing data (this may take a while).. ", end='')
 
 for record in records:
 
@@ -232,9 +255,6 @@ for record in records:
 						if value not in DATA_OLD_7[tag]: DATA_OLD_7[tag][value] = []
 						DATA_OLD_7[tag][value].append(aleph)
 
-print("Done.")
-print("Generating new statistic:")
-
 ALL = 0
 ALL_7 = 0
 
@@ -264,8 +284,6 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 
 	BRIG_CNT = 0
 	BRIG_CNT_7 = 0
-
-	print('Generating ' + TAG + '.. ', end='')
 
 	# NO SEVEN
 
@@ -454,13 +472,8 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	BRIG_ALL+=BRIG_CNT
 	BRIG_ALL_7+=BRIG_CNT_7
 
-	print("Done.")
-# EXIT
-
-print("Writing index.. ", end='')
-
+ind.write('</table><br><br>')
 if ALL or ALL_7:
-	ind.write('</table><br><br>')
 	ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
 	ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
 	ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td>')
@@ -474,11 +487,11 @@ if ALL or ALL_7:
 	ind.write('<td align="right"><font color="white">' + str(ALL + ALL_7) + '</font></td></tr>')
 	ind.write('</table>')
 	ind.write('<br><br>')
-	ind.write('<font color="white">STARÁ DATA</font>')
-	ind.write('<br><br>')
+ind.write('<font color="white">STARÁ DATA</font>')
+ind.write('<br><br>')
 
+brig_ind.write('</table><br><br>')
 if BRIG_ALL or BRIG_ALL_7:
-	brig_ind.write('</table><br><br>')
 	brig_ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
 	brig_ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
 	brig_ind.write('<td width="80" align="right"><font color="white">' + str(BRIG_ALL_7) + '</font></td>')
@@ -492,10 +505,8 @@ if BRIG_ALL or BRIG_ALL_7:
 	brig_ind.write('<td align="right"><font color="white">' + str(BRIG_ALL + BRIG_ALL_7) + '</font></td></tr>')
 	brig_ind.write('</table>')
 	brig_ind.write('<br><br>')
-	brig_ind.write('<font color="white">STARÁ DATA</font>')
-	brig_ind.write('<br><br>')
-
-print("Generating old statistic:")
+brig_ind.write('<font color="white">STARÁ DATA</font>')
+brig_ind.write('<br><br>')
 
 ALL = 0
 ALL_7 = 0
@@ -518,8 +529,6 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 
 	BRIG_CNT = 0
 	BRIG_CNT_7 = 0
-
-	print('Generating ' + TAG + '.. ', end='')
 
 	# NO SEVEN
 
@@ -708,12 +717,8 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	BRIG_ALL+=BRIG_CNT
 	BRIG_ALL_7+=BRIG_CNT_7
 
-	print("Done.")
-
-print("Writing index.. ", end='')
-
+ind.write('</table><br><br>')
 if ALL or ALL_7:
-	ind.write('</table><br><br>')
 	ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
 	ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
 	ind.write('<td width="80" align="right"><font color="white">' + str(ALL_7) + '</font></td>')
@@ -725,11 +730,11 @@ if ALL or ALL_7:
 	ind.write('</tr>')
 	ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
 	ind.write('<td align="right"><font color="white">' + str(ALL + ALL_7) + '</font></td></tr>')
-	ind.write('</table>')
-	ind.write('<br><br>')
+ind.write('</table>')
+ind.write('<br><br>')
 
+brig_ind.write('</table><br><br>')
 if BRIG_ALL or BRIG_ALL_7:
-	brig_ind.write('</table><br><br>')
 	brig_ind.write('<table border="0" cellpadding="4px" style="border-collapse:collapse;"><tr>')
 	brig_ind.write('<td align="right"><font color="gold">Podpole 7</font></td>')
 	brig_ind.write('<td width="80" align="right"><font color="white">' + str(BRIG_ALL_7) + '</font></td>')
@@ -741,8 +746,8 @@ if BRIG_ALL or BRIG_ALL_7:
 	brig_ind.write('</tr>')
 	brig_ind.write('<tr><td align="right"><font color="gold">Celkem</font></td>')
 	brig_ind.write('<td align="right"><font color="white">' + str(BRIG_ALL + BRIG_ALL_7) + '</font></td></tr>')
-	brig_ind.write('</table>')
-	brig_ind.write('<br><br>')
+brig_ind.write('</table>')
+brig_ind.write('<br><br>')
 
 #EXIT 
 
@@ -752,5 +757,5 @@ brig_ind.write('</body></html>')
 ind.close()
 brig_ind.close()
 
-print("Done.")
+if args.notify: notify()
 
