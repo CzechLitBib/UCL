@@ -298,6 +298,9 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_htm = open(BRIG + TAG + '.html', 'a')
 	brig_htm.write(HTML_TOP)
 
+	csv = open(MONTHLY + TAG + '.csv', 'a')
+	brig_csv = open(BRIG + TAG + '.csv', 'a')
+
 	srt = open(MONTHLY + TAG + '.stat.html', 'a')
 	srt.write(SRT_TOP)
 	srt_csv = open(MONTHLY + TAG + '.stat.csv', 'a')
@@ -306,7 +309,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt.write(SRT_TOP)
 	brig_srt_csv = open(BRIG + TAG + '.stat.csv', 'a')
 
-	# gen html
+	# gen html and csv
 	try:
 		for value in DATA[TAG]:
 			SORT[value] = len(DATA[TAG][value])
@@ -314,11 +317,13 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				csv.write(value + '||' + aleph + '\n')
 				CNT+=1
 	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
-	# brig gen html
+	csv.close()
+	# brig gen html and csv
 	try:
 		for value in BRIG_DATA[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA[TAG][value])
@@ -326,10 +331,12 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT+=1
 	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
+	brig_csv.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
@@ -370,6 +377,9 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_htm = open(BRIG + TAG + '.7.html', 'a')
 	brig_htm.write(HTML_TOP)
 
+	csv = open(MONTHLY + TAG + '.7.csv', 'a')
+	brig_csv = open(BRIG + TAG + '.7.csv', 'a')
+
 	srt = open(MONTHLY + TAG + '.7.stat.html', 'a')
 	srt.write(SRT_TOP)
 	srt_csv = open(MONTHLY + TAG + '.7.stat.csv', 'a')
@@ -378,7 +388,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt.write(SRT_TOP)
 	brig_srt_csv = open(BRIG + TAG + '.7.stat.csv', 'a')
 	
-	# gen html
+	# gen html and csv
 	try:
 		for value in DATA_7[TAG]:
 			SORT[value] = len(DATA_7[TAG][value])
@@ -386,11 +396,13 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				csv.write(value + '||' + aleph + '\n')
 				CNT_7+=1
 	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
-	# brig gen html
+	csv.close()
+	# brig gen html and csv
 	try:
 		for value in BRIG_DATA_7[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA_7[TAG][value])
@@ -398,10 +410,12 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT_7+=1
 	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
+	brig_csv.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
@@ -542,6 +556,9 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_htm = open(BRIG + TAG + '.old.html', 'a')
 	brig_htm.write(HTML_TOP)
 
+	csv = open(MONTHLY + TAG + '.old.csv', 'a')
+	brig_csv = open(BRIG + TAG + '.old.csv', 'a')
+
 	srt = open(MONTHLY + TAG + '.old.stat.html', 'a')
 	srt.write(SRT_TOP)
 	srt_csv = open(MONTHLY + TAG + '.old.stat.csv', 'a')
@@ -550,7 +567,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt.write(SRT_TOP)
 	brig_srt_csv = open(BRIG + TAG + '.old.stat.csv', 'a')
 
-	# gen html
+	# gen html and csv
 	try:
 		for value in DATA_OLD[TAG]:
 			SORT[value] = len(DATA_OLD[TAG][value])
@@ -558,11 +575,13 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				csv.write(value + '||' + aleph + '\n')
 				CNT+=1
 	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
-	# brig gen html
+	csv.close()
+	# brig gen html and csv
 	try:
 		for value in BRIG_DATA_OLD[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA_OLD[TAG][value])
@@ -570,10 +589,12 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT+=1
 	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
+	brig_csv.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
@@ -614,6 +635,9 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_htm = open(BRIG + TAG + '.old.7.html', 'a')
 	brig_htm.write(HTML_TOP)
 
+	csv = open(MONTHLY + TAG + '.old.7.csv', 'a')
+	brig_csv = open(BRIG + TAG + '.old.7.csv', 'a')
+
 	srt = open(MONTHLY + TAG + '.old.7.stat.html', 'a')
 	srt.write(SRT_TOP)
 	srt_csv = open(MONTHLY + TAG + '.old.7.stat.csv', 'a')
@@ -622,7 +646,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt.write(SRT_TOP)
 	brig_srt_csv = open(BRIG + TAG + '.old.7.stat.csv', 'a')
 	
-	# gen html
+	# gen html and csv
 	try:
 		for value in DATA_OLD_7[TAG]:
 			SORT[value] = len(DATA_OLD_7[TAG][value])
@@ -630,11 +654,13 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				csv.write(value + '||' + aleph + '\n')
 				CNT_7+=1
 	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
-	# brig gen html
+	csv.close()
+	# brig gen html and csv
 	try:
 		for value in BRIG_DATA_OLD_7[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA_OLD_7[TAG][value])
@@ -642,10 +668,12 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				brig_htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
 				)
+				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT_7+=1
 	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
+	brig_csv.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
