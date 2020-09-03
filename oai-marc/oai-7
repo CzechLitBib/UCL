@@ -255,6 +255,8 @@ for record in records:
 						if value not in DATA_OLD_7[tag]: DATA_OLD_7[tag][value] = []
 						DATA_OLD_7[tag][value].append(aleph)
 
+print('7-Harvest done.')
+
 ALL = 0
 ALL_7 = 0
 
@@ -419,12 +421,12 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	if re.match('630', TAG): TYPE='LinkedResource'
 	if re.match('655', TAG): TYPE='Genre'
 	for value in sorted(BRIG_SORT, key=BRIG_SORT.get, reverse=True):
-		brig_srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
+		brig_srt.write('<tr><td align="right"><font color="white">' + str(BRIG_SORT[value]) + '</font></td>' +
 			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
 			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
 			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
 		)
-		brig_srt_csv.write(str(SORT[value]) + '||' + value + '\n')
+		brig_srt_csv.write(str(BRIG_SORT[value]) + '||' + value + '\n')
 	brig_srt.write(SRT_BOTTOM)	
 	brig_srt.close()
 	brig_srt_csv.close()
@@ -514,10 +516,7 @@ ALL_7 = 0
 BRIG_ALL = 0
 BRIG_ALL_7 = 0
 
-ind = open(MONTHLY_INDEX, 'a', 0)
 ind.write(INDEX_HEADER)
-
-brig_ind = open(BRIG_INDEX, 'a', 0)
 brig_ind.write(INDEX_HEADER)
 
 for TAG in ['100','110','111','600','610','611','700','710','711']:
@@ -664,12 +663,12 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	if re.match('630', TAG): TYPE='LinkedResource'
 	if re.match('655', TAG): TYPE='Genre'
 	for value in sorted(BRIG_SORT, key=BRIG_SORT.get, reverse=True):
-		brig_srt.write('<tr><td align="right"><font color="white">' + str(SORT[value]) + '</font></td>' +
+		brig_srt.write('<tr><td align="right"><font color="white">' + str(BRIG_SORT[value]) + '</font></td>' +
 			'<td><a style="text-decoration:none;" target="_blank" href="https://vufind.ucl.cas.cz/Search/Results?lookfor=' +
 			re.sub('(.*) OPRAVA UCL$', '\\1', value) +
 			'&type=' + TYPE + '"><font color="#6DAE42">' + value + '</font></a></td>\n'
 		)
-		brig_srt_csv.write(str(SORT[value]) + '||' + value + '\n')
+		brig_srt_csv.write(str(BRIG_SORT[value]) + '||' + value + '\n')
 	brig_srt.write(SRT_BOTTOM)	
 	brig_srt.close()
 	brig_srt_csv.close()
