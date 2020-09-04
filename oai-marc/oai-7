@@ -120,9 +120,8 @@ def is_worker(metadata):
 	return False
 
 def notify():
-	html = ('Dobrý den,<br><br>Výstupní data kontroly za uplynulý měsíc:<br><br>' +
-		'<a href="http://pokuston.ucl.cas.cz:38080/nkp/4tbre4g5/' + LAST_MONTH_DIR +
-		'">http://pokuston.ucl.cas.cz:38080/nkp/4tbre4g5/' + LAST_MONTH_DIR + '</a><br><br>' +
+	html = ('Dobrý den,<br><br>Výstupní data za uplynulý měsíc jsou dotupná na adrese:<br><br>' +
+		'<a target="_blank" href="http://pokuston.ucl.cas.cz:38080/nkp/">http://pokuston.ucl.cas.cz:38080/nkp</a><br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
 	msg = MIMEText(html.decode('utf-8'), 'html', 'utf-8')
 	msg['Subject'] = 'UCL - Kontrolní zpráva'
