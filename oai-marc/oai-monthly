@@ -7,9 +7,6 @@
 
 DATA_PATH='/tmp/5xx'
 
-SEVEN_DATA="/var/www/html/7/monthly/$(date --date="$(date) -2 day" +'%Y/%m')/data"
-SEVEN_BRIG_DATA="/var/www/html/nkp/4tbre4g5/$(date --date="$(date) -2 day" +'%Y/%m')/data"
-
 # ------------------------
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
@@ -30,22 +27,6 @@ oai-5xx \
 rm -r "$DATA_PATH" 2> /dev/null
 
 echo "5xx done."
-
-#
-# "7"
-#
-
-mkdir -p "$SEVEN_DATA" 2> /dev/null
-mkdir -p "$SEVEN_BRIG_DATA" 2> /dev/null
-
-oai-7 \
-	--set 'UCLA' \
-	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
-	--until "$(date +'%Y-%m-01 00:00:00')" \
-	--check \
-	--notify
-
-echo "7 done."
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 

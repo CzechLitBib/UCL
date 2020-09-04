@@ -28,6 +28,7 @@ oai-marc
 oai-daily
 oai-weekly
 oai-monthly
+oai-monthly-7
 
 country_code.txt
 lang_code.txt
@@ -39,6 +40,7 @@ sif_code.txt
 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 00 6 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 30 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
+00 4 1 * * root oai-monthly >> /var/log/oai-monthly-7.log 2>&1 &
 </pre>
 APACHE
 <pre>
