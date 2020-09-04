@@ -16,10 +16,10 @@ from pymarc import marcxml
 
 IN='/home/bruna/test/uclall.xml'
 
-RAW='/var/www/html/7/ucl/raw/'
-OUT='/var/www/html/7/ucl/data/'
+RAW='/var/www/html/7/UCL/raw/'
+OUT='/var/www/html/7/UCL/data/'
 
-INDEX='/var/www/html/7/ucl/index.html'
+INDEX='/var/www/html/7/UCL/index.html'
 
 TAGLIST=[]
 
