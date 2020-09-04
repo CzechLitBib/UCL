@@ -128,13 +128,12 @@ for TAG in sorted(TAGLIST):
 	srt_csv = open(OUT + TAG + '.stat.csv', 'a')
 
 	#load raw data
-	try:
+	if os.path.exists(RAW + TAG + '.csv'):
 		with open(RAW + TAG + '.csv', 'r') as f:
 			for line in f:
 				value,aleph = line.split('||')
 				if value not in DB: DB[value] = []
 				DB[value].append(aleph.strip())
-	except:	pass
 	# gen html
 	for value in DB:
 		SORT[value] = len(DB[value])
@@ -172,13 +171,12 @@ for TAG in sorted(TAGLIST):
 	srt_csv = open(OUT + TAG + '.7.stat.csv', 'a')
 	
 	#load raw data
-	try:
+	if os.path.exists(RAW + TAG + '.7.csv'):
 		with open(RAW + TAG + '.7.csv', 'r') as f:
 			for line in f:
 				value,aleph = line.split('||')
 				if value not in DB: DB[value] = []
 				DB[value].append(aleph.strip())
-	except: pass
 	# gen html
 	for value in DB:
 		SORT[value] = len(DB[value])
