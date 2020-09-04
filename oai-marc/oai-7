@@ -69,7 +69,7 @@ INDEX_TOP='''<!doctype html>
 <body style="background-color:black;color:#6DAE42;">
 <br>
 <b><u>OAI-PMH 2.0 MARCXML</u></b>
-<br><br><font size="3" color="white">Výstup kontroly podpole "7" záznamů MARCXML.</font>
+<br><br><font size="3" color="white">Výstup kontroly podpole 7 záznamů MARCXML.</font>
 '''
 INDEX_HEADER='''<table border="1" cellpadding="8px" style="border-collapse:collapse;">
 <tr>
