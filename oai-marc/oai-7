@@ -26,14 +26,17 @@ MAIL_TARGET='xxx'
 MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
 
-LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
-LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
+#LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
+#LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
 
-BRIG='/var/www/html/nkp/4tbre4g5/' + LAST_MONTH_DIR + '/data/'
-BRIG_INDEX='/var/www/html/nkp/4tbre4g5/' + LAST_MONTH_DIR + '/index.html'
+LAST_MONTH='2004'
+LAST_MONTH_DIR='2020/04'
 
-MONTHLY='/var/www/html/7/monthly/' + LAST_MONTH_DIR + '/data/'
-MONTHLY_INDEX='/var/www/html/7/monthly/' + LAST_MONTH_DIR + '/index.html'
+BRIG='/var/www/html/nkp/NKP/' + LAST_MONTH_DIR + '/data/'
+BRIG_INDEX='/var/www/html/nkp/NKP/' + LAST_MONTH_DIR + '/index.html'
+
+MONTHLY='/var/www/html/nkp/měsíční/' + LAST_MONTH_DIR + '/data/'
+MONTHLY_INDEX='/var/www/html/nkp/měsíční/' + LAST_MONTH_DIR + '/index.html'
 
 DATA={}
 DATA_7={}
@@ -107,7 +110,11 @@ def get_value(field):
 	return ' '.join(ret).encode('utf-8')
 
 def is_worker(metadata):
-	for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+	catlist = metadata.get_fields('CAT','KAT')
+	for F in catlist:# remove all bots
+		if 'a' in F and 'a' == 'BATCH':
+				 catlist.remove(F)
+	for F in catlist[-1:]:# last one
 		if 'a' in F:
 			if F['a'] in ['UCLRE', 'UCLJCH']: return True
 	return False
@@ -310,7 +317,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt_csv = open(BRIG + TAG + '.stat.csv', 'a')
 
 	# gen html and csv
-	try:
+	if TAG in DATA:
 		for value in DATA[TAG]:
 			SORT[value] = len(DATA[TAG][value])
 			for aleph in DATA[TAG][value]:
@@ -319,12 +326,11 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				csv.write(value + '||' + aleph + '\n')
 				CNT+=1
-	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
 	csv.close()
 	# brig gen html and csv
-	try:
+	if TAG in BRIG_DATA:
 		for value in BRIG_DATA[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA[TAG][value])
 			for aleph in BRIG_DATA[TAG][value]:
@@ -333,7 +339,6 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT+=1
-	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
 	brig_csv.close()
@@ -389,7 +394,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt_csv = open(BRIG + TAG + '.7.stat.csv', 'a')
 	
 	# gen html and csv
-	try:
+	if TAG in DATA_7:
 		for value in DATA_7[TAG]:
 			SORT[value] = len(DATA_7[TAG][value])
 			for aleph in DATA_7[TAG][value]:
@@ -398,12 +403,11 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				csv.write(value + '||' + aleph + '\n')
 				CNT_7+=1
-	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
 	csv.close()
 	# brig gen html and csv
-	try:
+	if TAG in BRIG_DATA_7:
 		for value in BRIG_DATA_7[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA_7[TAG][value])
 			for aleph in BRIG_DATA_7[TAG][value]:
@@ -412,7 +416,6 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT_7+=1
-	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
 	brig_csv.close()
@@ -568,7 +571,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt_csv = open(BRIG + TAG + '.old.stat.csv', 'a')
 
 	# gen html and csv
-	try:
+	if TAG in DATA_OLD:
 		for value in DATA_OLD[TAG]:
 			SORT[value] = len(DATA_OLD[TAG][value])
 			for aleph in DATA_OLD[TAG][value]:
@@ -577,12 +580,11 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				csv.write(value + '||' + aleph + '\n')
 				CNT+=1
-	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
 	csv.close()
 	# brig gen html and csv
-	try:
+	if TAG in BRIG_DATA_OLD:
 		for value in BRIG_DATA_OLD[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA_OLD[TAG][value])
 			for aleph in BRIG_DATA_OLD[TAG][value]:
@@ -591,7 +593,6 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT+=1
-	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
 	brig_csv.close()
@@ -647,7 +648,7 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 	brig_srt_csv = open(BRIG + TAG + '.old.7.stat.csv', 'a')
 	
 	# gen html and csv
-	try:
+	if TAG in DATA_OLD_7:
 		for value in DATA_OLD_7[TAG]:
 			SORT[value] = len(DATA_OLD_7[TAG][value])
 			for aleph in DATA_OLD_7[TAG][value]:
@@ -656,12 +657,11 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				csv.write(value + '||' + aleph + '\n')
 				CNT_7+=1
-	except: pass
 	htm.write(HTML_BOTTOM)	
 	htm.close()
 	csv.close()
 	# brig gen html and csv
-	try:
+	if TAG in BRIG_DATA_OLD_7:
 		for value in BRIG_DATA_OLD_7[TAG]:
 			BRIG_SORT[value] = len(BRIG_DATA_OLD_7[TAG][value])
 			for aleph in BRIG_DATA_OLD_7[TAG][value]:
@@ -670,7 +670,6 @@ for TAG in ['100','110','111','600','610','611','700','710','711']:
 				)
 				brig_csv.write(value + '||' + aleph + '\n')
 				BRIG_CNT_7+=1
-	except: pass
 	brig_htm.write(HTML_BOTTOM)	
 	brig_htm.close()
 	brig_csv.close()
