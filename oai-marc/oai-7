@@ -21,16 +21,16 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 
-MAIL_SENDER='xxx'
-MAIL_TARGET='xxx'
-MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
+MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
+MAIL_TARGET='vecerova@ucl.cas.cz'
+MAIL_SERVER='listonos.ucl.cas.cz'
+MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
 
-#LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
-#LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
+LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
+LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
 
-LAST_MONTH='2004'
-LAST_MONTH_DIR='2020/04'
+#LAST_MONTH='2008'
+#LAST_MONTH_DIR='2020/08'
 
 BRIG='/var/www/html/nkp/NKP/' + LAST_MONTH_DIR + '/data/'
 BRIG_INDEX='/var/www/html/nkp/NKP/' + LAST_MONTH_DIR + '/index.html'
@@ -111,10 +111,11 @@ def get_value(field):
 
 def is_worker(metadata):
 	catlist = metadata.get_fields('CAT','KAT')
+	out=[]
 	for F in catlist:# remove all bots
-		if 'a' in F and 'a' == 'BATCH':
-				 catlist.remove(F)
-	for F in catlist[-1:]:# last one
+		if 'a' in F and 'BATCH' not in F['a']:
+			 out.append(F)
+	for F in out[-1:]:# last one
 		if 'a' in F:
 			if F['a'] in ['UCLRE', 'UCLJCH']: return True
 	return False

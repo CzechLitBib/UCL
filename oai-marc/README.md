@@ -22,6 +22,7 @@ python -B setup.py install
 /usr/local/bin/:
 
 oai-7
+oai-kat
 oai-5xx
 oai-964
 oai-marc
@@ -92,6 +93,7 @@ FILE
          oai-964 - Generate Aleph Pseudo-Marc format file. 
          oai-mdt - Z39.50 yaz-client wrapper.
            oai-7 - Evaluate subfield "7" data. 
+         oai-kat - Evaluate field "KAT" data. 
        oai-7-xml - Evaluate subfield "7" datafrom file.
       
        oai-debug - Debug & testing.
