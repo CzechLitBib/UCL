@@ -3,11 +3,6 @@ DESCRIPTION
 
 Library support software.
 
-TODO
-<pre>
--NKP CAT/KAT fix -> regen 07/08 -> revert oai-7
--CLO, 600
-</pre>
 FILE
 <pre>
  oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
