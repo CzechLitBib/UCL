@@ -8,19 +8,101 @@
 
 from __future__ import print_function
 
-import argparse,json,sys,os,re
+import tarfile,argparse,json,sys,os,re
 
 from pymarc import Record
 from pymarc.field import Field
-
-# fast JSON streaming library
-#from yajl import YajlParser,YajlContentHandler
 
 # VAR -----------------
 
 #IN='retrobi.json'
 IN='demo.json'
-#BUFFER={}
+OUT='retro.tar.gz'
+
+SLO_MAP=[
+u'Orol tatránski',
+u'Slovenské noviny',
+u'Slovenskje pohladi na vedi, umeňja a literatúru',
+u'Nitra',
+u'Hronka'
+]
+
+GER_MAP=[
+u'Abhandlungen der königlichen böhmischen Gesellschaft der Wissenschaften',
+u'Akademie',
+u'Archiv für österreichische Geschichte',
+u'Archiv für slavische Philologie',
+u'Beiträge zur Heimatkunde des Aussig-Karbitzer Bezirkes',
+u'Bild und Leben',
+u'Bohemia',
+u'Böhmen und Mähren',
+u'Brünner Zeitung',
+u'Camelien',
+u'Constitutionelle Allgemeine Zeitung von Böhmen',
+u'Constitutionelle Prager Zeitung',
+u'Constitutionelles Blatt aus Böhmen',
+u'Correspondenz',
+u'Čechische revue',
+u'Das literarische Echo',
+u'Das Vaterland',
+u'Der Ackermann aus Böhmen',
+u'Der Bote von der Egger',
+u'Der Freund des Volkes',
+u'Der Wegweiser',
+u'Deutsche Zeitung aus Böhmen',
+u'Deutsches Archiv für Geschichte des Mittelalters',
+u'Die Literatur',
+u'Die Waage für Freiheit, Recht und Wahrheit', 
+u'Erinnerungen an merkwürdige Gegenstände und Begebenheiten',
+u'Fort mit den Zöpfen!',
+u'Für Kalobiotik',
+u'Germanoslavica',
+u'Illustriertes Volksblatt für Böhmen',
+u'Jahrbücher für Kultur und Geschichte der Slaven',
+u'Kritische Blätter für Literatur und Kunst',
+u'Kunst und Wissenschaft',
+u'Länder',
+u'Leben der slavischen Völker',
+u'Libussa',
+u'Mittheilungen des Vereines für Geschichte der Deutschen in Böhmen',
+u'Monatschrift der Gesellschaft des vaterländischen Museums in Böhmen',
+u'Neue Litteratur',
+u'Neue Zeit',
+u'Oesterreichisches Morgenblatt',
+u'Olmützer Zeitschrift',
+u'Ost und West',
+u'Österreichischer Correspondent',
+u'Panorama',
+u'Panorama des Universums',
+u'Pilsner Anzeiger',
+u'Politik',
+u'Politik',
+u'Politisches Wochenblatt',
+u'Prag',
+u'Prager Abendblatt',
+u'Prager Bahnhof',
+u'Prager Presse',
+u'Prager Rundschau',
+u'Prager Tagblatt',
+u'Prager Zeitung',
+u'Slavische Centralblätter',
+u'Slavische Rundschau',
+u'Slowanka',
+u'Sonntagsblätter für heimatliche Interessen',
+u'Stadt und Land',
+u'Sudetendeutsche Zeitschrift für Volkskunde',
+u'Sudetendeutschen',
+u'Tagesbote aus Böhmen',
+u'Union',
+u'Unterhaltungsblätter',
+u'Volksblatt für Böhmen',
+u'Witiko',
+u'Wochenblätter für Freiheit und Gesetz',
+u'Zeitschrift des Deutschen Vereins für die Geschichte Mährens und Schlesiens',
+u'Zeitschrift für Geschichte und Kulturgeschichte Oesterreichisch-Schlesiens',
+u'Zeitschrift für Slavische Philologie',
+u'Zeitschrift für sudetendeutsche Geschichte'
+]
 
 # INIT -----------------
 
@@ -43,69 +125,32 @@ record.add_ordered_field(Field(tag='OWN', indicators=[' ',' '], subfields=['a', 
 
 # DEF -----------------
 
-#class ContentHandler(YajlContentHandler):
-#	def __init__(self): pass
-#	def yajl_null(self, ctx): pass
-#	def yajl_start_map(self, ctx): pass
-#	def yajl_end_map(self, ctx): pass
-#	def yajl_start_array(self, ctx): pass
-#	def yajl_end_array(self, ctx): pass
-#
-#	def yajl_boolean(self, ctx, boolVal):
-#		field_complete(['bool', boolVal])
-#	def yajl_integer(self, ctx, integerVal):
-#		field_complete(['integer', integerVal])
-#	def yajl_double(self, ctx, doubleVal):
-#		field_complete(['double', doubleVal])
-#	def yajl_number(self, ctx, stringNum):
-#		field_complete(['number', stringNum])
-#	def yajl_string(self, ctx, stringVal):
-#		field_complete(['string', stringVal])
-#	def yajl_map_key(self, ctx, stringVal):
-#		field_complete(['key', stringVal])
-#
-#def field_complete(tpl):
-#	print(tpl[0] + ': ' + str(tpl[1]))
-
-# MAIN -----------------
-
-#parser = YajlParser(ContentHandler())
-#parser.dont_validate_strings=True
-#parser.allow_multiple_values=True
-
 with open(IN, 'rb') as f:
 	for LINE in f:
 		j = json.loads(re.sub('(.*),$','\\1',LINE.strip()), strict=False)
-		print(json.dumps(j, indent=2))
+		#print(json.dumps(j, indent=2))
 		# ID
-		#record.add_ordered_field(Field(tag='001', data='RET-' +  j['id']))
-		# 
+		record.add_ordered_field(Field(tag='001', data='RET-' +  j['id']))
+		# 008
+		DAT='19600101'
+		if int(j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]):
+			DAT+='s' + j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
+		else:
+			DAT+='n    '
+		DAT+='    xr            ||| ||'
+		if j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0] in SLO_MAP:
+			DAT+='slo'
+		elif j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0] in GER_MAP:
+			DAT+='ger'
+		else:
+			DAT+='cze'
+		
+		DAT+=' d'
+		record.add_ordered_field(Field(tag='008', data=DAT))
+		#
 
 #parser.parse(f=j)
 #j.close()
-
-#print(record.as_json())
-
-# EXPORT -----------------
-
-#try:
-#	os.mkdir('export')
-#	os.mkdir('export/' + args.format)
-#except: pass
-
-#for record in reader:
-#	if args.format == 'json':# JSON
-#		writer = JSONWriter(open('export/json/' + re.sub('(.*)\.json', '\\1', f) + '.json', 'wt'))
-#		writer.write(record)
-#		writer.close()
-#	if args.format == 'marc':# MARC21
-#		writer = MARCWriter(open('export/marc/' + re.sub('(.*)\.json', '\\1', f)  + '.dat', 'wb'))
-#		writer.write(record)
-#		writer.close()
-#	if args.format == 'xml':# MARCXML
-#		writer = XMLWriter(open('export/xml/' + re.sub('(.*)\.json', '\\1', f) + '.xml', 'wb'))
-#		writer.write(record)
-#		writer.close()
 
 # EXIT -------------------
 
