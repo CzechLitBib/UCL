@@ -143,8 +143,8 @@ with open(IN, 'rb') as f:
 		if not 'tree' in j['doc']:
 			print('Broken: ' + j['id'])
 			continue
-		else:
-			print(j['id'] + ' Done.')
+		#else:
+		#	print(j['id'] + ' Done.')
 
 		# 001
 		record.add_ordered_field(Field(tag='001', data='RET-' +  j['id']))
