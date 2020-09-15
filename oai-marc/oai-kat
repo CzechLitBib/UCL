@@ -23,8 +23,8 @@ URL='https://aleph.lib.cas.cz/OAI'
 #LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
 #LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
 
-LAST_MONTH='2008'
-LAST_MONTH_DIR='2020/08'
+LAST_MONTH='2007'
+LAST_MONTH_DIR='2020/07'
 
 OUT_DATA='/var/www/html/kat/' + LAST_MONTH_DIR + '/data/'
 OUT_INDEX='/var/www/html/kat/' + LAST_MONTH_DIR + '/index.html'
@@ -50,7 +50,7 @@ SIF_MAP={
 'PET':'UCLPL',
 'PAV':'UCLPN',
 'PV':'UCLPV',
-'RC':'UCLRC',
+'RCE':'UCLRCE',
 'RE':'UCLRE',
 'SRA':'UCLST',
 'TP':'UCLTP',
@@ -125,8 +125,10 @@ def get_catlist(metadata):
 	out = []
 	for F in catlist:# remove all bots
 		if 'a' in F and 'BATCH' not in F['a']:
-			out.append(F['a'])
+			if 'c' in F and F['c'][0:6] == LAST_MONTH_DIR.replace('/',''):
+				out.append(F['a'])
 	return out
+
 def get_key(val,lst):
 	for sif,cat in lst.iteritems():
 		if cat == val:

@@ -151,7 +151,7 @@ with open(IN, 'rb') as f:
 		# 008
 		DAT='19600101'
 		if j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]:
-			if int(j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]):
+			if len(j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]) == 4:
 				DAT+='s' + j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
 			else: DAT+='n    '
 		else: DAT+='n    '
