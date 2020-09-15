@@ -106,25 +106,6 @@ u'Zeitschrift für Slavische Philologie',
 u'Zeitschrift für sudetendeutsche Geschichte'
 ]
 
-# INIT -----------------
-
-record = Record()
-
-record.add_ordered_field(Field(tag='LDR', data='     nab a22     4a 4500'))
-record.add_ordered_field(Field(tag='FMT', data='RS'))
-record.add_ordered_field(Field(tag='003', data='CZ PrUCL'))
-record.add_ordered_field(Field(tag='005', data='20201231'))
-record.add_ordered_field(Field(tag='040', indicators=['\\','\\'], subfields=['a', 'ABB060','b', 'cze']))
-record.add_ordered_field(Field(tag='041', indicators=['0','\\'], subfields=['a', 'cze']))
-record.add_ordered_field(Field(tag='336', indicators=['\\','\\'], subfields=['a', 'text', 'b', 'txt', '2', 'rdacontent']))
-record.add_ordered_field(Field(tag='337', indicators=['\\','\\'], subfields=['a', u'bez média', 'b', 'n', '2', 'rdamedia']))
-record.add_ordered_field(Field(tag='338', indicators=['\\','\\'], subfields=['a', u'jiný', 'b', 'nz', '2', 'rdacarrier']))
-record.add_ordered_field(Field(tag='500', indicators=['\\','\\'], subfields=['a', u'Strojově převedený záznam z RETROBI bez redakční kontroly.']))
-record.add_ordered_field(Field(tag='910', indicators=['\\','\\'], subfields=['a', 'ABB060']))
-record.add_ordered_field(Field(tag='964', indicators=['\\','\\'], subfields=['a', 'RETROBI']))
-record.add_ordered_field(Field(tag='OWN', indicators=['\\','\\'], subfields=['a', 'UCLA']))
-record.add_ordered_field(Field(tag='SIF', data='RET'))
-
 #tar=tarfile.open(name=OUT + '.tar.gz', fileobj=buff, mode='w:gz')
 #info = tarfile.TarInfo(name=OUT)
 
@@ -134,17 +115,46 @@ bib = open(OUT,'w')
 
 with open(IN, 'rb') as f:
 	for LINE in f:
-		# PARSE
+
+		# INIT -----------------
+
+		record = Record()
+
+		record.add_ordered_field(Field(tag='LDR', data='     nab a22     4a 4500'))
+		record.add_ordered_field(Field(tag='FMT', data='RS'))
+		record.add_ordered_field(Field(tag='003', data='CZ PrUCL'))
+		record.add_ordered_field(Field(tag='005', data='20201231'))
+		record.add_ordered_field(Field(tag='040', indicators=['\\','\\'], subfields=['a', 'ABB060','b', 'cze']))
+		record.add_ordered_field(Field(tag='041', indicators=['0','\\'], subfields=['a', 'cze']))
+		record.add_ordered_field(Field(tag='336', indicators=['\\','\\'], subfields=['a', 'text', 'b', 'txt', '2', 'rdacontent']))
+		record.add_ordered_field(Field(tag='337', indicators=['\\','\\'], subfields=['a', u'bez média', 'b', 'n', '2', 'rdamedia']))
+		record.add_ordered_field(Field(tag='338', indicators=['\\','\\'], subfields=['a', u'jiný', 'b', 'nz', '2', 'rdacarrier']))
+		record.add_ordered_field(Field(tag='500', indicators=['\\','\\'], subfields=['a', u'Strojově převedený záznam z RETROBI bez redakční kontroly.']))
+		record.add_ordered_field(Field(tag='910', indicators=['\\','\\'], subfields=['a', 'ABB060']))
+		record.add_ordered_field(Field(tag='964', indicators=['\\','\\'], subfields=['a', 'RETROBI']))
+		record.add_ordered_field(Field(tag='OWN', indicators=['\\','\\'], subfields=['a', 'UCLA']))
+		record.add_ordered_field(Field(tag='SIF', data='RET'))
+
+		# PARSE -----------------
+
 		j = json.loads(re.sub('(.*),$','\\1',LINE.strip()), strict=False)
 		#print(json.dumps(j, indent=2))
+		
+		if not 'tree' in j['doc']:
+			print('Broken: ' + j['id'])
+			continue
+		else:
+			print(j['id'] + ' Done.')
+
 		# 001
 		record.add_ordered_field(Field(tag='001', data='RET-' +  j['id']))
 		# 008
 		DAT='19600101'
-		if int(j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]):
-			DAT+='s' + j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
-		else:
-			DAT+='n    '
+		if j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]:
+			if int(j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]):
+				DAT+='s' + j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
+			else: DAT+='n    '
+		else: DAT+='n    '
 		DAT+='    xr            ||| ||'
 		if j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0] in SLO_MAP:
 			DAT+='slo'
@@ -179,7 +189,8 @@ with open(IN, 'rb') as f:
 		# 856
 		link = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + j['id']
 		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', link, 'y', u'původní lístek v RETROBI', '4', 'N']))
-		# write TAR
+		# WRITE -----------------
+
 		try:
 			for F in record:
 				try:
