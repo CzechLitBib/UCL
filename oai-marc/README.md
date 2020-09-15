@@ -30,6 +30,7 @@ oai-daily
 oai-weekly
 oai-monthly
 oai-monthly-7
+oai-monthly-kat
 
 country_code.txt
 lang_code.txt
@@ -41,7 +42,8 @@ sif_code.txt
 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 00 6 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 30 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
-00 4 1 * * root oai-monthly >> /var/log/oai-monthly-7.log 2>&1 &
+00 4 1 * * root oai-monthly-7 >> /var/log/oai-monthly-7.log 2>&1 &
+00 5 1 * * root oai-monthly-kat >> /var/log/oai-monthly-kat.log 2>&1 &
 </pre>
 APACHE
 <pre>
@@ -101,6 +103,8 @@ FILE
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
      oai-monthly - Crontab monthly runner.
+   oai-monthly-7 - Crontab "7" monthly runner.
+ oai-monthly-kat - Crontab "KAT" monthly runner.
 
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
