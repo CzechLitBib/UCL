@@ -3,10 +3,6 @@ DESCRIPTION
 
 Library support software.
 
-TODO
-<pre>
--cron: KAT
-</pre>
 FILE
 <pre>
  oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
