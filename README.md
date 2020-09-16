@@ -14,8 +14,3 @@ SOURCE
 
 https://github.com/KyomaHooin/UCL
 
-- JSON: year fix
--REC xml: 1x  600 bez podpole 7 + 655 bib. etc.
--CLO: 773-9 rok vytakhnou, dlouha radka na konec
--CAT: cat date + omezeni catu
--RC .. RCE
