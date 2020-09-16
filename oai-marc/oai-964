@@ -142,7 +142,7 @@ for record in records:
 		BOT=False
 		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
 			if 'a' in F:
-				if re.match('BATCH', F['a']): BOT=True
+				if 'BATCH' in F['a']: BOT=True
 		if BOT: continue
 		
 		# 1xx/6xx-653/700/710/711/730 ------------------
