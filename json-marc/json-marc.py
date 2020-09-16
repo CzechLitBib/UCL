@@ -8,9 +8,9 @@
 
 from __future__ import print_function
 
-import StringIO,tarfile,json,sys,os,re
+import subprocess,json,sys,os,re
 
-from pymarc import Record
+from pymarc import Record,MARCReader
 from pymarc.field import Field
 
 # VAR -----------------
@@ -113,6 +113,35 @@ bib = open(OUT,'w')
 
 # DEF -----------------
 
+def get_mdt(mdt):
+	ret=[]
+	try:
+		# create config, bin
+		with open('tmpfs/z3950.cfg', 'w') as f:
+			f.write('open tcp:aleph.nkp.cz:9991/AUT-UTF\n')
+			f.write('set_marcdump tmpfs/rec.bin\n')
+			f.write('find @attr 1=12 "' + mdt + '"\n')# sys. number http://aleph.nkp.cz/web/Z39_NK_cze.htm
+			f.write('show 1\n')
+			f.write('close\n')
+			f.write('quit\n')
+		# call client
+		data = subprocess.check_output(['yaz-client', '-f', 'tmpfs/z3950.cfg'])
+		# paprse output
+		reader = MARCReader(open('tmpfs/rec.bin','rb'))
+		for rec in reader:
+			# 100d
+			for f in rec.get_fields('100'):
+				if 'd' in f:
+					ret.append(f['d'])
+		# cleanup
+		os.remove('tmpfs/z3950.cfg')		
+		os.remove('tmpfs/rec.bin')
+	except:
+		print(mdt + ' Z39.50 error.')
+	return ret
+
+# MAIN -----------------
+
 with open(IN, 'rb') as f:
 	for LINE in f:
 
@@ -138,14 +167,11 @@ with open(IN, 'rb') as f:
 		# PARSE -----------------
 
 		j = json.loads(re.sub('(.*),$','\\1',LINE.strip()), strict=False)
-		#print(json.dumps(j, indent=2))
-		
+		#DEBUG: print(json.dumps(j, indent=2))
+		# Broken
 		if not 'tree' in j['doc']:
 			print('Broken: ' + j['id'])
 			continue
-		#else:
-		#	print(j['id'] + ' Done.')
-
 		# 001
 		record.add_ordered_field(Field(tag='001', data='RET-' +  j['id']))
 		# 008
@@ -165,62 +191,77 @@ with open(IN, 'rb') as f:
 		DAT+=' d'
 		record.add_ordered_field(Field(tag='008', data=DAT))
 		# 100
+		mdt=''
 		author = j['doc']['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0]
 		ident = j['doc']['tree']['nazvova_cast'][0]['autor'][0]['id'][0]
-		record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=['a', author, '7', ident, '4', 'AUT']))
+		if author and ident:
+			mdt = get_mdt(ident)[:1]
+		if mdt:
+			record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=['a', author,'d', mdt[0], '7', ident, '4', 'aut']))
+		else:
+			record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=['a', author, '7', ident, '4', 'aut']))
 		# 245
-		label = j['doc']['tree']['nazvova_cast'][0]['nazev'][0] + ' /'
+		#label = j['doc']['tree']['nazvova_cast'][0]['nazev'][0] + ' /'
 		name = re.sub('(.*), (.*)', '\\2 \\1', j['doc']['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0])
-		record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', label, 'c', name]))
+		if name:
+			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]', 'c', name]))
+		else:
+			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]']))
 		# 520
 		anotace = j['doc']['tree']['anotacni_cast'][0]['anotace'][0]
 		record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', anotace]))
 		# 600
 		aname = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['jmeno'][0]
 		aident = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['id'][0]
-		record.add_ordered_field(Field(tag='600', indicators=['1','4'], subfields=['a', aname, '7', aident, '2', 'czenas']))
+		if aname and aident:
+			record.add_ordered_field(Field(tag='600', indicators=['1','4'], subfields=['a', aname, '7', aident, '2', 'czenas']))
 		# 655
 		char = j['doc']['tree']['nazvova_cast'][0]['charakteristika'][0]
-		record.add_ordered_field(Field(tag='655', indicators=['\\','7'], subfields=['a', char]))
+		if char:
+			record.add_ordered_field(Field(tag='655', indicators=['\\','7'], subfields=['a', char]))
 		# 773
 		src = j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0]
 		year = j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
-		record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', year, '9', year]))
+		if src and year:
+			if len(year) == 4:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g','R.' + year, '9', year]))
+			else:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', year, '9', year]))
 		# 856
 		link = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + j['id']
 		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', link, 'y', u'původní lístek v RETROBI', '4', 'N']))
 		# WRITE -----------------
 
-		try:
-			for F in record:
-				try:
-					IND=''
-					if F.indicator1: IND += F.indicator1
-					else: IND += "\\"
-					if F.indicator2: IND += F.indicator2
-					else: IND += "\\"
-				except:
-					 IND = "\\\\"
-				try:
-					VAL=[]
-					if F.subfields:
-						for sub in F:
-							VAL.append(''.join(sub).strip())
-        					DATA = '$' + '$'.join(VAL)
-					else: DATA = ''
-				except: DATA = F.value()
-				if F.tag == 'FMT': DATA = 'RS'
-				if F.tag == 'SIF': DATA = 'RET'
-				if F.tag == 'LDR': DATA = '     nab a22     4a 4500'
-				if F.tag in ['LDR', 'FMT', 'SIF', '001', '003', '005', '008']:
-					#print('=' + str(F.tag) + '  ' + DATA)
-					bib.write('=' + str(F.tag) + '  ' + DATA.encode('utf-8')+ '\n')
-				else:
-					#print('=' + str(F.tag) + '  '+ IND + DATA)
-					bib.write('=' + str(F.tag) + '  ' + str(IND) + DATA.encode('utf-8') + '\n')
-			bib.write('\n')
-		except:
-			print( 'Write failed.')
+		#try:
+		for F in record:
+			try:
+				IND=''
+				if F.indicator1: IND += F.indicator1
+				else: IND += "\\"
+				if F.indicator2: IND += F.indicator2
+				else: IND += "\\"
+			except:
+				 IND = "\\\\"
+			try:
+				VAL=[]
+				if F.subfields:
+					for sub in F:
+						VAL.append(''.join(sub).strip())
+        				DATA = '$' + '$'.join(VAL)
+				else: DATA = ''
+			except: DATA = F.value()
+			if F.tag == 'FMT': DATA = 'RS'
+			if F.tag == 'SIF': DATA = 'RET'
+			if F.tag == 'LDR': DATA = '     nab a22     4a 4500'
+			if F.tag in ['LDR', 'FMT', 'SIF', '001', '003', '005', '008']:
+				#print('=' + str(F.tag) + '  ' + DATA)
+				bib.write('=' + str(F.tag) + '  ' + DATA.encode('utf-8')+ '\n')
+			else:
+				#print('=' + str(F.tag) + '  '+ IND + DATA)
+				bib.write('=' + str(F.tag) + '  ' + str(IND) + DATA.encode('utf-8') + '\n')
+		bib.write('\n')
+		#except:
+		#	print( 'Write failed.')
 
 # EXIT -------------------
 
