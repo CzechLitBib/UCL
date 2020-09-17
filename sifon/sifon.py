@@ -5,42 +5,46 @@
 #
 # SysNo; SIF; 1. výskyt CAT-c rok; 1. výskyt CAT-c měsíc; CATa; CATc-rok; CATc-měsíc; CATc cele
 #
+# 000989107 CAT   L $$aUCLMI$$b50$$c20170215$$lKNA01$$h2309
+# 000989107 CAT   L $$aUCLLS$$b50$$c20190321$$lKNA01$$h1148
+# 000989107 SIF   L $$ami
+#
 
 from __future__ import print_function
 
 import sys,os,re
 
 IN='uclacatsif.bib'
-OUT='uclcatsif.csv'
+#IN='demo.bib'
+OUT='uclacatsif.csv'
 
-SIF_MAP={
-'AG':'UCLAG',
-'DM':'UCLDM',
-'DAN':'UCLDR',
-'FAP':'UCLFP',
-'GR':'UCLGR',
-'NÚS':'UCLJF',
-'JCH':'UCLJCH',
-'JHK':'UCLJK',
-'JS':'UCLJS',
-'KB':'UCLKB',
-'LS':'UCLLS',
-'LUV':'UCLLUV',
-'MF':'UCLMF',
-'IM':'UCLMI',
-'MAK':'UCLMK',
-'SKU':'UCLMS',
-'PHA':'UCLPH',
-'PET':'UCLPL',
-'PAV':'UCLPN',
-'PV':'UCLPV',
-'RCE':'UCLRCE',
-'RE':'UCLRE',
-'SRA':'UCLST',
-'TP':'UCLTP',
-'VM':'UCLVM'
-}
+BUFF=[]
+FIRST=''
+
+csv = open(OUT, 'a', 0)
 
 with open(IN, 'r') as f:
-	for line in f:
-		
+	for LINE in f:
+		DATA = LINE.strip().split(' ')
+		# SIF
+		if DATA[1] == 'SIF':
+			SIF = DATA[5].replace('$$a','').decode('utf-8')
+			for BATCH in BUFF:
+				BATCH.insert(1,SIF)
+				csv.write('||'.join(BATCH).encode('utf-8') + '\n')
+			FIRST=''
+			BUFF=[]
+			#sys.exit(0)
+		# DATA
+		else:
+			IDENT = DATA[0]
+			A,C,M='','',''
+			for VAL in DATA[5].strip().split('$$'):
+				if re.match('^a', VAL): KAT = VAL.replace('a','')
+				if re.match('^c', VAL):
+					Y = VAL[1:5] # YEAR
+					M = VAL[5:7] # MONTH
+			if not FIRST: FIRST=(Y,M)
+			BUFF.append([IDENT,FIRST[0],FIRST[1],KAT,Y,M,DATA[5].strip()])
+csv.close()
+
