@@ -28,7 +28,7 @@ with open(IN, 'r') as f:
 		DATA = LINE.strip().split(' ')
 		# SIF
 		if DATA[1] == 'SIF':
-			SIF = DATA[5].replace('$$a','').decode('utf-8')
+			SIF = re.sub('\$\$a(.*)', '\\1', DATA[5]).decode('utf-8')
 			for BATCH in BUFF:
 				BATCH.insert(1,SIF)
 				csv.write('||'.join(BATCH).encode('utf-8') + '\n')
@@ -40,11 +40,13 @@ with open(IN, 'r') as f:
 			IDENT = DATA[0]
 			A,C,M='','',''
 			for VAL in DATA[5].strip().split('$$'):
-				if re.match('^a', VAL): KAT = VAL.replace('a','')
+				if re.match('^a', VAL): KAT = re.sub('^a(.*)', '\\1', VAL)
 				if re.match('^c', VAL):
 					Y = VAL[1:5] # YEAR
 					M = VAL[5:7] # MONTH
 			if not FIRST: FIRST=(Y,M)
 			BUFF.append([IDENT,FIRST[0],FIRST[1],KAT,Y,M,DATA[5].strip()])
+			#print([IDENT,FIRST[0],FIRST[1],KAT,Y,M,DATA[5].strip()])
+			#sys.exit(1)
 csv.close()
 
