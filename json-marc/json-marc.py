@@ -8,7 +8,7 @@
 
 from __future__ import print_function
 
-import subprocess,json,sys,os,re
+import sqlite3,json,sys,os,re
 
 from pymarc import Record,MARCReader
 from pymarc.field import Field
@@ -18,8 +18,8 @@ from pymarc.field import Field
 #IN='retrobi.json'
 IN='demo.json'
 OUT='retrobi.bib'
-
-#buff=StringIO.StringIO()
+AUTLOG='aut.log'
+DB='AUT.db'
 
 SLO_MAP=[
 u'Orol tatránski',
@@ -109,36 +109,32 @@ u'Zeitschrift für sudetendeutsche Geschichte'
 #tar=tarfile.open(name=OUT + '.tar.gz', fileobj=buff, mode='w:gz')
 #info = tarfile.TarInfo(name=OUT)
 
+try:
+	con = sqlite3.connect(DB)# sqlite:///your_filename.db
+	cur = con.cursor()
+except:
+	print("Failed to SQLite connect.")
+	sys.exit(1)
+
+
+
 bib = open(OUT,'w')
+autlog = open(AUTLOG, 'w')
 
 # DEF -----------------
 
-def get_mdt(mdt):
-	ret=[]
-	try:
-		# create config, bin
-		with open('tmpfs/z3950.cfg', 'w') as f:
-			f.write('open tcp:aleph.nkp.cz:9991/AUT-UTF\n')
-			f.write('set_marcdump tmpfs/rec.bin\n')
-			f.write('find @attr 1=12 "' + mdt + '"\n')# sys. number http://aleph.nkp.cz/web/Z39_NK_cze.htm
-			f.write('show 1\n')
-			f.write('close\n')
-			f.write('quit\n')
-		# call client
-		data = subprocess.check_output(['yaz-client', '-f', 'tmpfs/z3950.cfg'])
-		# paprse output
-		reader = MARCReader(open('tmpfs/rec.bin','rb'))
-		for rec in reader:
-			# 100d
-			for f in rec.get_fields('100'):
-				if 'd' in f:
-					ret.append(f['d'])
-		# cleanup
-		os.remove('tmpfs/z3950.cfg')		
-		os.remove('tmpfs/rec.bin')
-	except:
-		print(mdt + ' Z39.50 error.')
-	return ret
+def get_mdt(tag, name, ident, autlog, rec):
+	data=()
+	idn = (ident,)
+	cur.execute("SELECT a,b,c,d,q,w,zero,two FROM t WHERE seven = ?", idn)
+	data = cur.fetchone()
+	if not data:
+		autlog.write(tag + ': No AUT data. ' + rec)
+		return ()
+	elif name.rstrip(',') != data[0]:
+		autlog.write(tag + ':  AUT name do not match. ' + rec)
+		return ()
+	return data
 
 # MAIN -----------------
 
@@ -162,12 +158,11 @@ with open(IN, 'rb') as f:
 		record.add_ordered_field(Field(tag='910', indicators=['\\','\\'], subfields=['a', 'ABB060']))
 		record.add_ordered_field(Field(tag='964', indicators=['\\','\\'], subfields=['a', 'RETROBI']))
 		record.add_ordered_field(Field(tag='OWN', indicators=['\\','\\'], subfields=['a', 'UCLA']))
-		record.add_ordered_field(Field(tag='SIF', data='RET'))
 
 		# PARSE -----------------
 
 		j = json.loads(re.sub('(.*),$','\\1',LINE.strip()), strict=False)
-		#DEBUG: print(json.dumps(j, indent=2))
+		#print(json.dumps(j, indent=2))
 		# Broken
 		if not 'tree' in j['doc']:
 			print('Broken: ' + j['id'])
@@ -179,27 +174,25 @@ with open(IN, 'rb') as f:
 		if j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]:
 			if len(j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]) == 4:
 				DAT+='s' + j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
-			else: DAT+='n    '
-		else: DAT+='n    '
-		DAT+='    xr            ||| ||'
+			else: DAT+='n----'
+		else: DAT+='n----'
+		DAT+='----xr------------|||-||'
 		if j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0] in SLO_MAP:
 			DAT+='slo'
 		elif j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0] in GER_MAP:
 			DAT+='ger'
 		else:
 			DAT+='cze'
-		DAT+=' d'
+		DAT+='-d'
 		record.add_ordered_field(Field(tag='008', data=DAT))
-		# 100
-		mdt=''
-		author = j['doc']['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0]
+		# 100 a,b,c,d,q,7
+		name = j['doc']['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0]
 		ident = j['doc']['tree']['nazvova_cast'][0]['autor'][0]['id'][0]
-		if author and ident:
-			mdt = get_mdt(ident)[:1]
-		if mdt:
-			record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=['a', author,'d', mdt[0], '7', ident, '4', 'aut']))
-		else:
-			record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=['a', author, '7', ident, '4', 'aut']))
+		if name and ident:
+			mdt = get_mdt('100', name, ident, autlog, j['id'])
+			if mdt:
+				print(mdt)
+				#record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=['a', author,'d', mdt[0], '7', ident, '4', 'aut']))
 		# 245
 		#label = j['doc']['tree']['nazvova_cast'][0]['nazev'][0] + ' /'
 		name = re.sub('(.*), (.*)', '\\2 \\1', j['doc']['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0])
@@ -209,12 +202,18 @@ with open(IN, 'rb') as f:
 			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]']))
 		# 520
 		anotace = j['doc']['tree']['anotacni_cast'][0]['anotace'][0]
-		record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', anotace]))
-		# 600
-		aname = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['jmeno'][0]
-		aident = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['id'][0]
-		if aname and aident:
-			record.add_ordered_field(Field(tag='600', indicators=['1','4'], subfields=['a', aname, '7', aident, '2', 'czenas']))
+		if j['doc']['state'] == 'SEGMENTED':
+			anotace = j['doc']['segment_annotation']
+		if anotace:
+			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', anotace]))
+		# 600 a,b,c,d,q,2,7
+		name = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['jmeno'][0]
+		ident = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['id'][0]
+		if name and ident:
+			mdt = get_mdt('600', name, ident, autlog, j['id'])
+			if mdt:
+				print(mdt)
+				#record.add_ordered_field(Field(tag='600', indicators=['1','4'], subfields=['a', name, '7', ident, '2', 'czenas']))
 		# 655
 		char = j['doc']['tree']['nazvova_cast'][0]['charakteristika'][0]
 		if char:
@@ -222,14 +221,46 @@ with open(IN, 'rb') as f:
 		# 773
 		src = j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0]
 		year = j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
-		if src and year:
-			if len(year) == 4:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g','R.' + year, '9', year]))
-			else:
+
+		if j['doc']['state'] == 'SEGMENTED':
+			if j['doc']['segment_bibliography']:
+				src = re.sub('(\D+).*','\\1', j['doc']['segment_bibliography'].replace('In: ', '')).strip()
+				date = re.sub('(\D+)(.*)','\\2', j['doc']['segment_bibliography'].replace('In: ', '')).strip()
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', date, '9', year]))
+		else:
+			if len(year) == 4: year = 'R. ' + year
+			if src and year:
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', year, '9', year]))
+			if src and not year:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src]))
+			if not src and year:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g', year, '9', year]))
+
 		# 856
 		link = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + j['id']
 		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', link, 'y', u'původní lístek v RETROBI', '4', 'N']))
+		# SIF
+		sif = 'RET'
+		if j['doc']['state'] == 'SEGMENTED':
+			if j['doc']['segment_excerpter']:
+				sif = j['doc']['segment_excerpter']
+		record.add_ordered_field(Field(tag='SIF', data=sif))
+		# TIT
+		tit=''
+		if j['doc']['state'] == 'SEGMENTED':
+			if j['doc']['segment_title']:
+				tit = j['doc']['segment_title']
+				record.add_ordered_field(Field(tag='TIT', data=tit))
+		# TXT
+		ocr=''
+		if j['doc']['state'] == 'SEGMENTED':
+			if j['doc']['ocr_fix']:
+				ocr = j['doc']['ocr_fix']
+				record.add_ordered_field(Field(tag='TXT', data=ocr))
+			elif j['doc']['ocr']:
+				ocr = j['doc']['ocr']
+				record.add_ordered_field(Field(tag='TXT', data=ocr))
+
 		# WRITE -----------------
 
 		#try:
@@ -251,9 +282,11 @@ with open(IN, 'rb') as f:
 				else: DATA = ''
 			except: DATA = F.value()
 			if F.tag == 'FMT': DATA = 'RS'
-			if F.tag == 'SIF': DATA = 'RET'
+			if F.tag == 'SIF': DATA = sif
 			if F.tag == 'LDR': DATA = '     nab a22     4a 4500'
-			if F.tag in ['LDR', 'FMT', 'SIF', '001', '003', '005', '008']:
+			if F.tag == 'TIT': DATA = tit
+			if F.tag == 'TXT': DATA = ocr
+			if F.tag in ['TXT', 'TIT', 'LDR', 'FMT', 'SIF', '001', '003', '005', '008']:
 				#print('=' + str(F.tag) + '  ' + DATA)
 				bib.write('=' + str(F.tag) + '  ' + DATA.encode('utf-8')+ '\n')
 			else:
@@ -265,7 +298,9 @@ with open(IN, 'rb') as f:
 
 # EXIT -------------------
 
+autlog.close()
 bib.close()
+con.close()
 
 print('Done.')
 
