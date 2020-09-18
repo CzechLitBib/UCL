@@ -136,11 +136,11 @@ def get_mdt(tag, name, ident, autlog, rec):
 	elif name.rstrip(',') != data[0].rstrip(','):
 		autlog.write(
 			tag +
-			': AUT name do notmatch. ' +
+			': AUT name do not match. ' +
 			str(ident) +
-			' "' + name.rstrip(',').encode('utf-8') +
-			'" <> "' + data[0].rstrip(',').encode('utf-8') +
-			'"\n'
+			' | ' + name.rstrip(',').encode('utf-8') +
+			' | ' + data[0].rstrip(',').encode('utf-8') +
+			'\n'
 		)
 		return ret
 	else:
