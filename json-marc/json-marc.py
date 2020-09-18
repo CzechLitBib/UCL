@@ -124,20 +124,27 @@ autlog = open(AUTLOG, 'w')
 # DEF -----------------
 
 def get_mdt(tag, name, ident, autlog, rec):
-	data=()
+	tag_list=['a','b','c','d','q','7']
 	idn = (ident,)
-	cur.execute("SELECT a,b,c,d,q,w,zero,two FROM t WHERE seven = ?", idn)
+	ret=[]
+	cur.execute("SELECT a,b,c,d,q,seven FROM t WHERE seven = ?", idn)
 	data = cur.fetchone()
+
 	if not data:
-		autlog.write(tag + ': No AUT data. ' + rec)
-		return ()
-	elif name.rstrip(',') != data[0]:
-		autlog.write(tag + ':  AUT name do not match. ' + rec)
-		return ()
-	return data
+		autlog.write(tag + ': No AUT data. ' + rec + ' ' + ident + '\n')
+		return ret
+	elif name.rstrip(',') != data[0].rstrip(','):
+		autlog.write(tag + ': AUT name do not match. ' + rec + ' ' + ident + '\n')
+		return ret
+	else:
+		for i in range(0,6):
+			if data[i]:
+				ret.append(tag_list[i])
+				ret.append(data[i])
+	return ret
 
 # MAIN -----------------
-
+	
 with open(IN, 'rb') as f:
 	for LINE in f:
 
@@ -145,7 +152,7 @@ with open(IN, 'rb') as f:
 
 		record = Record()
 
-		record.add_ordered_field(Field(tag='LDR', data='     nab a22     4a 4500'))
+		record.add_ordered_field(Field(tag='LDR', data='-----nab-a22-----4a-4500'))
 		record.add_ordered_field(Field(tag='FMT', data='RS'))
 		record.add_ordered_field(Field(tag='003', data='CZ PrUCL'))
 		record.add_ordered_field(Field(tag='005', data='20201231'))
@@ -161,7 +168,7 @@ with open(IN, 'rb') as f:
 
 		# PARSE -----------------
 
-		j = json.loads(re.sub('(.*),$','\\1',LINE.strip()), strict=False)
+		j = json.loads(re.sub('(.*),$','\\1',LINE.rstrip(',').strip()), strict=False)
 		#print(json.dumps(j, indent=2))
 		# Broken
 		if not 'tree' in j['doc']:
@@ -185,35 +192,36 @@ with open(IN, 'rb') as f:
 			DAT+='cze'
 		DAT+='-d'
 		record.add_ordered_field(Field(tag='008', data=DAT))
-		# 100 a,b,c,d,q,7
+		# 100
 		name = j['doc']['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0]
 		ident = j['doc']['tree']['nazvova_cast'][0]['autor'][0]['id'][0]
 		if name and ident:
 			mdt = get_mdt('100', name, ident, autlog, j['id'])
 			if mdt:
-				print(mdt)
-				#record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=['a', author,'d', mdt[0], '7', ident, '4', 'aut']))
+				mdt.append('4')
+				mdt.append('aut')
+				record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=mdt))
 		# 245
-		#label = j['doc']['tree']['nazvova_cast'][0]['nazev'][0] + ' /'
 		name = re.sub('(.*), (.*)', '\\2 \\1', j['doc']['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0])
 		if name:
 			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]', 'c', name]))
 		else:
 			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]']))
 		# 520
-		anotace = j['doc']['tree']['anotacni_cast'][0]['anotace'][0]
+		anotace = j['doc']['tree']['anotacni_cast'][0]['anotace'][0].rstrip('|')
 		if j['doc']['state'] == 'SEGMENTED':
-			anotace = j['doc']['segment_annotation']
+			anotace = j['doc']['segment_annotation'].rstrip('|')
 		if anotace:
 			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', anotace]))
-		# 600 a,b,c,d,q,2,7
+		# 600
 		name = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['jmeno'][0]
 		ident = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['id'][0]
 		if name and ident:
 			mdt = get_mdt('600', name, ident, autlog, j['id'])
 			if mdt:
-				print(mdt)
-				#record.add_ordered_field(Field(tag='600', indicators=['1','4'], subfields=['a', name, '7', ident, '2', 'czenas']))
+				mdt.append('2')
+				mdt.append('czenas')
+				record.add_ordered_field(Field(tag='600', indicators=['1','4'], subfields=mdt))
 		# 655
 		char = j['doc']['tree']['nazvova_cast'][0]['charakteristika'][0]
 		if char:
@@ -225,7 +233,7 @@ with open(IN, 'rb') as f:
 		if j['doc']['state'] == 'SEGMENTED':
 			if j['doc']['segment_bibliography']:
 				src = re.sub('(\D+).*','\\1', j['doc']['segment_bibliography'].replace('In: ', '')).strip()
-				date = re.sub('(\D+)(.*)','\\2', j['doc']['segment_bibliography'].replace('In: ', '')).strip()
+				date = re.sub('(\D+)(.*)','\\2', j['doc']['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', date, '9', year]))
 		else:
 			if len(year) == 4: year = 'R. ' + year
@@ -244,26 +252,25 @@ with open(IN, 'rb') as f:
 		if j['doc']['state'] == 'SEGMENTED':
 			if j['doc']['segment_excerpter']:
 				sif = j['doc']['segment_excerpter']
-		record.add_ordered_field(Field(tag='SIF', data=sif))
+		record.add_ordered_field(Field(tag='SIF', indicators=['\\', '\\'], subfields=['a', sif]))
 		# TIT
 		tit=''
 		if j['doc']['state'] == 'SEGMENTED':
 			if j['doc']['segment_title']:
-				tit = j['doc']['segment_title']
-				record.add_ordered_field(Field(tag='TIT', data=tit))
+				tit = j['doc']['segment_title'].strip('|')
+				record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
 		ocr=''
 		if j['doc']['state'] == 'SEGMENTED':
 			if j['doc']['ocr_fix']:
 				ocr = j['doc']['ocr_fix']
-				record.add_ordered_field(Field(tag='TXT', data=ocr))
+				record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
 			elif j['doc']['ocr']:
 				ocr = j['doc']['ocr']
-				record.add_ordered_field(Field(tag='TXT', data=ocr))
+				record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
 
 		# WRITE -----------------
 
-		#try:
 		for F in record:
 			try:
 				IND=''
@@ -282,25 +289,16 @@ with open(IN, 'rb') as f:
 				else: DATA = ''
 			except: DATA = F.value()
 			if F.tag == 'FMT': DATA = 'RS'
-			if F.tag == 'SIF': DATA = sif
-			if F.tag == 'LDR': DATA = '     nab a22     4a 4500'
-			if F.tag == 'TIT': DATA = tit
-			if F.tag == 'TXT': DATA = ocr
-			if F.tag in ['TXT', 'TIT', 'LDR', 'FMT', 'SIF', '001', '003', '005', '008']:
-				#print('=' + str(F.tag) + '  ' + DATA)
+			if F.tag == 'LDR': DATA = '-----nab-a22-----4a-4500'
+			if F.tag in ['LDR', 'FMT', '001', '003', '005', '008']:
 				bib.write('=' + str(F.tag) + '  ' + DATA.encode('utf-8')+ '\n')
 			else:
-				#print('=' + str(F.tag) + '  '+ IND + DATA)
 				bib.write('=' + str(F.tag) + '  ' + str(IND) + DATA.encode('utf-8') + '\n')
 		bib.write('\n')
-		#except:
-		#	print( 'Write failed.')
 
 # EXIT -------------------
 
 autlog.close()
 bib.close()
 con.close()
-
-print('Done.')
 
