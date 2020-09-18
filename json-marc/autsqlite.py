@@ -12,7 +12,7 @@ from __future__ import print_function
 
 import sqlite3,sys,os,re
 
-IN='AUT-UTF-8.bib'
+IN='tmp/AUT-UTF-8.bib'
 OUT='AUT.db'
 
 con = sqlite3.connect(OUT)# sqlite:///your_filename.db
@@ -38,7 +38,7 @@ with open(IN, 'r') as f:
 			if re.match('^7', val): SEVEN = re.sub('^7(.*)', '\\1', val)
 		buff=[ID,A,B,C,D,Q,W,ZERO,TWO,SEVEN]
 		cur.execute("INSERT INTO t (id,a,b,c,d,q,w,zero,two,seven) VALUES (?,?,?,?,?,?,?,?,?,?);", buff)
-
+cur.execute("CREATE INDEX 'seven_index' ON t(seven);")
 con.commit()
 con.close()
 
