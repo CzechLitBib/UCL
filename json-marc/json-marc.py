@@ -137,6 +137,7 @@ def get_mdt(tag, name, ident, autlog, rec):
 		autlog.write(
 			tag +
 			': AUT name do not match. ' +
+			str(rec) + ' | ' +
 			str(ident) +
 			' | ' + name.rstrip(',').encode('utf-8') +
 			' | ' + data[0].rstrip(',').encode('utf-8') +
@@ -175,7 +176,7 @@ with open(IN, 'rb') as f:
 
 		# PARSE -----------------
 
-		j = json.loads(re.sub('(.*),$','\\1',LINE.rstrip(',').strip()), strict=False)
+		j = json.loads(LINE.strip().rstrip(','), strict=False)
 		#print(json.dumps(j, indent=2))
 		# Broken
 		if not 'tree' in j['doc']:
