@@ -290,18 +290,18 @@ with open(IN, 'rb') as f:
 							record['655'].indicator2 = 4
 					tit = tit.replace(' [' + brace[0] + ']', '')
 					# frist colon
-					colon = re.sub('(^[^:]+): .*','\\1', tit)
+					colon = re.findall('(^[^:]+):.*', tit)
 					if colon:
 						if 'c' in record['245']:
-							record['245']['c'] =  colon
+							record['245']['c'] =  colon[0]
 						else:
-							record['245'].add_subfield('c', colon)
-						tit = tit.replace(colon + ': ', '')
+							record['245'].add_subfield('c', colon[0])
+						tit = tit.replace(colon[0] + ': ', '')
 						# first dot
-						dot = re.sub('(^[^\.]+)\. .*','\\1', tit)
+						dot = re.findall('(^[^\.]+)\..*', tit)
 						if dot:
-							record['245']['a'] = dot + ' /'
-							tit = tit.replace(dot + '. ', '')
+							record['245']['a'] = dot[0] + ' /'
+							tit = tit.replace(dot[0] + '. ', '')
 							# 245
 							#print(record['245'].subfields)
 							record['245']['c'] = record['245']['c'] + ' ; ' + tit
