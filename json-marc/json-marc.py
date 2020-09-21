@@ -272,15 +272,51 @@ with open(IN, 'rb') as f:
 			if j['doc']['segment_excerpter']:
 				sir = j['doc']['segment_excerpter']
 				record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', sir]))
-		# TIT
+		# TIT + TIZ
 		tit=''
 		if j['doc']['state'] == 'SEGMENTED':
 			if j['doc']['segment_title']:
 				tit = j['doc']['segment_title'].strip('|')
 				# 655-4 a
-				if re.match('', tit):
-				
-
+				#print('before: ' + tit)
+				# last square bracer
+				brace = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', tit)
+				if brace:
+					if '655' not in record:
+						record.add_ordered_field(Field(tag='655', indicators=['\\', '4'], subfields=['a', brace[0]]))
+					else:
+						if 'a' not in record['655']:
+							record['655'].add_subfield('a', brace[0], 0)
+							record['655'].indicator2 = 4
+					tit = tit.replace(' [' + brace[0] + ']', '')
+					# frist colon
+					colon = re.sub('(^[^:]+): .*','\\1', tit)
+					if colon:
+						if 'c' in record['245']:
+							record['245']['c'] =  colon
+						else:
+							record['245'].add_subfield('c', colon)
+						tit = tit.replace(colon + ': ', '')
+						# first dot
+						dot = re.sub('(^[^\.]+)\. .*','\\1', tit)
+						if dot:
+							record['245']['a'] = dot + ' /'
+							tit = tit.replace(dot + '. ', '')
+							# 245
+							#print(record['245'].subfields)
+							record['245']['c'] = record['245']['c'] + ' ; ' + tit
+							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
+							# lang
+							lang = re.findall('(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
+							if lang:
+								record['041'].indicator1 = 1
+								record['041'].add_subfield('h', re.sub)
+								# trans
+								trans = re.sub('[Pp]řel (.*)', '\\1', tit)
+								if trans:
+									record.add_ordered_field(Field(tag='700', indicators=['0', '1'], subfields=['a', trans]))
+					
+				#print('after:' + tit)
 				record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
 		ocr=''
