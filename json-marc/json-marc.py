@@ -217,7 +217,7 @@ with open(IN, 'rb') as f:
 		if j['doc']['state'] == 'SEGMENTED':
 			anotace = j['doc']['segment_annotation'].rstrip('|')
 		if anotace:
-			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', re.sub('^[(.*)]$', '\\1', anotace)]))
+			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', re.sub('^\[(.*)\]$', '\\1', anotace)]))
 		# 600
 		name = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['jmeno'][0]
 		ident = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['id'][0]
@@ -305,14 +305,15 @@ with open(IN, 'rb') as f:
 							record['245']['c'] = record['245']['c'] + ' ; ' + tit
 							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
 							# lang
-							lang = re.findall('(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
+							lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
 							if lang:
 								record['041'].indicator1 = 1
-								record['041'].add_subfield('h', re.sub)
+								record['041'].add_subfield('h', lang[0])
+								tit = tit.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
 								# trans
-								trans = re.sub('[Pp]řel (.*)', '\\1', tit)
+								trans = re.findall(u'(?<=[Pp]řel\. ).*', tit.strip())
 								if trans:
-									record.add_ordered_field(Field(tag='700', indicators=['0', '1'], subfields=['a', trans]))
+									record.add_ordered_field(Field(tag='700', indicators=['0', '1'], subfields=['a', trans[0]]))
 					
 				record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
