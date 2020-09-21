@@ -278,7 +278,6 @@ with open(IN, 'rb') as f:
 			if j['doc']['segment_title']:
 				tit = j['doc']['segment_title'].strip('|')
 				# 655-4 a
-				#print('before: ' + tit)
 				# last square bracer
 				brace = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', tit)
 				if brace:
@@ -303,7 +302,6 @@ with open(IN, 'rb') as f:
 							record['245']['a'] = dot[0] + ' /'
 							tit = tit.replace(dot[0] + '. ', '')
 							# 245
-							#print(record['245'].subfields)
 							record['245']['c'] = record['245']['c'] + ' ; ' + tit
 							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
 							# lang
@@ -316,7 +314,6 @@ with open(IN, 'rb') as f:
 								if trans:
 									record.add_ordered_field(Field(tag='700', indicators=['0', '1'], subfields=['a', trans]))
 					
-				#print('after:' + tit)
 				record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
 		ocr=''
