@@ -21,6 +21,15 @@ OUT='retrobi.bib'
 AUTLOG='aut.log'
 DB='AUT.db'
 
+LANG_MAP={
+	'eng':['ang', 'angl', '[angl'],
+	'fre':['fr', 'Fr', 'fra', 'fran', 'franc'],
+	'lat':'lat',
+	'ger':['něm', '[něm'],
+	'rus':['rus', 'ruš' , '[ruš', 'rušt'],
+	'ita':['vlaš', 'it', 'ital']
+}
+
 SLO_MAP=[
 u'Orol tatránski',
 u'Slovenské noviny',
@@ -178,6 +187,7 @@ with open(IN, 'rb') as f:
 
 		j = json.loads(LINE.strip().rstrip(','), strict=False)
 		#print(json.dumps(j, indent=2))
+		#print(j['id'])
 		# Broken
 		if not 'tree' in j['doc']:
 			print('Broken: ' + j['id'])
@@ -214,7 +224,7 @@ with open(IN, 'rb') as f:
 			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]']))
 		# 520
 		anotace = j['doc']['tree']['anotacni_cast'][0]['anotace'][0].rstrip('|')
-		if j['doc']['state'] == 'SEGMENTED':
+		if 'segment_annotation' in j['doc']:
 			anotace = j['doc']['segment_annotation'].rstrip('|')
 		if anotace:
 			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', re.sub('^\[(.*)\]$', '\\1', anotace)]))
@@ -236,23 +246,22 @@ with open(IN, 'rb') as f:
 		# 773
 		src = j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0]
 		year = j['doc']['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
-		if j['doc']['state'] == 'SEGMENTED':
-			if j['doc']['segment_bibliography']:
-				src = re.sub('(\D+).*','\\1', j['doc']['segment_bibliography'].replace('In: ', '')).strip()
-				date = re.sub('(\D+)(.*)','\\2', j['doc']['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
-				# trailing dot
-				date = re.sub('(?<=\d{3}).$', '', date)# trailing dot
-				# 'str. ' -> 's. '
-				date = date.replace(', str. ',', s. ')
-				# page
-				page = re.findall(' s\. [^,]+,', date)
-				if page and len(page) == 1:
-					date = date.replace(page[0], '')
-					date = date + ',' + page[0].strip(',')
-				if lang == 'ger':
-					record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', 'Jg. ' + date, '9', year]))
-				else:
-					record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', u'Roč. ' + date, '9', year]))
+		if 'segment_bibliography' in j['doc']:
+			src = re.sub('(\D+).*','\\1', j['doc']['segment_bibliography'].replace('In: ', '')).strip()
+			date = re.sub('(\D+)(.*)','\\2', j['doc']['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
+			# trailing dot
+			date = re.sub('(?<=\d{3}).$', '', date)# trailing dot
+			# 'str. ' -> 's. '
+			date = date.replace(', str. ',', s. ')
+			# page
+			page = re.findall(' s\. [^,]+,', date)
+			if page and len(page) == 1:
+				date = date.replace(page[0], '')
+				date = date + ',' + page[0].strip(',')
+			if lang == 'ger':
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', 'Jg. ' + date, '9', year]))
+			else:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', u'Roč. ' + date, '9', year]))
 		else:
 			base_year = year
 			if len(year) == 4: year = 'R. ' + year
@@ -268,63 +277,59 @@ with open(IN, 'rb') as f:
 		# SIF
 		record.add_ordered_field(Field(tag='SIF', indicators=['\\', '\\'], subfields=['a', 'RET']))
 		# SIR
-		if j['doc']['state'] == 'SEGMENTED':
-			if j['doc']['segment_excerpter']:
-				sir = j['doc']['segment_excerpter']
-				record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', sir]))
+		if 'segment_excerpter' in j['doc']:
+			sir = j['doc']['segment_excerpter']
+			record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', sir]))
 		# TIT + TIZ
 		tit=''
-		if j['doc']['state'] == 'SEGMENTED':
-			if j['doc']['segment_title']:
-				tit = j['doc']['segment_title'].strip('|')
-				# 655-4 a
-				# last square bracer
-				brace = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', tit)
-				if brace:
-					if '655' not in record:
-						record.add_ordered_field(Field(tag='655', indicators=['\\', '4'], subfields=['a', brace[0]]))
+		if 'segment_title' in j['doc']:
+			tit = j['doc']['segment_title'].strip('|')
+			# 655-4 a
+			# last square bracer
+			brace = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', tit)
+			if brace:
+				if '655' not in record:
+					record.add_ordered_field(Field(tag='655', indicators=['\\', '4'], subfields=['a', brace[0]]))
+				else:
+					if 'a' not in record['655']:
+						record['655'].add_subfield('a', brace[0], 0)
+						record['655'].indicator2 = '4'
+				tit = tit.replace(' [' + brace[0] + ']', '')
+				# frist colon
+				colon = re.findall('(^[^:]+):.*', tit)
+				if colon:
+					if 'c' in record['245']:
+						record['245']['c'] =  colon[0]
 					else:
-						if 'a' not in record['655']:
-							record['655'].add_subfield('a', brace[0], 0)
-							record['655'].indicator2 = 4
-					tit = tit.replace(' [' + brace[0] + ']', '')
-					# frist colon
-					colon = re.findall('(^[^:]+):.*', tit)
-					if colon:
-						if 'c' in record['245']:
-							record['245']['c'] =  colon[0]
-						else:
-							record['245'].add_subfield('c', colon[0])
-						tit = tit.replace(colon[0] + ': ', '')
-						# first dot
-						dot = re.findall('(^[^\.]+)\..*', tit)
-						if dot:
-							record['245']['a'] = dot[0] + ' /'
-							tit = tit.replace(dot[0] + '. ', '')
-							# 245
-							record['245']['c'] = record['245']['c'] + ' ; ' + tit
-							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
-							# lang
-							lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
-							if lang:
-								record['041'].indicator1 = 1
-								record['041'].add_subfield('h', lang[0])
-								tit = tit.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
-								# trans
-								trans = re.findall(u'(?<=[Pp]řel\. ).*', tit.strip())
-								if trans:
-									record.add_ordered_field(Field(tag='700', indicators=['0', '1'], subfields=['a', trans[0]]))
-					
-				record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
+						record['245'].add_subfield('c', colon[0])
+					tit = tit.replace(colon[0] + ': ', '')
+					# first dot
+					dot = re.findall('(^[^\.]+)\..*', tit)
+					if dot:
+						record['245']['a'] = dot[0] + ' /'
+						tit = tit.replace(dot[0] + '. ', '')
+						# 245
+						record['245']['c'] = record['245']['c'] + ' ; ' + tit
+						record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
+						# lang
+						lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
+						if lang:
+							record['041'].indicator1 = '1'
+							record['041'].add_subfield('h', lang[0])
+							tit = tit.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
+							# trans
+							trans = re.findall(u'(?<=[Pp]řel\. ).*', tit.strip())
+							if trans:
+								record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
+			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
 		ocr=''
-		if j['doc']['state'] == 'SEGMENTED':
-			if j['doc']['ocr_fix']:
-				ocr = j['doc']['ocr_fix']
-				record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
-			elif j['doc']['ocr']:
-				ocr = j['doc']['ocr']
-				record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
+		if 'ocr_fix' in j['doc']:
+			ocr = j['doc']['ocr_fix']
+			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
+		elif 'ocr' in j['doc']:
+			ocr = j['doc']['ocr']
+			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
 
 		# WRITE -----------------
 
