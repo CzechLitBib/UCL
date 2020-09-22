@@ -10,7 +10,7 @@ from __future__ import print_function
 
 import sqlite3,json,sys,os,re
 
-from pymarc import Record,MARCReader
+from pymarc import Record
 from pymarc.field import Field
 
 # VAR -----------------
@@ -22,12 +22,12 @@ AUTLOG='aut.log'
 DB='AUT.db'
 
 LANG_MAP={
-	'eng':['ang', 'angl', '[angl'],
-	'fre':['fr', 'Fr', 'fra', 'fran', 'franc'],
-	'lat':'lat',
-	'ger':['něm', '[něm'],
-	'rus':['rus', 'ruš' , '[ruš', 'rušt'],
-	'ita':['vlaš', 'it', 'ital']
+	'eng':[u'ang', u'angl', u'[angl'],
+	'fre':[u'fr', u'Fr', u'fra', u'fran', u'franc'],
+	'lat':u'lat',
+	'ger':[u'něm', u'[něm'],
+	'rus':[u'rus', u'ruš' , u'[ruš', u'rušt'],
+	'ita':[u'vlaš', u'it', u'ital']
 }
 
 SLO_MAP=[
@@ -132,6 +132,12 @@ autlog = open(AUTLOG, 'w')
 
 # DEF -----------------
 
+def get_lang(lang):
+	for l in LANG_MAP:
+		if lang in LANG_MAP[l]:
+			return l
+	return lang	
+
 def get_mdt(tag, name, ident, autlog, rec):
 	tag_list=['a','b','c','d','q','7']
 	idn = (ident,)
@@ -161,7 +167,7 @@ def get_mdt(tag, name, ident, autlog, rec):
 	return ret
 
 # MAIN -----------------
-	
+
 with open(IN, 'rb') as f:
 	for LINE in f:
 
@@ -315,7 +321,7 @@ with open(IN, 'rb') as f:
 						lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
 						if lang:
 							record['041'].indicator1 = '1'
-							record['041'].add_subfield('h', lang[0])
+							record['041'].add_subfield('h', get_lang(lang[0]))
 							tit = tit.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
 							# trans
 							trans = re.findall(u'(?<=[Pp]řel\. ).*', tit.strip())
