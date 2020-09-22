@@ -7,12 +7,6 @@ INSTALL
 <pre>
 apt-get install python-setuptools python-lxml python-six
 
-<a href="https://pypi.org/project/pyoai/#files">pyoai-2.5.0.tar.gz</a>
-
-tar xzf pyoai-2.5.0.tar.gz
-cd pyoai-2.5.0
-python -B setup.py install
-
 <a href="https://pypi.org/project/pymarc/#files">pymarc-3.1.13.tar.gz</a>
 
 tar xzf pymarc-3.1.13.tar.gz
@@ -21,7 +15,8 @@ python -B setup.py install
 </pre>
 FILE
 <pre>
-json-marc.py - Main program.
+json-marc.py - Convert JSON to Aleph.
+autsqlite.py - Convert Aleph 100 to indexed SQLite3 DB.
 </pre>
 SOURCE
 
