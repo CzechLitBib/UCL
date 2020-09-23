@@ -17,6 +17,7 @@ FILE
 <pre>
 json-marc.py - Convert JSON to Aleph.
 autsqlite.py - Convert Aleph 100 to indexed SQLite3 DB.
+   autmdt.py - Cotrol AUT over Z35.90.
 </pre>
 SOURCE
 
