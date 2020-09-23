@@ -15,108 +15,126 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-#IN='retrobi.json'
+#IN='tmp/retrobi.json'
 IN='demo.json'
 OUT='retrobi.bib'
 AUTLOG='aut.log'
+BROKEN='broken.log'
 DB='AUT.db'
 
 LANG_MAP={
+	'bul':u'bul',
+	'chi':u'čín',
+	'cze':u'češ',
+	'dan':u'dán',
 	'eng':[u'ang', u'angl', u'[angl'],
+	'fin':u'fin',
 	'fre':[u'fr', u'Fr', u'fra', u'fran', u'franc'],
-	'lat':u'lat',
 	'ger':[u'něm', u'[něm'],
+	'gre':[u'řeč', u'řec'],
+	'hrv':[u'chor',u'chrv'],
+	'hun':[u'maď', u'maďar', u'maďarš'],
+	'ita':[u'vlaš', u'it', u'ital'],
+	'jpn':u'jap',
+	'lat':u'lat',
+	'lot':u'lav',
+	'nor':u'nor',
+	'pol':u'pol',
+	'por':u'port',
+	'rum':u'rum',
 	'rus':[u'rus', u'ruš' , u'[ruš', u'rušt'],
-	'ita':[u'vlaš', u'it', u'ital']
+	'tur':u'tur'	
 }
 
 SLO_MAP=[
-u'Orol tatránski',
-u'Slovenské noviny',
-u'Slovenskje pohladi na vedi, umeňja a literatúru',
-u'Nitra',
-u'Hronka'
+	u'Orol tatránski',
+	u'Slovenské noviny',
+	u'Slovenskje pohladi na vedi, umeňja a literatúru',
+	u'Nitra',
+	u'Hronka'
 ]
 
 GER_MAP=[
-u'Abhandlungen der königlichen böhmischen Gesellschaft der Wissenschaften',
-u'Akademie',
-u'Archiv für österreichische Geschichte',
-u'Archiv für slavische Philologie',
-u'Beiträge zur Heimatkunde des Aussig-Karbitzer Bezirkes',
-u'Bild und Leben',
-u'Bohemia',
-u'Böhmen und Mähren',
-u'Brünner Zeitung',
-u'Camelien',
-u'Constitutionelle Allgemeine Zeitung von Böhmen',
-u'Constitutionelle Prager Zeitung',
-u'Constitutionelles Blatt aus Böhmen',
-u'Correspondenz',
-u'Čechische revue',
-u'Das literarische Echo',
-u'Das Vaterland',
-u'Der Ackermann aus Böhmen',
-u'Der Bote von der Egger',
-u'Der Freund des Volkes',
-u'Der Wegweiser',
-u'Deutsche Zeitung aus Böhmen',
-u'Deutsches Archiv für Geschichte des Mittelalters',
-u'Die Literatur',
-u'Die Waage für Freiheit, Recht und Wahrheit', 
-u'Erinnerungen an merkwürdige Gegenstände und Begebenheiten',
-u'Fort mit den Zöpfen!',
-u'Für Kalobiotik',
-u'Germanoslavica',
-u'Illustriertes Volksblatt für Böhmen',
-u'Jahrbücher für Kultur und Geschichte der Slaven',
-u'Kritische Blätter für Literatur und Kunst',
-u'Kunst und Wissenschaft',
-u'Länder',
-u'Leben der slavischen Völker',
-u'Libussa',
-u'Mittheilungen des Vereines für Geschichte der Deutschen in Böhmen',
-u'Monatschrift der Gesellschaft des vaterländischen Museums in Böhmen',
-u'Neue Litteratur',
-u'Neue Zeit',
-u'Oesterreichisches Morgenblatt',
-u'Olmützer Zeitschrift',
-u'Ost und West',
-u'Österreichischer Correspondent',
-u'Panorama',
-u'Panorama des Universums',
-u'Pilsner Anzeiger',
-u'Politik',
-u'Politik',
-u'Politisches Wochenblatt',
-u'Prag',
-u'Prager Abendblatt',
-u'Prager Bahnhof',
-u'Prager Presse',
-u'Prager Rundschau',
-u'Prager Tagblatt',
-u'Prager Zeitung',
-u'Slavische Centralblätter',
-u'Slavische Rundschau',
-u'Slowanka',
-u'Sonntagsblätter für heimatliche Interessen',
-u'Stadt und Land',
-u'Sudetendeutsche Zeitschrift für Volkskunde',
-u'Sudetendeutschen',
-u'Tagesbote aus Böhmen',
-u'Union',
-u'Unterhaltungsblätter',
-u'Volksblatt für Böhmen',
-u'Witiko',
-u'Wochenblätter für Freiheit und Gesetz',
-u'Zeitschrift des Deutschen Vereins für die Geschichte Mährens und Schlesiens',
-u'Zeitschrift für Geschichte und Kulturgeschichte Oesterreichisch-Schlesiens',
-u'Zeitschrift für Slavische Philologie',
-u'Zeitschrift für sudetendeutsche Geschichte'
+	u'Abhandlungen der königlichen böhmischen Gesellschaft der Wissenschaften',
+	u'Akademie',
+	u'Archiv für österreichische Geschichte',
+	u'Archiv für slavische Philologie',
+	u'Beiträge zur Heimatkunde des Aussig-Karbitzer Bezirkes',
+	u'Bild und Leben',
+	u'Bohemia',
+	u'Böhmen und Mähren',
+	u'Brünner Zeitung',
+	u'Camelien',
+	u'Constitutionelle Allgemeine Zeitung von Böhmen',
+	u'Constitutionelle Prager Zeitung',
+	u'Constitutionelles Blatt aus Böhmen',
+	u'Correspondenz',
+	u'Čechische revue',
+	u'Das literarische Echo',
+	u'Das Vaterland',
+	u'Der Ackermann aus Böhmen',
+	u'Der Bote von der Egger',
+	u'Der Freund des Volkes',
+	u'Der Wegweiser',
+	u'Deutsche Zeitung aus Böhmen',
+	u'Deutsches Archiv für Geschichte des Mittelalters',
+	u'Die Literatur',
+	u'Die Waage für Freiheit, Recht und Wahrheit', 
+	u'Erinnerungen an merkwürdige Gegenstände und Begebenheiten',
+	u'Fort mit den Zöpfen!',
+	u'Für Kalobiotik',
+	u'Germanoslavica',
+	u'Illustriertes Volksblatt für Böhmen',
+	u'Jahrbücher für Kultur und Geschichte der Slaven',
+	u'Kritische Blätter für Literatur und Kunst',
+	u'Kunst und Wissenschaft',
+	u'Länder',
+	u'Leben der slavischen Völker',
+	u'Libussa',
+	u'Mittheilungen des Vereines für Geschichte der Deutschen in Böhmen',
+	u'Monatschrift der Gesellschaft des vaterländischen Museums in Böhmen',
+	u'Neue Litteratur',
+	u'Neue Zeit',
+	u'Oesterreichisches Morgenblatt',
+	u'Olmützer Zeitschrift',
+	u'Ost und West',
+	u'Österreichischer Correspondent',
+	u'Panorama',
+	u'Panorama des Universums',
+	u'Pilsner Anzeiger',
+	u'Politik',
+	u'Politik',
+	u'Politisches Wochenblatt',
+	u'Prag',
+	u'Prager Abendblatt',
+	u'Prager Bahnhof',
+	u'Prager Presse',
+	u'Prager Rundschau',
+	u'Prager Tagblatt',
+	u'Prager Zeitung',
+	u'Slavische Centralblätter',
+	u'Slavische Rundschau',
+	u'Slowanka',
+	u'Sonntagsblätter für heimatliche Interessen',
+	u'Stadt und Land',
+	u'Sudetendeutsche Zeitschrift für Volkskunde',
+	u'Sudetendeutschen',
+	u'Tagesbote aus Böhmen',
+	u'Union',
+	u'Unterhaltungsblätter',
+	u'Volksblatt für Böhmen',
+	u'Witiko',
+	u'Wochenblätter für Freiheit und Gesetz',
+	u'Zeitschrift des Deutschen Vereins für die Geschichte Mährens und Schlesiens',
+	u'Zeitschrift für Geschichte und Kulturgeschichte Oesterreichisch-Schlesiens',
+	u'Zeitschrift für Slavische Philologie',
+	u'Zeitschrift für sudetendeutsche Geschichte'
 ]
 
 #tar=tarfile.open(name=OUT + '.tar.gz', fileobj=buff, mode='w:gz')
 #info = tarfile.TarInfo(name=OUT)
+
+# INIT -----------------
 
 try:
 	con = sqlite3.connect(DB)# sqlite:///your_filename.db
@@ -125,10 +143,9 @@ except:
 	print("Failed to SQLite connect.")
 	sys.exit(1)
 
-
-
 bib = open(OUT,'w')
 autlog = open(AUTLOG, 'w')
+broken = open(BROKEN, 'w')
 
 # DEF -----------------
 
@@ -196,7 +213,7 @@ with open(IN, 'rb') as f:
 		#print(j['id'])
 		# Broken
 		if not 'tree' in j['doc']:
-			print('Broken: ' + j['id'])
+			broken.write('Broken: ' + j['id'] + '\n')
 			continue
 		# 001
 		record.add_ordered_field(Field(tag='001', data='RET-' +  j['id']))
@@ -366,6 +383,7 @@ with open(IN, 'rb') as f:
 
 # EXIT -------------------
 
+broken.close()
 autlog.close()
 bib.close()
 con.close()
