@@ -836,8 +836,8 @@ for record in records:
 			if 'xr' not in metadata['044'].value(): CNB=False
 		if metadata.leader:
 			if metadata.leader[7] != 'm': CNB=False
-		if '506' in metadata:
-			if re.match(u'^Bez čísla ČNB.*', metadata['506'].value()): CNB=False
+		for F in metadata.get_fields('506'):
+			if re.match(u'^Bez čísla ČNB.*', F.value()): CNB=False
 		if CNB:
 			if '015' not in metadata:
 				write_error(header.identifier(), '506', SIF, '132', 'Chybí číslo ČNB.')
