@@ -852,8 +852,8 @@ for record in records:
 		if '008' in metadata:
 			if metadata['008'].value()[7:11].isdigit():
 				if int(metadata['008'].value()[7:11]) < 1989: ISBN=False
-		if '506' in metadata:
-			if re.match('.*ISBN.*', metadata['506'].value()): ISBN=False
+		for F in metadata.get_fields('506'):
+			if 'ISBN' in F.value(): ISBN=False
 		if ISBN:
 			if '020' not in metadata:
 				write_error(header.identifier(), '020', SIF, '134', 'Chybí ISBN.')
