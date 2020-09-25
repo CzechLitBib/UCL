@@ -30,12 +30,14 @@ def check_mdt(i,n1):
 	for rec in reader:
 		if '100' in rec and 'a' in rec['100']:
 			if n1.strip(',').decode('utf-8') != rec['100']['a'].strip(','):
-				if '400' in rec and 'a' in rec['400']:
-					if n1.strip(',').decode('utf-8') == rec['400']['a'].strip(','):
-						ret = '400'
-				if '500' in rec and 'a' in rec['500']:
-					if n1.strip(',').decode('utf-8') == rec['500']['a'].strip(','):
-						ret = '500'
+				for F in rec.get_fields('400'):
+					if 'a' in F:
+						if n1.strip(',').decode('utf-8') == F['a'].strip(','):
+							ret = '400'
+				for F in rec.get_fields('500'):
+					if 'a' in F:
+						if n1.strip(',').decode('utf-8') == F['a'].strip(','):
+							ret = '500'
 			else:
 				ret = '100'
 	# cleanup
