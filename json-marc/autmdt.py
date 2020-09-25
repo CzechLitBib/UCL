@@ -14,7 +14,7 @@ from lxml.etree import tostring
 AUT='aut.csv'
 
 def check_mdt(i,n1):
-	ret = 'Failed.'
+	ret = ['Failed.','']
 	# create config, bin
 	with open('z3950.cfg', 'w') as f:
 		f.write('open tcp:aleph.nkp.cz:9991/AUT-UTF\n')
@@ -30,16 +30,17 @@ def check_mdt(i,n1):
 	for rec in reader:
 		if '100' in rec and 'a' in rec['100']:
 			if n1.strip(',').decode('utf-8') != rec['100']['a'].strip(','):
+				ret = ['Failed.', rec['100']['a']]
 				for F in rec.get_fields('400'):
 					if 'a' in F:
 						if n1.strip(',').decode('utf-8') == F['a'].strip(','):
-							ret = '400'
+							ret = ['400', rec['100']['a']]
 				for F in rec.get_fields('500'):
 					if 'a' in F:
 						if n1.strip(',').decode('utf-8') == F['a'].strip(','):
-							ret = '500'
+							ret = ['500', rec['100']['a']]
 			else:
-				ret = '100'
+				ret = ['100', rec['100']['a']]
 	# cleanup
 	os.remove('z3950.cfg')		
 	os.remove('rec.bin')
@@ -48,5 +49,6 @@ def check_mdt(i,n1):
 with open(AUT, 'r') as f:
 	for line in f:
 		ident, name1, name2 = line.split('|') 
-		print(ident + ' | ' + name1 + ' | ' + check_mdt(ident,name1))
+		code, value = check_mdt(ident, name1)
+		print(ident + ' | ' + name1 + ' | ' + value.encode('utf-8')+ ' | ' + code)
 
