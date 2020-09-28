@@ -8,7 +8,7 @@
 
 from __future__ import print_function
 
-import sqlite3,json,sys,os,re
+import subprocess,sqlite3,json,sys,os,re
 
 from pymarc import Record
 from pymarc.field import Field
@@ -183,6 +183,38 @@ def get_mdt(tag, name, ident, autlog, rec):
 				ret.append(data[i])
 	return ret
 
+def live_mdt(seven,name):
+	ret = False
+	# create config, bin
+	with open('z3950.cfg', 'w') as f:
+		f.write('open tcp:aleph.nkp.cz:9991/AUT-UTF\n')
+		f.write('set_marcdump rec.bin\n')
+		f.write('find @attr 1=12 "' + seven + '"\n')# sys. number http://aleph.nkp.cz/web/Z39_NK_cze.htm
+		f.write('show 1\n')
+		f.write('close\n')
+		f.write('quit\n')
+	# call client
+	data = subprocess.check_output(['yaz-client', '-f', 'z3950.cfg'])
+	# paprse output
+	reader = MARCReader(open('rec.bin','rb'))
+	for rec in reader:
+		if '100' in rec and 'a' in rec['100']:
+			if n1.strip(',').decode('utf-8') != rec['100']['a'].strip(','):
+				ret = ['Failed.', rec['100']['a']]
+				for F in rec.get_fields('400'):
+					if 'a' in F:
+						if n1.strip(',').decode('utf-8') == F['a'].strip(','): ret = True
+				for F in rec.get_fields('500'):
+					if 'a' in F:
+						if n1.strip(',').decode('utf-8') == F['a'].strip(','): ret = True
+			else:
+				ret = True
+	# cleanup
+	os.remove('z3950.cfg')          
+	os.remove('rec.bin')
+	if ret: return True
+	return False
+
 # MAIN -----------------
 
 with open(IN, 'rb') as f:
@@ -213,6 +245,7 @@ with open(IN, 'rb') as f:
 		#print(j['id'])
 		# Broken
 		if not 'tree' in j['doc']:
+			#print('Broken: ' + j['id'])
 			broken.write('Broken: ' + j['id'] + '\n')
 			continue
 		# 001
@@ -318,32 +351,46 @@ with open(IN, 'rb') as f:
 						record['655'].add_subfield('a', brace[0], 0)
 						record['655'].indicator2 = '4'
 				tit = tit.replace(' [' + brace[0] + ']', '')
-				# frist colon
-				colon = re.findall('(^[^:]+):.*', tit)
-				if colon:
-					if 'c' in record['245']:
-						record['245']['c'] =  colon[0]
-					else:
-						record['245'].add_subfield('c', colon[0])
-					tit = tit.replace(colon[0] + ': ', '')
-					# first dot
-					dot = re.findall('(^[^\.]+)\..*', tit)
-					if dot:
-						record['245']['a'] = dot[0] + ' /'
-						tit = tit.replace(dot[0] + '. ', '')
-						# 245
-						record['245']['c'] = record['245']['c'] + ' ; ' + tit
-						record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
-						# lang
-						lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
-						if lang:
-							record['041'].indicator1 = '1'
-							record['041'].add_subfield('h', get_lang(lang[0]))
-							tit = tit.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
-							# trans
-							trans = re.findall(u'(?<=[Pp]řel\. ).*', tit.strip())
-							if trans:
-								record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
+				# poem
+				if brace[0] in [u'Báseň', u'báseň']: # , u'básně', u'Básně']:
+					tit = tit.replace(u' [Báseň]', '').replace(u' [báseň]', '')
+					if ':' in tit and len(re.findall('\.\.\.', tit)) == 1:
+						poem = re.findall('(?<=:).*(?=\.\.\.)', tit)
+						if poem and len(re.findall('(?<!\.\.)\. |(?<!\.)\. ', poem[0])) == 1:
+							part = poem[0].split('. ', 1)
+							record['245']['a'] = part[0] + ' :'
+							record['245'].add_subfield('b',   part[1] + ' /')
+							if tit.split('...')[1]:
+								record['245'].add_subfield('c', tit.split(':')[0] + ' ;' + tit.split('...')[1])
+							else:
+								record['245'].add_subfield('c', tit.split(':')[0])
+				else:
+					# frist colon
+					colon = re.findall('(^[^:]+):.*', tit)
+					if colon:
+						if 'c' in record['245']:
+							record['245']['c'] =  colon[0]
+						else:
+							record['245'].add_subfield('c', colon[0])
+							tit = tit.replace(colon[0] + ': ', '')
+							# first dot
+							dot = re.findall('(^[^\.]+)\..*', tit)
+							if dot:
+								record['245']['a'] = dot[0] + ' /'
+								tit = tit.replace(dot[0] + '. ', '')
+								# 245
+								record['245']['c'] = record['245']['c'] + ' ; ' + tit
+								record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
+								# lang
+								lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
+								if lang:
+									record['041'].indicator1 = '1'
+									record['041'].add_subfield('h', get_lang(lang[0]))
+									tit = tit.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
+									# trans
+									trans = re.findall(u'(?<=[Pp]řel\. ).*', tit.strip())
+									if trans:
+										record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
 			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
 		ocr=''
