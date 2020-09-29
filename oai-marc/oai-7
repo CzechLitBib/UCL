@@ -21,10 +21,10 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 
-MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
-MAIL_TARGET='vecerova@ucl.cas.cz'
-MAIL_SERVER='listonos.ucl.cas.cz'
-MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
+MAIL_SENDER='xxx'
+MAIL_TARGET='[xxx]'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
 LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
 LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
@@ -129,14 +129,16 @@ def notify():
 	msg['From'] = 'UCL Kontrola <' + MAIL_SENDER + '>'
 	msg['To'] = MAIL_TARGET
 	try:
-		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
-		s.quit()
+		for mail in MAIL_TARGET:
+			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+			s.sendmail(MAIL_SENDER, mail, msg.as_string())
+			s.quit()
 	except:
 		try:
-			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
-			s.quit()
+			for mail in MAIL_TARGET:
+				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+				s.sendmail(MAIL_SENDER, mail, msg.as_string())
+				s.quit()
 		except:
 			print('Sendmail error.')
 	
