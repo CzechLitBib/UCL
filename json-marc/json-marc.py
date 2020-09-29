@@ -369,40 +369,41 @@ with open(IN, 'rb') as f:
 							record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
 				# no dot
 				elif re.match('^[^:]+: [^\.\]\[]+$', tit) and ';' not in tit:
-					record['245']['a'] = tit.split(': ')[1]
+					record['245']['a'] = tit.split(': ')[1] + ' /'
 					if 'c' in record['245']:
 						record['245']['c'] = tit.split(':')[0]
 					else:
 						record['245'].add_subfield('c', tit.split(':')[0])
-				else:#
+				else:
+					t = tit
 					# frist colon
-					colon = re.findall('(^[^:]+):.*', tit)
+					colon = re.findall('(^[^:]+):.*', t)
 					if colon:
 						if 'c' in record['245']:
 							record['245']['c'] =  colon[0]
 						else:
 							record['245'].add_subfield('c', colon[0])
-							tit = tit.replace(colon[0] + ': ', '')
+							t = t.replace(colon[0] + ': ', '')
 							# first dot
-							dot = re.findall('(^[^\.]+)\..*', tit)
+							dot = re.findall('(^[^\.]+[^A-Z0-9])\..*', t)
 							if dot:
 								record['245']['a'] = dot[0] + ' /'
-								tit = tit.replace(dot[0] + '. ', '')
+								t = t.replace(dot[0] + '. ', '')
 								# 245
-								record['245']['c'] = record['245']['c'] + ' ; ' + tit
-								record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
+								record['245']['c'] = record['245']['c'] + ' ; ' + t
 								# lang
-								lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', tit)
+								lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', t)
 								if lang:
 									record['041'].indicator1 = '1'
 									record['041'].add_subfield('h', get_lang(lang[0]))
-									tit = tit.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
+									t = t.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
 									# trans
-									trans = re.findall(u'(?<=[Pp]řel\. ).*', tit.strip())
+									trans = re.findall(u'(?<=[Pp]řel\. ).*', t.strip())
 									if trans:
 										record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
-					# tiz
-					record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', tit]))
+						# tiz
+						if t != tit:
+							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', t]))
 			# tit
 			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
