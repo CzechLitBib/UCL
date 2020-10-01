@@ -43,6 +43,7 @@ LANG_MAP={
 	'por':u'port',
 	'rum':u'rum',
 	'rus':[u'rus', u'ruš' , u'[ruš', u'rušt'],
+	'scr':u'chorv',
 	'tur':u'tur'	
 }
 
@@ -319,11 +320,14 @@ with open(IN, 'rb') as f:
 						record['655'].indicator2 = '4'
 				tit = tit.replace(' [' + brace[0] + ']', '')
 				# dot triple dot
-				if re.match('^[^:]+: [^\.]+[^0-9]\. [^\.\]\[]+\.\.\.(?!\]\))( .+)?$', tit) and ';' not in tit:
+				if re.match('^[^:]+: [^\.]+[^A-Z0-9]\. [^\.\]\[]+\.\.\.(?!\]\))( .+)?$', tit) and ';' not in tit:
 					text = re.findall('(?<=:).*(?=\.\.\.)', tit)
 					part = text[0].split('. ')
 					record['245']['a'] = part[0] + ' :'
-					record['245'].add_subfield('b',   part[1] + ' /', 1)# a :b /c
+					if brace in [u'báseň', u'Báseň']:
+						record['245'].add_subfield('b', '[' + part[1] + ']' + ' /', 1)# a :b /c
+					else:
+						record['245'].add_subfield('b', part[1] + ' /', 1)# a :b /c
 					if tit.split('...')[1]:
 						if 'c' in record['245']:
 							record['245']['c'] = tit.split(':')[0] + ' ;' + tit.split('...')[1]
