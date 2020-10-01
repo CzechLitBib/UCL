@@ -22,7 +22,7 @@ from lxml.etree import tostring
 URL='https://aleph.lib.cas.cz/OAI'
 
 MAIL_SENDER='xxx'
-MAIL_TARGET='[xxx]'
+MAIL_TARGET=['xxx']
 MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
 
@@ -121,27 +121,26 @@ def is_worker(metadata):
 	return False
 
 def notify():
-	html = ('Dobrý den,<br><br>Výstupní data za uplynulý měsíc jsou dotupná na adrese:<br><br>' +
-		'<a target="_blank" href="http://pokuston.ucl.cas.cz:38080/nkp/">http://pokuston.ucl.cas.cz:38080/nkp</a><br><br>' +
-		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
-	msg = MIMEText(html.decode('utf-8'), 'html', 'utf-8')
-	msg['Subject'] = 'UCL - Kontrolní zpráva'
-	msg['From'] = 'UCL Kontrola <' + MAIL_SENDER + '>'
-	msg['To'] = MAIL_TARGET
-	try:
-		for mail in MAIL_TARGET:
+	for mail in MAIL_TARGET:
+		html = ('Dobrý den,<br><br>Výstupní data za uplynulý měsíc jsou dotupná na adrese:<br><br>' +
+			'<a target="_blank" href="http://pokuston.ucl.cas.cz:38080/nkp/">http://pokuston.ucl.cas.cz:38080/nkp</a><br><br>' +
+			'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+		msg = MIMEText(html.decode('utf-8'), 'html', 'utf-8')
+		msg['Subject'] = 'UCL - Kontrolní zpráva'
+		msg['From'] = 'UCL Kontrola <' + MAIL_SENDER + '>'
+		msg['To'] = mail
+		try:
 			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
 			s.sendmail(MAIL_SENDER, mail, msg.as_string())
 			s.quit()
-	except:
-		try:
-			for mail in MAIL_TARGET:
+		except:
+			try:
 				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
 				s.sendmail(MAIL_SENDER, mail, msg.as_string())
 				s.quit()
-		except:
-			print('Sendmail error.')
-	
+			except:
+				print('Sendmail error. ' + mail)
+
 # ARG -------------------
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
