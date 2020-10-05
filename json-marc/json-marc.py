@@ -467,9 +467,8 @@ with open(IN, 'rb') as f:
 				N1 = P.split('-')[0]
 				N2 = P.split('-')[1]
 				if len(N1) != len(N2) and int(N1) > int(N2):
-					print('before:' + record['773']['g'])
 					record['773']['g'] = record['773']['g'].replace(P, N1 + '-' + N1[:-len(N2)]  + N2)
-					print('after:' + record['773']['g'])
+
 		# WRITE -----------------
 
 		for F in record:
