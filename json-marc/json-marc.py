@@ -429,6 +429,7 @@ with open(IN, 'rb') as f:
 				if  len(name1) == 1 and name2:
 					if name2[0] in name1[0]:
 						record['245']['c'] = record['245']['c'].replace(name1[0], ', '.join(name2))
+
 		# 520a -> 787w
 		if '520' in record and 'a' in record['520']:
 			REF=False
@@ -438,6 +439,7 @@ with open(IN, 'rb') as f:
 			if REF:
 				record.add_ordered_field(Field(tag='787', indicators=['0','8'], subfields=['w', record['520']['a'].replace('Rf:','').replace('Rf.: ','')]))
 				record['520']['a'] = u'Referát.'
+
 		# 700 [=] -> 700
 		if '700' in record and 'a'  in record['700']:
 			REC = record['700']['a'].strip()
@@ -454,7 +456,20 @@ with open(IN, 'rb') as f:
 						record['700']['a'] = REC.split(' ')[1] + ', ' + REC.split(' ')[0]
 					elif re.match('^.+, .+$', REC):
 						record['700']['a'] = REC
-	
+		# 773t "LN"
+		if '773' in record and 't' in record['773']:
+			if record['773']['t'] == 'LN':
+				record['773']['t'] = u'Lidové noviny'
+
+		# 773g
+		if '773' in record and 'g' in record['773']:
+			for P in re.findall('\d+-\d+(?=[.,]|$)', record['773']['g']):
+				N1 = P.split('-')[0]
+				N2 = P.split('-')[1]
+				if len(N1) != len(N2) and int(N1) > int(N2):
+					print('before:' + record['773']['g'])
+					record['773']['g'] = record['773']['g'].replace(P, N1 + '-' + N1[:-len(N2)]  + N2)
+					print('after:' + record['773']['g'])
 		# WRITE -----------------
 
 		for F in record:
