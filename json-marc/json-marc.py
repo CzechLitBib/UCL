@@ -252,7 +252,9 @@ with open(IN, 'rb') as f:
 		if 'segment_annotation' in j['doc']:
 			anotace = j['doc']['segment_annotation'].rstrip('|')
 		if anotace:
-			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', re.sub('^\[(.*)\]$', '\\1', anotace)]))
+			anotace = re.sub('^\[(.*)\]$', '\\1', anotace)
+			if not re.match('.*\.$', anotace): anotace = anotace + '.'
+			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', anotace]))
 		# 600
 		name = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['jmeno'][0]
 		ident = j['doc']['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['id'][0]
@@ -387,24 +389,24 @@ with open(IN, 'rb') as f:
 							record['245']['c'] =  colon[0]
 						else:
 							record['245'].add_subfield('c', colon[0])
-							t = t.replace(colon[0] + ': ', '')
-							# first dot
-							dot = re.findall('(^[^\.]+[^A-Z0-9])\..*', t)
-							if dot:
-								record['245']['a'] = dot[0] + ' /'
-								t = t.replace(dot[0] + '. ', '')
-								# 245
-								record['245']['c'] = record['245']['c'] + ' ; ' + t
-								# lang
-								lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', t)
-								if lang:
-									record['041'].indicator1 = '1'
-									record['041'].add_subfield('h', get_lang(lang[0]))
-									t = t.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
-									# trans
-									trans = re.findall(u'(?<=[Pp]řel\. ).*', t.strip())
-									if trans:
-										record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
+						t = t.replace(colon[0] + ': ', '')
+						# first dot
+						dot = re.findall('(^[^\.]+[^A-Z0-9])\..*', t)
+						if dot:
+							record['245']['a'] = dot[0] + ' /'
+							t = t.replace(dot[0] + '.', '')
+							# 245
+							if t: record['245']['c'] = record['245']['c'] + ' ; ' + t
+							# lang
+							lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', t)
+							if lang:
+								record['041'].indicator1 = '1'
+								record['041'].add_subfield('h', get_lang(lang[0]))
+					 			t = t.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
+								# trans
+								trans = re.findall(u'(?<=[Pp]řel\. ).*', t.strip())
+								if trans:
+									record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
 						# tiz
 						if t != tit:
 							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', t]))
@@ -418,6 +420,24 @@ with open(IN, 'rb') as f:
 		elif 'ocr' in j['doc']:
 			ocr = j['doc']['ocr']
 			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
+
+		# 100a -> 245c
+		if '100' in record and '245' in record:
+			if 'a' in record['100'] and 'c' in record['245']:
+				name1 = re.findall('\[=([^\[\]]+)]', record['245']['c'])
+				name2 = [n.strip(',') for n in record['100']['a'].split(' ')]
+				if  len(name1) == 1 and name2:
+					if name2[0] in name1[0]:
+						record['245']['c'] = record['245']['c'].replace(name1[0], ', '.join(name2))
+		# 520a -> 787w
+		if '520' in record and 'a' in record['520']:
+			REF=False
+			if re.match('^Rf\.?: ', record['520']['a']): REF=True
+			if '655' in record and 'a' in record['655']:
+				if re.match('^ ?[Rr]ef', record['655']['a']): REF=True
+			if REF:
+				record.add_ordered_field(Field(tag='787', indicators=['0','8'], subfields=['w', record['520']['a'].replace('Rf:','').replace('Rf.: ','')]))
+				record['520']['a'] = u'Referát.'
 
 		# WRITE -----------------
 
