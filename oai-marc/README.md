@@ -61,7 +61,7 @@ APACHE
                 AllowOverride Indexes
         &lt;/Directory&gt;
 
-        &lt;Directory /var/www/html/nkp/$gt;
+        &lt;Directory /var/www/html/nkp/&gt;
                 Options +Indexes
                 HeaderName /nkp/include/HEADER.html
                 ReadmeName /nkp/include/README.html
@@ -83,7 +83,7 @@ APACHE
                 IndexIgnore .??* include
                 IndexStyleSheet  /nkp/include/STYLE.css
                 AllowOverride Indexes 
-        $lt;/Directory&gt;
+        &lt;/Directory&gt;
 </pre>
 FILE
 <pre>
