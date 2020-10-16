@@ -32,7 +32,7 @@ HEADER={
 	#'Content-Type':'application/soap+xml; charset=utf-8',
 	'Content-Type' : 'application/x-www-form-urlencoded',
 	'Content-Length':len(DATA.encode('utf-8')),
-	'Authorization':'Basic ' + base64.encodestring('ctenar:ctenar').replace('\n','')
+	#'Authorization':'Basic ' + base64.encodestring('ctenar:ctenar').replace('\n','')
 }
 
 c = httplib.HTTPConnection(SERVER, '80', timeout=10)

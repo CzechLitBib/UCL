@@ -20,15 +20,12 @@ from lxml.etree import tostring
 
 # VAR -------------------
 
+#DATA='demo.xml'
 DATA='ucla.xml'
 
 BUFF={}
 
-COUNTER=0
-
 def validate(record):
-
-	global COUNTER
 
 	metadata = record
 	IDENT = record['001'].value()
@@ -37,7 +34,9 @@ def validate(record):
 		for F in metadata.get_fields('773'):
 			if 't' in F and 'x' in F:
 				if F['x'] not in BUFF:
-					BUFF[F['x']] = F['t']
+					BUFF[F['x']] = [F['t'], 1]
+				else:
+					BUFF[F['x']][1] = BUFF[F['x']][1] + 1
 
 	# 600
  	#if len(metadata.get_fields('600')) == 1 and '7' not in metadata['600']:
@@ -148,7 +147,7 @@ marcxml.map_xml(validate, DATA)
 
 with open('issn.txt','a') as issn:
 	for k in BUFF:
-		issn.write(k.encode('utf-8') + '||' + BUFF[k].encode('utf-8') + '\n')
+		issn.write(k.encode('utf-8') + '||' + str(BUFF[k][1]) + '||' + BUFF[k][0].encode('utf-8') + '\n')
 
 # EXIT -------------------
 
