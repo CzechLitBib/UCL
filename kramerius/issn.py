@@ -29,12 +29,12 @@ with open(RD) as f:
 
 
 for i in issn:
-	print(issn[i][0] + '||' + i + '||' + issn[i][1])
+	#print(issn[i][0] + '||' + i + '||' + issn[i][1])
 	if i in rd:
 		for link in rd[i]:
 			out.write(issn[i][0] + '||' + i + '||' + issn[i][1]  + '||' + link[0] + '||' + link[1] + '\n')
 	else:
-		bad.write(i + '\n')
+		bad.write(i + '||' + issn[i][1] + '\n')
 
 out.close()
 bad.close()
