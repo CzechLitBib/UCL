@@ -20,42 +20,11 @@ from lxml.etree import tostring
 
 # VAR -------------------
 
-#CSV='all.csv'
-#DATA='uclall.xml'
-DATA='uclall.xml'
+DATA='ucla.xml'
 
-COUNTRY_CODE='/usr/local/bin/country_code.txt'
-LANG_CODE='/usr/local/bin/lang_code.txt'
-ROLE_CODE='/usr/local/bin/role_code.txt'
-SIF_CODE='/usr/local/bin/sif_code.txt'
-
-ERROR={}
+BUFF={}
 
 COUNTER=0
-
-# DEF -------------------
-
-def url_response(url):
-	#try:
-	req = urllib2.Request(url)
-	req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0')
-	if urllib2.urlopen(req, timeout=10).getcode() == 200: return 1
-	#except: pass
-	return 0
-
-def MarcXML(xml):
-	handler = marcxml.XmlHandler()
-	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
-	return handler.records[0]
-
-def write_error(ident,tag,sif,code,code_text):
-	SIF = sif.decode('utf-8').lower()
-	# ident
-	ident = str(ident.strip())
-	# print
-	#print(ident + ' ' + code + ' ' + code_text)
-	# write daily CSV
-	#csv.write(ident + ';' + sif + ';' + code + ';' + code_text + '\n')
 
 def validate(record):
 
@@ -64,247 +33,122 @@ def validate(record):
 	metadata = record
 	IDENT = record['001'].value()
 
-	# VALIDATION ------------------
+	if record.leader[7] == 'b':
+		for F in metadata.get_fields('773'):
+			if 't' in F and 'x' in F:
+				if F['x'] not in BUFF:
+					BUFF[F['x']] = F['t']
 
-	if args.check:
+	# 600
+ 	#if len(metadata.get_fields('600')) == 1 and '7' not in metadata['600']:
+	#	BIB=False
+	#	for F in metadata.get_fields('655'):
+	#		if 'a' in F and F['a'] in [
+	#			u'biografické poznámky',
+	#			u'bio-bibliografické poznámky',
+	#			u'biograficko-bibliografické poznámky',
+	#			u'bibliografické poznámky',
+	#			u'nekrology',
+	#		 	u'medailony'
+	#		]: BIB=True
+	#	if BIB:
+	#		six.write(str(IDENT) + '\n')
 
-		# 600
-	 	#if len(metadata.get_fields('600')) == 1 and '7' not in metadata['600']:
-		#	BIB=False
-		#	for F in metadata.get_fields('655'):
-		#		if 'a' in F and F['a'] in [
-		#			u'biografické poznámky',
-		#			u'bio-bibliografické poznámky',
-		#			u'biograficko-bibliografické poznámky',
-		#			u'bibliografické poznámky',
-		#			u'nekrology',
-		#		 	u'medailony'
-		#		]: BIB=True
-		#	if BIB:
-		#		six.write(str(IDENT) + '\n')
+	# CLO
+	#if metadata.leader[7] == 'b':
+	#	if '100' in metadata and '700' not in metadata:
+	#		for F in metadata.get_fields('773'):
+	#			if '9' in F and 't' in F:
+	#				if '245' in metadata and 'c' in metadata['245']:
+	#					if '100' in metadata and 'a' in metadata['100']:
+	#						clo.write(
+	#							metadata['100']['a'].encode('utf-8') + '||' +
+	#							metadata['245']['c'].encode('utf-8') + '||' +
+	#							F['9'][:4].encode('utf-8') + '||' +
+	#							F['t'].encode('utf-8') + '||' +
+	#							F.value().encode('utf-8') + '||' +
+	#							str(IDENT) + '\n'
+	#						)
 
-		# CLO
-		if metadata.leader[7] == 'b':
-			if '100' in metadata and '700' not in metadata:
-				for F in metadata.get_fields('773'):
-					if '9' in F and 't' in F:
-						if '245' in metadata and 'c' in metadata['245']:
-							if '100' in metadata and 'a' in metadata['100']:
-								clo.write(
-									metadata['100']['a'].encode('utf-8') + '||' +
-									metadata['245']['c'].encode('utf-8') + '||' +
-									F['9'][:4].encode('utf-8') + '||' +
-									F['t'].encode('utf-8') + '||' +
-									F.value().encode('utf-8') + '||' +
-									str(IDENT) + '\n'
-								)
+	#if IDENT > 
+	#	print("Time.")
+	#sys.exit(1)
 
-		#if IDENT > 
-		#	print("Time.")
-		#sys.exit(1)
+	#if 'SIF' in metadata:
+	#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+	#else:
+	#	SIF = ''
 
-		#if 'SIF' in metadata:
-		#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-		#else:
-		#	SIF = ''
+	# CSV
+	# SysNo SIF i a t n d b k h z x y 4
 
-		# CSV
-		# SysNo SIF i a t n d b k h z x y 4
+	#if COUNTER == 10000: sys.exit(1)
 
-		#if COUNTER == 10000: sys.exit(1)
+	#COUNTER+=1
 
-		#COUNTER+=1
+	#for F in metadata.get_fields('787'):
+	#	PAYLOAD=''
+	#	PAYLOAD+=str(IDENT) + '|' + SIF
+	#	for SUB in ('i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'x', 'y', '4'):
+	#		if SUB in F:
+	#			PAYLOAD+= '|' + '@'.join([s.encode('utf-8') for s in F.get_subfields(SUB)])
+	#		else:
+	#			PAYLOAD+='|'
+	#	PAYLOAD+='\n'
+	#	csv_787.write(PAYLOAD)
+	#return
+			
+	#	VAL = re.sub('( +,| +;| +:)$','', VAL).strip().strip('[').strip(']')
+	#	csv_260a.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+	#	for VAL in F.get_subfields('z'):
+	#		VAL = re.sub('( ?,| ?;| ?:)$','', VAL).strip().strip('[').strip(']')
+	#		csv_260b.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+	#	for F in metadata.get_fields('264'):
+	#		for VAL in F.get_subfields('a'):
+	#			VAL = re.sub('( +,| +;| +:)$','', VAL).strip().strip('[').strip(']')
+	#			csv_264a.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+	#	for VAL in F.get_subfields('b'):
+	#		VAL = re.sub('( ?,| ?;| ?:)$','', VAL).strip().strip('[').strip(']')
+	#		csv_264b.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
 
-		#for F in metadata.get_fields('787'):
-		#	PAYLOAD=''
-		#	PAYLOAD+=str(IDENT) + '|' + SIF
-		#	for SUB in ('i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'x', 'y', '4'):
-		#		if SUB in F:
-		#			PAYLOAD+= '|' + '@'.join([s.encode('utf-8') for s in F.get_subfields(SUB)])
-		#		else:
-		#			PAYLOAD+='|'
-		#	PAYLOAD+='\n'
-		#	csv_787.write(PAYLOAD)
-		#return
-				
-			#	VAL = re.sub('( +,| +;| +:)$','', VAL).strip().strip('[').strip(']')
-			#	csv_260a.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
-			#for VAL in F.get_subfields('z'):
-			#	VAL = re.sub('( ?,| ?;| ?:)$','', VAL).strip().strip('[').strip(']')
-			#	csv_260b.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
+	#	if 'SIF' in metadata:
+	#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+	#	else:
+	#		SIF = ''
 
-		#for F in metadata.get_fields('264'):
-		#	for VAL in F.get_subfields('a'):
-		#		VAL = re.sub('( +,| +;| +:)$','', VAL).strip().strip('[').strip(']')
-		#		csv_264a.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
-		#	for VAL in F.get_subfields('b'):
-		#		VAL = re.sub('( ?,| ?;| ?:)$','', VAL).strip().strip('[').strip(']')
-		#		csv_264b.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
-	
-		#if 'SIF' in metadata:
-		#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-		#else:
-		#	SIF = ''
+	#	if metadata.leader[7]  == 'b':
+	#		for F in metadata.get_fields('773'):
+	#			T,X,G,Q,N='','','','',''
+	#			if 't' in F: T = F['t'].encode('utf-8')
+	#			if 'x' in F: X = F['x'].encode('utf-8')
+	#			if 'g' in F: G = F['g'].encode('utf-8')
+	#			if 'q' in F: Q = F['q'].encode('utf-8')
+	#			if '9' in F: N = F['9'].encode('utf-8')
+	#			csv_773.write(str(IDENT) + '|' + SIF  + '|' + T + '|' + X  + '|' + G + '|' + Q + '|' + N + '\n')
+	#	return
 
-		#if metadata.leader[7]  == 'b':
-		#	for F in metadata.get_fields('773'):
-		#		T,X,G,Q,N='','','','',''
-		#		if 't' in F: T = F['t'].encode('utf-8')
-		#		if 'x' in F: X = F['x'].encode('utf-8')
-		#		if 'g' in F: G = F['g'].encode('utf-8')
-		#		if 'q' in F: Q = F['q'].encode('utf-8')
-		#		if '9' in F: N = F['9'].encode('utf-8')
-		#		csv_773.write(str(IDENT) + '|' + SIF  + '|' + T + '|' + X  + '|' + G + '|' + Q + '|' + N + '\n')
-		#return
-
-		# TEST TAG ------------------
-
-		#if 'SIF' in metadata:
-		#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-		#else:
-		#	SIF = ''
-
-# ARG -------------------
-
-parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
-parser.add_argument('--check', help='Validation control.', action='store_true')
-args = parser.parse_args()
-
-# INIT -------------------
-
-try:
-	with open(COUNTRY_CODE, 'r') as f: country_code = f.read().splitlines()
-except: country_code = []
-
-try:
-	with open(LANG_CODE, 'r') as f:	lang_code = f.read().splitlines()
-except: lang_code = []
-
-try:
-	with open(ROLE_CODE, 'r') as f:	role_code = f.read().splitlines()
-except: role_code = []
-
-try:
-	sif_code = {}
-	with open(SIF_CODE, 'r') as f:
-		for line in f:
-			acct_code, acct_addr = line.decode('utf-8').split(':')
-			sif_code[acct_code] = acct_addr.strip()
-except: sif_code = {}
-
+	#	if 'SIF' in metadata:
+	#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+	#	else
+	#		SIF = ''
 
 # MAIN -------------------
 
-record = Record()
+#record = Record()
 
-record.leader = '     nam a22     4i 4500'
-field = Field(tag = '001', data='002524717')
-record.add_ordered_field(field)
-field = Field(tag = '003', data='CZ PrUCL')
-record.add_ordered_field(field)
-field = Field(tag = '005', data='20200513155735.0')
-record.add_ordered_field(field)
-field = Field(tag = '008', data='191204q20192020xr            ||| ||cze d')
-record.add_ordered_field(field)
-field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
-record.add_ordered_field(field)
-field = Field(tag = '020', indicators = [' ',' '], subfields = ['a', '000-00-0X-00-0X-00', 'q', '(foo;','q','foobar;','q', 'bar)'])
-record.add_ordered_field(field)
-#field = Field(tag = '035', indicators = [' ',' '], subfields = ['a', 'bla(ISIS-B80-MFN)bla'])
+#record.leader = '     nam a22     4i 4500'
+#field = Field(tag = '001', data='002524717')
 #record.add_ordered_field(field)
-#field = Field(tag = '035', indicators = [' ',' '], subfields = ['a', 'bla(ISIS-B80-ID)bla'])
-#record.add_ordered_field(field)
-field = Field(tag = '040', indicators = [' ',' '], subfields = ['a', 'ABB060', 'b', 'cze', 'e', 'rda'])
-record.add_ordered_field(field)
-field = Field(tag = '041', indicators = ['1',' '], subfields = ['a', 'cze', 'b', 'cze', 'h', 'zza'])
-record.add_ordered_field(field)
-field = Field(tag = '044', indicators = ['1',' '], subfields = ['a','xr','b','xna'])
-record.add_ordered_field(field)
-field = Field(tag = '080', indicators = [' ',' '], subfields = ['a', '06.05NOBEL','2', 'MRF'])
-record.add_ordered_field(field)
-field = Field(tag = '100', indicators = ['0',' '], subfields = ['a', 'js.','c','[boo]','4','crp','4','oth','j','rej'])
-record.add_ordered_field(field)
-#field = Field(tag = '110', indicators = ['0',' '], subfields = ['a', 'Dokonaly zaznam.','c','[boo]','4','aut','4','oth'])
-#record.add_ordered_field(field)
-field = Field(tag = '245', indicators = ['1',' '], subfields = ['a', u'Výročí, výročí, výročí... :','b', u'[Jako že... vždycky si všímají ostatních,]', 'c', 'js., boooo.'])
-record.add_ordered_field(field)
-field = Field(tag = '260', indicators = ['1','0'], subfields = ['a','Berlin ;','a',u'München ;','a','Boston :','b','foo :','b',u'De Gruyter Oldenbourg,','c','2019.'])
-record.add_ordered_field(field)
-#field = Field(tag = '264', indicators = ['1','0'], subfields = ['a','Berlin ;','a',u'München ;','a','Boston :','b',u'De Gruyter Oldenbourg,','c','[2019].'])
-field = Field(tag = '264', indicators = ['0','0'], subfields = ['a','Foo :','b',u'De Gruyter Oldenbourg,','c','[2019].'])
-record.add_ordered_field(field)
-field = Field(tag = '300', indicators = ['1','0'], subfields = ['e', 'boo', 'a','foo'])
-record.add_ordered_field(field)
-#field = Field(tag = '264', indicators = ['1','0'], subfields = ['c', '1234'])
-#record.add_ordered_field(field)
-#field = Field(tag = '490', indicators = [' ',' '], subfields = ['a', 'foo=','v','bar.','x','bar'])
-#record.add_ordered_field(field)
-#field = Field(tag = '500', indicators = [' ',' '], subfields = ['a', u'Boo.'])
-#record.add_ordered_field(field)
-#field = Field(tag = '500', indicators = [' ',' '], subfields = ['a', u'Nepodepsáno.'])
-#record.add_ordered_field(field)
-field = Field(tag = '505', indicators = [' ',' '], subfields = ['t', u'Bez čísla ČNB','r','[=Tomas, Okurka]sdf[=Pavel, Bobek]'])
-record.add_ordered_field(field)
-field = Field(tag = '505', indicators = [' ',' '], subfields = ['t', u'Bez čísla ČNB','r','[=Tomas, Okurka]sdf[=Pavel, Bobek]'])
-record.add_ordered_field(field)
-field = Field(tag = '506', indicators = [' ',' '], subfields = ['a', u'Bez čísla ČNB','a','163','r','foo;bar'])
-record.add_ordered_field(field)
-field = Field(tag = '520', indicators = ['2',' '], subfields = ['a', 'Dokonaly zaznam.'])
-record.add_ordered_field(field)
-field = Field(tag = '600', indicators = ['0','4'], subfields = ['a', 'DGARCH.','x','foo','2','abcd'])
-record.add_ordered_field(field)
-field = Field(tag = '600', indicators = ['0','4'], subfields = ['a', 'DGARCH','x','foo','c','czenas'])
-record.add_ordered_field(field)
-field = Field(tag = '630', indicators = ['0','4'], subfields = ['a', 'Foo Bible','f','foo','s','boo'])
-record.add_ordered_field(field)
-field = Field(tag = '651', indicators = [' ','4'], subfields = ['a', 'DGARCH'])
-record.add_ordered_field(field)
-field = Field(tag = '655', indicators = [' ','7'], subfields = ['a', u'poznámky','2','czenas','7','Perfektni zaznam.'])
-record.add_ordered_field(field)
-field = Field(tag = '655', indicators = [' ','4'], subfields = ['a', u'biografické poznámky'])
-record.add_ordered_field(field)
-#field = Field(tag = '700', indicators = ['0',' '], subfields = ['a', 'Dokonaly zaznam.','c','[boooo]','4','oth','j','rej'])
-#record.add_ordered_field(field)
-field = Field(tag = '710', indicators = ['0',' '], subfields = ['a', 'Dokonaly zaznam.','c','[boo]','4','aut','4','oth'])
-record.add_ordered_field(field)
-#field = Field(tag = '773', indicators = ['0',' '], subfields = ['9','20191220-20191222','a', 'Dokonaly zaznam.','t', 'foo','g', 'Dokonaly zaznam. 2019 a 2020'])
-#record.add_ordered_field(field)
-field = Field(tag = '773', indicators = ['0',' '], subfields = ['9','2019-2020','a', 'Dokonaly zaznam.','t', 'boo','g', u'[příl. datum]','n','boo ; boo'])
-record.add_ordered_field(field)
-field = Field(tag = '773', indicators = ['0',' '], subfields = ['t', u'boo příloha'])
-record.add_ordered_field(field)
-field = Field(tag = '787', indicators = ['0','8'], subfields = ['4','boo','t', '2019', 'n','boo ; boo','x','boo ; boo'])
-record.add_ordered_field(field)
-field = Field(tag = '910', indicators = [' ',' '], subfields = ['a', 'ABB060'])
-record.add_ordered_field(field)
-field = Field(tag = '964', indicators = [' ','7'], subfields = ['a', 'B12'])
-record.add_ordered_field(field)
-field = Field(tag = '964', indicators = [' ','7'], subfields = ['a', 'INT'])
-record.add_ordered_field(field)
-field = Field(tag = 'OWN', indicators = [' ',' '], subfields = ['a', 'UCLA'])
-record.add_ordered_field(field)
-field = Field(tag = 'KAT', indicators = [' ',' '], subfields = ['a', 'UCLJF'])
-record.add_ordered_field(field)
-field = Field(tag = 'SIF', indicators = [' ',' '], subfields = ['a', 'moo'])
-record.add_ordered_field(field)
-#field = Field(tag = '856', indicators = [' ',' '], subfields = ['4', 'N', 'y','online','u','https://nic.cz'])
-#record.add_ordered_field(field)
-#field = Field(tag = '856', indicators = [' ',' '], subfields = ['4', 'N', 'y','Webarchiv'])
+#field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
 #record.add_ordered_field(field)
 
 #validate(record)
 
-try:
-	#six = open('six.txt','a')
-	clo = open('clo.csv','a')
-except:
-	print('CSV: Read only FS exiting.')
-	exit(1)
-
 marcxml.map_xml(validate, DATA)
 
-#six.close()
-clo.close()
+with open('issn.txt','a') as issn:
+	for k in BUFF:
+		issn.write(k.encode('utf-8') + '||' + BUFF[k].encode('utf-8') + '\n')
 
 # EXIT -------------------
 
