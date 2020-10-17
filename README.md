@@ -3,6 +3,11 @@ DESCRIPTION
 
 Library support software.
 
+BACKUP
+<pre>
+crontab -e
+0 0     * * *   cd ~/UCL && git add . && git commit -m "Git auto backup." >> ~/git.log 2>&1 &
+</pre>
 FILE
 <pre>
  oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
