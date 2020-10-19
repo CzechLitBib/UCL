@@ -7,8 +7,6 @@
 #
 # Kramerius grab & link
 #
-# TODO: Collection -> Volume -> Issue -> Page
-#
 
 from __future__ import print_function
 
@@ -20,44 +18,70 @@ import requests,json,time
 # [ {
 #     'volume_year' : volume_year,
 #     'volume_number' : volume_number,
-#     'volume_uuid' : volume_uuid
-#     'volume_page' : {
-#                       '1a' = page_uuid
-#                       '......
+#     'volume_pid' : volume_pid,
+#     'issue' : [
+#                  {
+#                    'issue_date' : issue_date
+#                    'issue_pid' : issue_pid
+#	             'page' : {
+#                                page_name : page_pid
+#                                ......
+#                             }
+#                  }
+#                  ......
+#               ]
 #   }
 #   ......
-# ]                      '
+# ]
 #
 
 CESLIT='uuid:f9f595d7-4116-11e1-99e8-005056a60003'
+
 DATA=[]
-INDEX=0
+VOLUME_INDEX=0
+ISSUE_INDEX=0
 
 session = requests.Session()
 
 req = session.get('https://kramerius.lib.cas.cz/search/api/v5.0/item/' + CESLIT + '/children')
 if req.status_code == 200:
-	for parent in json.loads(req.text, strict=False):
-		volume_parent = parent['pid']
-		volume_number = parent['details']['volumeNumber']
-		volume_year = parent['details']['year']
-		DATA.append({'volume_year':volume_year,'volume_number':volume_number})
-		# VOLUME
-		req = session.get('https://kramerius.lib.cas.cz/search/api/v5.0/item/' + volume_parent + '/children')
+	# VOLUUME
+	for volume in json.loads(req.text, strict=False):
+		volume_year = volume['details']['year']
+		volume_number = volume['details']['volumeNumber']
+		volume_pid = volume['pid']
+		DATA.append({
+				'volume_year':volume_year,
+				'volume_number':volume_number,
+				'volume_pid':volume_pid,
+				'issue':[]
+		})
+		print('volume: ' + volume_pid)
+		req = session.get('https://kramerius.lib.cas.cz/search/api/v5.0/item/' + volume_pid + '/children')
 		if req.status_code == 200:
-			for volume in json.loads(req.text, strict=False):
-				volume_uuid = volume['pid']
-				DATA[INDEX]['volume_uuid'] = volume_uuid
-				DATA[INDEX]['volume_page'] = {}
-				# ISSUE
-				req = session.get('https://kramerius.lib.cas.cz/search/api/v5.0/item/' + volume_uuid + '/children')
+			# ISSUE
+			for issue in json.loads(req.text, strict=False):
+				if issue['model'] != 'periodicalitem': continue# skip index listing page
+				issue_date = issue['details']['date']
+				issue_pid = issue['pid']
+				DATA[VOLUME_INDEX]['issue'].append({
+					'issue_date':issue_date,
+					'issue_pid':issue_pid,
+					'page':{}
+				})
+				print('   issue: ' + issue_pid)
+				req = session.get('https://kramerius.lib.cas.cz/search/api/v5.0/item/' + issue_pid + '/children')
 				if req.status_code == 200:
+					# PAGE
 					for page in json.loads(req.text, strict=False):
-						page_pid = page['pid']
 						page_name = page['title']
-						DATA[INDEX]['volume_page'][page_name] = page_pid
-
-		INDEX+=1
+						page_pid = page['pid']
+						DATA[VOLUME_INDEX]['issue'][ISSUE_INDEX]['page'][page_name] = page_pid
+				# update indexes
+				ISSUE_INDEX+=1
+		# update /reset indexes
+		VOLUME_INDEX+=1
+		ISSUE_INDEX=0
 		time.sleep(1)
 
 with open('ceslit.json', 'w') as ceslit:
