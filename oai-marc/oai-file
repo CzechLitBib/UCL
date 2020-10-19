@@ -36,7 +36,7 @@ def validate(record):
 		for F in metadata.get_fields('773'):
 			if 't' in F and 'x' in F:
 				if F['x'] == '0009-0468' and F['t'] == u'Česká literatura':
-					BUFF+=F.as_marc(encoding='utf-8') + '\n'
+					BUFF+=str(IDENT) + chr(0x1F) + F.as_marc(encoding='utf-8') + '\n'
 				#	print(F.as_marc(encoding='utf-8'))
 					#for L in metadata.get_fields('856'):
 					#	print(L.value().encode('utf-8'))
