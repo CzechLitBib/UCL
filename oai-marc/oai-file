@@ -23,9 +23,11 @@ from lxml.etree import tostring
 #DATA='demo.xml'
 DATA='ucla.xml'
 
-BUFF={}
+BUFF=''
 
 def validate(record):
+
+	global BUFF
 
 	metadata = record
 	IDENT = record['001'].value()
@@ -33,11 +35,11 @@ def validate(record):
 	if record.leader[7] == 'b':
 		for F in metadata.get_fields('773'):
 			if 't' in F and 'x' in F:
-				if F['x'] not in BUFF:
-					BUFF[F['x']] = [F['t'], 1]
-				else:
-					BUFF[F['x']][1] = BUFF[F['x']][1] + 1
-
+				if F['x'] == '0009-0468' and F['t'] == u'Česká literatura':
+					BUFF+=F.as_marc(encoding='utf-8') + '\n'
+				#	print(F.as_marc(encoding='utf-8'))
+					#for L in metadata.get_fields('856'):
+					#	print(L.value().encode('utf-8'))
 	# 600
  	#if len(metadata.get_fields('600')) == 1 and '7' not in metadata['600']:
 	#	BIB=False
@@ -145,9 +147,9 @@ def validate(record):
 
 marcxml.map_xml(validate, DATA)
 
-with open('issn.txt','a') as issn:
-	for k in BUFF:
-		issn.write(k.encode('utf-8') + '||' + str(BUFF[k][1]) + '||' + BUFF[k][0].encode('utf-8') + '\n')
+with open('ceslit.bib','w') as ceslit:
+	#for line in BUFF:
+		ceslit.write(BUFF)
 
 # EXIT -------------------
 
