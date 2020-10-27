@@ -206,6 +206,7 @@ with open(IN, 'rb') as f:
 		record.add_ordered_field(Field(tag='910', indicators=['\\','\\'], subfields=['a', 'ABB060']))
 		record.add_ordered_field(Field(tag='964', indicators=['\\','\\'], subfields=['a', 'RETROBI']))
 		record.add_ordered_field(Field(tag='OWN', indicators=['\\','\\'], subfields=['a', 'UCLA']))
+		record.add_ordered_field(Field(tag='SIF', indicators=['\\','\\'], subfields=['a', 'RET']))
 
 		# PARSE -----------------
 
@@ -249,7 +250,7 @@ with open(IN, 'rb') as f:
 			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]']))
 		# 520
 		anotace = j['tree']['anotacni_cast'][0]['anotace'][0].rstrip('|')
-		if 'segment_annotation' in j:
+		if 'segment_annotation' in j and j['segment_annotation']:
 			anotace = j['segment_annotation'].rstrip('|')
 		if anotace:
 			anotace = re.sub('^\[(.*)\]$', '\\1', anotace)
@@ -277,7 +278,7 @@ with open(IN, 'rb') as f:
 			src = re.sub('(\D+).*','\\1', j['segment_bibliography'].replace('In: ', '')).strip()
 			date = re.sub('(\D+)(.*)','\\2', j['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
 			# trailing dot
-			date = re.sub('(?<=\d{3}).$', '', date)# trailing dot
+			date = re.sub('(?<=\d{3})\.$', '', date)# trailing dot
 			# 'str. ' -> 's. '
 			date = date.replace(', str. ',', s. ')
 			# page
@@ -301,8 +302,6 @@ with open(IN, 'rb') as f:
 		# 856
 		link = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + j['_id']
 		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', link, 'y', u'původní lístek v RETROBI', '4', 'N']))
-		# SIF
-		record.add_ordered_field(Field(tag='SIF', indicators=['\\', '\\'], subfields=['a', 'RET']))
 		# SIR
 		if 'segment_excerpter' in j:
 			sir = j['segment_excerpter']
