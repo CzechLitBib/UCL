@@ -211,6 +211,9 @@ with open(IN, 'rb') as f:
 		# PARSE -----------------
 
 		j = json.loads(LINE.strip().rstrip(','), strict=False)
+		#if j['_id'] == '1b8bde895994f29801a8a3c23be3d91d':
+		#	print(json.dumps(j))
+		#	sys.exit(1)
 		#print(json.dumps(j, indent=2))
 		#print(j['_id'])
 		# Broken
@@ -275,7 +278,7 @@ with open(IN, 'rb') as f:
 		src = j['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0]
 		year = j['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
 		if 'segment_bibliography' in j:
-			src = re.sub('(\D+).*','\\1', j['segment_bibliography'].replace('In: ', '')).strip()
+			src = re.sub('(\D+).*','\\1', j['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
 			date = re.sub('(\D+)(.*)','\\2', j['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
 			# trailing dot
 			date = re.sub('(?<=\d{3})\.$', '', date)# trailing dot

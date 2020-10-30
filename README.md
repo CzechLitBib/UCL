@@ -6,7 +6,7 @@ Library support software.
 BACKUP
 <pre>
 crontab -e
-0 0     * * *   cd ~/UCL && git add . && git commit -m "Git auto backup." >> ~/git.log 2>&1 &
+0 0     * * *   cd ~/UCL && git add . && git commit -m "Git auto backup." && git push origin master >> ~/git.log 2>&1 &
 </pre>
 FILE
 <pre>
