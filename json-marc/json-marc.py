@@ -135,19 +135,6 @@ GER_MAP=[
 #tar=tarfile.open(name=OUT + '.tar.gz', fileobj=buff, mode='w:gz')
 #info = tarfile.TarInfo(name=OUT)
 
-# INIT -----------------
-
-try:
-	con = sqlite3.connect(DB)# sqlite:///your_filename.db
-	cur = con.cursor()
-except:
-	print("Failed to SQLite connect.")
-	sys.exit(1)
-
-bib = open(OUT,'w')
-autlog = open(AUTLOG, 'w')
-broken = open(BROKEN, 'w')
-
 # DEF -----------------
 
 def get_lang(lang):
@@ -184,6 +171,32 @@ def get_mdt(tag, name, ident, autlog, rec):
 				ret.append(data[i])
 	return ret
 
+def find(path,json):
+	node = path.split('/')
+	# root
+	if node and node[0] not in json: return ''
+	root = json[node[0]]
+	# leave
+	for leaf in node[1:]:
+		if leaf in root:
+			root = root[leaf][0]
+		else:
+			return ''
+	return root
+
+# INIT -----------------
+
+try:
+	con = sqlite3.connect(DB)
+	cur = con.cursor()
+except:
+	print("SQLite3 connection failed.")
+	sys.exit(1)
+
+bib = open(OUT,'w')
+autlog = open(AUTLOG, 'w')
+broken = open(BROKEN, 'w')
+
 # MAIN -----------------
 
 with open(IN, 'rb') as f:
@@ -210,111 +223,110 @@ with open(IN, 'rb') as f:
 
 		# PARSE -----------------
 
-		j = json.loads(LINE.strip().rstrip(','), strict=False)
-		#if j['_id'] == '1b8bde895994f29801a8a3c23be3d91d':
-		#	print(json.dumps(j))
-		#	sys.exit(1)
-		#print(json.dumps(j, indent=2))
-		#print(j['_id'])
+		jsn = json.loads(LINE.strip().rstrip(','), strict=False)
+
+		#print(json.dumps(jsn))
+		#print(json.dumps(jsn, indent=2))
+	
 		# Broken
-		if not 'tree' in j:
-			#print('Broken: ' + j['_id'])
-			broken.write('Broken: ' + j['_id'] + '\n')
-			continue
+		#if not 'tree' in j:
+		#	#print('Broken: ' + j['_id'])
+		#	broken.write('Broken: ' + j['_id'] + '\n')
+		#	continue
 		# 001
-		record.add_ordered_field(Field(tag='001', data='RET-' +  j['_id']))
+		record.add_ordered_field(Field(tag='001', data='RET-' + find('_id',jsn)))
 		# 008
-		lang='cze'
-		DAT='19600101'
-		if j['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]:
-			if len(j['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]) == 4:
-				DAT+='s' + j['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
-			else: DAT+='n----'
-		else: DAT+='n----'
-		DAT+='----xr------------|||-||'
-		if j['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0] in SLO_MAP: lang='slo'
-		if j['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0] in GER_MAP: lang='ger'
-		DAT+=lang + '-d'
-		record.add_ordered_field(Field(tag='008', data=DAT))
+		LANG='cze'
+		DATA='19600101'
+		YEAR = find('tree/bibliograficka_cast/zdroj/rok', jsn)
+		NAME = find('tree/bibliograficka_cast/zdroj/nazev', jsn)
+		if len(YEAR) == 4:
+			DATA+='s' + YEAR
+		else:
+			DATA+='n----'
+		DATA+='----xr------------|||-||'
+		if NAME in SLO_MAP: LANG='slo'
+		if NAME in GER_MAP: LANG='ger'
+		DATA+=LANG + '-d'
+		record.add_ordered_field(Field(tag='008', data=DATA))
+
 		# 100
-		name = j['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0]
-		ident = j['tree']['nazvova_cast'][0]['autor'][0]['id'][0]
-		if name and ident:
-			mdt = get_mdt('100', name, ident, autlog, j['_id'])
-			if mdt:
-				mdt.append('4')
-				mdt.append('aut')
-				record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=mdt))
+		NAME = find('tree/nazvova_cast/autor/jmeno', jsn)
+		IDENT =find('tree/nazvova_cast/autor/id', jsn)
+		if NAME and IDENT:
+			MDT = get_mdt('100', NAME, IDENT, autlog, find('_id', jsn))
+			if MDT:
+				MDT.append('4')
+				MDT.append('aut')
+				record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=MDT))
 		# 245
-		name = re.sub('(.*), (.*)', '\\2 \\1', j['tree']['nazvova_cast'][0]['autor'][0]['jmeno'][0])
-		if name:
-			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]', 'c', name]))
+		NAME = re.sub('(.*), (.*)', '\\2 \\1', find('tree/nazvova_cast/autor/jmeno', jsn))
+		if NAME:
+			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]', 'c', NAME]))
 		else:
 			record.add_ordered_field(Field(tag='245', indicators=['1','0'], subfields=['a', u'[Název textu k dispozici na připojeném lístku]']))
 		# 520
-		anotace = j['tree']['anotacni_cast'][0]['anotace'][0].rstrip('|')
-		if 'segment_annotation' in j and j['segment_annotation']:
-			anotace = j['segment_annotation'].rstrip('|')
-		if anotace:
-			anotace = re.sub('^\[(.*)\]$', '\\1', anotace)
-			if not re.match('.*\.$', anotace): anotace = anotace + '.'
-			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', anotace]))
+		ANOT= find('tree/anotacni_cast/anotace', jsn).rstrip('|')
+		if find('segment_annotation', jsn): ANOT = find('segment_annotation', jsn).rstrip('|')
+		if ANOT:
+			ANOT = re.sub('^\[(.*)\]$', '\\1', ANOT)
+			if not re.match('.*\.$', ANOT): ANOT = ANOT + '.'
+			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', ANOT]))
 		# 600
-		name = j['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['jmeno'][0]
-		ident = j['tree']['anotacni_cast'][0]['odkazovana_osoba'][0]['id'][0]
-		if name and ident:
-			mdt = get_mdt('600', name, ident, autlog, j['_id'])
-			if mdt:
-				mdt.append('2')
-				mdt.append('czenas')
-				record.add_ordered_field(Field(tag='600', indicators=['1','7'], subfields=mdt))
+		NAME = find('tree/anotacni_cast/odkazovana_osoba/jmeno', jsn)
+		IDENT = find('tree/anotacni_cast/odkazovana_osoba/id', jsn)
+		if NAME and IDENT:
+			MDT = get_mdt('600', NAME, IDENT, autlog, find('_id', jsn))
+			if MDT:
+				MDT.append('2')
+				MDT.append('czenas')
+				record.add_ordered_field(Field(tag='600', indicators=['1','7'], subfields=MDT))
 			else:
-				record.add_ordered_field(Field(tag='600', indicators=['1','7'], subfields=['a', name, '7 ', ident]))
+				record.add_ordered_field(Field(tag='600', indicators=['1','7'], subfields=['a', NAME, '7 ', IDENT]))
 		# 655
-		char = j['tree']['nazvova_cast'][0]['charakteristika'][0]
-		if char:
-			record.add_ordered_field(Field(tag='655', indicators=['\\','7'], subfields=['a', char]))
+		CHAR = find('tree/nazvova_cast/charakteristika', jsn)
+		if CHAR:
+			record.add_ordered_field(Field(tag='655', indicators=['\\','7'], subfields=['a', CHAR]))
 		# 773
-		src = j['tree']['bibliograficka_cast'][0]['zdroj'][0]['nazev'][0]
-		year = j['tree']['bibliograficka_cast'][0]['zdroj'][0]['rok'][0]
-		if 'segment_bibliography' in j:
-			src = re.sub('(\D+).*','\\1', j['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
-			date = re.sub('(\D+)(.*)','\\2', j['segment_bibliography'].replace('In: ', '')).strip().rstrip('|')
+		NAME = find('tree/bibliograficka_cast/zdroj/nazev', jsn)
+		YEAR = find('tree/bibliograficka_cast/zdroj/rok', jsn)
+		if find('segment_bibliography', jsn):
+			SRC = re.sub('(\D+).*','\\1', find('segment_bibliography', jsn).replace('In: ', '')).strip().rstrip('|')
+			DATE = re.sub('(\D+)(.*)','\\2', find('segment_bibliography', jsn).replace('In: ', '')).strip().rstrip('|')
 			# trailing dot
-			date = re.sub('(?<=\d{3})\.$', '', date)# trailing dot
+			DATE = re.sub('(?<=\d{3})\.$', '', DATE)# trailing dot
 			# 'str. ' -> 's. '
-			date = date.replace(', str. ',', s. ')
+			DATE = DATE.replace(', str. ',', s. ')
 			# page
-			page = re.findall(' s\. [^,]+,', date)
-			if page and len(page) == 1:
-				date = date.replace(page[0], '')
-				date = date + ',' + page[0].strip(',')
-			if lang == 'ger':
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', 'Jg. ' + date, '9', year]))
+			PAGE = re.findall(' s\. [^,]+,', DATE)
+			if PAGE and len(PAGE) == 1:
+				DATE = DATE.replace(PAGE[0], '')
+				DATE = DATE + ',' + PAGE[0].strip(',')
+			if LANG == 'ger':
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', 'Jg. ' + DATE, '9', YEAR]))
 			else:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', u'Roč. ' + date, '9', year]))
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', u'Roč. ' + DATE, '9', YEAR]))
 		else:
-			base_year = year
-			if len(year) == 4: year = 'R. ' + year
-			if src and year:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src, 'g', year, '9', base_year]))
-			if src and not year:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', src]))
-			if not src and year:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g', year, '9', base_year]))
+			BASE = YEAR
+			if len(YEAR) == 4: YEAR = 'R. ' + YEAR
+			if SRC and YEAR:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', YEAR, '9', BASE]))
+			if SRC and not YEAR:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC]))
+			if not SRC and YEAR:
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g', YEAR, '9', BASE]))
 		# 856
-		link = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + j['_id']
-		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', link, 'y', u'původní lístek v RETROBI', '4', 'N']))
+		LINK = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + find('_id', jsn))
+		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', LINK, 'y', u'původní lístek v RETROBI', '4', 'N']))
 		# SIR
-		if 'segment_excerpter' in j:
-			sir = j['segment_excerpter']
-			record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', sir]))
+		if find('segment_excerptor', jsn):
+			record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', find('segment_excerptor', jsn)))
 		# TIT + TIZ
-		tit=''
-		if 'segment_title' in j:
-			tit = j['segment_title'].strip('|')
+		TITLE = find('segment_title', jsn)
+		if TITLE:
+			TITLE = TITLE.strip('|')
 			# last square bracet
-			brace = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', tit)
+			brace = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', TITLE)
 			if brace:
 				if '655' not in record:
 					record.add_ordered_field(Field(tag='655', indicators=['\\', '4'], subfields=['a', brace[0]]))
@@ -415,14 +427,15 @@ with open(IN, 'rb') as f:
 			# tit
 			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
 		# TXT
-		ocr=''
-		if 'ocr_fix' in j:
-			ocr = j['ocr_fix']
-			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
-		elif 'ocr' in j:
-			ocr = j['ocr']
-			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', ocr]))
+		OCRF = find('ocr_fix', jsn)
+		OCR = find('ocr', jsn)
+		if OCRF:
+			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', OCRF]))
+		elif OCR:
+			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', OCR]))
 
+		# FIX -----------------
+	
 		# 100a -> 245c
 		if '100' in record and '245' in record:
 			if 'a' in record['100'] and 'c' in record['245']:
