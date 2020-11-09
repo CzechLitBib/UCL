@@ -205,8 +205,8 @@ with open(IN, 'rb') as f:
 		# INIT -----------------
 
 		record = Record()
-
-		record.add_ordered_field(Field(tag='LDR', data='-----nab-a22-----4a-4500'))
+	
+		LDR='-----nab-a22-----4a-4500'# overwrite internal(pymarc.record) LDR tag
 		record.add_ordered_field(Field(tag='FMT', data='RS'))
 		record.add_ordered_field(Field(tag='003', data='CZ-PrUCL'))
 		record.add_ordered_field(Field(tag='005', data='20201231'))
@@ -296,7 +296,7 @@ with open(IN, 'rb') as f:
 			SRC = re.sub('^([^,0-9]+).*', '\\1', find('segment_bibliography', jsn).replace('In:', ''))
 			SRC = SRC.rstrip('.[').strip()
 			#print(SRC.strip().encode('utf-8') + ' -> ' + find('segment_bibliography', jsn).encode('utf-8'))
-			print(SRC.strip().encode('utf-8'))
+			#print(SRC.strip().encode('utf-8'))
 			DATE = re.sub('(\D+)(.*)', '\\2', find('segment_bibliography', jsn).replace('In:', '')).strip().rstrip('|')
 			# trailing dot
 			DATE = re.sub('(?<=\d{3})\.$', '', DATE)# trailing dot
@@ -512,7 +512,7 @@ with open(IN, 'rb') as f:
 				else: DATA = ''
 			except: DATA = F.value()
 			if F.tag == 'FMT': DATA = 'RS'
-			if F.tag == 'LDR': DATA = '-----nab-a22-----4a-4500'
+			if F.tag == 'LDR': DATA = LDR
 			if F.tag in ['LDR', 'FMT', '001', '003', '005', '008']:
 				bib.write('=' + str(F.tag) + '  ' + DATA.encode('utf-8')+ '\n')
 			else:
