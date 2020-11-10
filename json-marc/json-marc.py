@@ -15,8 +15,8 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-#IN='tmp/retrobi.json'
-IN='demo.json'
+IN='tmp/retrobi.json'
+#IN='demo.json'
 OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
@@ -222,18 +222,11 @@ with open(IN, 'rb') as f:
 		record.add_ordered_field(Field(tag='SIF', indicators=['\\','\\'], subfields=['a', 'RET']))
 
 		# PARSE -----------------
-
-		jsn = json.loads(LINE.strip().rstrip(','), strict=False)
-
+		try:
+			jsn = json.loads(LINE.strip().rstrip(','), strict=False)
+		except: continue# skip broken line
 		#print(json.dumps(jsn))
 		#print(json.dumps(jsn, indent=2))
-	
-		# Broken
-		#if not 'tree' in j:
-		#	#print('Broken: ' + j['_id'])
-		#	broken.write('Broken: ' + j['_id'] + '\n')
-		#	continue
-	
 		# 001
 		record.add_ordered_field(Field(tag='001', data='RET-' + find('_id',jsn)))
 		# 008
@@ -326,6 +319,12 @@ with open(IN, 'rb') as f:
 		# SIR
 		if find('segment_excerpter', jsn):
 			record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', find('segment_excerpter', jsn)]))
+
+		OCRF = find('ocr_fix', jsn)
+		OCR = find('ocr', jsn)
+	
+		if not OCR and not OCRF:
+			broken.write(find('_id', jsn) + '\n')
 
 		continue
 
