@@ -15,8 +15,8 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-IN='tmp/retrobi.json'
-#IN='demo.json'
+#IN='tmp/retrobi.json'
+IN='demo.json'
 OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
@@ -285,21 +285,22 @@ with open(IN, 'rb') as f:
 		NAME = find('tree/bibliograficka_cast/zdroj/nazev', jsn)
 		YEAR = find('tree/bibliograficka_cast/zdroj/rok', jsn)
 		if find('segment_bibliography', jsn):
-			#SRC = re.sub('(\D+).*', '\\1', find('segment_bibliography', jsn).replace('In: ', ''))
 			SRC = re.sub('^([^,0-9]+).*', '\\1', find('segment_bibliography', jsn).replace('In:', ''))
 			SRC = SRC.rstrip('.[').strip()
-			#print(SRC.strip().encode('utf-8') + ' -> ' + find('segment_bibliography', jsn).encode('utf-8'))
-			#print(SRC.strip().encode('utf-8'))
-			DATE = re.sub('(\D+)(.*)', '\\2', find('segment_bibliography', jsn).replace('In:', '')).strip().rstrip('|')
-			# trailing dot
-			DATE = re.sub('(?<=\d{3})\.$', '', DATE)# trailing dot
-			# 'str. ' -> 's. '
-			DATE = DATE.replace(', str. ',', s. ')
+			DATE = find('segment_bibliography', jsn).replace('In:', '').replace(SRC, '').strip().rstrip('|')
+			#print(DATE.encode('utf-8'))
+			# 'str' -> 's'
+			DATE = re.sub('str[,.](?= [0-9])', 's.', DATE)
+		#	print(DATE.encode('utf-8'))
 			# page
 			PAGE = re.findall(' s\. [^,]+,', DATE)
 			if PAGE and len(PAGE) == 1:
 				DATE = DATE.replace(PAGE[0], '')
 				DATE = DATE + ',' + PAGE[0].strip(',')
+			# trailing dot year/page
+			#DATE = re.sub('(?<=\d{3})\.$', '', DATE)# trailing dot
+			#DATE = DATE.rstrip('.')
+			print(DATE.encode('utf-8'))
 			if LANG == 'ger':
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', 'Jg. ' + DATE, '9', YEAR]))
 			else:
@@ -313,21 +314,15 @@ with open(IN, 'rb') as f:
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', NAME]))
 			if not NAME and YEAR:
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g', YEAR, '9', BASE]))
+
+		continue
+
 		# 856
 		LINK = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + find('_id', jsn)
 		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', LINK, 'y', u'původní lístek v RETROBI', '4', 'N']))
 		# SIR
 		if find('segment_excerpter', jsn):
 			record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', find('segment_excerpter', jsn)]))
-
-		OCRF = find('ocr_fix', jsn)
-		OCR = find('ocr', jsn)
-	
-		if not OCR and not OCRF:
-			broken.write(find('_id', jsn) + '\n')
-
-		continue
-
 		# TIT + TIZ
 		TITLE = find('segment_title', jsn)
 		if TITLE:
