@@ -15,8 +15,9 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-#IN='tmp/retrobi.json'
-IN='demo.json'
+IN='tmp/retrobi.json'
+#IN='demo.json'
+#IN='100.json'
 OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
@@ -225,6 +226,12 @@ with open(IN, 'rb') as f:
 		try:
 			jsn = json.loads(LINE.strip().rstrip(','), strict=False)
 		except: continue# skip broken line
+
+		# skip segmented for now
+		if find('segment_bibliography', jsn): continue
+
+	#	print("Hello")
+
 		#print(json.dumps(jsn))
 		#print(json.dumps(jsn, indent=2))
 		# 001
@@ -288,10 +295,8 @@ with open(IN, 'rb') as f:
 			SRC = re.sub('^([^,0-9]+).*', '\\1', find('segment_bibliography', jsn).replace('In:', ''))
 			SRC = SRC.rstrip('.[').strip()
 			DATE = find('segment_bibliography', jsn).replace('In:', '').replace(SRC, '').strip().rstrip('|')
-			#print(DATE.encode('utf-8'))
 			# 'str' -> 's'
 			DATE = re.sub('str[,.](?= [0-9])', 's.', DATE)
-		#	print(DATE.encode('utf-8'))
 			# page
 			PAGE = re.findall(' s\. [^,]+,', DATE)
 			if PAGE and len(PAGE) == 1:
@@ -300,7 +305,6 @@ with open(IN, 'rb') as f:
 			# trailing dot year/page
 			#DATE = re.sub('(?<=\d{3})\.$', '', DATE)# trailing dot
 			#DATE = DATE.rstrip('.')
-			print(DATE.encode('utf-8'))
 			if LANG == 'ger':
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', 'Jg. ' + DATE, '9', YEAR]))
 			else:
@@ -314,8 +318,6 @@ with open(IN, 'rb') as f:
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', NAME]))
 			if not NAME and YEAR:
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g', YEAR, '9', BASE]))
-
-		continue
 
 		# 856
 		LINK = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + find('_id', jsn)
@@ -386,48 +388,48 @@ with open(IN, 'rb') as f:
 							if not LANG: LANG = re.findall(u'(?<=\[[Zz] ).+(?=\.\] [Pp]řel\. .+)', TITLE)
 							record['041'].indicator1 = '1'
 							record['041'].add_subfield('h', get_lang(LANG[0]))
-							TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TIT)
+							TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
 							if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
 							record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRNS[0]]))
 				# no dot
-				elif re.match('^[^:]+: [^\.\]\[]+$', tit) and ';' not in tit:
-					record['245']['a'] = tit.split(': ')[1] + ' /'
+				elif re.match('^[^:]+: [^\.\]\[]+$', TITLE) and ';' not in TITLE:
+					record['245']['a'] = TITLE.split(': ')[1] + ' /'
 					if 'c' in record['245']:
-						record['245']['c'] = tit.split(':')[0]
+						record['245']['c'] = TITLE.split(':')[0]
 					else:
-						record['245'].add_subfield('c', tit.split(':')[0])
+						record['245'].add_subfield('c', TITLE.split(':')[0])
 				else:
-					t = tit
+					T = TITLE
 					# frist colon
-					colon = re.findall('(^[^:]+):.*', t)
-					if colon and ';' not in tit:
+					COLON = re.findall('(^[^:]+):.*', T)
+					if COLON and ';' not in TITLE:
 						if 'c' in record['245']:
-							record['245']['c'] =  colon[0]
+							record['245']['c'] =  COLON[0]
 						else:
-							record['245'].add_subfield('c', colon[0])
-						t = t.replace(colon[0] + ': ', '')
+							record['245'].add_subfield('c', COLON[0])
+						T = T.replace(colon[0] + ': ', '')
 						# first dot
-						dot = re.findall('(^[^\.]+[^A-Z0-9])\..*', t)
-						if dot:
-							record['245']['a'] = dot[0] + ' /'
-							t = t.replace(dot[0] + '.', '')
+						DOT = re.findall('(^[^\.]+[^A-Z0-9])\..*', T)
+						if DOT:
+							record['245']['a'] = DOT[0] + ' /'
+							T = T.replace(DOT[0] + '.', '')
 							# 245
-							if t: record['245']['c'] = record['245']['c'] + ' ; ' + t
+							if T: record['245']['c'] = record['245']['c'] + ' ; ' + T
 							# lang
-							lang = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', t)
-							if lang:
+							LANG = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', t)
+							if LANG:
 								record['041'].indicator1 = '1'
-								record['041'].add_subfield('h', get_lang(lang[0]))
-					 			t = t.replace('[Z ' + lang[0] + '.]', '').replace('[z '+lang[0] + '.]', '')
+								record['041'].add_subfield('h', get_lang(LANG[0]))
+					 			T = T.replace('[Z ' + LANG[0] + '.]', '').replace('[z ' + LANG[0] + '.]', '')
 								# trans
-								trans = re.findall(u'(?<=[Pp]řel\. ).*', t.strip())
-								if trans:
-									record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', trans[0]]))
+								TRANS = re.findall(u'(?<=[Pp]řel\. ).*', T.strip())
+								if TRANS:
+									record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRANS[0]]))
 						# tiz
-						if t != tit:
-							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', t]))
+						if T != TITLE:
+							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', T]))
 			# tit
-			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', tit]))
+			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', TITLE]))
 		# TXT
 		OCRF = find('ocr_fix', jsn)
 		OCR = find('ocr', jsn)

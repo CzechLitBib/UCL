@@ -6,7 +6,7 @@ from __future__ import print_function
 
 import json,sys,os,re
 
-IN='demo.json'
+IN='tmp/retrobi.json'
 
 COLON='brig/colon.csv'
 DOT='brig/dot.csv'
@@ -31,23 +31,35 @@ def find(path,json):
 
 # MAIN -----------------
 
-#col = open(COLON, 'w')
+clean = open('retro_clean.json', 'w')
 #dot = open(DOT, 'w')
 #dots = open(DOTS, 'w')
 #bracket = open(BRACKET, 'w')
 #triple = open(TRIPLE, 'w')
 
+STATE = []
+
 with open(IN, 'rb') as f:
 	for LINE in f:
 
-		j = json.loads(LINE.strip().rstrip(','), strict=False)
-	
-		ID = j['_id']
+		try:
+			jsn = json.loads(LINE.strip().rstrip(','), strict=False)
+		except: continue
+
+		ID = jsn['_id']
 
 	#	if find('',j):
-		print(find('tree/bibliograficka_cast/zdroj/nazev',j))
+	#	print(find('tree/bibliograficka_cast/zdroj/nazev',j))
 
-		sys.exit(1)
+		if find('state', jsn):
+			state =  jsn['state']
+			if state not in STATE:
+				STATE.append(state)
+			
+	print(STATE)
+				
+		#	clean.write(LINE.strip().rstrip(',') + '\n')
+		
 
 		#if 'segment_bibliography' in j:
 		#	data = j['segment_bibliography'].replace('In: ', '').strip().rstrip('|') 
@@ -76,6 +88,8 @@ with open(IN, 'rb') as f:
 		#else:
 		#	print(ID)
 # EXIT -------------------
+
+clean.close()
 
 #col.close()
 #dot.close()
