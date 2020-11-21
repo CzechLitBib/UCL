@@ -22,6 +22,7 @@ OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
 DB='AUT.db'
+COUNT=0
 
 LANG_MAP={
 	'bul':u'bul',
@@ -207,7 +208,7 @@ with open(IN, 'rb') as f:
 
 		record = Record()
 	
-		LDR='-----nab-a22-----4a-4500'# overwrite internal(pymarc.record) LDR tag
+		record.leader='-----nab-a22-----4a-4500'# overwrite internal(pymarc.record) LDR tag
 		record.add_ordered_field(Field(tag='FMT', data='RS'))
 		record.add_ordered_field(Field(tag='003', data='CZ-PrUCL'))
 		record.add_ordered_field(Field(tag='005', data='20201231'))
@@ -228,9 +229,10 @@ with open(IN, 'rb') as f:
 		except: continue# skip broken line
 
 		# skip segmented for now
-		if find('segment_bibliography', jsn): continue
+		if find('state', jsn) != 'FRESH': continue
 
-	#	print("Hello")
+		COUNT+=1
+		if COUNT == 100001: sys.exit(1)
 
 		#print(json.dumps(jsn))
 		#print(json.dumps(jsn, indent=2))
@@ -431,8 +433,8 @@ with open(IN, 'rb') as f:
 			# tit
 			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', TITLE]))
 		# TXT
-		OCRF = find('ocr_fix', jsn)
-		OCR = find('ocr', jsn)
+		OCRF = find('ocr_fix', jsn).replace('\n', ' ')
+		OCR = find('ocr', jsn).replace('\n', ' ')
 		if OCRF:
 			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', OCRF]))
 		elif OCR:
@@ -490,6 +492,9 @@ with open(IN, 'rb') as f:
 
 		# WRITE -----------------
 
+		# leader
+		bib.write('=LDR  ' + record.leader.encode('utf-8')+ '\n')
+
 		for F in record:
 			try:
 				IND=''
@@ -507,9 +512,9 @@ with open(IN, 'rb') as f:
         				DATA = '$' + '$'.join(VAL)
 				else: DATA = ''
 			except: DATA = F.value()
+
 			if F.tag == 'FMT': DATA = 'RS'
-			if F.tag == 'LDR': DATA = LDR
-			if F.tag in ['LDR', 'FMT', '001', '003', '005', '008']:
+			if F.tag in ['FMT', '001', '003', '005', '008']:
 				bib.write('=' + str(F.tag) + '  ' + DATA.encode('utf-8')+ '\n')
 			else:
 				bib.write('=' + str(F.tag) + '  ' + str(IND) + DATA.encode('utf-8') + '\n')
