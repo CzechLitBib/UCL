@@ -1,0 +1,20 @@
+--- field.py	2020-11-24 10:32:18.594542945 +0100
++++ pymarc-3.2.0/pymarc/field.py	2020-11-24 10:33:27.735733136 +0100
+@@ -44,6 +44,8 @@
+         # assume controlfields are numeric only; replicates ruby-marc behavior
+         if self.tag < '010' and self.tag.isdigit():
+             self.data = data
++	elif self.tag in ['FMT']:
++            self.data = data
+         else:
+             self.indicators = indicators
+             self.subfields = subfields
+@@ -205,6 +207,8 @@
+         Returns true or false if the field is considered a control field.
+         Control fields lack indicators and subfields.
+         """
++	if self.tag in ['FMT']: return True
++
+         if self.tag < '010' and self.tag.isdigit():
+             return True
+         return False

@@ -104,6 +104,8 @@ FILE
    oai-monthly-7 - Crontab "7" monthly runner.
  oai-monthly-kat - Crontab "KAT" monthly runner.
 
+  field.py.patch - Allow non-standard control field(FMT).
+
 country_code.txt - MARC country code file.
    lang_code.txt - MARC language code file.
    role_code.txt - MARC role code file.

@@ -10,7 +10,7 @@ from __future__ import print_function
 
 import sqlite3,json,sys,os,re
 
-from pymarc import Record
+from pymarc import Record,MARCWriter
 from pymarc.field import Field
 
 # VAR -----------------
@@ -195,9 +195,11 @@ except:
 	print("SQLite3 connection failed.")
 	sys.exit(1)
 
-bib = open(OUT,'w')
+#bib = open(OUT,'w')
 autlog = open(AUTLOG, 'w')
 broken = open(BROKEN, 'w')
+
+writer = MARCWriter(open('retrobi.mrc','wb'))
 
 # MAIN -----------------
 
@@ -206,6 +208,7 @@ with open(IN, 'rb') as f:
 
 		# INIT -----------------
 
+		#record = Record(force_utf8=True)
 		record = Record()
 	
 		record.leader='-----nab-a22-----4a-4500'# overwrite internal(pymarc.record) LDR tag
@@ -213,7 +216,7 @@ with open(IN, 'rb') as f:
 		record.add_ordered_field(Field(tag='003', data='CZ-PrUCL'))
 		record.add_ordered_field(Field(tag='005', data='20201231'))
 		record.add_ordered_field(Field(tag='040', indicators=['\\','\\'], subfields=['a', 'ABB060','b', 'cze']))
-		record.add_ordered_field(Field(tag='041', indicators=['0','\\'], subfields=['a', 'cze']))
+		#record.add_ordered_field(Field(tag='041', indicators=['0','\\'], subfields=['a', 'cze']))
 		record.add_ordered_field(Field(tag='336', indicators=['\\','\\'], subfields=['a', 'text', 'b', 'txt', '2', 'rdacontent']))
 		record.add_ordered_field(Field(tag='337', indicators=['\\','\\'], subfields=['a', u'bez média', 'b', 'n', '2', 'rdamedia']))
 		record.add_ordered_field(Field(tag='338', indicators=['\\','\\'], subfields=['a', u'jiný', 'b', 'nz', '2', 'rdacarrier']))
@@ -231,8 +234,12 @@ with open(IN, 'rb') as f:
 		# skip segmented for now
 		if find('state', jsn) != 'FRESH': continue
 
-		COUNT+=1
-		if COUNT == 100001: sys.exit(1)
+		# first 100.000 for now
+	#	COUNT+=1
+	#	if COUNT == 2:
+	#		writer.close()
+	#		sys.exit(1)
+		#if COUNT == 100001: sys.exit(1)
 
 		#print(json.dumps(jsn))
 		#print(json.dumps(jsn, indent=2))
@@ -364,11 +371,12 @@ with open(IN, 'rb') as f:
 					if re.findall(u'[Pp]řel\. \[[Zz] .+\.\] .+|\[[Zz] .+\.\] [Pp]řel\. .+', TITLE):
 						LANG = re.findall(u'(?<=[Pp]řel\. \[[Zz] ).+(?=\.\] .+)', TITLE)
 						if not LANG: LANG = re.findall(u'(?<=\[[Zz] ).+(?=\.\] [Pp]řel\. .+)', TITLE)
-						record['041'].indicator1 = '1'
-						record['041'].add_subfield('h', get_lang(LANG[0]))
-						TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
-						if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
-						record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRANS[0]]))
+						if LANG:
+							record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
+							TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
+							if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
+							if TRNS:
+								record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRANS[0]]))
 				# triple dot
 				elif re.match('^[^:]+: [^\.\]\[]+\.\.\.(?![\]\)])( .+)?$', TITLE) and ';' not in TITLE:
 					if len(re.findall('\.\.\.', TITLE)) == 1:
@@ -386,13 +394,14 @@ with open(IN, 'rb') as f:
 								record['245'].add_subfield('c', TITLE.split(':')[0])
 						#lang + trans
 						if re.findall(u'[Pp]řel\. \[[Zz] .+\.\] .+|\[[Zz] .+\.\] [Pp]řel\. .+', TITLE):
-							lang = re.findall(u'(?<=[Pp]řel\. \[[Zz] ).+(?=\.\] .+)', TITLE)
+							LANG = re.findall(u'(?<=[Pp]řel\. \[[Zz] ).+(?=\.\] .+)', TITLE)
 							if not LANG: LANG = re.findall(u'(?<=\[[Zz] ).+(?=\.\] [Pp]řel\. .+)', TITLE)
-							record['041'].indicator1 = '1'
-							record['041'].add_subfield('h', get_lang(LANG[0]))
-							TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
-							if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
-							record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRNS[0]]))
+							if LANG:
+								record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
+								TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
+								if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
+								if TRNS:
+									record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRNS[0]]))
 				# no dot
 				elif re.match('^[^:]+: [^\.\]\[]+$', TITLE) and ';' not in TITLE:
 					record['245']['a'] = TITLE.split(': ')[1] + ' /'
@@ -409,7 +418,7 @@ with open(IN, 'rb') as f:
 							record['245']['c'] =  COLON[0]
 						else:
 							record['245'].add_subfield('c', COLON[0])
-						T = T.replace(colon[0] + ': ', '')
+						T = T.replace(COLON[0] + ': ', '')
 						# first dot
 						DOT = re.findall('(^[^\.]+[^A-Z0-9])\..*', T)
 						if DOT:
@@ -420,8 +429,7 @@ with open(IN, 'rb') as f:
 							# lang
 							LANG = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', t)
 							if LANG:
-								record['041'].indicator1 = '1'
-								record['041'].add_subfield('h', get_lang(LANG[0]))
+								record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
 					 			T = T.replace('[Z ' + LANG[0] + '.]', '').replace('[z ' + LANG[0] + '.]', '')
 								# trans
 								TRANS = re.findall(u'(?<=[Pp]řel\. ).*', T.strip())
@@ -492,6 +500,12 @@ with open(IN, 'rb') as f:
 
 		# WRITE -----------------
 
+		# write MARC21 binary
+
+		writer.write(record)
+		continue
+
+
 		# leader
 		bib.write('=LDR  ' + record.leader.encode('utf-8')+ '\n')
 
@@ -524,6 +538,8 @@ with open(IN, 'rb') as f:
 
 broken.close()
 autlog.close()
-bib.close()
+#bib.close()
 con.close()
+
+writer.close()
 
