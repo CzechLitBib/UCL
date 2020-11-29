@@ -1,42 +1,104 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#
-# OAI-PMH 2.0 MARCXML Record validator.
-#
 
 # INCLUDE -------------------
 
 from __future__ import print_function
 
-import argparse,StringIO,urllib2,smtplib,sys,os,re
+import sys,os,re
 
-from email.mime.text import MIMEText
-from datetime import datetime
-from oaipmh.client import Client
-from oaipmh.metadata import MetadataRegistry
-from pymarc import marcxml,Field
+from pymarc import marcxml,Field,MARCWriter
 from pymarc.record import Record
-from lxml.etree import tostring
 
 # VAR -------------------
 
 #DATA='demo.xml'
 DATA='ucla.xml'
 
-BUFF=''
+BUFF_100=''
+BUFF_600=''
+BUFF_700=''
+
+TOTAL_100=0
+SEVEN_100=0
+TOTAL_600=0
+SEVEN_600=0
+TOTAL_700=0
+SEVEN_700=0
+
+SIXTEEN=0
+
+file1 = open('100.csv','w')
+file2 = open('600.csv','w')
+file3 = open('700.csv','w')
 
 def validate(record):
 
-	global BUFF
+#	rec = Record(force_utf8=True)
+#	rec = record
+#	rec.remove_fields('LDR')# LDR dup
+
+#	if record['001'].value() == '001232606': record.remove_fields('506')#broken control field
+#	if record['001'].value() == '001852470': return # skip broken encoding
+
+#	print(rec['001'].value())
+
+#	writer.write(rec)
+
+	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
+
+	global SIXTEEN
 
 	metadata = record
-	IDENT = record['001'].value()
+	IDENT = metadata['001'].value()
 
-	if record.leader[7] == 'b':
-		for F in metadata.get_fields('773'):
-			if 't' in F and 'x' in F:
-				if F['x'] == '0009-0468' and F['t'] == u'Česká literatura':
-					BUFF+=str(IDENT) + chr(0x1F) + F.as_marc(encoding='utf-8') + '\n'
+	if '005' in metadata and '008' in metadata:
+		if int(metadata['005'].value()[:4]) >= 2016:
+			if int(metadata['005'].value()[:4]) > int(metadata['008'].value()[:4]):
+				SIXTEEN+=1
+			if int(metadata['005'].value()[:4]) == int(metadata['008'].value()[:4]):
+				if int(metadata['005'].value()[4:7]) > int(metadata['008'].value()[4:7]):
+					SIXTEEN+=1
+
+	for F in metadata.get_fields('100'):
+		TOTAL_100+=1
+		if '7' in F: SEVEN_100+=1
+		file1.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+	
+	for F in metadata.get_fields('600'):
+		TOTAL_600+=1
+		if '7' in F: SEVEN_600+=1
+		file2.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+
+	for F in metadata.get_fields('700'):
+		TOTAL_700+=1
+		if '7' in F: SEVEN_700+=1
+		file3.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+
+	#ALL = [ F['r'] for F in metadata.get_fields('912') if F.indicator1 == '2' and 'r' in F]
+
+	#if len(ALL) == 1:
+	#	BUFF+=(str(IDENT) + str(';') + metadata['245']['a'].encode('utf-8') + str(';' + ALL[0]) + '\n')
+	#if len(ALL) > 1:
+	#	BUFF+=(str(IDENT) + str(';') + metadata['245']['a'].encode('utf-8') + str(';' + ALL[0] + '#' + ALL[-1]) + '\n')
+
+			#	print(F['a'])
+	#		print(F.subfields[0::2])
+		#	print(F.value().encode('utf-8'))
+	#		print(F)
+	#	if metadata['912'].indicator1 == '2':
+	#		print(len(metadata.get_fields('912'):
+	#		print(metadata['912'].value().encode('utf-8'))	
+
+
+#	if '100' in record:
+#		print(IDENT + '||' + record['100'].value())
+
+	#if record.leader[7] == 'b':
+	#	for F in metadata.get_fields('773'):
+	#		if 't' in F and 'x' in F:
+	#			if F['x'] == '0009-0468' and F['t'] == u'Česká literatura':
+	#				BUFF+=str(IDENT) + chr(0x1F) + F.as_marc(encoding='utf-8') + '\n'
 				#	print(F.as_marc(encoding='utf-8'))
 					#for L in metadata.get_fields('856'):
 					#	print(L.value().encode('utf-8'))
@@ -46,7 +108,7 @@ def validate(record):
 	#	for F in metadata.get_fields('655'):
 	#		if 'a' in F and F['a'] in [
 	#			u'biografické poznámky',
-	#			u'bio-bibliografické poznámky',
+	 #			u'bio-bibliografické poznámky',
 	#			u'biograficko-bibliografické poznámky',
 	#			u'bibliografické poznámky',
 	#			u'nekrology',
@@ -147,9 +209,25 @@ def validate(record):
 
 marcxml.map_xml(validate, DATA)
 
-with open('ceslit.bib','w') as ceslit:
-	#for line in BUFF:
-		ceslit.write(BUFF)
+#with = open('100.csv','w') as ucl:
+#	ucl.write(BUFF_100)
+#with = open('600.csv','w') as ucl:
+#	ucl.write(BUFF_600)
+#with open('700.csv','w') as ucl:
+#	ucl.write(BUFF_700)
+
+file1.close()
+file2.close()
+file3.close()
+
+print('TOTAL 100:' + str(TOTAL_100))
+print('SEVEN 100:' + str(SEVEN_100))
+print('TOTAL 600:' + str(TOTAL_600))
+print('SEVEN 600:' + str(SEVEN_600))
+print('TOTAL 700:' + str(TOTAL_700))
+print('SEVEN 700:' + str(SEVEN_700))
+
+print(str(SIXTEEN))
 
 # EXIT -------------------
 
