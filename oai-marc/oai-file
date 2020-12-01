@@ -15,10 +15,6 @@ from pymarc.record import Record
 #DATA='demo.xml'
 DATA='ucla.xml'
 
-BUFF_100=''
-BUFF_600=''
-BUFF_700=''
-
 TOTAL_100=0
 SEVEN_100=0
 TOTAL_600=0
@@ -26,54 +22,91 @@ SEVEN_600=0
 TOTAL_700=0
 SEVEN_700=0
 
-SIXTEEN=0
+#SIXTEEN=0
 
-file1 = open('100.csv','w')
-file2 = open('600.csv','w')
-file3 = open('700.csv','w')
+#file1 = open('100.csv','w')
+#file2 = open('600.csv','w')
+#file3 = open('700.csv','w')
+
+link = open('link.txt','w')
+
+writer = MARCWriter(open('file.mrc','wb'))
 
 def validate(record):
 
-#	rec = Record(force_utf8=True)
-#	rec = record
-#	rec.remove_fields('LDR')# LDR dup
+	metadata = Record(force_utf8=True)
+	metadata = record
+
+	# LDR dup
+	metadata.remove_fields('LDR')# LDR dup
 
 #	if record['001'].value() == '001232606': record.remove_fields('506')#broken control field
 #	if record['001'].value() == '001852470': return # skip broken encoding
 
-#	print(rec['001'].value())
+#	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
+#	global SIXTEEN
 
-#	writer.write(rec)
-
-	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
-
-	global SIXTEEN
-
-	metadata = record
 	IDENT = metadata['001'].value()
 
-	if '005' in metadata and '008' in metadata:
-		if int(metadata['005'].value()[:4]) >= 2016:
-			if int(metadata['005'].value()[:4]) > int(metadata['008'].value()[:4]):
-				SIXTEEN+=1
-			if int(metadata['005'].value()[:4]) == int(metadata['008'].value()[:4]):
-				if int(metadata['005'].value()[4:7]) > int(metadata['008'].value()[4:7]):
-					SIXTEEN+=1
+	# webarchiv
+	for F in metadata.get_fields('856'):
+		if 'y' in F:
+			link.write(F['y'].encode('utf-8') + str('#') + str(IDENT) + '\n')
+			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
 
-	for F in metadata.get_fields('100'):
-		TOTAL_100+=1
-		if '7' in F: SEVEN_100+=1
-		file1.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
-	
-	for F in metadata.get_fields('600'):
-		TOTAL_600+=1
-		if '7' in F: SEVEN_600+=1
-		file2.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+	# drop X
+	X=False
+	for F in metadata.get_fields('773'):
+		if X and 'x' in F: F.delete_subfield('x')# drop more than one
+		if 'x' in F: X = True# catch the first one
 
-	for F in metadata.get_fields('700'):
-		TOTAL_700+=1
-		if '7' in F: SEVEN_700+=1
-		file3.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+	# add MBK
+	MBK=False
+	if '044' in metadata:
+		if 'a' in metadata['044']:
+			if metadata['044']['a'] != 'xr': MBK=True
+	if '008' in metadata:
+		if metadata['008'].value()[15:17] != 'xr': MBK=True
+	if MBK:
+		if '964' in metadata:
+			metadata['964'].add_subfield('a', 'MBK')
+		else:
+			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+
+	# broken
+	if metadata['001'].value() == '001852470': return # skip the broken encoding
+
+	writer.write(metadata)
+
+#	if int(IDENT) >= int('002484593'):# 2020 only
+#	if '005' in metadata and '008' in metadata:
+#		if int(metadata['005'].value()[:4]) >= 2016:
+#			if int(metadata['005'].value()[:4]) > int(metadata['008'].value()[:4]):
+#				SIXTEEN+=1
+#			if int(metadata['005'].value()[:4]) == int(metadata['008'].value()[:4]):
+#				if int(metadata['005'].value()[4:7]) > int(metadata['008'].value()[4:7]):
+#					SIXTEEN+=1
+
+#	if int(IDENT) >= int('002484593'):# 2020 only
+#		for F in metadata.get_fields('100'):
+#			TOTAL_100+=1
+#			if '7' in F: SEVEN_100+=1
+#			file1.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+#	
+#		for F in metadata.get_fields('600'):
+#			TOTAL_600+=1
+#			if '7' in F: SEVEN_600+=1
+#			file2.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+#
+#		for F in metadata.get_fields('700'):
+#			TOTAL_700+=1
+#			if '7' in F: SEVEN_700+=1
+#			file3.write(str(IDENT) + str(';') + '$$'.join(F.subfields).encode('utf-8') + '\n')
+
+#	writer.write(rec)
 
 	#ALL = [ F['r'] for F in metadata.get_fields('912') if F.indicator1 == '2' and 'r' in F]
 
@@ -81,15 +114,6 @@ def validate(record):
 	#	BUFF+=(str(IDENT) + str(';') + metadata['245']['a'].encode('utf-8') + str(';' + ALL[0]) + '\n')
 	#if len(ALL) > 1:
 	#	BUFF+=(str(IDENT) + str(';') + metadata['245']['a'].encode('utf-8') + str(';' + ALL[0] + '#' + ALL[-1]) + '\n')
-
-			#	print(F['a'])
-	#		print(F.subfields[0::2])
-		#	print(F.value().encode('utf-8'))
-	#		print(F)
-	#	if metadata['912'].indicator1 == '2':
-	#		print(len(metadata.get_fields('912'):
-	#		print(metadata['912'].value().encode('utf-8'))	
-
 
 #	if '100' in record:
 #		print(IDENT + '||' + record['100'].value())
@@ -216,18 +240,22 @@ marcxml.map_xml(validate, DATA)
 #with open('700.csv','w') as ucl:
 #	ucl.write(BUFF_700)
 
-file1.close()
-file2.close()
-file3.close()
+link.close()
 
-print('TOTAL 100:' + str(TOTAL_100))
-print('SEVEN 100:' + str(SEVEN_100))
-print('TOTAL 600:' + str(TOTAL_600))
-print('SEVEN 600:' + str(SEVEN_600))
-print('TOTAL 700:' + str(TOTAL_700))
-print('SEVEN 700:' + str(SEVEN_700))
+writer.close()
 
-print(str(SIXTEEN))
+#file1.close()
+#file2.close()
+#file3.close()
+
+#print('TOTAL 100:' + str(TOTAL_100))
+#print('SEVEN 100:' + str(SEVEN_100))
+#print('TOTAL 600:' + str(TOTAL_600))
+#print('SEVEN 600:' + str(SEVEN_600))
+#print('TOTAL 700:' + str(TOTAL_700))
+#print('SEVEN 700:' + str(SEVEN_700))
+
+#print(str(SIXTEEN))
 
 # EXIT -------------------
 
