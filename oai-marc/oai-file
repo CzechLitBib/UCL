@@ -13,14 +13,17 @@ from pymarc.record import Record
 # VAR -------------------
 
 #DATA='demo.xml'
-DATA='ucla.xml'
+DATA='uclec.xml'
 
-TOTAL_100=0
-SEVEN_100=0
-TOTAL_600=0
-SEVEN_600=0
-TOTAL_700=0
-SEVEN_700=0
+#TOTAL_100=0
+#SEVEN_100=0
+#TOTAL_600=0
+#SEVEN_600=0
+#TOTAL_700=0
+#SEVEN_700=0
+
+
+BUFF=''
 
 #SIXTEEN=0
 
@@ -28,60 +31,60 @@ SEVEN_700=0
 #file2 = open('600.csv','w')
 #file3 = open('700.csv','w')
 
-link = open('link.txt','w')
+#link = open('link.txt','w')
 
-writer = MARCWriter(open('file.mrc','wb'))
+#writer = MARCWriter(open('file.mrc','wb'))
 
 def validate(record):
 
-	metadata = Record(force_utf8=True)
+#	metadata = Record(force_utf8=True)
 	metadata = record
 
 	# LDR dup
-	metadata.remove_fields('LDR')# LDR dup
+#	metadata.remove_fields('LDR')# LDR dup
 
 #	if record['001'].value() == '001232606': record.remove_fields('506')#broken control field
 #	if record['001'].value() == '001852470': return # skip broken encoding
 
+	global BUFF
 #	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
 #	global SIXTEEN
 
 	IDENT = metadata['001'].value()
 
 	# webarchiv
-	for F in metadata.get_fields('856'):
-		if 'y' in F:
-			link.write(F['y'].encode('utf-8') + str('#') + str(IDENT) + '\n')
-			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
-			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
-			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
-			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
+#	for F in metadata.get_fields('856'):
+#		if 'y' in F:
+#			link.write(F['y'].encode('utf-8') + str('#') + str(IDENT) + '\n')
+#			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
 
 	# drop X
-	X=False
-	for F in metadata.get_fields('773'):
-		if X and 'x' in F: F.delete_subfield('x')# drop more than one
-		if 'x' in F: X = True# catch the first one
+#	X=False
+#	for F in metadata.get_fields('773'):
+#		if X and 'x' in F: F.delete_subfield('x')# drop more than one
+#		if 'x' in F: X = True# catch the first one
 
 	# add MBK
-	MBK=False
-	if '044' in metadata:
-		if 'a' in metadata['044']:
-			if metadata['044']['a'] != 'xr': MBK=True
-	if '008' in metadata:
-		if metadata['008'].value()[15:17] != 'xr': MBK=True
-	if MBK:
-		if '964' in metadata:
-			metadata['964'].add_subfield('a', 'MBK')
-		else:
-			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+#	MBK=False
+#	if '044' in metadata:
+#		if 'a' in metadata['044']:
+#			if metadata['044']['a'] != 'xr': MBK=True
+#	if '008' in metadata:
+#		if metadata['008'].value()[15:17] != 'xr': MBK=True
+#	if MBK:
+#		if '964' in metadata:
+#			metadata['964'].add_subfield('a', 'MBK')
+#		else:
+#			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
 	# broken
-	if metadata['001'].value() == '001852470': return # skip the broken encoding
+#	if metadata['001'].value() == '001852470': return # skip the broken encoding
 
-	writer.write(metadata)
+#	writer.write(metadata)
 
-#	if int(IDENT) >= int('002484593'):# 2020 only
 #	if '005' in metadata and '008' in metadata:
 #		if int(metadata['005'].value()[:4]) >= 2016:
 #			if int(metadata['005'].value()[:4]) > int(metadata['008'].value()[:4]):
@@ -108,12 +111,46 @@ def validate(record):
 
 #	writer.write(rec)
 
-	#ALL = [ F['r'] for F in metadata.get_fields('912') if F.indicator1 == '2' and 'r' in F]
+	# 912
+	if '912' in metadata:
+		if '245' in metadata:
+			if 'a' in metadata['245']:
+				part_0 = metadata['245']['a'].encode('utf-8')
+			else:
+				part_0 = ''
+			part_1 = '$$'.join(metadata['245'].subfields).encode('utf-8') 
+		else:
+			part_1 = ''
 
-	#if len(ALL) == 1:
-	#	BUFF+=(str(IDENT) + str(';') + metadata['245']['a'].encode('utf-8') + str(';' + ALL[0]) + '\n')
-	#if len(ALL) > 1:
-	#	BUFF+=(str(IDENT) + str(';') + metadata['245']['a'].encode('utf-8') + str(';' + ALL[0] + '#' + ALL[-1]) + '\n')
+		if '246' in metadata:
+			part_2 = '$$'.join(metadata['246'].subfields).encode('utf-8') 
+		else:
+			part_2 = ''
+
+		ALL1 = [ F['r'] for F in metadata.get_fields('912') if F.indicator1 == ' ' and F.indicator2 == ' ' and 'r' in F]
+		if len(ALL1) == 1:
+			part_3 = ALL1[0]
+		elif len(ALL1) > 1:
+			part_3 = '#'.join(ALL1)
+		else:
+			part_3 = ''
+
+		ALL2 = [ F['r'] for F in metadata.get_fields('912') if F.indicator1 == '2' and 'r' in F]
+		if len(ALL2) == 1:
+			part_4 = ALL2[0]
+		elif len(ALL2) > 1:
+			part_4 = ALL2[0] + '#' + ALL2[-1]
+		else:
+			part_4 = ''
+
+		BUFF+=(
+			str(IDENT) + '\t' +
+			part_0 + '\t' +
+			part_4.encode('utf-8') + '\t' +
+			part_1 + '\t' +
+			part_2 + '\t' +
+			part_3.encode('utf-8') + '\n'
+		)
 
 #	if '100' in record:
 #		print(IDENT + '||' + record['100'].value())
@@ -233,6 +270,9 @@ def validate(record):
 
 marcxml.map_xml(validate, DATA)
 
+with open('uclec.csv','w') as ucl:
+	ucl.write(BUFF)
+
 #with = open('100.csv','w') as ucl:
 #	ucl.write(BUFF_100)
 #with = open('600.csv','w') as ucl:
@@ -240,9 +280,9 @@ marcxml.map_xml(validate, DATA)
 #with open('700.csv','w') as ucl:
 #	ucl.write(BUFF_700)
 
-link.close()
+#link.close()
 
-writer.close()
+#writer.close()
 
 #file1.close()
 #file2.close()
