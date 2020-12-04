@@ -14,12 +14,12 @@ from pymarc import marcxml
 
 # VAR -------------------
 
-IN='/home/bruna/test/uclall.xml'
+IN='/home/bruna/xml/ucla.xml'
 
-RAW='/var/www/html/7/UCL/raw/'
-OUT='/var/www/html/7/UCL/data/'
+RAW='/var/www/html/7/raw/'
+OUT='/var/www/html/7/data/'
 
-INDEX='/var/www/html/7/UCL/index.html'
+INDEX='/var/www/html/7/index.html'
 
 TAGLIST=[]
 
@@ -82,7 +82,7 @@ def validate(record):
 				if not SEVEN and VALUE:
 					try:
 						with open(RAW + TAG + '.csv', 'a') as f:
-							f.write(VALUE.encode('utf-8')+ '||' + str(ALEPH) + '\n')
+							f.write(VALUE.encode('utf-8') + '||' + str(ALEPH) + '\n')
 					except:
 						print("Non Unicode trash ID: " + ALEPH + ' TAG: ' + TAG)
 				if SEVEN and VALUE:
@@ -105,7 +105,7 @@ ALL_7 = 0
 ind = open(INDEX, 'a', 0)
 ind.write(INDEX_TOP)
 
-TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', u'6OR', '130', '711']
+TAGLIST = ['100', '600', '650', '651', '655', '648', '610', '611', '700', '630', '110', '710', '111', '130', '711']
 
 for TAG in sorted(TAGLIST):
 
@@ -210,13 +210,20 @@ for TAG in sorted(TAGLIST):
 	ind.write('<td width="40" align="right">'+ str(CNT_7) + '</td>' + '\n')
 	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
 	ind.write('<td width="40" align="center"><a href="data/' + TAG + '.7.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="center">' + str(CNT_7*100/(CNT + CNT_7)) + '%</td>' + '\n')
+
+	try:
+		ind.write('<td width="40" align="center">' + str(CNT_7*100/(CNT + CNT_7)) + '%</td>' + '\n')
+	except:
+		ind.write('<td width="40" align="center">0%</td>' + '\n')
 	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
 	ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
 	ind.write('<td width="40" align="right">' + str(CNT) + '</td>' + '\n')
 	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
 	ind.write('<td width="40" align="center"><a href="data/' + TAG + '.stat.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
-	ind.write('<td width="40" align="center">' + str(CNT*100/(CNT + CNT_7)) + '%</td>' + '\n')
+	try:
+		ind.write('<td width="40" align="center">' + str(CNT*100/(CNT + CNT_7)) + '%</td>' + '\n')
+	except:
+		ind.write('<td width="40" align="center">0%</td>' + '\n')
 	ind.write('</tr>' + '\n')
 
 	# global counter
