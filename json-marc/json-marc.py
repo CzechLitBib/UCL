@@ -15,14 +15,13 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-IN='tmp/retrobi.json'
-#IN='demo.json'
-#IN='100.json'
+#IN='tmp/retrobi.json'
+IN='demo.json'
+
 OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
 DB='AUT.db'
-COUNT=0
 
 LANG_MAP={
 	'bul':u'bul',
@@ -186,6 +185,91 @@ def find(path,json):
 			return ''
 	return root
 
+def segment_dot_triple_dot(TITLE,record):
+	TEXT = re.findall('(?<=:).*(?=\.\.\.)', TITLE)
+	PART = TEXT[0].split('. ')
+	record['245']['a'] = PART[0] + ' :'
+	if BRACE in [u'báseň', u'Báseň']:
+		record['245'].add_subfield('b', '[' + PART[1] + ']' + ' /', 1)# a :b /c
+	else:
+		record['245'].add_subfield('b', PART[1] + ' /', 1)# a :b /c
+	if TITLE.split('...')[1]:
+		if 'c' in record['245']:
+			record['245']['c'] = TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1]
+		else:
+			record['245'].add_subfield('c', TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1])
+	else:
+		if 'c' in record['245']:
+			record['245']['c'] = TITLE.split(':')[0]
+		else:
+			record['245'].add_subfield('c', TITLE.split(':')[0])
+	#lang + trans
+	if re.findall(u'[Pp]řel\. \[[Zz] .+\.\] .+|\[[Zz] .+\.\] [Pp]řel\. .+', TITLE):
+		LANG = re.findall(u'(?<=[Pp]řel\. \[[Zz] ).+(?=\.\] .+)', TITLE)
+		if not LANG:
+			LANG = re.findall(u'(?<=\[[Zz] ).+(?=\.\] [Pp]řel\. .+)', TITLE)
+		if LANG:
+			record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
+			TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
+			if not TRNS:
+				TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
+			if TRNS:
+				record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRNS[0]]))
+
+def segment_triple_dot(TITLE,record):
+	TEXT = re.findall('(?<=:).*(?=\.\.\.)', TITLE)
+	record['245']['a'] = TEXT[0]
+	if TITLE.split('...')[1]:
+		if 'c' in record['245']:
+			record['245']['c'] = TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1]
+		else:
+			record['245'].add_subfield('c', TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1])
+	else:
+		if 'c' in record['245']:
+			record['245']['c'] = TITLE.split(':')[0]
+		else:
+			record['245'].add_subfield('c', TITLE.split(':')[0])
+	#lang + trans
+	if re.findall(u'[Pp]řel\. \[[Zz] .+\.\] .+|\[[Zz] .+\.\] [Pp]řel\. .+', TITLE):
+		LANG = re.findall(u'(?<=[Pp]řel\. \[[Zz] ).+(?=\.\] .+)', TITLE)
+		if not LANG: LANG = re.findall(u'(?<=\[[Zz] ).+(?=\.\] [Pp]řel\. .+)', TITLE)
+		if LANG:
+			record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
+			TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
+			if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
+			if TRNS:
+				record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRNS[0]]))
+
+def segment_recursion(TITLE,record):
+	T = TITLE
+	# frist colon
+	COLON = re.findall('(^[^:]+):.*', T)
+	if COLON and ';' not in TITLE:
+		if 'c' in record['245']:
+			record['245']['c'] =  COLON[0]
+		else:
+			record['245'].add_subfield('c', COLON[0])
+		T = T.replace(COLON[0] + ': ', '')
+		# first dot
+		DOT = re.findall('(^[^\.]+[^A-Z0-9])\..*', T)
+		if DOT:
+			record['245']['a'] = DOT[0] + ' /'
+			T = T.replace(DOT[0] + '.', '')
+			# 245
+			if T: record['245']['c'] = record['245']['c'] + ' ; ' + T
+			# lang
+			LANG = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', T)
+			if LANG:
+				record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
+				T = T.replace('[Z ' + LANG[0] + '.]', '').replace('[z ' + LANG[0] + '.]', '')
+				# trans
+				TRNS = re.findall(u'(?<=[Pp]řel\. ).*', T.strip())
+				if TRNS:
+					record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRNS[0]]))
+		# TIZ
+		if T != TITLE:
+			record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', T]))
+
 # INIT -----------------
 
 try:
@@ -195,11 +279,11 @@ except:
 	print("SQLite3 connection failed.")
 	sys.exit(1)
 
-#bib = open(OUT,'w')
 autlog = open(AUTLOG, 'w')
 broken = open(BROKEN, 'w')
 
-writer = MARCWriter(open('retrobi.mrc','wb'))
+bib = open(OUT,'w')
+#writer = MARCWriter(open('retrobi.mrc','wb'))
 
 # MAIN -----------------
 
@@ -229,20 +313,15 @@ with open(IN, 'rb') as f:
 		# PARSE -----------------
 		try:
 			jsn = json.loads(LINE.strip().rstrip(','), strict=False)
-		except: continue# skip broken line
+		except:
+			print("Broken JSON.")# skip broken line
 
 		# skip segmented for now
-		if find('state', jsn) != 'FRESH': continue
-
-		# first 100.000 for now
-	#	COUNT+=1
-	#	if COUNT == 2:
-	#		writer.close()
-	#		sys.exit(1)
-		#if COUNT == 100001: sys.exit(1)
-
+		#if find('state', jsn) != 'FRESH': continue
+	
 		#print(json.dumps(jsn))
 		#print(json.dumps(jsn, indent=2))
+
 		# 001
 		record.add_ordered_field(Field(tag='001', data='RET-' + find('_id',jsn)))
 		# 008
@@ -334,10 +413,10 @@ with open(IN, 'rb') as f:
 		# SIR
 		if find('segment_excerpter', jsn):
 			record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', find('segment_excerpter', jsn)]))
-		# TIT + TIZ
+		# 245 / TIT / TIZ
 		TITLE = find('segment_title', jsn)
 		if TITLE:
-			TITLE = TITLE.strip('|')
+			TITLE = TITLE.strip().rstrip('|')
 			# last square bracet
 			BRACE = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', TITLE)
 			if BRACE:
@@ -350,58 +429,11 @@ with open(IN, 'rb') as f:
 				TITLE = TITLE.replace(' [' + BRACE[0] + ']', '')
 				# dot triple dot
 				if re.match('^[^:]+: [^\.]+[^A-Z0-9]\. [^\.\]\[]+\.\.\.(?!\]\))( .+)?$',TITLE) and ';' not in TITLE:
-					TEXT = re.findall('(?<=:).*(?=\.\.\.)', TITLE)
-					PART = TEXT[0].split('. ')
-					record['245']['a'] = PART[0] + ' :'
-					if BRACE in [u'báseň', u'Báseň']:
-						record['245'].add_subfield('b', '[' + PART[1] + ']' + ' /', 1)# a :b /c
-					else:
-						record['245'].add_subfield('b', PART[1] + ' /', 1)# a :b /c
-					if TITLE.split('...')[1]:
-						if 'c' in record['245']:
-							record['245']['c'] = TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1]
-						else:
-							record['245'].add_subfield('c', TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1])
-					else:
-						if 'c' in record['245']:
-							record['245']['c'] = TITLE.split(':')[0]
-						else:
-							record['245'].add_subfield('c', TITLE.split(':')[0])
-					#lang + trans
-					if re.findall(u'[Pp]řel\. \[[Zz] .+\.\] .+|\[[Zz] .+\.\] [Pp]řel\. .+', TITLE):
-						LANG = re.findall(u'(?<=[Pp]řel\. \[[Zz] ).+(?=\.\] .+)', TITLE)
-						if not LANG: LANG = re.findall(u'(?<=\[[Zz] ).+(?=\.\] [Pp]řel\. .+)', TITLE)
-						if LANG:
-							record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
-							TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
-							if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
-							if TRNS:
-								record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRANS[0]]))
+					segment_dot_triple_dot(TITLE,record)
 				# triple dot
 				elif re.match('^[^:]+: [^\.\]\[]+\.\.\.(?![\]\)])( .+)?$', TITLE) and ';' not in TITLE:
 					if len(re.findall('\.\.\.', TITLE)) == 1:
-						TEXT = re.findall('(?<=:).*(?=\.\.\.)', TITLE)
-						record['245']['a'] = TEXT[0]
-						if TITLE.split('...')[1]:
-							if 'c' in record['245']:
-								record['245']['c'] = TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1]
-							else:
-								record['245'].add_subfield('c', TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1])
-						else:
-							if 'c' in record['245']:
-								record['245']['c'] = TITLE.split(':')[0]
-							else:
-								record['245'].add_subfield('c', TITLE.split(':')[0])
-						#lang + trans
-						if re.findall(u'[Pp]řel\. \[[Zz] .+\.\] .+|\[[Zz] .+\.\] [Pp]řel\. .+', TITLE):
-							LANG = re.findall(u'(?<=[Pp]řel\. \[[Zz] ).+(?=\.\] .+)', TITLE)
-							if not LANG: LANG = re.findall(u'(?<=\[[Zz] ).+(?=\.\] [Pp]řel\. .+)', TITLE)
-							if LANG:
-								record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
-								TRNS = re.findall(u'(?<=[Pp]řel\. \[[Zz] ' + LANG[0] + u'\.\] ).+', TITLE)
-								if not TRNS: TRNS = re.findall(u'(?<=\[[Zz] ' + LANG[0] + u'\.\] [Pp]řel\. ).+', TITLE)
-								if TRNS:
-									record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRNS[0]]))
+						segment_triple_dot(TITLE,record)
 				# no dot
 				elif re.match('^[^:]+: [^\.\]\[]+$', TITLE) and ';' not in TITLE:
 					record['245']['a'] = TITLE.split(': ')[1] + ' /'
@@ -409,37 +441,12 @@ with open(IN, 'rb') as f:
 						record['245']['c'] = TITLE.split(':')[0]
 					else:
 						record['245'].add_subfield('c', TITLE.split(':')[0])
+				# default dynamic
 				else:
-					T = TITLE
-					# frist colon
-					COLON = re.findall('(^[^:]+):.*', T)
-					if COLON and ';' not in TITLE:
-						if 'c' in record['245']:
-							record['245']['c'] =  COLON[0]
-						else:
-							record['245'].add_subfield('c', COLON[0])
-						T = T.replace(COLON[0] + ': ', '')
-						# first dot
-						DOT = re.findall('(^[^\.]+[^A-Z0-9])\..*', T)
-						if DOT:
-							record['245']['a'] = DOT[0] + ' /'
-							T = T.replace(DOT[0] + '.', '')
-							# 245
-							if T: record['245']['c'] = record['245']['c'] + ' ; ' + T
-							# lang
-							LANG = re.findall(u'(?<=\[[Zz] ).*?(?=\.\] [Pp]řel\.)|(?<=[Pp]řel\. \[[Zz] ).*?(?=\.])', t)
-							if LANG:
-								record.add_ordered_field(Field(tag='041', indicators=['1', '\\'], subfields=['a','cze', 'h', get_lang(LANG[0])]))
-					 			T = T.replace('[Z ' + LANG[0] + '.]', '').replace('[z ' + LANG[0] + '.]', '')
-								# trans
-								TRANS = re.findall(u'(?<=[Pp]řel\. ).*', T.strip())
-								if TRANS:
-									record.add_ordered_field(Field(tag='700', indicators=['1', '\\'], subfields=['a', TRANS[0]]))
-						# tiz
-						if T != TITLE:
-							record.add_ordered_field(Field(tag='TIZ', indicators=['\\', '\\'], subfields=['a', T]))
-			# tit
+					segment_recursion(TITLE,record)
+			# TIT
 			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', TITLE]))
+
 		# TXT
 		OCRF = find('ocr_fix', jsn).replace('\n', ' ')
 		OCR = find('ocr', jsn).replace('\n', ' ')
@@ -501,10 +508,10 @@ with open(IN, 'rb') as f:
 		# WRITE -----------------
 
 		# write MARC21 binary
+		#writer.write(record)
+		#continue
 
-		writer.write(record)
-		continue
-
+		# write Aleph
 
 		# leader
 		bib.write('=LDR  ' + record.leader.encode('utf-8')+ '\n')
@@ -538,8 +545,8 @@ with open(IN, 'rb') as f:
 
 broken.close()
 autlog.close()
-#bib.close()
+bib.close()
 con.close()
 
-writer.close()
+#writer.close()
 
