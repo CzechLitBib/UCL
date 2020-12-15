@@ -15,10 +15,10 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-#IN='tmp/retrobi.json'
-IN='demo.json'
+IN='tmp/retrobi.json'
+#IN='demo.json'
 
-OUT='retrobi.bib'
+#OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
 DB='AUT.db'
@@ -282,8 +282,8 @@ except:
 autlog = open(AUTLOG, 'w')
 broken = open(BROKEN, 'w')
 
-bib = open(OUT,'w')
-#writer = MARCWriter(open('retrobi.mrc','wb'))
+#bib = open(OUT,'w')
+writer = MARCWriter(open('retrobi.mrc','wb'))
 
 # MAIN -----------------
 
@@ -295,7 +295,7 @@ with open(IN, 'rb') as f:
 		#record = Record(force_utf8=True)
 		record = Record()
 	
-		record.leader='-----nab-a22-----4a-4500'# overwrite internal(pymarc.record) LDR tag
+		record.leader='     nab a22     4a 4500'# overwrite internal(pymarc.record) LDR tag
 		record.add_ordered_field(Field(tag='FMT', data='RS'))
 		record.add_ordered_field(Field(tag='003', data='CZ-PrUCL'))
 		record.add_ordered_field(Field(tag='005', data='20201231'))
@@ -332,11 +332,11 @@ with open(IN, 'rb') as f:
 		if len(YEAR) == 4:
 			DATA+='s' + YEAR
 		else:
-			DATA+='n----'
-		DATA+='----xr------------|||-||'
+			DATA+='n    '
+		DATA+='    xr            ||| ||'
 		if NAME in SLO_MAP: LANG='slo'
 		if NAME in GER_MAP: LANG='ger'
-		DATA+=LANG + '-d'
+		DATA+=LANG + ' d'
 		record.add_ordered_field(Field(tag='008', data=DATA))
 		# 100
 		NAME = find('tree/nazvova_cast/autor/jmeno', jsn)
@@ -398,14 +398,12 @@ with open(IN, 'rb') as f:
 			else:
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', u'Roč. ' + DATE, '9', YEAR]))
 		else:
-			BASE = YEAR
-			if len(YEAR) == 4: YEAR = 'R. ' + YEAR
 			if NAME and YEAR:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', NAME, 'g', YEAR, '9', BASE]))
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', NAME, 'g', 'R. ' + YEAR, '9', YEAR]))
 			if NAME and not YEAR:
 				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', NAME]))
 			if not NAME and YEAR:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g', YEAR, '9', BASE]))
+				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g','R. ' + YEAR, '9', YEAR]))
 
 		# 856
 		LINK = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + find('_id', jsn)
@@ -508,8 +506,8 @@ with open(IN, 'rb') as f:
 		# WRITE -----------------
 
 		# write MARC21 binary
-		#writer.write(record)
-		#continue
+		writer.write(record)
+		continue
 
 		# write Aleph
 
@@ -545,8 +543,8 @@ with open(IN, 'rb') as f:
 
 broken.close()
 autlog.close()
-bib.close()
+#bib.close()
 con.close()
 
-#writer.close()
+writer.close()
 
