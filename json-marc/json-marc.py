@@ -15,12 +15,13 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-IN='tmp/retrobi.json'
+IN='tmp/retrobi_dump.json'
 #IN='demo.json'
 
 #OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
+#TRASH='trash.dat'
 DB='AUT.db'
 
 LANG_MAP={
@@ -281,6 +282,7 @@ except:
 
 autlog = open(AUTLOG, 'w')
 broken = open(BROKEN, 'w')
+#trash = open(TRASH, 'w')
 
 #bib = open(OUT,'w')
 writer = MARCWriter(open('retrobi.mrc','wb'))
@@ -315,7 +317,10 @@ with open(IN, 'rb') as f:
 			jsn = json.loads(LINE.strip().rstrip(','), strict=False)
 		except:
 			print("Broken JSON.")# skip broken line
+			continue
 
+		# skip all not state record
+		if not find('state', jsn): continue
 		# skip segmented for now
 		#if find('state', jsn) != 'FRESH': continue
 	
@@ -541,6 +546,7 @@ with open(IN, 'rb') as f:
 
 # EXIT -------------------
 
+#trash.close()
 broken.close()
 autlog.close()
 #bib.close()
