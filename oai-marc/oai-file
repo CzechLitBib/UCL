@@ -14,7 +14,8 @@ from pymarc.record import Record
 
 #DATA='demo.xml'
 #DATA='uclec.xml'
-DATA='ucla.xml'
+DATA='uclo.xml'
+#DATA='ucla.xml'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -26,6 +27,7 @@ DATA='ucla.xml'
 #BUFF=''
 
 #SIXTEEN=0
+COUNTER=0
 
 #file1 = open('100.csv','w')
 #file2 = open('600.csv','w')
@@ -33,7 +35,7 @@ DATA='ucla.xml'
 
 #link = open('link.txt','w')
 
-writer = MARCWriter(open('ucla.mrc','wb'))
+writer = MARCWriter(open('xedice.mrc','wb'))
 
 def validate(record):
 
@@ -46,7 +48,7 @@ def validate(record):
 	metadata.remove_fields('LDR')# LDR dup
 
 #	if metadata['001'].value() == '001232606': metadata.remove_fields('506')# UCLEC broken control field
-	if metadata['001'].value() == '001852470': return # UCLA skip broken encoding
+#	if metadata['001'].value() == '001852470': return # UCLA skip broken encoding
 
 	# UCLEC: 912 -> 913 if ind1 = 2
 #	for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
@@ -54,40 +56,51 @@ def validate(record):
 #	global BUFF
 #	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
 #	global SIXTEEN
+	global COUNTER
 
 #	IDENT = metadata['001'].value()
 
 	# UCLA:  webarchiv
-	for F in metadata.get_fields('856'):
-		if 'y' in F:
-			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
-			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
-			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
-			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
+#	for F in metadata.get_fields('856'):
+#		if 'y' in F:
+#			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
 
 	# UCLA: drop X
-	X=False
-	for F in metadata.get_fields('773'):
-		if X and 'x' in F: F.delete_subfield('x')# drop more than one
-		if 'x' in F: X = True# catch the first one
+#	X=False
+#	for F in metadata.get_fields('773'):
+#		if X and 'x' in F: F.delete_subfield('x')# drop more than one
+#		if 'x' in F: X = True# catch the first one
 
 	# UCLA: add MBK
-	MBK=False
-	if '044' in metadata:
-		if 'a' in metadata['044']:
-			if metadata['044']['a'] != 'xr': MBK=True
-	if '008' in metadata:
-		if metadata['008'].value()[15:17] != 'xr': MBK=True
-	for F in metadata.get_fields('964'):
-		if 'CLE' in F.value(): MBK=False
-	if MBK:
-		if '964' in metadata:
-			metadata['964'].add_subfield('a', 'MBK')
-		else:
-			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+#	MBK=False
+#	if '044' in metadata:
+#		if 'a' in metadata['044']:
+#			if metadata['044']['a'] != 'xr': MBK=True
+#	if '008' in metadata:
+#		if metadata['008'].value()[15:17] != 'xr': MBK=True
+#	for F in metadata.get_fields('964'):
+#		if 'CLE' in F.value(): MBK=False
+#	if MBK:
+#		if '964' in metadata:
+#			metadata['964'].add_subfield('a', 'MBK')
+#		else:
+#			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+
+	# UCLO 599a
+	XEDICE=False
+	for F in metadata.get_fields('599'):
+		if 'a' in F and F['a'] == 'xedice':
+			XEDICE=True
+	if XEDICE:
+		COUNTER+=1
+		writer.write(metadata)
 
 	# write MRC
-	writer.write(metadata)
+	#writer.write(metadata)
+#	print(metadata)
 
 # ------------------------------------------------------
 
@@ -303,6 +316,7 @@ writer.close()
 #print('SEVEN 700:' + str(SEVEN_700))
 
 #print(str(SIXTEEN))
+print(str(COUNTER))
 
 # EXIT -------------------
 

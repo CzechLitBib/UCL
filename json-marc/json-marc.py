@@ -15,10 +15,10 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-IN='tmp/retrobi_dump.json'
-#IN='demo.json'
+#IN='tmp/retrobi_dump.json'
+IN='demo.json'
 
-#OUT='retrobi.bib'
+OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
 #TRASH='trash.dat'
@@ -189,7 +189,7 @@ def find(path,json):
 def segment_dot_triple_dot(TITLE,record):
 	TEXT = re.findall('(?<=:).*(?=\.\.\.)', TITLE)
 	PART = TEXT[0].split('. ')
-	record['245']['a'] = PART[0] + ' :'
+	record['245']['a'] = PART[0].strip() + ' :'
 	if BRACE in [u'báseň', u'Báseň']:
 		record['245'].add_subfield('b', '[' + PART[1] + ']' + ' /', 1)# a :b /c
 	else:
@@ -219,7 +219,7 @@ def segment_dot_triple_dot(TITLE,record):
 
 def segment_triple_dot(TITLE,record):
 	TEXT = re.findall('(?<=:).*(?=\.\.\.)', TITLE)
-	record['245']['a'] = TEXT[0]
+	record['245']['a'] = TEXT[0].strip()
 	if TITLE.split('...')[1]:
 		if 'c' in record['245']:
 			record['245']['c'] = TITLE.split(':')[0] + ' ;' + TITLE.split('...')[1]
@@ -254,7 +254,7 @@ def segment_recursion(TITLE,record):
 		# first dot
 		DOT = re.findall('(^[^\.]+[^A-Z0-9])\..*', T)
 		if DOT:
-			record['245']['a'] = DOT[0] + ' /'
+			record['245']['a'] = DOT[0].strip() + ' /'
 			T = T.replace(DOT[0] + '.', '')
 			# 245
 			if T: record['245']['c'] = record['245']['c'] + ' ; ' + T
@@ -284,8 +284,8 @@ autlog = open(AUTLOG, 'w')
 broken = open(BROKEN, 'w')
 #trash = open(TRASH, 'w')
 
-#bib = open(OUT,'w')
-writer = MARCWriter(open('retrobi.mrc','wb'))
+bib = open(OUT,'w')
+#writer = MARCWriter(open('retrobi.mrc','wb'))
 
 # MAIN -----------------
 
@@ -431,15 +431,15 @@ with open(IN, 'rb') as f:
 						record['655'].indicator2 = '4'
 				TITLE = TITLE.replace(' [' + BRACE[0] + ']', '')
 				# dot triple dot
-				if re.match('^[^:]+: [^\.]+[^A-Z0-9]\. [^\.\]\[]+\.\.\.(?!\]\))( .+)?$',TITLE) and ';' not in TITLE:
+				if re.match('^[^:]+: [^\.]+[^A-Z0-9]\. [^"\.\]\[]+\.\.\.(?!\]\))( .+)?$',TITLE) and ';' not in TITLE:
 					segment_dot_triple_dot(TITLE,record)
 				# triple dot
-				elif re.match('^[^:]+: [^\.\]\[]+\.\.\.(?![\]\)])( .+)?$', TITLE) and ';' not in TITLE:
+				elif re.match('^[^:]+: [^"\.\]\[]+\.\.\.(?![\]\)])( .+)?$', TITLE) and ';' not in TITLE:
 					if len(re.findall('\.\.\.', TITLE)) == 1:
 						segment_triple_dot(TITLE,record)
 				# no dot
 				elif re.match('^[^:]+: [^\.\]\[]+$', TITLE) and ';' not in TITLE:
-					record['245']['a'] = TITLE.split(': ')[1] + ' /'
+					record['245']['a'] = TITLE.split(': ')[1].strip() + ' /'
 					if 'c' in record['245']:
 						record['245']['c'] = TITLE.split(':')[0]
 					else:
@@ -511,8 +511,8 @@ with open(IN, 'rb') as f:
 		# WRITE -----------------
 
 		# write MARC21 binary
-		writer.write(record)
-		continue
+		#writer.write(record)
+		#continue
 
 		# write Aleph
 
@@ -549,8 +549,8 @@ with open(IN, 'rb') as f:
 #trash.close()
 broken.close()
 autlog.close()
-#bib.close()
-con.close()
+bib.close()
+#writer.close()
 
-writer.close()
+con.close()
 
