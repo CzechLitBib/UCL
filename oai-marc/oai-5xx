@@ -12,7 +12,7 @@ import argparse,StringIO,urllib2,smtplib,sys,os,re
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime,date
+from datetime import datetime,date,timedelta
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
@@ -199,7 +199,7 @@ for record in records:
 			if 'c' in F:
 				CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
 				if CAT_DATE >= date.today().replace(day=1): OUTDATE=True# 1st day this month
-				if CAT_DATE < date.today().replace(day=1,month=date.today().month - 1): OUTDATE=True# 1st day prev. month 
+				if CAT_DATE < (date.today().replace(day=1) - timedelta(days=1)).replace(day=1): OUTDATE=True# 1st day prev. month 
 		if OUTDATE: continue
 
 		# 1xx/6xx-653/700/710/711/730 ------------------
