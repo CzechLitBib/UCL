@@ -384,10 +384,10 @@ for record in records:
 
 		# TEST VALID LINK ------------------
 
-		#for F in metadata.get_fields('856'):
-		#	if 'u' in F:
-		#		if not url_response(F['u']):
-		#			write_error(header.identifier(), '856', SIF, '029', 'Nefunkční odkaz v poli 856u.')
+		for F in metadata.get_fields('856'):
+			if 'u' in F:
+				if not url_response(F['u']):
+					write_error(header.identifier(), '856', SIF, '029', 'Nefunkční odkaz v poli 856u.')
 		
 		# TEST INDICATOR ------------------
 
