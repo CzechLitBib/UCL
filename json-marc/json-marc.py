@@ -328,7 +328,7 @@ with open(IN, 'rb') as f:
 		record.add_ordered_field(Field(tag='001', data='RET-' + find('_id',jsn)))
 		# 008
 		LANG='cze'
-		DATA='19600101'
+		DATA='600101'
 		YEAR = find('tree/bibliograficka_cast/zdroj/rok', jsn)
 		NAME = find('tree/bibliograficka_cast/zdroj/nazev', jsn)
 		if len(YEAR) == 4:
