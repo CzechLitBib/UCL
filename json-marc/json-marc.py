@@ -15,10 +15,10 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-#IN='tmp/retrobi_dump.json'
-IN='demo.json'
+IN='tmp/retrobi_dump.json'
+#IN='demo.json'
 
-OUT='retrobi.bib'
+#OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
 #TRASH='trash.dat'
@@ -133,9 +133,6 @@ GER_MAP=[
 	u'Zeitschrift für Slavische Philologie',
 	u'Zeitschrift für sudetendeutsche Geschichte'
 ]
-
-#tar=tarfile.open(name=OUT + '.tar.gz', fileobj=buff, mode='w:gz')
-#info = tarfile.TarInfo(name=OUT)
 
 # DEF -----------------
 
@@ -284,8 +281,8 @@ autlog = open(AUTLOG, 'w')
 broken = open(BROKEN, 'w')
 #trash = open(TRASH, 'w')
 
-bib = open(OUT,'w')
-#writer = MARCWriter(open('retrobi.mrc','wb'))
+#bib = open(OUT,'w')
+writer = MARCWriter(open('retrobi.mrc','wb'))
 
 # MAIN -----------------
 
@@ -450,13 +447,13 @@ with open(IN, 'rb') as f:
 			# TIT
 			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', TITLE]))
 
-		# TXT
+		# 989
 		OCRF = find('ocr_fix', jsn).replace('\n', ' ')
 		OCR = find('ocr', jsn).replace('\n', ' ')
 		if OCRF:
-			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', OCRF]))
+			record.add_ordered_field(Field(tag='989', indicators=['\\', '\\'], subfields=['a', OCRF]))
 		elif OCR:
-			record.add_ordered_field(Field(tag='TXT', indicators=['\\', '\\'], subfields=['a', OCR]))
+			record.add_ordered_field(Field(tag='989', indicators=['\\', '\\'], subfields=['a', OCR]))
 
 		# FIX -----------------
 	
@@ -511,8 +508,8 @@ with open(IN, 'rb') as f:
 		# WRITE -----------------
 
 		# write MARC21 binary
-		#writer.write(record)
-		#continue
+		writer.write(record)
+		continue
 
 		# write Aleph
 
@@ -549,8 +546,8 @@ with open(IN, 'rb') as f:
 #trash.close()
 broken.close()
 autlog.close()
-bib.close()
-#writer.close()
+#bib.close()
+writer.close()
 
 con.close()
 
