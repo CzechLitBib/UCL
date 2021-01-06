@@ -13,8 +13,8 @@ from pymarc.record import Record
 # VAR -------------------
 
 #DATA='demo.xml'
-#DATA='uclec.xml'
-DATA='uclo.xml'
+DATA='uclec.xml'
+#DATA='uclo.xml'
 #DATA='ucla.xml'
 
 #TOTAL_100=0
@@ -35,7 +35,7 @@ DATA='uclo.xml'
 
 #link = open('link.txt','w')
 
-writer = MARCWriter(open('xedice.mrc','wb'))
+writer = MARCWriter(open('uclec.mrc','wb'))
 
 def validate(record):
 
@@ -47,11 +47,18 @@ def validate(record):
 	# LDR dup
 	metadata.remove_fields('LDR')# LDR dup
 
-#	if metadata['001'].value() == '001232606': metadata.remove_fields('506')# UCLEC broken control field
+	if metadata['001'].value() == '001232606': metadata.remove_fields('506')# UCLEC broken control field
 #	if metadata['001'].value() == '001852470': return # UCLA skip broken encoding
 
+	# UCLEC drop records
+	#if metadata['001'].value() in ['001676249','002194963','002265478','001232724','002549375','001232855']: return
+	if metadata['001'].value() == '001232855': return
+
 	# UCLEC: 912 -> 913 if ind1 = 2
-#	for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
+	for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
+
+	# UCLEC drop 506 fields
+	metadata.remove_fields('506')
 
 #	global BUFF
 #	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
@@ -96,17 +103,17 @@ def validate(record):
 	#		BUFF+=F['a'] + str('|') + IDENT + '\n'
 
 	# UCLO 599a
-	XEDICE=False
-	for F in metadata.get_fields('599'):
-		if 'a' in F and F['a'] == 'xedice':
-			XEDICE=True
-	if XEDICE:
+#	XEDICE=False
+#	for F in metadata.get_fields('599'):
+#		if 'a' in F and F['a'] == 'xedice':
+#			XEDICE=True
+#	if XEDICE:
 #		COUNTER+=1
-		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'XEDICE']))
-		writer.write(metadata)
+#		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'XEDICE']))
+#		writer.write(metadata)
 
 	# write MRC
-#	writer.write(metadata)
+	writer.write(metadata)
 #	print(metadata)
 
 # ------------------------------------------------------
