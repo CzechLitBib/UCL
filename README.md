@@ -3,6 +3,17 @@ DESCRIPTION
 
 Library support software.
 
+TODO
+
+<pre>
+- oai-marc update
+- 260 input form
+- oai-marc error doc
+- 773/787 csv update
+- 15000 segmented xml
+- 964 base xml + sif;sys;vufind.csv
+<pre>
+
 BACKUP
 <pre>
 crontab -e
