@@ -7,7 +7,7 @@ TODO
 
 <pre>
 - oai-marc update
-- 260 input form
+-[DONE] 260 input form
 - oai-marc error doc
 - 773/787 csv update
 - 15000 segmented xml
