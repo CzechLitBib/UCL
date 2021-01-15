@@ -824,7 +824,7 @@ for record in records:
 			for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT
 				if 'c' in F:
 					if metadata['008'].value()[:6] != F['c'][2:]:
-						write_error(header.identifier(), '008', SIF, '131','Nesoulad data založení v poli 008/CAT.')
+						write_error(header.identifier(), '008', SIF, '131', 'Nesoulad data založení v poli 008/CAT.')
 
 		# 2ND BATCH ------------------
 
