@@ -8,11 +8,11 @@ TODO
 <pre>
 - oai-marc update
 -[DONE] 260 input form
-- oai-marc error doc
+-[DONE] oai-marc error doc
 - 773/787 csv update
 - 15000 segmented xml
 - 964 base xml + sif;sys;vufind.csv
-<pre>
+</pre>
 
 BACKUP
 <pre>
