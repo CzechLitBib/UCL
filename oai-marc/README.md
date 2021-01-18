@@ -24,7 +24,6 @@ python -B setup.py install
 oai-7
 oai-kat
 oai-5xx
-oai-964
 oai-marc
 oai-daily
 oai-weekly
@@ -92,12 +91,12 @@ FILE
 
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
          oai-5xx - Send dumped 245/246/5xx text for correction. 
-         oai-964 - Generate Aleph Pseudo-Marc format file. 
          oai-mdt - Z39.50 yaz-client wrapper.
            oai-7 - Evaluate subfield "7" data. 
          oai-kat - Evaluate field "KAT" data. 
        oai-7-xml - Evaluate subfield "7" datafrom file.
         oai-file - Debug & testing.
+
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
      oai-monthly - Crontab monthly runner.

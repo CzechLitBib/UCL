@@ -13,9 +13,9 @@ from pymarc.record import Record
 # VAR -------------------
 
 #DATA='demo.xml'
-DATA='uclec.xml'
+#DATA='uclec.xml'
 #DATA='uclo.xml'
-#DATA='ucla.xml'
+DATA='ucla.xml'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -37,10 +37,13 @@ COUNTER=0
 
 #writer = MARCWriter(open('uclec.mrc','wb'))
 
-writer1 = MARCWriter(open('uclec1.mrc','wb'))
-writer2 = MARCWriter(open('uclec2.mrc','wb'))
-writer3 = MARCWriter(open('uclec3.mrc','wb'))
-writer4 = MARCWriter(open('uclec4.mrc','wb'))
+#writer1 = MARCWriter(open('uclec1.mrc','wb'))
+#writer2 = MARCWriter(open('uclec2.mrc','wb'))
+#writer3 = MARCWriter(open('uclec3.mrc','wb'))
+#writer4 = MARCWriter(open('uclec4.mrc','wb'))
+
+DATADIR='/var/www/html/964'
+BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ']
 
 def validate(record):
 
@@ -52,12 +55,12 @@ def validate(record):
 #	global BUFF
 #	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
 #	global SIXTEEN
-	global COUNTER
+#	global COUNTER
 
 	# LDR dup
-	metadata.remove_fields('LDR')# LDR dup
+#	metadata.remove_fields('LDR')# LDR dup
 
-	if metadata['001'].value() == '001232606': metadata.remove_fields('506')# UCLEC broken control field
+#	if metadata['001'].value() == '001232606': metadata.remove_fields('506')# UCLEC broken control field
 #	if metadata['001'].value() == '001852470': return # UCLA skip broken encoding
 
 	# UCLEC drop records [obsolate]
@@ -65,28 +68,28 @@ def validate(record):
 	#if metadata['001'].value() == '001232855': return
 
 	# UCLEC: 912 -> 913 ind1 = 2
-	for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
+#	for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
 
 	# UCLEC: 912 -> 911 ind1 = ' ' ind2 = ' '
-	for F in [f for f in metadata.get_fields('912') if f.indicator1 + f.indicator2 == '  ']: F.tag = '911'
+#	for F in [f for f in metadata.get_fields('912') if f.indicator1 + f.indicator2 == '  ']: F.tag = '911'
 
 	# UCLEC drop 506 fields
-	metadata.remove_fields('506')
+#	metadata.remove_fields('506')
 
-	COUNTER+=1
+#	COUNTER+=1
 
 	# write MRC
 
-	if COUNTER > 1284:
-		writer4.write(metadata)
-		return		
-	if COUNTER > 856:
-		writer3.write(metadata)
-		return		
-	if COUNTER > 428:
-		writer2.write(metadata)
-		return		
-	writer1.write(metadata)
+#	if COUNTER > 1284:
+#		writer4.write(metadata)
+#		return		
+#	if COUNTER > 856:
+#		writer3.write(metadata)
+#		return		
+#	if COUNTER > 428:
+#		writer2.write(metadata)
+#		return		
+#	writer1.write(metadata)
 
 #	try:
 #		IDENT = metadata['001'].value()
@@ -140,7 +143,54 @@ def validate(record):
 #	print(metadata)
 
 # ------------------------------------------------------
+# BASE
+# ------------------------------------------------------
 
+
+	if 'SIF' in metadata:
+		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].ljust(5)
+	else:
+		SIF = ''.ljust(5)
+
+	if '964' and '990' in metadata:# 990 -> FMT
+		for F in metadata.get_fields('964'):
+			base = F.value()
+			sub_base = metadata['990'].value()
+			try:
+				os.mkdir(DATADIR + '/'+ base)
+			except: pass
+			try:
+				os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+			except: pass
+			try:
+				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '.' + sub_base + '.bib', 'a', 0) as f:
+					for F in metadata:
+						try:
+							IND=''
+							if F.indicator1: IND += F.indicator1
+							else: IND += ' '
+							if F.indicator2: IND += F.indicator2
+							else: IND += ' '
+						except: IND = '  '
+						try:
+							VAL=[]
+							if F.subfields:
+								for sub in F:
+									VAL.append(''.join(sub).strip())
+        							DATA = '$$' + '$$'.join(VAL)
+							else: DATA = ''
+						except: DATA = F.value()
+						if F.tag == 'SYS': continue
+						if F.tag == 'LDR':
+							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';LDR' + IND + ' L ' + metadata.leader.encode('utf-8') + '\n')
+						else:
+							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';' + str(F.tag) + str(IND) + ' L ' + DATA.encode('utf-8') + '\n')
+			except:
+				print(ALEPH + ' Write failed.')
+
+# ------------------------------------------------------
+# GENERIC
+# ------------------------------------------------------
 
 #	if '005' in metadata and '008' in metadata:
 #		if int(metadata['005'].value()[:4]) >= 2016:
