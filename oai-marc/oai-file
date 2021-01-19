@@ -27,7 +27,7 @@ DATA='ucla.xml'
 #BUFF=''
 
 #SIXTEEN=0
-COUNTER=0
+#COUNTER=0
 
 #file1 = open('100.csv','w')
 #file2 = open('600.csv','w')
@@ -146,47 +146,27 @@ def validate(record):
 # BASE
 # ------------------------------------------------------
 
-
 	if 'SIF' in metadata:
-		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].ljust(5)
+		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
 	else:
-		SIF = ''.ljust(5)
+		SIF = ''
 
-	if '964' and '990' in metadata:# 990 -> FMT
+	IDENT = metadata['001'].value()
+
+	if '964' and 'FMT' in metadata:# 990 -> FMT
 		for F in metadata.get_fields('964'):
 			base = F.value()
-			sub_base = metadata['990'].value()
-			try:
-				os.mkdir(DATADIR + '/'+ base)
-			except: pass
-			try:
-				os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
-			except: pass
-			try:
-				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '.' + sub_base + '.bib', 'a', 0) as f:
-					for F in metadata:
-						try:
-							IND=''
-							if F.indicator1: IND += F.indicator1
-							else: IND += ' '
-							if F.indicator2: IND += F.indicator2
-							else: IND += ' '
-						except: IND = '  '
-						try:
-							VAL=[]
-							if F.subfields:
-								for sub in F:
-									VAL.append(''.join(sub).strip())
-        							DATA = '$$' + '$$'.join(VAL)
-							else: DATA = ''
-						except: DATA = F.value()
-						if F.tag == 'SYS': continue
-						if F.tag == 'LDR':
-							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';LDR' + IND + ' L ' + metadata.leader.encode('utf-8') + '\n')
-						else:
-							f.write(SIF.encode('utf-8') + ';' + ALEPH + ';' + str(F.tag) + str(IND) + ' L ' + DATA.encode('utf-8') + '\n')
-			except:
-				print(ALEPH + ' Write failed.')
+			if base in BASE:
+				sub_base = metadata['FMT'].value()
+				try:
+					os.mkdir(DATADIR + '/'+ base)
+				except: pass
+				try:
+					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+				except: pass
+			
+				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
+					f.write(SIF + ';' + str(IDENT) + ';' + 'https://vufind.ucl.cas.cz/Record/' + str(IDENT) + '\n')
 
 # ------------------------------------------------------
 # GENERIC
@@ -390,10 +370,10 @@ marcxml.map_xml(validate, DATA)
 
 #link.close()
 
-writer1.close()
-writer2.close()
-writer3.close()
-writer4.close()
+#writer1.close()
+#writer2.close()
+#writer3.close()
+#writer4.close()
 
 #file0.close()
 #file1.close()
