@@ -8,67 +8,24 @@
 
 from __future__ import print_function
 
-import argparse,StringIO,urllib2,smtplib,sys,os,re
+import argparse,StringIO,urllib2,sys,os,re
 
-from email.mime.text import MIMEText
 from datetime import datetime
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
+from pymarc.record import Record
+from pymarc.field import Field
 from lxml.etree import tostring
 
 # VAR -------------------
 
-LOG='oai-marc.html'
 CSV='oai-marc.csv'
 
 COUNTRY_CODE='/usr/local/bin/country_code.txt'
 LANG_CODE='/usr/local/bin/lang_code.txt'
 ROLE_CODE='/usr/local/bin/role_code.txt'
 SIF_CODE='/usr/local/bin/sif_code.txt'
-
-ERROR={}
-
-HTML_HEADER='''<!doctype html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="background-color:black;color:#6DAE42;">
-<br>[ <a href="CSVPLACEHOLDER" style="color:white; text-decoration:none;">CSV</a> ]
-<br>
-'''
-
-HTML_FOOTER='''</body>
-</html>
-'''
-
-COUNTER=0
-MATCH=0
-
-# DEF -------------------
-
-def MarcXML(xml):
-	handler = marcxml.XmlHandler()
-	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
-	return handler.records[0]
-
-def write_error(id,tag,sif,code,code_text):
-	aleph = re.sub('^.*-(\d+)$', '\\1', id)
-	SIF = sif.decode('utf-8').lower()
-	# error counter
-#	global MATCH
-#	MATCH+=1
-	# update errors
-#	if SIF not in ERROR: ERROR[SIF] = {}
-#	if aleph not in ERROR[SIF]: ERROR[SIF][aleph] = []
-#	ERROR[SIF][aleph].append((code,code_text))
-	# write daily HTML
-#	log.write(
-#		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-#		aleph + '&local_base=AV">' + aleph + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
-#		' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
-#	)
-	# write daily CSV
-	csv.write(str(aleph) + ';' + sif + ';' + code + ';' + code_text + '\n')
 
 # ARGS -------------------
 
@@ -79,12 +36,6 @@ args = parser.parse_args()
 
 # INIT -------------------
 
-try:
-	log = open(LOG, 'w', 0)
-	log.write(HTML_HEADER)
-except:
-	print('LOG: Read only FS exiting..')
-	exit(1)
 try:
 	csv = open(CSV, 'w', 0)
 except:
@@ -109,6 +60,13 @@ try:
 			acct_code, acct_addr = line.decode('utf-8').split(':')
 			sif_code[acct_code] = acct_addr.strip()
 except: sif_code = {}
+
+# DEF -------------------
+
+def write_error(id,tag,sif,code,code_text):
+	aleph = re.sub('^.*-(\d+)$', '\\1', id)
+	SIF = sif.decode('utf-8').lower()
+	csv.write(str(aleph) + ';' + sif + ';' + code + ';' + code_text + '\n')
 
 def validate(record):
 
@@ -1015,18 +973,74 @@ def validate(record):
 				if re.findall('(?<![0-9\[ ])=', F['r']):
 					write_error(IDENT, '505', SIF, '177', 'Chybný znak před znakem = v podpoli 505r.')
 		# 080
-                if '080' not in metadata:
-                        PASS=False
-                        if '600' in metadata and metadata['600'].indicator2 == '7': PASS=True
-                        if '655' in metadata and metadata['655'].indicator2 == '7': PASS=True
-                        if not PASS:
-                                write_error(IDENT, TAG, SIF, '178', 'Chybí pole 080.')
+		if '080' not in metadata:
+			PASS=False
+			if '600' in metadata and metadata['600'].indicator2 == '7': PASS=True
+			if '655' in metadata and metadata['655'].indicator2 == '7': PASS=True
+			if not PASS:
+				write_error(IDENT, '080', SIF, '178', 'Chybí pole 080.')
+
+		# 3RD BATCH ------------------
+
+	
+		# 100-4
+		PASS=False
+		if '100' in metadata and '4' not in metadata['100']:
+			write_error(IDENT, TAG, SIF, '179', "Pole 100 nebsahuje žádné podpole '4'.")
+		
+		# 110-4
+		if '110' in metadata and '4' not in metadata['110']:
+			write_error(IDENT, TAG, SIF, '180', "Pole 110 nebsahuje žádné podpole '4'.")
+
+		# 773 semi-colon
+		for F in metadata.get_fields('773'):
+			if 'g' in F and ';' in F['g']:
+				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) + len(F.get_subfields('9')):
+					write_error(IDENT, TAG, SIF, '181', 'Neplatný počet středníků v podpoli 773q.')
+		# 773q 773-9 match 
+		for F in metadata.get_fields('773'):
+			if 'g' in F and '9' in F:
+				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
+					write_error(IDENT, TAG, SIF, '182', "V poli 773 nesouhlasí počet podpolí 'q' a '9'.")
+	
+		# 787z brace
+		for F in metadata.get_fields('787'):
+			if 'z' in F:
+				if '(' in F['z'] or ')' in F['z']:
+					write_error(IDENT, TAG, SIF, '183', "Podpole 787z obsahuje závorku.")
+
+		# 856z brace
+		for F in metadata.get_fields('856'):
+			if 'z' in F:
+				if '(' in F['z'] or ')' in F['z']:
+					write_error(IDENT, TAG, SIF, '184', "Podpole 856z obsahuje závorku.")
+					
+
+		#5) v podpoli 856z nesmí být ()	
 
 # EXIT -------------------
 
-marcxml.map_xml(validate, 'ucla.xml')
+record = Record()
 
-log.write(HTML_FOOTER)
-log.close()
+record.leader = '     nam a22     4i 4500'
+field = Field(tag = '001', data='002524717')
+record.add_ordered_field(field)
+field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
+record.add_ordered_field(field)
+field = Field(tag = '100', indicators = ['1',' '], subfields = ['a', 'foo','4', 'boo'])
+record.add_ordered_field(field)
+field = Field(tag = '110', indicators = ['1',' '], subfields = ['a', 'foo', '4', 'boo'])
+record.add_ordered_field(field)
+field = Field(tag = '773', indicators = ['1',' '], subfields = ['g', 'foo;', 'q', 'foo', '9','bar'])
+record.add_ordered_field(field)
+field = Field(tag = '787', indicators = ['1',' '], subfields = ['z', 'boo'])
+record.add_ordered_field(field)
+field = Field(tag = '856', indicators = ['1',' '], subfields = ['z', 'boo'])
+record.add_ordered_field(field)
+
+validate(record)
+
+#marcxml.map_xml(validate, 'ucla.xml')
+
 csv.close()
 
