@@ -1199,7 +1199,7 @@ for record in records:
 #		for F in metadata.get_fields('773'):
 #			if 'g' in F and '9' in F:
 #				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
-#					write_error(header.identifer(), '773', SIF, '182', "V poli 773 nesouhlasí počet podpolí 'q' a '9'.")
+#					write_error(header.identifer(), '773', SIF, '182', "V poli 773 se neshoduje počet podpolí 'q' a '9'.")
 
 		# 787z brace
 #		for F in metadata.get_fields('787'):

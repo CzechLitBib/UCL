@@ -6,7 +6,7 @@ Library support software.
 TODO
 
 <pre>
-- oai-marc update
+-[DONE] oai-marc update
 -[DONE] 260 input form
 -[DONE] oai-marc error doc
 - 773/787 csv update
