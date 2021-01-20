@@ -1038,28 +1038,43 @@ Popis chybových zpráv kontrolního programu OAI-MARC.
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
+<tr><td width="42" align="center"><font color="red"><b>142</b></font></td><td width="700"><b>Chybny zapis podpole 110c.</b></td></tr>
+<tr><td></td><td>Prvni indikator pole 110 ma hodnotu '0' a zaroven podpole 'c' nezacina na hranatou zavorku.</td></tr>
+</table>
+</p>
+
+<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
+<table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>143</b></font></td><td width="700"><b>Chybí podpole 110b, nebo chybný indikátor.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Prvni indikator pole 110 ma hodnotu '1' a zaroven neobsahuje podpole 'b'.</td></tr>
+</table>
+</p>
+
+<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
+<table cellpadding="5">
+<tr><td width="42" align="center"><font color="red"><b>144</b></font></td><td width="700"><b>Chybny zapis podpole 710c.</b></td></tr>
+<tr><td></td><td>Prvni indikator nektereho z poli 710 ma hodnotu '0' a zaroven podpole 710c nezacina na hranatou zavorku.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>145</b></font></td><td width="700"><b>Chybí podpole 710b, nebo chybný indikátor.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Prvni indikator nektereho z poli 710 ma hodnotu '1' a zaroven neobsahuje podpole 'b'.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>146</b></font></td><td width="700"><b>Chybný zápis středníku v 245c.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>V podpoli 245c neni pred strednikem a za strednikem mezera.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>147</b></font></td><td width="700"><b>Chybný zápis středníku v 505r.</b></td></tr>
+<tr><td></td><td>V nekterem podpoli 505r neni pred strednikem a za strednikem mezera.</td></tr>
 <tr><td></td><td> </td></tr>
 </table>
 </p>
@@ -1067,6 +1082,7 @@ Popis chybových zpráv kontrolního programu OAI-MARC.
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>148</b></font></td><td width="700"><b>Chybný zápis středníku v 787n.</b></td></tr>
+<tr><td></td><td>V nekterem podpoli 787n neni pred strednikem a za strednikem mezera.</td></tr>
 <tr><td></td><td> </td></tr>
 </table>
 </p>
@@ -1074,105 +1090,128 @@ Popis chybových zpráv kontrolního programu OAI-MARC.
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>149</b></font></td><td width="700"><b>Chybný zápis středníku v 787k.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>V nekterem podpoli 787k neni pred strednikem a za strednikem mezera.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>150</b></font></td><td width="700"><b>Chybný zápis středníku v 773n.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>V nekterem podpoli 773n neni pred strednikem a za strednikem mezera.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>151</b></font></td><td width="700"><b>Chybná interpunkce v 245c mezi [ a = je mezera.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>V podpoli 245c je mezera mezi otevirajici hranatou zavorkou a rovnitkem.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>152</b></font></td><td width="700"><b>Chybná interpunkce v 505r mezi [ a = je mezera.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>V neterem podpoli 505r je mezera mezi otevirajici hranatou zavorkou a rovnitkem.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>153</b></font></td><td width="700"><b>Odlišný počet [ a ] v poli 505r.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>V nekterem z podpoli 505r se neshoduje pocet otevirajicich a uzavirajicich hranatych zavorek.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>154</b></font></td><td width="700"><b>Odlišný počet [ a ] v poli 245c.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>V podpoli 245c se neshoduje pocet otevirajicich a uzavirajicich hranatych zavorek.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>155</b></font></td><td width="700"><b>Chybný 1.indikátor pole 245c, nebo chybí pole 700, "Nepodepsáno." v 500, či nejde o bbp.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Prvni indikator pole 245 ma hodnotu '0'. Zaznam neobsahuje pole 700.</td></tr>
+<tr><td></td><td>Zadne pole 500 neobsahuje hodnotu 'Nepodepsano.'.</td></tr>
+<tr><td></td><td>Zadne podpole 665a neobsahuje 'biograficke poznamky', 'bibliograficke poznamky', bio-bibliograficke poznamky' , nebo 'biograficko-bibliograficke poznamky'.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>156</b></font></td><td width="700"><b>Chyba v poli 245c po středníku následuje velké písmeno.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Pole 008 neobsahuje na 36-39 pozici hodnotu 'ger'. Zadne podpole pole 041 neobsahuje hodnotu 'ger'.</td></tr>
+<tr><td></td><td>V podpoli 245c nasleduje po znacich  ';  ' velke pismeno.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>157</b></font></td><td width="700"><b>Chyba v 245c 1.indikátor je 0, pole začíná velkým písmenem.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Prvni indikator pole 245 ma hodnotu '0', podpole 245c zacina na velke pismeno.</td></tr>
+<tr><td></td><td>Podpole 245c neobsahuje zkratku 'ed.', 'edd.', 'eds.', 'hg.',  nebo '.)' zacinajici velkym i malym pismenem.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>158</b></font></td><td width="700"><b>Chyba podpole 245b začíná na (.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Podpole 245b zacina na kulatou zaroku.</td></tr>
+</table>
+</p>
+
+<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
+<table cellpadding="5">
+<tr><td width="42" align="center"><font color="red"><b>159</b></font></td><td width="700"><b>Chyba v poli 245a oznaceni casti je treba zapsat do pole 245n.</b></td></tr>
+<tr><td></td><td>Podpole 245a obsahuje samostatne cislo 1 az 20.</td></tr>
+</table>
+</p>
+
+<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
+<table cellpadding="5">
+<tr><td width="42" align="center"><font color="red"><b>160</b></font></td><td width="700"><b>Chyba v poli 245b oznaceni casti je treba zapsat do pole 245n.</b></td></tr>
+<tr><td></td><td>Podpole 245b obsahuje samostatne cislo 1 az 20.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>161</b></font></td><td width="700"><b>Nepovolená kombinace . : v poli 245.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Podpole v poli 245 obsahuje kombinaci '. :', tecka neni soucasti zkratky 'ml', 'st', 'kol', 'spol', 'min', 'Dr', 'atp', nebo 'etc'</td></tr>
+<tr><td></td><td>Tecka neni soucasti tri tecek.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>162</b></font></td><td width="700"><b>Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Prvni indikator pole 245 ma hodnotu '1', hodnota podpole 245c za strednikem, nebo carkou neobsahuje '[='.</td></tr>
+<tr><td></td><td>Hodnota podpole 100a se neodpovida hodnote podpole 245c s teckou, nebo bez tecky na konci.</td></tr>
+<tr><td></td><td>Podpole 245c nezacina na 'text', nebo 'napsal'.</td></tr>
+<tr><td></td><td>Pokud ma indikator pole 100 hodnotu '0' neshoduje se hodnota podpole 100a s hodnotou podpole 245c za carkou.</td></tr>
+<tr><td></td><td>Zaznam neobsahuje podpole 506a s hodnotou '162'.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>163</b></font></td><td width="700"><b>Chybná hodnota 1.indikátoru pole 245, chybí podpole "c".</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Prvni indikator pole 245 ma hodnotu '1', pole neobsahuje podpole 'c', zaznam neobsahuje podpole 506a s hodnotou '163'.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>164</b></font></td><td width="700"><b>Chybný zápis dešifrovaného jména v 245c.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Jmeno v podpoli 245c mezi znaky '[=' a ']' neni oddelene carkou.</td></tr>
 </table>
 </p>
 
 <p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <table cellpadding="5">
 <tr><td width="42" align="center"><font color="red"><b>165</b></font></td><td width="700"><b>Chybný zápis dešifrovaného jména v 505r.</b></td></tr>
-<tr><td></td><td> </td></tr>
+<tr><td></td><td>Jmeno v podpoli 505r mezi znaky '[=' a ']' neni oddelene carkou.</td></tr>
 </table>
 </p>
 
