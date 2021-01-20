@@ -1174,10 +1174,12 @@ for record in records:
 		# 080
                 if '080' not in metadata:
                         PASS=False
-                        if '600' in metadata and metadata['600'].indicator2 == '7': PASS=True
-                        if '655' in metadata and metadata['655'].indicator2 == '7': PASS=True
-                        if not PASS:
-                                write_error(header.identifier(), '080', SIF, '178', 'Chybí pole 080.')
+			for F in metadata.get_fields('600'):
+				if F['600'].indicator2 == '7': PASS=True
+			for F in metadata.get_fields('655'):
+				if F['655'].indicator2 == '7': PASS=True
+			if not PASS:
+				write_error(header.identifier(), '080', SIF, '178', 'Chybí pole 080.')
 
 		# 3RD BATCH ------------------
 
