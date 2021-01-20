@@ -12,6 +12,8 @@ TODO
 - 773/787 csv update
 -[DONE] 15000 segmented MARC
 -[DONE] 964 base sif;sys;vufind.csv
+-Koha reinstall.
+-[@]
 </pre>
 
 BACKUP
