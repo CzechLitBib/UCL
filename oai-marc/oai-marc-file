@@ -996,10 +996,10 @@ def validate(record):
 		for F in metadata.get_fields('773'):
 			if 'g' in F and ';' in F['g']:
 				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) + len(F.get_subfields('9')):
-					write_error(IDENT, TAG, SIF, '181', 'Neplatný počet středníků v podpoli 773q.')
+					write_error(IDENT, TAG, SIF, '181', 'Neplatný počet středníků v podpoli 773g.')
 		# 773q 773-9 match 
 		for F in metadata.get_fields('773'):
-			if 'g' in F and '9' in F:
+			if 'q' in F and '9' in F:
 				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
 					write_error(IDENT, TAG, SIF, '182', "V poli 773 se neshoduje počet podpolí 'q' a '9'.")
 	
