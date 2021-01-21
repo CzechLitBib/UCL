@@ -8,7 +8,7 @@
 
 from __future__ import print_function
 
-import argparse,StringIO,urllib2,sys,os,re
+import StringIO,urllib2,sys,os,re
 
 from datetime import datetime
 from oaipmh.client import Client
@@ -26,13 +26,6 @@ COUNTRY_CODE='/usr/local/bin/country_code.txt'
 LANG_CODE='/usr/local/bin/lang_code.txt'
 ROLE_CODE='/usr/local/bin/role_code.txt'
 SIF_CODE='/usr/local/bin/sif_code.txt'
-
-# ARGS -------------------
-
-parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
-optional = parser.add_argument_group('output')
-optional.add_argument('--check', help='Validation control.', action='store_true')
-args = parser.parse_args()
 
 # INIT -------------------
 
@@ -75,9 +68,9 @@ def validate(record):
 	IDENT = metadata['001'].value()
 
 	# VALIDATION ------------------
+	
+	if True:
 
-	if args.check:
-		
 		# TEST TAG ------------------
 
 		if 'SIF' in metadata:
@@ -996,24 +989,24 @@ def validate(record):
 		for F in metadata.get_fields('773'):
 			if 'g' in F and ';' in F['g']:
 				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) + len(F.get_subfields('9')):
-					write_error(IDENT, TAG, SIF, '181', 'Neplatný počet středníků v podpoli 773g.')
+					write_error(IDENT, TAG, SIF, '181', 'Neplatný počet středníků v podpoli 773q.')
 		# 773q 773-9 match 
 		for F in metadata.get_fields('773'):
 			if 'q' in F and '9' in F:
 				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
 					write_error(IDENT, TAG, SIF, '182', "V poli 773 se neshoduje počet podpolí 'q' a '9'.")
 	
-		# 787z brace
-		for F in metadata.get_fields('787'):
-			if 'z' in F:
-				if '(' in F['z'] or ')' in F['z']:
-					write_error(IDENT, TAG, SIF, '183', "Podpole 787z obsahuje závorku.")
+		# 856y brace
+		for F in metadata.get_fields('856'):
+			if 'y' in F:
+				if '(' in F['y'] or ')' in F['y']:
+					write_error(IDENT, TAG, SIF, '183', "Podpole 856y obsahuje závorku.")
 
 		# 856z brace
 		for F in metadata.get_fields('856'):
 			if 'z' in F:
-				if '(' in F['z'] or ')' in F['z']:
-					write_error(IDENT, TAG, SIF, '184', "Podpole 856z obsahuje závorku.")
+				if '(' not in F['z'] or ')' not in F['z']:
+					write_error(IDENT, TAG, SIF, '184', "Podpole 856z neobsahuje závorku.")
 					
 
 		#5) v podpoli 856z nesmí být ()	
@@ -1035,7 +1028,7 @@ field = Field(tag = '773', indicators = ['1',' '], subfields = ['g', 'foo;', 'q'
 record.add_ordered_field(field)
 field = Field(tag = '787', indicators = ['1',' '], subfields = ['z', 'boo'])
 record.add_ordered_field(field)
-field = Field(tag = '856', indicators = ['1',' '], subfields = ['z', 'boo'])
+field = Field(tag = '856', indicators = ['1',' '], subfields = ['z', '(boo)', 'y', 'test'])
 record.add_ordered_field(field)
 
 validate(record)
