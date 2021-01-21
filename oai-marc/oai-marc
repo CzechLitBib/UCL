@@ -758,14 +758,14 @@ for record in records:
 				for DATA in metadata['041'].subfields[1::2]:
 					if DATA not in lang_code:
 						write_error(header.identifier(), '041', SIF, '114', 'Chybný kód jazyka v poli 041.')
-			if len(metadata['041'].subfields) <= 2:
+			if len(metadata['041'].subfields) < 2:
 					write_error(header.identifier(), '041', SIF, '115', 'Pole 041 musí obsahovat 2 a více podpolí.')
 		if '044' in metadata:
 			if country_code:
 				for DATA in metadata['044'].subfields[1::2]:
 					if DATA not in country_code:
 						write_error(header.identifier(), '044', SIF, '116', 'Chybný kód země v poli 044.')
-			if len(metadata['044'].subfields) <= 2:
+			if len(metadata['044'].subfields) < 2:
 					write_error(header.identifier(), '044', SIF, '117', 'Pole 044 musí obsahovat 2 a více podpolí.')
 		if '100' in metadata:
 			if role_code:
