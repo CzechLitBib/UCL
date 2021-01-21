@@ -1203,17 +1203,17 @@ for record in records:
 #				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
 #					write_error(header.identifier(), '773', SIF, '182', "V poli 773 se neshoduje počet podpolí 'q' a '9'.")
 
-		# 787z brace
-#		for F in metadata.get_fields('787'):
-#			if 'z' in F:
-#				if '(' in F['z'] or ')' in F['z']:
-#					write_error(header.identifier(), '787', SIF, '183', "Podpole 787z obsahuje závorku.")
+		# 856y brace
+#		for F in metadata.get_fields('856'):
+#			if 'y' in F:
+#				if '(' in F['y'] or ')' in F['y']:
+#					write_error(header.identifier(), '856', SIF, '183', "Podpole 856y obsahuje závorky.")
 
                 # 856z brace
 #		for F in metadata.get_fields('856'):
 #			if 'z' in F:
-#				if '(' in F['z'] or ')' in F['z']:
-#					write_error(header.identifier(), '856', SIF, '184', "Podpole 856z obsahuje závorku.")
+#				if '(' not in F['z'] or ')' not in F['z']:
+#					write_error(header.identifier(), '856', SIF, '184', "Podpole 856z neobsahuje závorky.")
 
 	COUNTER+=1
 
