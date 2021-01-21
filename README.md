@@ -6,12 +6,8 @@ Library support software.
 TODO
 
 <pre>
--[DONE] oai-marc update
--[DONE] 260 input form
--[DONE] oai-marc error doc
-- 773/787 csv update
--[DONE] 15000 segmented MARC
--[DONE] 964 base sif;sys;vufind.csv
+-773/787 csv update
+-964 base sif;sys;vufind.csv
 -Koha reinstall.
 -[@]
 </pre>
