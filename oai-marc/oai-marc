@@ -775,8 +775,8 @@ for record in records:
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
 					write_error(header.identifier(), '100', SIF, '119', 'Chybný kód role v podpoli 100j.')
-			if '4' not in metadata['100'] or 'oth' not in metadata['100'].get_subfields('4'):
-				write_error(header.identifier(), '100', SIF, '120', 'V poli 100 chybí podpole 4 s hodnotou "oth".')
+				if '4' not in metadata['100'] or 'oth' not in metadata['100'].get_subfields('4'):
+					write_error(header.identifier(), '100', SIF, '120', 'V poli 100 chybí podpole 4 s hodnotou "oth".')
 		for F in metadata.get_fields('700'):
 			if role_code:
 				for DATA in F.get_subfields('4'):
