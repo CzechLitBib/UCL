@@ -369,7 +369,7 @@ for record in records:
 				if VAL and re.match('.*' + F['t'] + '.*', VAL): ADD=True
 				if VAL and u'příl.' in VAL and u'příloha' in F['t']: ADD =True
 				if '[samizdat]' in F['t']: ADD=True
-				if 'Literární archiv' in F['t']: ADD=True
+				if u'Literární archiv' in F['t']: ADD=True
 				if not ADD:
 					write_error(header.identifier(), '773', SIF, '024', 'Neplatné pole 773.')
 		for F in metadata.get_fields('787'):
