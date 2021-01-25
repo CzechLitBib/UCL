@@ -499,9 +499,14 @@ for record in records:
 				if SUB not in ('a', 'b', 'c'):
 					write_error(header.identifier(), '264', SIF, '059', 'Chybný kód podpole v poli 264.')
 		if '300' in metadata:
+			BAD=False
 			for SUB in metadata['300'].subfields[0::2]:
-				if SUB not in ('a', 'b', 'e'):
-					write_error(header.identifier(), '300', SIF, '060', 'Chybný kód podpole v poli 300.')
+				if SUB not in ('a', 'b', 'e'): BAD=True
+				if SUB == 'c':
+					for F in metadata.get_fields('964'):
+						if F.value() == 'SMZ': BAD=False
+			if BAD:
+				write_error(header.identifier(), '300', SIF, '060', 'Chybný kód podpole v poli 300.')
 		for F in metadata.get_fields('490'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'v', 'x'):
@@ -1011,7 +1016,7 @@ for record in records:
 		# 245c
 		GER=False
 		if '008' in metadata:
-				if metadata['008'].value()[35:39] == 'ger': GER=True
+				if metadata['008'].value()[35:38] == 'ger': GER=True
 		if '041' in metadata:
 				if 'ger' in metadata['041'].subfields[1::2]: GER=True
 		if not GER:
