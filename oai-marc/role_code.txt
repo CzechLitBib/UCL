@@ -15,14 +15,17 @@ crp
 ctb
 cwt
 dis
+drt
 dsr
 edt
+grt
 hnr
 ill
 ilu
 ive
 ivr
 lbt
+opn
 org
 oth
 pbd
@@ -33,6 +36,9 @@ prt
 rcp
 red
 rev
+sgn
+sng
+ths
 trl
 tyg
 wam

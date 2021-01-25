@@ -30,9 +30,9 @@ SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
-MAIL_SENDER='xxx'
-MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
+MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
+MAIL_SERVER='listonos.ucl.cas.cz'
+MAIL_SERVER_BACKUP='mail2.ucl.cas.cz'
 
 HTML_HEADER='''<!doctype html>
 <html>
@@ -336,7 +336,7 @@ for record in records:
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
 					write_error(header.identifier(), TAG, SIF, '014', 'Chybné opakování podpole ' + TAG + 'a.')
-		for TAG in ('080', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
+		for TAG in ('080', '100', '110', '111', '130', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			for F in metadata.get_fields(TAG):
 				if len(F.get_subfields('a')) != 1:
 					write_error(header.identifier(), TAG, SIF, '015', 'Chybné opakování podpole ' + TAG + 'a.')
@@ -369,6 +369,7 @@ for record in records:
 				if VAL and re.match('.*' + F['t'] + '.*', VAL): ADD=True
 				if VAL and u'příl.' in VAL and u'příloha' in F['t']: ADD =True
 				if '[samizdat]' in F['t']: ADD=True
+				if 'Literární archiv' in F['t']: ADD=True
 				if not ADD:
 					write_error(header.identifier(), '773', SIF, '024', 'Neplatné pole 773.')
 		for F in metadata.get_fields('787'):
@@ -698,11 +699,13 @@ for record in records:
 					write_error(header.identifier(), '008', SIF, '103', 'Neplatné datum v poli 008.')
 			if metadata['008'].value()[6] == 'q':
 				if len(DATE) != 4:
-					Q=False
+					BAD=True
 					if len(DATE) in (6, 8):
 						if '773' in metadata and 'g' in metadata['773']:
-							if re.match('^\[.*\]$', metadata['773']['g']): Q=True
-					if not Q:
+							if re.match('^\[.*\]$', metadata['773']['g']): BAD=False
+						if '773' in metadata and '9' in metadata['773']:
+							if DATE.replace('u','-') == metadata['773']['9']: BAD=False
+					if BAD:
 						write_error(header.identifier(), '008', SIF, '104', 'Nesoulad mezi kódem data a datem (má být RRRR).')
 			if metadata['008'].value()[6] == 's':
 				if len(DATE) != 4:
@@ -719,12 +722,12 @@ for record in records:
 				if '260' in metadata and 'c' in metadata['260']:
 					if not re.match('^\[.*\]\.?$', metadata['260']['c']):
 						if DATA != metadata['260']['c'].strip('.'):
-							write_error(header.identifier(), '008', SIF, '107', 'Nesoulad mezi daty v poli 008 a 260/264.')
+							write_error(header.identifier(), '008', SIF, '107', 'Nesoulad mezi daty v poli 008 a 260.')
 				for F in metadata.get_fields('264'):
 					if 'c' in F:
 						if not re.match('^\[.*\]\.?$', F['c']):
 							if DATA != F['c'].strip('.'):
-								write_error(header.identifier(), '008', SIF, '108', 'Nesoulad mezi daty v poli 008 a 260/264.')
+								write_error(header.identifier(), '008', SIF, '108', 'Nesoulad mezi daty v poli 008 a 264.')
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
 				DATA = metadata['008'].value()[7:15].strip()
@@ -742,16 +745,16 @@ for record in records:
 			if country_code:
 				if DATA not in country_code:
 					write_error(header.identifier(), '008', SIF, '110', 'Chybný kód země v poli 008.')
-			if '044' in metadata:
-				if DATA != metadata['044'].subfields[1::2][0]:
+			if '044' in metadata and 'a' in metadata['044']:
+				if DATA != metadata['044']['a']:
 					write_error(header.identifier(), '008', SIF, '111', 'Nesoulad mezi kódy zemí v poli 008 a 044.')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[35:38].strip()
 			if lang_code:
 				if DATA not in lang_code:
 					write_error(header.identifier(), '008', SIF, '112', 'Chybný kód jazyka v poli 008.')
-			if '041' in metadata:
-				if DATA != metadata['041'].subfields[1::2][0]:
+			if '041' in metadata and 'a' in metadata['041']:
+				if DATA != metadata['041']['a']:
 					write_error(header.identifier(), '008', SIF, '113', 'Nesoulad mezi kódy jazyků v poli 008 a 041.')
 		if '041' in metadata:
 			if lang_code:
@@ -802,22 +805,22 @@ for record in records:
 			if metadata['110'].indicator1 + metadata['110'].indicator2  == '0 ':
 				if 'c' in metadata['110']:
 					if not re.match('^\[.*$', metadata['110']['c']):
-						write_error(header.identifier(), '110', SIF, '126', "Chybný znak v podpoli 'c' v poli 110.")
+						write_error(header.identifier(), '110', SIF, '126', "Chybný znak v podpoli 110c.")
 				else:
-					write_error(header.identifier(), '110', SIF, '127', "Chybí podpole 'c' v poli 110.")
+					write_error(header.identifier(), '110', SIF, '127', "Chybí podpole 110c.")
 		for F in metadata.get_fields('710'):
 			if F.indicator1 + F.indicator2  == '0 ':
 				if 'c' in F:
 					if not re.match('^\[.*$', F['c']):
-						write_error(header.identifier(), '710', SIF, '128', "Chybný znak v podpoli 'c' v poli 710.")
+						write_error(header.identifier(), '710', SIF, '128', "Chybný znak v podpoli 710c.")
 				else:
-					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 'c' v poli 710.")
+					write_error(header.identifier(), '710', SIF, '129', "Chybí podpole 710c.")
 		#if len(metadata.get_fields('300')) > 1:
 		#	BAD=False
 		#	for F in metadata.get_fields('964'):
 		#		if F.value() != 'INT': BAD=True
 		#	for F in metadata.get_fields('300'):
-		#		if F.subfields[0] != 'e': BAD = True
+		#		if 'e' not in F: BAD=True
 		#	if BAD:
 		#		 write_error(header.identifier(), '300', SIF, '130', 'Neplatné opakování pole 300.')
 		if '008' in metadata:
@@ -838,6 +841,8 @@ for record in records:
 			if metadata.leader[7] != 'm': CNB=False
 		for F in metadata.get_fields('506'):
 			if re.match(u'^Bez čísla ČNB.*', F.value()): CNB=False
+		for F in metadata.get_fields('964'):
+			if F.value() == 'SMZ': CNB=False
 		if CNB:
 			if '015' not in metadata:
 				write_error(header.identifier(), '506', SIF, '132', 'Chybí číslo ČNB.')
@@ -849,11 +854,14 @@ for record in records:
 		ISBN=True
 		if metadata.leader:
 			if metadata.leader[7] != 'm': ISBN=False
+			if metadata.leader[6] == 'g': ISBN=False
 		if '008' in metadata:
 			if metadata['008'].value()[7:11].isdigit():
 				if int(metadata['008'].value()[7:11]) < 1989: ISBN=False
 		for F in metadata.get_fields('506'):
 			if 'ISBN' in F.value(): ISBN=False
+		for F in metadata.get_fields('964'):
+			if F.value() == 'SMZ': ISBN=False
 		if ISBN:
 			if '020' not in metadata:
 				write_error(header.identifier(), '020', SIF, '134', 'Chybí ISBN.')

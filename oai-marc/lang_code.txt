@@ -372,6 +372,7 @@ sas
 sat
 scn
 sco
+scr
 sel
 sem
 sga
