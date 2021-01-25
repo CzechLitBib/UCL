@@ -30,9 +30,9 @@ SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
-MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
-MAIL_SERVER='listonos.ucl.cas.cz'
-MAIL_SERVER_BACKUP='mail2.ucl.cas.cz'
+MAIL_SENDER='xxx'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
 HTML_HEADER='''<!doctype html>
 <html>
@@ -718,15 +718,15 @@ for record in records:
 					write_error(header.identifier(), '008', SIF, '106', 'Nesoulad mezi kódem data a datem (není interval roků).')
 		if metadata.leader[7] == 'm':
 			if '008' in metadata:
-				DATA = metadata['008'].value()[7:11]
+				DATA = metadata['008'].value()[7:15].strip()
 				if '260' in metadata and 'c' in metadata['260']:
 					if not re.match('^\[.*\]\.?$', metadata['260']['c']):
-						if DATA != metadata['260']['c'].strip('.'):
+						if DATA != metadata['260']['c'].strip('.').replace('-', ''):
 							write_error(header.identifier(), '008', SIF, '107', 'Nesoulad mezi daty v poli 008 a 260.')
 				for F in metadata.get_fields('264'):
 					if 'c' in F:
 						if not re.match('^\[.*\]\.?$', F['c']):
-							if DATA != F['c'].strip('.'):
+							if DATA != F['c'].strip('.').replace('-', ''):
 								write_error(header.identifier(), '008', SIF, '108', 'Nesoulad mezi daty v poli 008 a 264.')
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
