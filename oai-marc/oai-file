@@ -5,9 +5,9 @@
 
 from __future__ import print_function
 
-import sys,os,re
+import time,sys,os,re
 
-from pymarc import marcxml,Field,MARCWriter
+from pymarc import marcxml,Field,MARCWriter,MARCReader
 from pymarc.record import Record
 
 # VAR -------------------
@@ -15,7 +15,8 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-DATA='ucla.xml'
+#DATA='ucla.xml'
+DATA='CLO964.mrc'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -27,7 +28,7 @@ DATA='ucla.xml'
 #BUFF=''
 
 #SIXTEEN=0
-#COUNTER=0
+COUNTER=0
 
 #file1 = open('100.csv','w')
 #file2 = open('600.csv','w')
@@ -37,15 +38,18 @@ DATA='ucla.xml'
 
 #writer = MARCWriter(open('uclec.mrc','wb'))
 
-#writer1 = MARCWriter(open('uclec1.mrc','wb'))
-#writer2 = MARCWriter(open('uclec2.mrc','wb'))
-#writer3 = MARCWriter(open('uclec3.mrc','wb'))
-#writer4 = MARCWriter(open('uclec4.mrc','wb'))
+#writer1 = MARCWriter(open('clo964_1.mrc','wb'))
+#writer2 = MARCWriter(open('clo964_2.mrc','wb'))
+#writer3 = MARCWriter(open('clo964_3.mrc','wb'))
+#writer4 = MARCWriter(open('clo964_4.mrc','wb'))
 
-DATADIR='/var/www/html/964'
-BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ']
+#DATADIR='/var/www/html/964'
+#BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ']
 
-def validate(record):
+reader = MARCReader(file(DATA))
+
+for record in reader:
+#def validate(record):
 
 #	metadata = Record(force_utf8=True)
 	metadata = record
@@ -76,7 +80,17 @@ def validate(record):
 	# UCLEC drop 506 fields
 #	metadata.remove_fields('506')
 
-#	COUNTER+=1
+	print(metadata['001'].value())
+	
+	#if int(metadata['001'].value()) > 35900:	
+	#	if int(metadata['001'].value()) % 50 == 0:
+	#		raw_input("Press ENTER to continue...")
+
+	if int(metadata['001'].value()) > 36380 and int(metadata['001'].value()) < 36390:
+		print(record)
+		raw_input("Press ENTER to continue...")
+
+	COUNTER+=1
 
 	# write MRC
 
@@ -146,27 +160,27 @@ def validate(record):
 # BASE
 # ------------------------------------------------------
 
-	if 'SIF' in metadata:
-		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-	else:
-		SIF = ''
+#	if 'SIF' in metadata:
+#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+#	else:
+#		SIF = ''
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 
-	if '964' and 'FMT' in metadata:# 990 -> FMT
-		for F in metadata.get_fields('964'):
-			base = F.value()
-			if base in BASE:
-				sub_base = metadata['FMT'].value()
-				try:
-					os.mkdir(DATADIR + '/'+ base)
-				except: pass
-				try:
-					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
-				except: pass
-			
-				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
-					f.write(SIF + ';' + str(IDENT) + ';' + 'https://vufind.ucl.cas.cz/Record/' + str(IDENT) + '\n')
+#	if '964' and 'FMT' in metadata:# 990 -> FMT
+#		for F in metadata.get_fields('964'):
+#			base = F.value()
+#			if base in BASE:
+#				sub_base = metadata['FMT'].value()
+#				try:
+#					os.mkdir(DATADIR + '/'+ base)
+#				except: pass
+#				try:
+#					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+#				except: pass
+#			
+#				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
+#					f.write(SIF + ';' + str(IDENT) + ';' + 'https://vufind.ucl.cas.cz/Record/' + str(IDENT) + '\n')
 
 # ------------------------------------------------------
 # GENERIC
@@ -355,7 +369,7 @@ def validate(record):
 
 #validate(record)
 
-marcxml.map_xml(validate, DATA)
+#marcxml.map_xml(validate, DATA)
 
 #with open('x.csv','w') as edice:
 #	edice.write(BUFF)
@@ -388,7 +402,7 @@ marcxml.map_xml(validate, DATA)
 #print('SEVEN 700:' + str(SEVEN_700))
 
 #print(str(SIXTEEN))
-#print(str(COUNTER))
+print(str(COUNTER))
 
 # EXIT -------------------
 
