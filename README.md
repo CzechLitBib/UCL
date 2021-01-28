@@ -7,9 +7,7 @@ TODO
 
 <pre>
 -773/787 csv update
--964 base sif;sys;vufind.csv
--Koha reinstall.
--[@]
+-964 base sif;sys;value;vufind.csv
 </pre>
 
 BACKUP
