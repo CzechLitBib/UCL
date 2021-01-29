@@ -624,7 +624,7 @@ for record in records:
 						write_error(header.identifier(), '264', SIF, '086', 'Neplatné opakování podpolí v poli 264.')
 		for F in metadata.get_fields('773'):
 			for SUB in list(set(F.subfields[0::2])):
-				if SUB  != 'z':
+				if SUB not in ('q', 'z', '9'):
 					if len(F.get_subfields(SUB)) > 1:
 						write_error(header.identifier(), '773', SIF, '087', 'Neplatné opakování podpolí v poli 773.')
 		for F in metadata.get_fields('787'):
