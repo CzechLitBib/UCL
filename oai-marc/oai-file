@@ -30,18 +30,16 @@ DATA='ucla.xml'
 #SIXTEEN=0
 #COUNTER=0
 
-csv_773 = open('773.csv','w')
-# HEADER
-csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
+#csv_773 = open('773.csv','w')
+#csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
 
-csv_787 = open('787.csv','w')
-# HEADER
-csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
+#csv_787 = open('787.csv','w')
+#csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
 #file2 = open('600.csv','w')
 #file3 = open('700.csv','w')
 
-#link = open('link.txt','w')
+link = open('link.txt','w')
 
 #writer = MARCWriter(open('uclec.mrc','wb'))
 
@@ -337,49 +335,63 @@ def validate(record):
 
 	#	if metadata.leader[7]  == 'b':
 
+# ------------------------------------------------------
+# Webarchiv
+# ------------------------------------------------------
+
+	IDENT = metadata['001'].value()
+	
+	INT=False
+	for F in metadata.get_fields('964'):
+		if F.value() == 'INT': INT=True
+	if INT:
+		for F in metadata.get_fields('856'):
+			if F['y'] not in ['WebArchiv', 'Webarchiv']:
+				if F['y']  == 'online':
+					link.write(str(IDENT) + '##' + F['u'].encode('utf-8') + '\n')
 
 # ------------------------------------------------------
 # 773 / 787
 # ------------------------------------------------------
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 
-	if 'SIF' in metadata:
-		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-	else:
-		SIF = ''
+#	if 'SIF' in metadata:
+#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+#	else:
+#		SIF = ''
+
+	# DATA
+#	for F in metadata.get_fields('773'):
+#		SUBS=''
+#		for S in ['a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9', 'z']:
+#			SUBS += '|' + '@'.join(F.get_subfields(S))
+
+#		csv_773.write(
+#			str(IDENT) + '|' +
+#			SIF + '|' +
+#			str(record.leader[7]) + '|' +
+#			'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + '|' + # zero padding
+#			F.value().encode('utf-8') +
+#			SUBS.encode('utf-8') + 
+#			'\n'
+#		)
 	
 	# DATA
-	for F in metadata.get_fields('773'):
-		SUBS=''
-		for S in ['a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9', 'z']:
-			SUBS += '|' + '@'.join(F.get_subfields(S))
+#	for F in metadata.get_fields('787'):
+#		SUBS=''
+#		for S in ['i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'y', '4', 'x']:
+#			SUBS += '|' + '@'.join(F.get_subfields(S))
 
-		csv_773.write(
-			str(IDENT) + '|' +
-			SIF + '|' +
-			str(record.leader[7]) + '|' +
-			'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + '|' + # zero padding
-			F.value().encode('utf-8') +
-			SUBS.encode('utf-8') + 
-			'\n'
-		)
-	
-	# DATA
-	for F in metadata.get_fields('787'):
-		SUBS=''
-		for S in ['i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'y', '4', 'x']:
-			SUBS += '|' + '@'.join(F.get_subfields(S))
-
-		csv_787.write(
-			str(IDENT) + '|' +
-			SIF + '|' +
-			str(record.leader[7]) + '|' +
-			'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + '|' + # zero padding
-			F.value().encode('utf-8') +
-			SUBS.encode('utf-8') +
-			'\n'
-		)
+#		csv_787.write(
+#			str(IDENT) + '|' +
+#			SIF + '|' +
+#			str(record.leader[7]) + '|' +
+#			'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + '|' + # zero padding
+#			F.value().encode('utf-8') +
+#			SUBS.encode('utf-8') +
+#			'\n'
+#		)
 
 # ------------------------------------------------------
 # MAIN
@@ -408,10 +420,10 @@ marcxml.map_xml(validate, DATA)
 #with open('700.csv','w') as ucl:
 #	ucl.write(BUFF_700)
 
-csv_773.close()
-csv_787.close()
+#csv_773.close()
+#csv_787.close()
 
-#link.close()
+link.close()
 
 #writer1.close()
 #writer2.close()
