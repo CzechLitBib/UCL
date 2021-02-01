@@ -15,8 +15,8 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-#DATA='ucla.xml'
-DATA='CLO964.mrc'
+DATA='ucla.xml'
+#DATA='CLO964.mrc'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -28,7 +28,7 @@ DATA='CLO964.mrc'
 #BUFF=''
 
 #SIXTEEN=0
-COUNTER=0
+#COUNTER=0
 
 #file1 = open('100.csv','w')
 #file2 = open('600.csv','w')
@@ -43,13 +43,13 @@ COUNTER=0
 #writer3 = MARCWriter(open('clo964_3.mrc','wb'))
 #writer4 = MARCWriter(open('clo964_4.mrc','wb'))
 
-#DATADIR='/var/www/html/964'
-#BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ']
+DATADIR='/var/www/html/964'
+BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
 
-reader = MARCReader(file(DATA))
+#reader = MARCReader(file(DATA))
 
-for record in reader:
-#def validate(record):
+#for record in reader:
+def validate(record):
 
 #	metadata = Record(force_utf8=True)
 	metadata = record
@@ -80,17 +80,17 @@ for record in reader:
 	# UCLEC drop 506 fields
 #	metadata.remove_fields('506')
 
-	print(metadata['001'].value())
+#	print(metadata['001'].value())
 	
 	#if int(metadata['001'].value()) > 35900:	
 	#	if int(metadata['001'].value()) % 50 == 0:
 	#		raw_input("Press ENTER to continue...")
 
-	if int(metadata['001'].value()) > 36380 and int(metadata['001'].value()) < 36390:
-		print(record)
-		raw_input("Press ENTER to continue...")
-
-	COUNTER+=1
+#	if int(metadata['001'].value()) > 36380 and int(metadata['001'].value()) < 36390:
+#		print(record)
+#		raw_input("Press ENTER to continue...")
+#
+#	COUNTER+=1
 
 	# write MRC
 
@@ -160,27 +160,33 @@ for record in reader:
 # BASE
 # ------------------------------------------------------
 
-#	if 'SIF' in metadata:
-#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-#	else:
-#		SIF = ''
+	if 'SIF' in metadata:
+		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+	else:
+		SIF = ''
 
-#	IDENT = metadata['001'].value()
+	IDENT = metadata['001'].value()
 
-#	if '964' and 'FMT' in metadata:# 990 -> FMT
-#		for F in metadata.get_fields('964'):
-#			base = F.value()
-#			if base in BASE:
-#				sub_base = metadata['FMT'].value()
-#				try:
-#					os.mkdir(DATADIR + '/'+ base)
-#				except: pass
-#				try:
-#					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
-#				except: pass
-#			
-#				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
-#					f.write(SIF + ';' + str(IDENT) + ';' + 'https://vufind.ucl.cas.cz/Record/' + str(IDENT) + '\n')
+	if '964' and 'FMT' in metadata:# 990 -> FMT
+		for F in metadata.get_fields('964'):
+			base = F.value()
+			if base in BASE:
+				sub_base = metadata['FMT'].value()
+				try:
+					os.mkdir(DATADIR + '/'+ base)
+				except: pass
+				try:
+					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+				except: pass
+			
+				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
+					f.write(
+						str(IDENT) + ';' +
+						SIF + ';' +
+						str(record.leader[7]) + ';' +
+						'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + ';' +# zero padding
+						str(base) + '\n'
+					)
 
 # ------------------------------------------------------
 # GENERIC
@@ -369,7 +375,7 @@ for record in reader:
 
 #validate(record)
 
-#marcxml.map_xml(validate, DATA)
+marcxml.map_xml(validate, DATA)
 
 #with open('x.csv','w') as edice:
 #	edice.write(BUFF)
@@ -402,7 +408,7 @@ for record in reader:
 #print('SEVEN 700:' + str(SEVEN_700))
 
 #print(str(SIXTEEN))
-print(str(COUNTER))
+#print(str(COUNTER))
 
 # EXIT -------------------
 
