@@ -30,7 +30,14 @@ DATA='ucla.xml'
 #SIXTEEN=0
 #COUNTER=0
 
-#file1 = open('100.csv','w')
+csv_773 = open('773.csv','w')
+# HEADER
+csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
+
+csv_787 = open('787.csv','w')
+# HEADER
+csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
+	
 #file2 = open('600.csv','w')
 #file3 = open('700.csv','w')
 
@@ -43,8 +50,8 @@ DATA='ucla.xml'
 #writer3 = MARCWriter(open('clo964_3.mrc','wb'))
 #writer4 = MARCWriter(open('clo964_4.mrc','wb'))
 
-DATADIR='/var/www/html/964'
-BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
+#DATADIR='/var/www/html/964'
+#BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
 
 #reader = MARCReader(file(DATA))
 
@@ -160,37 +167,42 @@ def validate(record):
 # BASE
 # ------------------------------------------------------
 
-	if 'SIF' in metadata:
-		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-	else:
-		SIF = ''
+#	if 'SIF' in metadata:
+#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+#	else:
+#		SIF = ''
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 
-	if '964' and 'FMT' in metadata:# 990 -> FMT
-		for F in metadata.get_fields('964'):
-			base = F.value()
-			if base in BASE:
-				sub_base = metadata['FMT'].value()
-				try:
-					os.mkdir(DATADIR + '/'+ base)
-				except: pass
-				try:
-					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
-				except: pass
+#	if '964' and 'FMT' in metadata:# 990 -> FMT
+#		for F in metadata.get_fields('964'):
+#			base = F.value()
+#			if base in BASE:
+#				sub_base = metadata['FMT'].value()
+#				try:
+#					os.mkdir(DATADIR + '/'+ base)
+#				except: pass
+#				try:
+#					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+#				except: pass
 			
-				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
-					f.write(
-						str(IDENT) + ';' +
-						SIF + ';' +
-						str(record.leader[7]) + ';' +
-						'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + ';' +# zero padding
-						str(base) + '\n'
-					)
+#				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
+#					f.write(
+#						str(IDENT) + ';' +
+#						SIF + ';' +
+#						str(record.leader[7]) + ';' +
+#						'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + ';' +# zero padding
+#						str(base) + '\n'
+#					)
 
 # ------------------------------------------------------
 # GENERIC
 # ------------------------------------------------------
+
+	#if 'SIF' in metadata:
+	#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+	#else:
+	#	SIF = ''
 
 #	if '005' in metadata and '008' in metadata:
 #		if int(metadata['005'].value()[:4]) >= 2016:
@@ -304,30 +316,6 @@ def validate(record):
 	#if IDENT > 
 	#	print("Time.")
 	#sys.exit(1)
-
-	#if 'SIF' in metadata:
-	#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-	#else:
-	#	SIF = ''
-
-	# CSV
-	# SysNo SIF i a t n d b k h z x y 4
-
-	#if COUNTER == 10000: sys.exit(1)
-
-	#COUNTER+=1
-
-	#for F in metadata.get_fields('787'):
-	#	PAYLOAD=''
-	#	PAYLOAD+=str(IDENT) + '|' + SIF
-	#	for SUB in ('i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'x', 'y', '4'):
-	#		if SUB in F:
-	#			PAYLOAD+= '|' + '@'.join([s.encode('utf-8') for s in F.get_subfields(SUB)])
-	#		else:
-	#			PAYLOAD+='|'
-	#	PAYLOAD+='\n'
-	#	csv_787.write(PAYLOAD)
-	#return
 			
 	#	VAL = re.sub('( +,| +;| +:)$','', VAL).strip().strip('[').strip(']')
 	#	csv_260a.write(str(IDENT) + ';' + VAL.encode('utf-8') + '\n')
@@ -348,22 +336,54 @@ def validate(record):
 	#		SIF = ''
 
 	#	if metadata.leader[7]  == 'b':
-	#		for F in metadata.get_fields('773'):
-	#			T,X,G,Q,N='','','','',''
-	#			if 't' in F: T = F['t'].encode('utf-8')
-	#			if 'x' in F: X = F['x'].encode('utf-8')
-	#			if 'g' in F: G = F['g'].encode('utf-8')
-	#			if 'q' in F: Q = F['q'].encode('utf-8')
-	#			if '9' in F: N = F['9'].encode('utf-8')
-	#			csv_773.write(str(IDENT) + '|' + SIF  + '|' + T + '|' + X  + '|' + G + '|' + Q + '|' + N + '\n')
-	#	return
 
-	#	if 'SIF' in metadata:
-	#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-	#	else
-	#		SIF = ''
 
-# MAIN -------------------
+# ------------------------------------------------------
+# 773 / 787
+# ------------------------------------------------------
+
+	IDENT = metadata['001'].value()
+
+	if 'SIF' in metadata:
+		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+	else:
+		SIF = ''
+	
+	# DATA
+	for F in metadata.get_fields('773'):
+		SUBS=''
+		for S in ['a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9', 'z']:
+			SUBS += '|' + '@'.join(F.get_subfields(S))
+
+		csv_773.write(
+			str(IDENT) + '|' +
+			SIF + '|' +
+			str(record.leader[7]) + '|' +
+			'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + '|' + # zero padding
+			F.value().encode('utf-8') +
+			SUBS.encode('utf-8') + 
+			'\n'
+		)
+	
+	# DATA
+	for F in metadata.get_fields('787'):
+		SUBS=''
+		for S in ['i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'y', '4', 'x']:
+			SUBS += '|' + '@'.join(F.get_subfields(S))
+
+		csv_787.write(
+			str(IDENT) + '|' +
+			SIF + '|' +
+			str(record.leader[7]) + '|' +
+			'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + '|' + # zero padding
+			F.value().encode('utf-8') +
+			SUBS.encode('utf-8') +
+			'\n'
+		)
+
+# ------------------------------------------------------
+# MAIN
+# ------------------------------------------------------
 
 #record = Record()
 
@@ -387,6 +407,9 @@ marcxml.map_xml(validate, DATA)
 #	ucl.write(BUFF_600)
 #with open('700.csv','w') as ucl:
 #	ucl.write(BUFF_700)
+
+csv_773.close()
+csv_787.close()
 
 #link.close()
 

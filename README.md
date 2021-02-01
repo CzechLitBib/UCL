@@ -3,12 +3,6 @@ DESCRIPTION
 
 Library support software.
 
-TODO
-
-<pre>
--773/787 csv update
-</pre>
-
 BACKUP
 <pre>
 crontab -e
