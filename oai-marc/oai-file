@@ -5,7 +5,7 @@
 
 from __future__ import print_function
 
-import StringIO,lxml.html,urllib2,time,sys,os,re
+import StringIO,requests,lxml.html,time,sys,os,re
 
 from pymarc import marcxml,Field,MARCWriter,MARCReader
 from pymarc.record import Record
@@ -39,8 +39,24 @@ DATA='ucla.xml'
 #file2 = open('600.csv', 'w')
 #file3 = open('700.csv', 'w')
 
+# WAYBACK ---------
+
 link = open('link.txt', 'r')
 wayback = open('wayback.csv', 'w')
+#aleph = open('wayback.aleph', 'w')
+
+#WAY={}
+# load data to hash
+#for LINE in wayback:
+#	ID=LINE.split('##')[0].strip()
+#	ORIG=LINE.split('##')[1].strip()
+#	ARCH=LINE.split('##')[2].strip()
+	
+#	if ID not in WAY: WAY[ID] = {}
+#	WAY[ID]['ORIG']=ORIG
+#	WAY[ID]['ARCH']=ARCH
+
+# WAYBACK ---------
 
 #writer = MARCWriter(open('uclec.mrc', 'wb'))
 
@@ -340,6 +356,8 @@ def validate(record):
 # Webarchiv
 # ------------------------------------------------------
 
+	# GET DATA
+
 	# drop idnes.cz, ihned.cz, webarchiv.cz, email.seznam.cz
 
 #	IDENT = metadata['001'].value()
@@ -356,31 +374,50 @@ def validate(record):
 #				if F['y']  == 'online':
 #					link.write(str(IDENT) + '##' + F['u'].encode('utf-8') + '\n')
 
+# GET LINK
+
+session = requests.Session()
+
+session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
+
 for LINK in link:
 
 	ID=LINK.split('##')[0].strip()
 	BASE=LINK.split('##')[1].replace('http://', '').replace('https://', '').strip()
 	URL='https://wayback.webarchiv.cz/wayback/*/' + BASE
 	
-	resp=''
+	req = session.get(URL)
 
-	try:
-		req = urllib2.Request(URL)
-		req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0')
-		resp = urllib2.urlopen(req, timeout=10)
-	except:
-		pass
-
-	if resp and resp.getcode() == 200:
+	if req and req.status_code == 200:
 		try:
 			p = lxml.html.HTMLParser()
-			t = lxml.html.parse(StringIO.StringIO(resp.read()), p)
+			t = lxml.html.parse(StringIO.StringIO(req.text), p)
 			url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
 
 			wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href').encode('utf-8') + '\n')
 		except:
 			pass
-	time.sleep(1)
+
+#	time.sleep(1)
+
+	# WRITE ALEPH
+
+#	IDENT = metadata['001'].value()
+
+#	if IDENT in WAY:
+#		for F in metadata.get_fields('856'):
+#
+#			SUB=''
+#			for I in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[I*2] + F.subfields[I*2+1]
+#
+#			if F['u'] == 'https://' + WAY[IDENT]['ORIG'] or F['u'] == 'http://' + WAY[IDENT]['ORIG']:
+#				aleph.write(str(IDENT) + ' 85642 L ' + SUB + '\n')
+#				aleph.write(str(IDENT) + ' 85642 L $$u' + DATA[IDENT]['ARCH'] + '$$yWebarchiv$$4N\n')
+#			else:
+#				aleph.write(str(IDENT) + ' 85642 L ' + SUB + '\n')
+#			
+#		sys.exit(1)
 
 # ------------------------------------------------------
 # 773 / 787
@@ -457,6 +494,7 @@ for LINK in link:
 
 link.close()
 wayback.close()
+#aleph.close()
 
 #writer1.close()
 #writer2.close()
