@@ -369,16 +369,17 @@ for LINK in link:
 		req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0')
 		resp = urllib2.urlopen(req, timeout=10)
 	except:
-		print("Broken.")
+		pass
 
 	if resp and resp.getcode() == 200:
+		try:
+			p = lxml.html.HTMLParser()
+			t = lxml.html.parse(StringIO.StringIO(resp.read()), p)
+			url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
 
-		p = lxml.html.HTMLParser()
-		t = lxml.html.parse(StringIO.StringIO(resp.read()), p)
-		url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
-
-		wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href').encode('utf-8') + '\n')
-
+			wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href').encode('utf-8') + '\n')
+		except:
+			pass
 	time.sleep(1)
 
 # ------------------------------------------------------
