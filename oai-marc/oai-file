@@ -5,7 +5,7 @@
 
 from __future__ import print_function
 
-import time,sys,os,re
+import StringIO,lxml.html,urllib2,time,sys,os,re
 
 from pymarc import marcxml,Field,MARCWriter,MARCReader
 from pymarc.record import Record
@@ -30,23 +30,24 @@ DATA='ucla.xml'
 #SIXTEEN=0
 #COUNTER=0
 
-#csv_773 = open('773.csv','w')
+#csv_773 = open('773.csv', 'w')
 #csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
 
-#csv_787 = open('787.csv','w')
+#csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file2 = open('600.csv','w')
-#file3 = open('700.csv','w')
+#file2 = open('600.csv', 'w')
+#file3 = open('700.csv', 'w')
 
-link = open('link.txt','w')
+link = open('link.txt', 'r')
+wayback = open('wayback.csv', 'w')
 
-#writer = MARCWriter(open('uclec.mrc','wb'))
+#writer = MARCWriter(open('uclec.mrc', 'wb'))
 
-#writer1 = MARCWriter(open('clo964_1.mrc','wb'))
-#writer2 = MARCWriter(open('clo964_2.mrc','wb'))
-#writer3 = MARCWriter(open('clo964_3.mrc','wb'))
-#writer4 = MARCWriter(open('clo964_4.mrc','wb'))
+#writer1 = MARCWriter(open('clo964_1.mrc', 'wb'))
+#writer2 = MARCWriter(open('clo964_2.mrc', 'wb'))
+#writer3 = MARCWriter(open('clo964_3.mrc', 'wb'))
+#writer4 = MARCWriter(open('clo964_4.mrc', 'wb'))
 
 #DATADIR='/var/www/html/964'
 #BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
@@ -339,16 +340,46 @@ def validate(record):
 # Webarchiv
 # ------------------------------------------------------
 
-	IDENT = metadata['001'].value()
+	# drop idnes.cz, ihned.cz, webarchiv.cz, email.seznam.cz
+
+#	IDENT = metadata['001'].value()
 	
-	INT=False
-	for F in metadata.get_fields('964'):
-		if F.value() == 'INT': INT=True
-	if INT:
-		for F in metadata.get_fields('856'):
-			if F['y'] not in ['WebArchiv', 'Webarchiv']:
-				if F['y']  == 'online':
-					link.write(str(IDENT) + '##' + F['u'].encode('utf-8') + '\n')
+#	INT=False
+#	for F in metadata.get_fields('964'):
+#		if F.value() == 'INT': INT=True
+#	if INT:
+#		ARCH=False
+#		for F in metadata.get_fields('856'):
+#			if F['y'] in ['WebArchiv', 'Webarchiv']: ARCH=True
+#		if not ARCH:
+#			for F in metadata.get_fields('856'):
+#				if F['y']  == 'online':
+#					link.write(str(IDENT) + '##' + F['u'].encode('utf-8') + '\n')
+
+for LINK in link:
+
+	ID=LINK.split('##')[0].strip()
+	BASE=LINK.split('##')[1].replace('http://', '').replace('https://', '').strip()
+	URL='https://wayback.webarchiv.cz/wayback/*/' + BASE
+	
+	resp=''
+
+	try:
+		req = urllib2.Request(URL)
+		req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0')
+		resp = urllib2.urlopen(req, timeout=10)
+	except:
+		print("Broken.")
+
+	if resp and resp.getcode() == 200:
+
+		p = lxml.html.HTMLParser()
+		t = lxml.html.parse(StringIO.StringIO(resp.read()), p)
+		url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
+
+		wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href').encode('utf-8') + '\n')
+
+	time.sleep(1)
 
 # ------------------------------------------------------
 # 773 / 787
@@ -407,7 +438,7 @@ def validate(record):
 
 #validate(record)
 
-marcxml.map_xml(validate, DATA)
+#marcxml.map_xml(validate, DATA)
 
 #with open('x.csv','w') as edice:
 #	edice.write(BUFF)
@@ -424,6 +455,7 @@ marcxml.map_xml(validate, DATA)
 #csv_787.close()
 
 link.close()
+wayback.close()
 
 #writer1.close()
 #writer2.close()
