@@ -41,20 +41,19 @@ DATA='ucla.xml'
 
 # WAYBACK ---------
 
-link = open('link.txt', 'r')
-wayback = open('wayback.csv', 'r')
-aleph = open('wayback.aleph', 'w')
+#link = open('link.txt', 'r')
+#wayback = open('wayback.csv', 'r')
+#aleph = open('wayback.aleph', 'w')
 
-WAY={}
-# load data to hash
-for LINE in wayback:
-	ID=LINE.split('##')[0].strip()
-	ORIG=LINE.split('##')[1].strip()
-	ARCH=LINE.split('##')[2].strip()
+#WAY={}
+#for LINE in wayback:
+#	ID=LINE.split('##')[0].strip()
+#	ORIG=LINE.split('##')[1].strip()
+#	ARCH=LINE.split('##')[2].strip()
 	
-	if ID not in WAY: WAY[ID] = {}
-	WAY[ID]['ORIG']=ORIG
-	WAY[ID]['ARCH']=ARCH
+#	if ID not in WAY: WAY[ID] = {}
+#	WAY[ID]['ORIG']=ORIG
+#	WAY[ID]['ARCH']=ARCH
 
 # WAYBACK ---------
 
@@ -400,20 +399,20 @@ def validate(record):
 
 	# WRITE ALEPH
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 
-	if IDENT in WAY:
-		for F in metadata.get_fields('856'):
+#	if IDENT in WAY:
+#		for F in metadata.get_fields('856'):
 		
-			SUB=''
-			for i in range(0, len(F.subfields)/2):
-				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
 
-			if F['u'] == 'https://' + WAY[IDENT]['ORIG'] or F['u'] == 'http://' + WAY[IDENT]['ORIG']:
-				aleph.write(str(IDENT) + ' 856' + F.indicator1 + F.indicator2 + ' L ' + SUB + '\n')
-				aleph.write(str(IDENT) + ' 85642 L $$u' + WAY[IDENT]['ARCH'] + '$$yWebarchiv$$4N\n')
-			else:
-				aleph.write(str(IDENT) + ' 856' + F.indicator1 + F.indicator2 + ' L ' + SUB + '\n')
+#			if F['u'] == 'https://' + WAY[IDENT]['ORIG'] or F['u'] == 'http://' + WAY[IDENT]['ORIG']:
+#				aleph.write(str(IDENT) + ' 856' + F.indicator1 + F.indicator2 + ' L ' + SUB + '\n')
+#				aleph.write(str(IDENT) + ' 85642 L $$u' + WAY[IDENT]['ARCH'] + '$$yWebarchiv$$4N\n')
+#			else:
+#				aleph.write(str(IDENT) + ' 856' + F.indicator1 + F.indicator2 + ' L ' + SUB + '\n')
 
 # ------------------------------------------------------
 # 773 / 787
@@ -488,9 +487,9 @@ marcxml.map_xml(validate, DATA)
 #csv_773.close()
 #csv_787.close()
 
-link.close()
-wayback.close()
-aleph.close()
+#link.close()
+#wayback.close()
+#aleph.close()
 
 #writer1.close()
 #writer2.close()
