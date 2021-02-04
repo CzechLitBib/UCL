@@ -366,7 +366,7 @@ for record in records:
 				write_error(header.identifier(), '773', SIF, '023', 'Chybné opakovéní podpole 773t.')
 			elif 'g' not in F:
 				ADD=False
-				if VAL and re.match('.*' + F['t'] + '.*', VAL): ADD=True
+				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): ADD=True
 				if VAL and u'příl.' in VAL and u'příloha' in F['t']: ADD =True
 				if '[samizdat]' in F['t']: ADD=True
 				if u'Literární archiv' in F['t']: ADD=True
