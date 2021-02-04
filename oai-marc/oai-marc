@@ -1185,14 +1185,13 @@ for record in records:
 				if re.findall('(?<![0-9\[ ])=', F['r']):
 					write_error(header.identifier(), '505', SIF, '177', 'Chybný znak před znakem = v podpoli 505r.')
 		# 080
-                if '080' not in metadata:
-                        PASS=False
-			for F in metadata.get_fields('600'):
-				if F.indicator2 == '7': PASS=True
-			for F in metadata.get_fields('655'):
-				if F.indicator2 == '7': PASS=True
-			if not PASS:
-				write_error(header.identifier(), '080', SIF, '178', 'Chybí pole 080.')
+		PASS=False
+		for F in metadata.get_fields('600'):
+			if F.indicator2 == '7': PASS=True
+		for F in metadata.get_fields('655'):
+			if F.indicator2 == '7': PASS=True
+		if PASS and '080' not in metadata:
+			write_error(header.identifier(), '080', SIF, '178', 'Chybí pole 080.')
 
 		# 3RD BATCH ------------------
 
