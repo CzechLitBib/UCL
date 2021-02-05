@@ -470,24 +470,32 @@ def validate(record):
 	IDENT = metadata['001'].value()
 	
 	# 100a – 700a: 245abnp. 245c. 773t. 773g.
-	NAME,COLLAB,DATA,CTEXT,TTEXT,GTEXT = '','','','','',''
+	NAME,DATA,CTEXT,TTEXT,GTEXT = '','','','',''
 	if metadata.leader[7] == 'b':
-		#NAME
-		if len(metadata['100']['a'].split(',')) == 2:
-			NAME = name_to_upper(metadata['100']['a']) 
-		# COLLAB
+		# NAME
+		if '100' in metadata:
+			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
+				NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
 		for F in metadata.get_fields('700'):
-			COLLAB = ' - '.join(name_to_upper(F['a']))
+			NAME += ' - ' + name_to_upper(F['a'].rstrip(','))
 		# 245
-		DATA = ''.join(metadata['245'].get_subfields('a','b','n','p') + '. '
-		# 245c
-		if ';' in metadata['245']['c']:
-			CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize() + '. '
-		# 773t (first..)
-		TTEXT = metadata['245']['t'] + '. '
-		# 773g (first..)
-		GTEXT = metadata['245']['t'] + '. '
-		# 773g 
+		if '245' in metadata:
+			# 245
+			DATA = ': ' + ''.join([f.rstrip(' /') for f in metadata['245'].get_subfields('a','b','n','p')]) + '. '
+			# 245c
+			if 'c' in metadata['245']:
+				if ';' in metadata['245']['c']:
+					CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize().strip() + '. '
+		# 773
+		if '773' in metadata:
+			# 773t (first..)
+			if 't' in metadata['773']:
+				TTEXT = metadata['773']['t'].strip() + '. '
+			# 773g (first..)
+			if 'g' in metadata['773']:
+				GTEXT = metadata['773']['g'].rstrip('.').strip() + '.'
+		print(NAME + DATA + CTEXT + TTEXT + GTEXT)
+
 	#if metadata.leader[7] == 'a':
 	#if metadata.leader[7] == 'm':
 
