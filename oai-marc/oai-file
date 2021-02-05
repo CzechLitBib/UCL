@@ -69,6 +69,12 @@ DATA='ucla.xml'
 
 #reader = MARCReader(file(DATA))
 
+def name_to_upper(s):
+	if len(s.split(',')) == 2:
+		return s.split(',')[0].strip().upper() + ', ' + s.split(',')[1].strip() 
+	else:
+		return s
+
 #for record in reader:
 def validate(record):
 
@@ -456,6 +462,34 @@ def validate(record):
 #			SUBS.encode('utf-8') +
 #			'\n'
 #		)
+
+# ------------------------------------------------------
+# CITACE
+# ------------------------------------------------------
+
+	IDENT = metadata['001'].value()
+	
+	# 100a – 700a: 245abnp. 245c. 773t. 773g.
+	NAME,COLLAB,DATA,CTEXT,TTEXT,GTEXT = '','','','','',''
+	if metadata.leader[7] == 'b':
+		#NAME
+		if len(metadata['100']['a'].split(',')) == 2:
+			NAME = name_to_upper(metadata['100']['a']) 
+		# COLLAB
+		for F in metadata.get_fields('700'):
+			COLLAB = ' - '.join(name_to_upper(F['a']))
+		# 245
+		DATA = ''.join(metadata['245'].get_subfields('a','b','n','p') + '. '
+		# 245c
+		if ';' in metadata['245']['c']:
+			CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize() + '. '
+		# 773t (first..)
+		TTEXT = metadata['245']['t'] + '. '
+		# 773g (first..)
+		GTEXT = metadata['245']['t'] + '. '
+		# 773g 
+	#if metadata.leader[7] == 'a':
+	#if metadata.leader[7] == 'm':
 
 # ------------------------------------------------------
 # MAIN
