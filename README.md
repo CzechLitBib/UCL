@@ -3,6 +3,11 @@ DESCRIPTION
 
 Library support software.
 
+TODO
+<pre>
+-Citace
+-964 Aleph
+</pre>
 BACKUP
 <pre>
 crontab -e
