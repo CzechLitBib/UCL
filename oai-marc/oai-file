@@ -39,6 +39,8 @@ DATA='ucla.xml'
 #file2 = open('600.csv', 'w')
 #file3 = open('700.csv', 'w')
 
+citace = open('citace.csv', 'w')
+
 # WAYBACK ---------
 
 #link = open('link.txt', 'r')
@@ -469,11 +471,11 @@ def validate(record):
 
 	IDENT = metadata['001'].value()
 	
-	# 100a – 700a: 245abnp. 245c. 773t. 773g.
+	# 100a - 700a: 245abnp. 245c. 773t. 773g.
 	NAME,DATA,CTEXT,TTEXT,GTEXT = '','','','',''
 	if metadata.leader[7] == 'b':
 		# NAME
-		if '100' in metadata:
+		if '100' in metadata and 'a' in metadata['100']:
 			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
 				NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
 		for F in metadata.get_fields('700'):
@@ -494,10 +496,91 @@ def validate(record):
 			# 773g (first..)
 			if 'g' in metadata['773']:
 				GTEXT = metadata['773']['g'].rstrip('.').strip() + '.'
-		print(NAME + DATA + CTEXT + TTEXT + GTEXT)
+	
+		NAME = NAME.encode('utf-8')
+		DATA = DATA.encode('utf-8')
+		CTEXT = CTEXT.encode('utf-8')
+		TTEXT = TTEXT.encode('utf-8')
+		GTEXT = GTEXT.encode('utf-8')
+	
+		citace.write(str(IDENT) + '##b##' + NAME + DATA + CTEXT + TTEXT + GTEXT + '\n')
 
-	#if metadata.leader[7] == 'a':
-	#if metadata.leader[7] == 'm':
+	# 100a - 700a: 245abnp. 245c. In: 773a: 773t. 773n. 773d, 773g.
+	NAME,DATA,CTEXT,ATEXT,TTEXT,NTEXT,DTEXT,GTEXT = '','','','','','','',''
+	if metadata.leader[7] == 'a':
+		# NAME
+		if '100' in metadata and 'a' in metadata['100']:
+			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
+				NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
+		for F in metadata.get_fields('700'):
+			NAME += ' - ' + name_to_upper(F['a'].rstrip(','))
+		# 245
+		if '245' in metadata:
+			# 245
+			DATA = ': ' + ''.join([f.rstrip(' /') for f in metadata['245'].get_subfields('a','b','n','p')]) + '. '
+			# 245c
+			if 'c' in metadata['245']:
+				if ';' in metadata['245']['c']:
+					CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize().strip() + '. '
+		# 773
+		if '773' in metadata:
+			# 773a (first..)
+			if 'a' in metadata['773']:
+				TTEXT = 'In: '+ metadata['773']['a'].strip() + ': '
+			# 773t (first..)
+			if 't' in metadata['773']:
+				TTEXT = metadata['773']['t'].strip() + '. '
+			# 773n (first..)
+			if 'n' in metadata['773']:
+				TTEXT = metadata['773']['n'].capitalize().strip() + '. '
+			# 773d (first..)
+			if 'd' in metadata['773']:
+				TTEXT = metadata['773']['d'].strip() + ', '
+			# 773g (first..)
+			if 'g' in metadata['773']:
+				GTEXT = metadata['773']['g'].rstrip('.').strip() + '.'
+				GTEXT = GTEXT[0].lower() + GTEXT[1:]
+	
+		NAME = NAME.encode('utf-8')
+		DATA = DATA.encode('utf-8')
+		CTEXT = CTEXT.encode('utf-8')
+		ATEXT = ATEXT.encode('utf-8')
+		TTEXT = TTEXT.encode('utf-8')
+		NTEXT = NTEXT.encode('utf-8')
+		DTEXT = DTEXT.encode('utf-8')
+		GTEXT = GTEXT.encode('utf-8')
+	
+		citace.write(str(IDENT) + '##a##' + NAME + DATA + CTEXT + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + '\n')
+
+	# 100a - 700a: 245abnp. 245c. 260abc [264abc]
+	NAME,DATA,CTEXT,ABC = '','','',''
+	if metadata.leader[7] == 'm':
+		# NAME
+		if '100' in metadata and 'a' in metadata['100']:
+			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
+				NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
+		for F in metadata.get_fields('700'):
+			NAME += ' - ' + name_to_upper(F['a'].rstrip(','))
+		# 245
+		if '245' in metadata:
+			# 245
+			DATA = ': ' + ''.join([f.rstrip(' /') for f in metadata['245'].get_subfields('a','b','n','p')]) + '. '
+			# 245c
+			if 'c' in metadata['245']:
+				if ';' in metadata['245']['c']:
+					CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize().strip() + '. '
+		# ABC
+		if '260' in metadata:
+			ABC = ''.join([f.rstrip(' /') for f in metadata['260'].get_subfields('a','b','c')])
+		if '264' in metadata:
+			ABC = ''.join([f.rstrip(' /') for f in metadata['264'].get_subfields('a','b','c')])
+
+		NAME = NAME.encode('utf-8')
+		DATA = DATA.encode('utf-8')
+		CTEXT = CTEXT.encode('utf-8')
+		ABC = ABC.encode('utf-8')
+
+		citace.write(str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC + '\n')
 
 # ------------------------------------------------------
 # MAIN
@@ -532,6 +615,8 @@ marcxml.map_xml(validate, DATA)
 #link.close()
 #wayback.close()
 #aleph.close()
+
+citace.close()
 
 #writer1.close()
 #writer2.close()
