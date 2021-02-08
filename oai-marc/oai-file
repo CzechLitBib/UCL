@@ -471,23 +471,35 @@ def validate(record):
 
 	IDENT = metadata['001'].value()
 	
-	# 100a - 700a: 245abnp. 245c. 773t. 773g.
-	NAME,DATA,CTEXT,TTEXT,GTEXT = '','','','',''
-	if metadata.leader[7] == 'b':
-		# NAME
-		if '100' in metadata and 'a' in metadata['100']:
-			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
-				NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
-		for F in metadata.get_fields('700'):
-			NAME += ' - ' + name_to_upper(F['a'].rstrip(','))
+	#BASE
+	NAME,DATA,CTEXT='','',''
+	if '100' in metadata and 'a' in metadata['100']:
+		if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
+			NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
+	for F in metadata.get_fields('700'):
+		if not NAME: NAME += name_to_upper(F['a'].rstrip(','))
+		NAME += u' – ' + name_to_upper(F['a'].rstrip(','))
+	# 245
+	if '245' in metadata:
 		# 245
-		if '245' in metadata:
-			# 245
-			DATA = ': ' + ''.join([f.rstrip(' /') for f in metadata['245'].get_subfields('a','b','n','p')]) + '. '
-			# 245c
-			if 'c' in metadata['245']:
-				if ';' in metadata['245']['c']:
-					CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize().strip() + '. '
+		# if b in [] .. drop !
+		if NAME:
+			DATA = ': ' + re.sub('(?<![.])([.,:;/])(?![ .])', '\\1 ', ''.join(metadata['245'].get_subfields('a','b','n','p')).strip('./ ')) + '. '
+		else:
+			DATA = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ''.join(metadata['245'].get_subfields('a','b','n','p')).strip('./ ')) + '. '
+	# 245c
+	if 'c' in metadata['245']:
+		if ';' in metadata['245']['c']:
+			CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).strip('. ') + '. '
+			CTEXT = CTEXT[0].upper() + CTEXT[1:]
+
+	NAME = NAME.encode('utf-8')
+	DATA = DATA.replace(' - ', u' – ').encode('utf-8')
+	CTEXT = CTEXT.replace(' - ', u' – ').encode('utf-8')
+
+	# 100a - 700a: 245abnp. 245c. 773t. 773g.
+	TTEXT,GTEXT = '',''
+	if metadata.leader[7] == 'b':
 		# 773
 		if '773' in metadata:
 			# 773t (first..)
@@ -497,31 +509,14 @@ def validate(record):
 			if 'g' in metadata['773']:
 				GTEXT = metadata['773']['g'].rstrip('.').strip() + '.'
 	
-		NAME = NAME.encode('utf-8')
-		DATA = DATA.encode('utf-8')
-		CTEXT = CTEXT.encode('utf-8')
-		TTEXT = TTEXT.encode('utf-8')
-		GTEXT = GTEXT.encode('utf-8')
+		TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
+		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
 	
 		citace.write(str(IDENT) + '##b##' + NAME + DATA + CTEXT + TTEXT + GTEXT + '\n')
 
 	# 100a - 700a: 245abnp. 245c. In: 773a: 773t. 773n. 773d, 773g.
-	NAME,DATA,CTEXT,ATEXT,TTEXT,NTEXT,DTEXT,GTEXT = '','','','','','','',''
+	ATEXT,TTEXT,NTEXT,DTEXT,GTEXT = '','','','',''
 	if metadata.leader[7] == 'a':
-		# NAME
-		if '100' in metadata and 'a' in metadata['100']:
-			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
-				NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
-		for F in metadata.get_fields('700'):
-			NAME += ' - ' + name_to_upper(F['a'].rstrip(','))
-		# 245
-		if '245' in metadata:
-			# 245
-			DATA = ': ' + ''.join([f.rstrip(' /') for f in metadata['245'].get_subfields('a','b','n','p')]) + '. '
-			# 245c
-			if 'c' in metadata['245']:
-				if ';' in metadata['245']['c']:
-					CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize().strip() + '. '
 		# 773
 		if '773' in metadata:
 			# 773a (first..)
@@ -538,46 +533,26 @@ def validate(record):
 				TTEXT = metadata['773']['d'].strip() + ', '
 			# 773g (first..)
 			if 'g' in metadata['773']:
-				GTEXT = metadata['773']['g'].rstrip('.').strip() + '.'
+				GTEXT = metadata['773']['g'].rstrip('.').replace('-', u'–').strip() + '.'
 				GTEXT = GTEXT[0].lower() + GTEXT[1:]
 	
-		NAME = NAME.encode('utf-8')
-		DATA = DATA.encode('utf-8')
-		CTEXT = CTEXT.encode('utf-8')
 		ATEXT = ATEXT.encode('utf-8')
-		TTEXT = TTEXT.encode('utf-8')
+		TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
 		NTEXT = NTEXT.encode('utf-8')
 		DTEXT = DTEXT.encode('utf-8')
-		GTEXT = GTEXT.encode('utf-8')
+		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
 	
 		citace.write(str(IDENT) + '##a##' + NAME + DATA + CTEXT + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + '\n')
 
 	# 100a - 700a: 245abnp. 245c. 260abc [264abc]
-	NAME,DATA,CTEXT,ABC = '','','',''
+	ABC = ''
 	if metadata.leader[7] == 'm':
-		# NAME
-		if '100' in metadata and 'a' in metadata['100']:
-			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
-				NAME = name_to_upper(metadata['100']['a'].rstrip(',')) 
-		for F in metadata.get_fields('700'):
-			NAME += ' - ' + name_to_upper(F['a'].rstrip(','))
-		# 245
-		if '245' in metadata:
-			# 245
-			DATA = ': ' + ''.join([f.rstrip(' /') for f in metadata['245'].get_subfields('a','b','n','p')]) + '. '
-			# 245c
-			if 'c' in metadata['245']:
-				if ';' in metadata['245']['c']:
-					CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).capitalize().strip() + '. '
 		# ABC
 		if '260' in metadata:
 			ABC = ''.join([f.rstrip(' /') for f in metadata['260'].get_subfields('a','b','c')])
 		if '264' in metadata:
 			ABC = ''.join([f.rstrip(' /') for f in metadata['264'].get_subfields('a','b','c')])
 
-		NAME = NAME.encode('utf-8')
-		DATA = DATA.encode('utf-8')
-		CTEXT = CTEXT.encode('utf-8')
 		ABC = ABC.encode('utf-8')
 
 		citace.write(str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC + '\n')
