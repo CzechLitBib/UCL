@@ -1034,7 +1034,7 @@ for record in records:
 						for E in ('ed.', 'edd.', 'eds.', 'hg.', '.)'):
 							if E in metadata['245']['c'].lower(): EDIT=True
 						if not EDIT:
-							write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c 1.indikátor je 0, pole začíná velkým písmenem.')
+							write_error(header.identifier(), '245', SIF, '157', 'Chyba v 245c, 1. indikátor je 0, podpole začíná velkým písmenem.')
 		# 245b
 		if '245' in metadata:
 			if 'b' in metadata['245']:
@@ -1126,20 +1126,20 @@ for record in records:
 			IND=0
 			for SUB in F.subfields[0::2]:
 				if SUB == 'b' and IND == 0:
-					write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce 264b, před podpolem 'b' má být dvojtečka.")
+					write_error(header.identifier(), '264', SIF, '169', "Chybná interpunkce 264b, před podpolem 'b' má být dvojtečka.")
 				if SUB == 'b' and IND > 0:
 					if not re.match('.*:$', F.subfields[1::2][IND - 1]):
-						write_error(header.identifier(), '264', SIF, '169', "Chybná interpunce 264b, před podpolem 'b' má být dvojtečka.")
+						write_error(header.identifier(), '264', SIF, '169', "Chybná interpunkce 264b, před podpolem 'b' má být dvojtečka.")
 				IND+=1
 		# 260b
 		if '260' in metadata:
 			IND=0
 			for F in metadata['260'].subfields[0::2]:
 				if F == 'b' and IND == 0:
-					write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce 260b, před podpolem 'b' má být dvojtečka.")
+					write_error(header.identifier(), '260', SIF, '170', "Chybná interpunkce 260b, před podpolem 'b' má být dvojtečka.")
 				if F == 'b' and IND > 0:
 					if not re.match('.*:$', metadata['260'].subfields[1::2][IND - 1]):
-						write_error(header.identifier(), '260', SIF, '170', "Chybná interpunce 260b, před podpolem 'b' má být dvojtečka.")
+						write_error(header.identifier(), '260', SIF, '170', "Chybná interpunkce 260b, před podpolem 'b' má být dvojtečka.")
 				IND+=1
 		# 300e
 		for F in metadata.get_fields('300'):
@@ -1197,11 +1197,11 @@ for record in records:
 
                 # 100-4
 #		if '100' in metadata and '4' not in metadata['100']:
-#			write_error(header.identifier(), '100', SIF, '179', "Pole 100 nebsahuje žádné podpole '4'.")
+#			write_error(header.identifier(), '100', SIF, '179', "Pole 100 neobsahuje žádné podpole '4'.")
 
 		# 110-4
 #		if '110' in metadata and '4' not in metadata['110']:
-#			write_error(header.identifier(), '110', SIF, '180', "Pole 110 nebsahuje žádné podpole '4'.")
+#			write_error(header.identifier(), '110', SIF, '180', "Pole 110 neobsahuje žádné podpole '4'.")
 
 		# 773 semi-colon
 #		for F in metadata.get_fields('773'):
