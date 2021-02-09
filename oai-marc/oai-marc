@@ -371,7 +371,7 @@ for record in records:
 				if '[samizdat]' in F['t']: ADD=True
 				if u'Literární archiv' in F['t']: ADD=True
 				if not ADD:
-					write_error(header.identifier(), '773', SIF, '024', 'Neplatné pole 773.')
+					write_error(header.identifier(), '773', SIF, '024', 'Chybný zápis přílohy v opakovaném poli 773.')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '787', SIF, '025', 'Chybné opakování podpole 787t.')
@@ -671,7 +671,7 @@ for record in records:
 				if 'a' in metadata['245']:
 					for S in ('The ', 'An ', 'Der ', 'Die ', 'Das ', 'Le ', 'La '):
 						if re.match('^' + S + '.*', metadata['245']['a']):
-							write_error(header.identifier(), '245', SIF, '096', 'Neplatný prefix, chybný 2.indikátor v poli 245.')
+							write_error(header.identifier(), '245', SIF, '096', 'Neplatný prefix, chybný 2. indikátor v poli 245.')
 		for F in metadata.get_fields('600'):
 			if F.indicator1 == '0' and F.indicator2 != '7':
 				if 'a' in F:
@@ -681,16 +681,16 @@ for record in records:
 			for F in metadata.get_fields(TAG):
 				if F.indicator2 == '7':
 					if '2' not in F or '7' not in F:
-						write_error(header.identifier(), TAG, SIF, '098', 'Chybný 2.indikátor v poli ' + TAG + '.')
+						write_error(header.identifier(), TAG, SIF, '098', 'Chybný 2. indikátor v poli ' + TAG + '.')
 					if '2' in F and '7' in F:
 						if F['2'] != 'czenas':
-							write_error(header.identifier(), TAG, SIF, '099', 'Chybný 2.indikátor v poli ' + TAG + '(czenas).')
+							write_error(header.identifier(), TAG, SIF, '099', 'Chybný 2. indikátor v poli ' + TAG + ' (czenas).')
 				if F.indicator2 == '4':
 					if '7' in F or '2' in F and F['2'] == 'czenas':
-						write_error(header.identifier(), TAG, SIF, '100', 'Chybný 2.indikátor v poli ' + TAG + '.')
+						write_error(header.identifier(), TAG, SIF, '100', 'Chybný 2. indikátor v poli ' + TAG + '.')
 					#if '2' in F:
 					#	if F['2'] == 'czenas':
-					#		write_error(header.identifier(), TAG, SIF, '101', 'Chybný 2.indikátor v poli ' + TAG + '(czenas).')
+					#		write_error(header.identifier(), TAG, SIF, '101', 'Chybný 2. indikátor v poli ' + TAG + ' (czenas).')
 	
 		# TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
