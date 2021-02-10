@@ -982,12 +982,12 @@ for record in records:
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if re.findall('\[ =', metadata['245']['c']):
-					write_error(header.identifier(), '245', SIF, '151', 'Chybná interpunkce v 245c mezi [ a = je mezera.')
+					write_error(header.identifier(), '245', SIF, '151', 'Chybná interpunkce v 245c, mezi [ a = je mezera.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if re.findall('\[ =', F['r']):
-					write_error(header.identifier(), '505', SIF, '152', 'Chybná interpunkce v 505r mezi [ a = je mezera.')
+					write_error(header.identifier(), '505', SIF, '152', 'Chybná interpunkce v 505r, mezi [ a = je mezera.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
@@ -1012,7 +1012,7 @@ for record in records:
 								u'biograficko-bibliografické poznámky'
 							): BIO=True
 						if not BIO:
-							write_error(header.identifier(), '245', SIF, '155', 'Chybný 1.indikátor pole 245c, nebo chybí pole 700, "Nepodepsáno." v 500, či nejde o bbp.')
+							write_error(header.identifier(), '245', SIF, '155', 'Chybný 1. indikátor pole 245c, nebo chybí pole 700, "Nepodepsáno." v 500, či nejde o bbp.')
 		# 245c
 		GER=False
 		if '008' in metadata:
@@ -1024,7 +1024,7 @@ for record in records:
 				if 'c' in metadata['245']:
 					for S in re.findall('; \S', metadata['245']['c']):
 						if S[2].isupper():
-							write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c po středníku následuje velké písmeno.')
+							write_error(header.identifier(), '245', SIF, '156', 'Chyba v poli 245c, po středníku následuje velké písmeno.')
 		# 245c
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0':
@@ -1039,7 +1039,7 @@ for record in records:
 		if '245' in metadata:
 			if 'b' in metadata['245']:
 				if re.match('^\(.*\)$', metadata['245']['b']):
-					write_error(header.identifier(), '245', SIF, '158', 'Podpole 245b začíná a končí kulatou závorkou.')
+					write_error(header.identifier(), '245', SIF, '158', 'Chyba podpole 245b začíná na (.')
 		# 245 
 		#if '245' in metadata:
 		#	if 'a' in metadata['245']:
@@ -1047,7 +1047,7 @@ for record in records:
 		#			write_error(header.identifier(), '245', SIF, '159', 'Chyba v poli 245a, označení části je třeba zapsat do pole 245n.')
 		#	if 'b' in metadata['245']:
 		#		if re.findall('\D[1-9]\D|\D[1][0-9]\D|\D20\D', metadata['245']['b']):
-		#			write_error(header.identifier(), '245', SIF, '160', 'Chyba v poli 245b, označení části je třeba zapsat do pole 245n.')
+		#			write_error(header.identifier(), '245', SIF, '160', 'Možná chyba v poli 245b, označení části je třeba zapsat do pole 245n.')
 		# 245
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[1::2]:
@@ -1070,7 +1070,7 @@ for record in records:
 							if '162' in F.get_subfields('a'): DOT=True
 						if not DOT:
 							if metadata['245']['c'][:1].islower():
-								write_error(header.identifier(), '245', SIF, '162', 'Chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
+								write_error(header.identifier(), '245', SIF, '162', 'Možný chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.')
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
@@ -1079,7 +1079,7 @@ for record in records:
 					for F in  metadata.get_fields('506'):
 						if '163' in F.get_subfields('a'): SKIP=True
 					if not SKIP:
-						write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1.indikátoru pole 245, chybí podpole "c".')
+						write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1. indikátoru pole 245, chybí podpole "c".')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
