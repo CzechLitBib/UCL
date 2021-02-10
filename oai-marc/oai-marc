@@ -1039,7 +1039,7 @@ for record in records:
 		if '245' in metadata:
 			if 'b' in metadata['245']:
 				if re.match('^\(.*\)$', metadata['245']['b']):
-					write_error(header.identifier(), '245', SIF, '158', 'Chyba podpole 245b začíná na (.')
+					write_error(header.identifier(), '245', SIF, '158', 'Chyba podpole 245b, začíná a končí kulatou závorkou.')
 		# 245 
 		#if '245' in metadata:
 		#	if 'a' in metadata['245']:

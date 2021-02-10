@@ -6,7 +6,6 @@ Library support software.
 TODO
 <pre>
 -964 Aleph
--error: fix div
 </pre>
 BACKUP
 <pre>
