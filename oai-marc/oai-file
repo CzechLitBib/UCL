@@ -471,7 +471,7 @@ def validate(record):
 
 	IDENT = metadata['001'].value()
 
-	print(IDENT)
+	#print(IDENT)
 	#	print(metadata)
 	#	sys.exit(1)
 
@@ -544,12 +544,12 @@ def validate(record):
 						MATCH=False
 						for F in metadata.get_fields('787'):
 							if 't' in F:
-								if metadata['773']['t'] in metadata['787']['t']:
+								if metadata['773']['t'] in F['t']:
 									MATCH=True
 							else:
 								print(IDENT + ' Missing 787t!')
 						if not MATCH:
-							print(str(IDENT) + ' No Match found! ' + metadata['773']['t'].encode('utf-8') + '##' + metadata['787']['t'].encode('utf-8'))
+							print(str(IDENT) + ' No Match found! ' + metadata['773']['t'].encode('utf-8'))
 					else:
 						print(IDENT + ' Missing 787!')
 				else:
