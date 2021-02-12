@@ -126,7 +126,7 @@ def validate(record):
 						MATCH=False
 						for F in metadata.get_fields('787'):
 							if 't' in F:
-								if metadata['773']['t'] in F['t']:
+								if metadata['773']['t'][:10] in F['t']:
 									MATCH=True
 									# 787a (first..)
 									if 'a' in metadata['787']:
@@ -134,11 +134,11 @@ def validate(record):
 									# 787t (first..)
 									if 't' in metadata['787']:
 										TTEXT = metadata['787']['t'].strip() + '. '
-									# URL
-									if '[online]' in metadata['787']['t']:
-										for F in metadata.get_fields('856'):
-											if 'u' in F and 'y' in F and 'online' in F['y']:
-												URL = ' URL: ' + F['u']
+										# URL
+										if '[online]' in metadata['787']['t']:
+											for F in metadata.get_fields('856'):
+												if 'u' in F and 'y' in F and 'online' in F['y']:
+													URL = ' URL: ' + F['u']
 									# 787n (first..)
 									if 'n' in metadata['787']:
 										TTEXT = metadata['787']['n'].capitalize().strip() + '. '
@@ -150,7 +150,7 @@ def validate(record):
 										GTEXT = metadata['787']['g'].rstrip('.').replace('-', u'–').strip() + '.'
 										GTEXT = GTEXT[0].lower() + GTEXT[1:]
 							else:
-								print(IDENT + ' Missing 787.')
+								print(IDENT + '#Missing 787t.')
 						if not MATCH:
 							print(str(IDENT) + '#No match.')
 					else:
