@@ -132,7 +132,7 @@ def validate(record):
 									if 'a' in F:
 										TTEXT = F['a'].strip() + ': '
 									# 773t (first..)
-									if 't' in F:
+									if 't' in metadata['773']:
 										TTEXT = metadata['773']['t'].strip() + '. '
 										# URL
 										if '[online]' in metadata['773']['t']:
