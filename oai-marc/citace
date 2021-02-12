@@ -1,0 +1,221 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# INCLUDE -------------------
+
+from __future__ import print_function
+
+import StringIO,requests,lxml.html,time,sys,os,re
+
+from pymarc import marcxml,Field,MARCWriter,MARCReader
+from pymarc.record import Record
+
+# VAR -------------------
+
+DATA='ucla.xml'
+
+citace = open('citace.csv', 'w')
+
+def name_to_upper(s,ID):
+	if len(s.split(',')) == 2:
+		return s.split(',')[0].strip().upper() + ', ' + s.split(',')[1].strip() 
+	else:
+		if '[=' in s: print(ID + '#Multiple comma.')
+	return s
+
+def word_to_upper(s):
+	word,buff = '',''
+	for char in s:
+		if not word and re.match('\w', char, re.UNICODE):
+			char = char.upper()
+			word=True
+		buff += char 
+	return buff
+
+def word_to_lower(s):
+	word,buff = '',''
+	for char in s:
+		if not word and re.match('\w', char, re.UNICODE):
+			char = char.lower()
+			word=True
+		buff += char 
+	return buff
+
+def validate(record):
+
+	metadata = record
+
+# ------------------------------------------------------
+# CITACE
+# ------------------------------------------------------
+
+	IDENT = metadata['001'].value()
+
+	#BASE
+	NAME,DATA,CTEXT='','',''
+	if '100' in metadata and 'a' in metadata['100']:
+		if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
+			NAME = name_to_upper(metadata['100']['a'].rstrip(','), IDENT)
+		else:
+			NAME = metadata['100']['a']
+	for F in metadata.get_fields('700'):
+		if not NAME:
+			NAME = name_to_upper(F['a'].rstrip(','), IDENT)
+		else:
+			NAME += u' – ' + name_to_upper(F['a'].rstrip(','), IDENT)
+	# NAME 100/700
+	if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
+		if '245' in metadata and 'c' in metadata['245']:
+			if '[=' in metadata['245']['c']:
+				if re.findall('\[=(.+?)\]', metadata['245']['c']):
+					LOW = re.findall('\[=(.+?)\]', metadata['245']['c'].strip())[0]
+					NAME =  metadata['245']['c'].replace(LOW, name_to_upper(LOW, IDENT)).strip('. ')
+	# 245
+	if '245' in metadata:
+		A = [sub for sub in metadata['245'].get_subfields('a')]
+		B = [sub for sub in metadata['245'].get_subfields('b') if not re.match('^\[.*\]$', sub.strip('./ '))]
+		NP = [sub for sub in metadata['245'].get_subfields('n','p')]
+
+		DATA = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ''.join(A + B + NP).strip('.:/ ')) + '. '
+		if NAME: DATA = ': ' + DATA
+		# 245c
+		if 'c' in metadata['245']:
+			if ';' in metadata['245']['c']:
+				CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).strip('. ') + '. '
+				CTEXT = word_to_upper(CTEXT)
+
+	#if not NAME: print(IDENT + '#No name.')
+
+	NAME = NAME.encode('utf-8')
+	DATA = DATA.replace(' - ', u' – ').encode('utf-8')
+	CTEXT = CTEXT.replace(' - ', u' – ').encode('utf-8')
+
+	# 100a - 700a: 245abnp. 245c. 773t. 773g.
+	TTEXT,GTEXT,URL = '','',''
+	if metadata.leader[7] == 'b':
+		# 773
+		if '773' in metadata:
+			# 773t (first..)
+			if 't' in metadata['773']:
+				TTEXT = metadata['773']['t'].strip() + '. '
+				# URL
+				if '[online]' in metadata['773']['t']:
+					for F in metadata.get_fields('856'):
+						if 'u' in F and 'y' in F and 'online' in F['y']:
+							URL = ' URL: ' + F['u']
+			# 773g (first..)
+			if 'g' in metadata['773']:
+				GTEXT = metadata['773']['g'].rstrip('.').strip() + '.'
+	
+		TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
+		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
+		URL = URL.encode('utf-8')
+
+		BUFF = str(IDENT) + '##b##' + NAME + DATA + CTEXT + TTEXT + GTEXT + URL
+		citace.write(BUFF.replace('....', '...') + '\n')
+
+	# 100a - 700a: 245abnp. 245c. In: 773a: 773t. 773n. 773d, 773g.
+	ATEXT,TTEXT,NTEXT,DTEXT,GTEXT,URL = '','','','','',''
+	if metadata.leader[7] == 'a':
+		# 773
+		if '773' in metadata:
+			# 100a - 700a: 245abnp. 245c. In: 787a: 773t. 787n. 787d, 773g.
+			if 'a' not in metadata['773'] and 'd' not in metadata['773']:
+				if 't' in metadata['773']:
+					if '787' in metadata:
+						MATCH=False
+						for F in metadata.get_fields('787'):
+							if 't' in F:
+								if metadata['773']['t'] in F['t']:
+									MATCH=True
+									# 787a (first..)
+									if 'a' in metadata['787']:
+										TTEXT = metadata['787']['a'].strip() + ': '
+									# 787t (first..)
+									if 't' in metadata['787']:
+										TTEXT = metadata['787']['t'].strip() + '. '
+									# URL
+									if '[online]' in metadata['787']['t']:
+										for F in metadata.get_fields('856'):
+											if 'u' in F and 'y' in F and 'online' in F['y']:
+												URL = ' URL: ' + F['u']
+									# 787n (first..)
+									if 'n' in metadata['787']:
+										TTEXT = metadata['787']['n'].capitalize().strip() + '. '
+									# 787d (first..)
+									if 'd' in metadata['787']:
+										TTEXT = metadata['787']['d'].strip() + ', '
+									# 787g (first..)
+									if 'g' in metadata['787']:
+										GTEXT = metadata['787']['g'].rstrip('.').replace('-', u'–').strip() + '.'
+										GTEXT = GTEXT[0].lower() + GTEXT[1:]
+							else:
+								print(IDENT + ' Missing 787.')
+						if not MATCH:
+							print(str(IDENT) + '#No match.')
+					else:
+						print(IDENT + '#No 787.')
+				else:
+					print(IDENT + '#No 773t.')
+			else:
+				# 773a (first..)
+				if 'a' in metadata['773']:
+					TTEXT = metadata['773']['a'].strip() + ': '
+				# 773t (first..)
+				if 't' in metadata['773']:
+					TTEXT = metadata['773']['t'].strip() + '. '
+					# URL
+					if '[online]' in metadata['773']['t']:
+						for F in metadata.get_fields('856'):
+							if 'u' in F and 'y' in F and 'online' in F['y']:
+								URL = ' URL: ' + F['u']
+				# 773n (first..)
+				if 'n' in metadata['773']:
+					TTEXT = metadata['773']['n'].capitalize().strip() + '. '
+				# 773d (first..)
+				if 'd' in metadata['773']:
+					TTEXT = metadata['773']['d'].strip() + ', '
+				# 773g (first..)
+				if 'g' in metadata['773']:
+					GTEXT = metadata['773']['g'].rstrip('.').replace('-', u'–').strip() + '.'
+					GTEXT = word_to_lower(GTEXT)
+
+		# 100a - 700a: 245abnp. 245c. In: 787a: 773t. 773n. 773d, 773g.
+
+		ATEXT = ATEXT.encode('utf-8')
+		TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
+		NTEXT = NTEXT.encode('utf-8')
+		DTEXT = DTEXT.encode('utf-8')
+		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
+		URL = URL.encode('utf-8')
+	
+		BUFF = str(IDENT) + '##a##' + NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
+		citace.write(BUFF.replace('....', '...') + '\n')
+
+	# 100a - 700a: 245abnp. 245c. 260abc[264abc].
+	ABC = ''
+	if metadata.leader[7] == 'm':
+		# ABC
+		if '260' in metadata:
+			ABC = ''.join([f.rstrip(' /') for f in metadata['260'].get_subfields('a','b','c')])
+		if '264' in metadata:
+			ABC = ''.join([f.rstrip(' /') for f in metadata['264'].get_subfields('a','b','c')])
+
+		ABC = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ABC).strip('. ') + '.'
+		ABC = ABC.replace(' - ', u' – ').encode('utf-8')
+
+		BUFF = str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC
+		citace.write(BUFF.replace('....', '...') + '\n')
+
+# ------------------------------------------------------
+# MAIN
+# ------------------------------------------------------
+
+marcxml.map_xml(validate, DATA)
+
+citace.close()
+
+# EXIT -------------------
+
+sys.exit(0)
+
