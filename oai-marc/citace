@@ -129,34 +129,38 @@ def validate(record):
 								if metadata['773']['t'][:10] in F['t']:
 									MATCH=True
 									# 787a (first..)
-									if 'a' in metadata['787']:
-										TTEXT = metadata['787']['a'].strip() + ': '
-									# 787t (first..)
-									if 't' in metadata['787']:
-										TTEXT = metadata['787']['t'].strip() + '. '
+									if 'a' in F:
+										TTEXT = F['a'].strip() + ': '
+									# 773t (first..)
+									if 't' in F:
+										TTEXT = metadata['773']['t'].strip() + '. '
 										# URL
-										if '[online]' in metadata['787']['t']:
-											for F in metadata.get_fields('856'):
-												if 'u' in F and 'y' in F and 'online' in F['y']:
-													URL = ' URL: ' + F['u']
+										if '[online]' in metadata['773']['t']:
+											for U in metadata.get_fields('856'):
+												if 'u' in U and 'y' in U and 'online' in U['y']:
+													URL = ' URL: ' + U['u']
 									# 787n (first..)
-									if 'n' in metadata['787']:
-										TTEXT = metadata['787']['n'].capitalize().strip() + '. '
+									if 'n' in F:
+										TTEXT = F['n'].capitalize().strip() + '. '
 									# 787d (first..)
-									if 'd' in metadata['787']:
-										TTEXT = metadata['787']['d'].strip() + ', '
-									# 787g (first..)
-									if 'g' in metadata['787']:
-										GTEXT = metadata['787']['g'].rstrip('.').replace('-', u'–').strip() + '.'
-										GTEXT = GTEXT[0].lower() + GTEXT[1:]
+									if 'd' in F:
+										TTEXT = F['d'].strip() + ', '
+									# 773g (first..)
+									if 'g' in metadata['773']:
+										GTEXT = metadata['773']['g'].rstrip('.').replace('-', u'–').strip() + '.'
+										GTEXT = word_to_lower(GTEXT)
 							else:
 								print(IDENT + '#Missing 787t.')
+								return
 						if not MATCH:
 							print(str(IDENT) + '#No match.')
+							return
 					else:
 						print(IDENT + '#No 787.')
+						return
 				else:
 					print(IDENT + '#No 773t.')
+					return
 			else:
 				# 773a (first..)
 				if 'a' in metadata['773']:
@@ -166,9 +170,9 @@ def validate(record):
 					TTEXT = metadata['773']['t'].strip() + '. '
 					# URL
 					if '[online]' in metadata['773']['t']:
-						for F in metadata.get_fields('856'):
-							if 'u' in F and 'y' in F and 'online' in F['y']:
-								URL = ' URL: ' + F['u']
+						for U in metadata.get_fields('856'):
+							if 'u' in U and 'y' in F and 'online' in U['y']:
+								URL = ' URL: ' + U['u']
 				# 773n (first..)
 				if 'n' in metadata['773']:
 					TTEXT = metadata['773']['n'].capitalize().strip() + '. '
@@ -188,7 +192,7 @@ def validate(record):
 		DTEXT = DTEXT.encode('utf-8')
 		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
 		URL = URL.encode('utf-8')
-	
+
 		BUFF = str(IDENT) + '##a##' + NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
 		citace.write(BUFF.replace('....', '...') + '\n')
 
