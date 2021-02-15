@@ -141,7 +141,7 @@ def validate(record):
 													URL = ' URL: ' + U['u']
 									# 787n (first..)
 									if 'n' in F:
-										TTEXT = F['n'].capitalize().strip() + '. '
+										TTEXT = word_to_upper(F['n']).strip() + '. '
 									# 787d (first..)
 									if 'd' in F:
 										TTEXT = F['d'].strip() + ', '
@@ -175,7 +175,7 @@ def validate(record):
 								URL = ' URL: ' + U['u']
 				# 773n (first..)
 				if 'n' in metadata['773']:
-					TTEXT = metadata['773']['n'].capitalize().strip() + '. '
+					TTEXT = word_to_upper(metadata['773']['n']).strip() + '. '
 				# 773d (first..)
 				if 'd' in metadata['773']:
 					TTEXT = metadata['773']['d'].strip() + ', '
@@ -199,6 +199,8 @@ def validate(record):
 	# 100a - 700a: 245abnp. 245c. 260abc[264abc].
 	ABC = ''
 	if metadata.leader[7] == 'm':
+		# remove 245c page ref.
+		CTEXT = re.sub(' \(s\.[^)]+\)', '', CTEXT)
 		# ABC
 		if '260' in metadata:
 			ABC = ''.join([f.rstrip(' /') for f in metadata['260'].get_subfields('a','b','c')])
