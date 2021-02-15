@@ -64,8 +64,11 @@ DATA='ucla.xml'
 #writer3 = MARCWriter(open('clo964_3.mrc', 'wb'))
 #writer4 = MARCWriter(open('clo964_4.mrc', 'wb'))
 
-#DATADIR='/var/www/html/964'
-#BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
+
+# BASE ---------
+
+DATADIR='/var/www/html/964'
+BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
 
 #reader = MARCReader(file(DATA))
 
@@ -181,33 +184,42 @@ def validate(record):
 # BASE
 # ------------------------------------------------------
 
-#	if 'SIF' in metadata:
-#		if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-#	else:
-#		SIF = ''
+	#if 'SIF' in metadata:
+	#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+	#else:
+	#	SIF = ''
 
-#	IDENT = metadata['001'].value()
+	# LDR dup
+	metadata.remove_fields('LDR')# LDR dup
 
-#	if '964' and 'FMT' in metadata:# 990 -> FMT
-#		for F in metadata.get_fields('964'):
-#			base = F.value()
-#			if base in BASE:
-#				sub_base = metadata['FMT'].value()
-#				try:
-#					os.mkdir(DATADIR + '/'+ base)
-#				except: pass
-#				try:
-#					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
-#				except: pass
-			
-#				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.csv', 'a', 0) as f:
-#					f.write(
-#						str(IDENT) + ';' +
-#						SIF + ';' +
-#						str(record.leader[7]) + ';' +
-#						'https://vufind.ucl.cas.cz/Record/' + str(IDENT).ljust(9, '0') + ';' +# zero padding
-#						str(base) + '\n'
-#					)
+	IDENT = metadata['001'].value()
+
+	if '964' in metadata and 'FMT' in metadata:# 990 -> FMT
+
+		for F in metadata.get_fields('964'):
+			base = F.value()
+			if base in BASE:
+				sub_base = metadata['FMT'].value()
+				try:
+					os.mkdir(DATADIR + '/'+ base)
+				except: pass
+				try:
+					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+				except: pass
+		
+				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.aleph', 'a', 0) as aleph:
+					# LEADER
+					aleph.write(str(IDENT) + ' LDR   L ' + metadata.leader.replace(' ', '^').encode('utf-8') + '\n')
+					for F in metadata:
+						if hasattr(F, 'indicators'):
+							# REGULAR FIELD
+							SUB=''
+							for i in range(0, len(F.subfields)/2):
+								SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+							aleph.write(str(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
+						else:
+							# SYSTEM FIELD
+							aleph.write(str(IDENT) + ' ' + F.tag + '   L ' + F.value().replace(' ','^').encode('utf-8') + '\n')
 
 # ------------------------------------------------------
 # GENERIC
@@ -489,7 +501,8 @@ marcxml.map_xml(validate, DATA)
 
 #link.close()
 #wayback.close()
-#aleph.close()
+
+aleph.close()
 
 #writer1.close()
 #writer2.close()

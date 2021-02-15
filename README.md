@@ -3,10 +3,6 @@ DESCRIPTION
 
 Library support software.
 
-TODO
-<pre>
--964 Aleph
-</pre>
 BACKUP
 <pre>
 crontab -e
