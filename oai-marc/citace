@@ -7,12 +7,11 @@ from __future__ import print_function
 
 import sys,os,re
 
-from pymarc import marcxml,MARCWriter
+from pymarc import marcxml,Field,MARCWriter
 
 # ------------------------------------------------------
 # VAR
 # ------------------------------------------------------
-
 
 DATA='ucla.xml'
 
@@ -52,11 +51,6 @@ def word_to_lower(s):
 def validate(record):
 
 	metadata = record
-
-# ------------------------------------------------------
-# CITACE
-# ------------------------------------------------------
-
 	IDENT = metadata['001'].value()
 
 	#RECORD
@@ -130,9 +124,11 @@ def validate(record):
 				# remove 245c page ref.
 				CTEXT = re.sub(' \(s\.[^)]+\)', '', CTEXT)
 
-	NAME = NAME.encode('utf-8')
-	DATA = DATA.replace(' - ', u' – ').encode('utf-8')
-	CTEXT = CTEXT.replace(' - ', u' – ').encode('utf-8')
+	#NAME = NAME.encode('utf-8')
+	#DATA = DATA.replace(' - ', u' – ').encode('utf-8')
+	#CTEXT = CTEXT.replace(' - ', u' – ').encode('utf-8')
+	DATA = DATA.replace(' - ', u' – ')
+	CTEXT = CTEXT.replace(' - ', u' – ')
 
 	# 100a - 700a: 245abnp. 245c. 773t. 773g.
 	TTEXT,GTEXT,URL = '','',''
@@ -151,9 +147,12 @@ def validate(record):
 			if 'g' in metadata['773']:
 				GTEXT = metadata['773']['g'].rstrip('.').strip() + '.'
 	
-		TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
-		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
-		URL = URL.encode('utf-8')
+		#TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
+		#GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
+		#URL = URL.encode('utf-8')
+
+		TTEXT = TTEXT.replace(' - ', u' – ')
+		GTEXT = GTEXT.replace('-', u'–')
 
 		#BUFF = str(IDENT) + '##b##' + NAME + DATA + CTEXT + TTEXT + GTEXT + URL
 		#citace.write(BUFF.replace('....', '...') + '\n')
@@ -232,12 +231,15 @@ def validate(record):
 
 		# 100a - 700a: 245abnp. 245c. In: 787a: 773t. 773n. 773d, 773g.
 
-		ATEXT = ATEXT.encode('utf-8')
-		TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
-		NTEXT = NTEXT.encode('utf-8')
-		DTEXT = DTEXT.encode('utf-8')
-		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
-		URL = URL.encode('utf-8')
+		#ATEXT = ATEXT.encode('utf-8')
+		#TTEXT = TTEXT.replace(' - ', u' – ').encode('utf-8')
+		#NTEXT = NTEXT.encode('utf-8')
+		#DTEXT = DTEXT.encode('utf-8')
+		#GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
+		#URL = URL.encode('utf-8')
+
+		TTEXT = TTEXT.replace(' - ', u' – ')
+		GTEXT = GTEXT.replace('-', u'–')
 
 		#BUFF = str(IDENT) + '##a##' + NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
 		#citace.write(BUFF.replace('....', '...') + '\n')
@@ -254,15 +256,16 @@ def validate(record):
 			ABC = ''.join([f.rstrip(' /') for f in metadata['264'].get_subfields('a','b','c')])
 
 		ABC = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ABC).strip('. ') + '.'
-		ABC = ABC.replace(' - ', u' – ').encode('utf-8')
+		#ABC = ABC.replace(' - ', u' – ').encode('utf-8')
+		ABC = ABC.replace(' - ', u' – ')
 
 		#BUFF = str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC
 		#citace.write(BUFF.replace('....', '...') + '\n')
 		BUFF = NAME + DATA + CTEXT + ABC
 		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
-	# write MRC
-	writer.write(metadata)
+	# WRITE
+	ucla.write(metadata)
 
 # ------------------------------------------------------
 # MAIN
