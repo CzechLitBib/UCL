@@ -5,16 +5,24 @@
 
 from __future__ import print_function
 
-import StringIO,requests,lxml.html,time,sys,os,re
+import sys,os,re
 
-from pymarc import marcxml,Field,MARCWriter,MARCReader
-from pymarc.record import Record
+from pymarc import marcxml,MARCWriter
 
-# VAR -------------------
+# ------------------------------------------------------
+# VAR
+# ------------------------------------------------------
+
 
 DATA='ucla.xml'
 
-citace = open('citace.csv', 'w')
+ucla = MARCWriter(open('ucla_citace.mrc', 'wb'))
+#citace = open('ucla_citace.csv', 'w')
+
+# ------------------------------------------------------
+# DEF
+# ------------------------------------------------------
+
 
 def name_to_upper(s,ID):
 	if len(s.split(',')) == 2:
@@ -50,6 +58,40 @@ def validate(record):
 # ------------------------------------------------------
 
 	IDENT = metadata['001'].value()
+
+	#RECORD
+
+	# LDR dup
+	metadata.remove_fields('LDR')
+
+	# UCLA skip broken encoding
+	if metadata['001'].value() == '001852470': return
+
+	# UCLA:  webarchiv
+	for F in metadata.get_fields('856'):
+		if 'y' in F:
+			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
+
+	# UCLA: drop X
+	X=False
+	for F in metadata.get_fields('773'):
+		if X and 'x' in F: F.delete_subfield('x')# drop more than one
+		if 'x' in F: X = True# catch the first one
+
+	# UCLA: add MBK
+	MBK=False
+	if '044' in metadata:
+		if 'a' in metadata['044']:
+			if metadata['044']['a'] != 'xr': MBK=True
+	if '008' in metadata:
+		if metadata['008'].value()[15:17] != 'xr': MBK=True
+	for F in metadata.get_fields('964'):
+		if 'CLE' in F.value(): MBK=False
+	if MBK:
+		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
 	#BASE
 	NAME,DATA,CTEXT='','',''
@@ -113,8 +155,10 @@ def validate(record):
 		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
 		URL = URL.encode('utf-8')
 
-		BUFF = str(IDENT) + '##b##' + NAME + DATA + CTEXT + TTEXT + GTEXT + URL
-		citace.write(BUFF.replace('....', '...') + '\n')
+		#BUFF = str(IDENT) + '##b##' + NAME + DATA + CTEXT + TTEXT + GTEXT + URL
+		#citace.write(BUFF.replace('....', '...') + '\n')
+		BUFF = NAME + DATA + CTEXT + TTEXT + GTEXT + URL
+		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
 	# 100a - 700a: 245abnp. 245c. In: 773a: 773t. 773n. 773d, 773g.
 	ATEXT,TTEXT,NTEXT,DTEXT,GTEXT,URL = '','','','','',''
@@ -155,7 +199,7 @@ def validate(record):
 								print(IDENT + '#Missing 787t.')
 								return
 						if not MATCH:
-							print(str(IDENT) + '#No match.')
+							print(str(IDENT) + '#No match.' + metadata['773']['t'].encode('utf-8') + ' # ' + ' '.join([F.value() for F in metadata.get_fields('787') if 't' in F]).encode('utf-8'))
 							return
 					else:
 						print(IDENT + '#No 787.')
@@ -195,8 +239,10 @@ def validate(record):
 		GTEXT = GTEXT.replace('-', u'–').encode('utf-8')
 		URL = URL.encode('utf-8')
 
-		BUFF = str(IDENT) + '##a##' + NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
-		citace.write(BUFF.replace('....', '...') + '\n')
+		#BUFF = str(IDENT) + '##a##' + NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
+		#citace.write(BUFF.replace('....', '...') + '\n')
+		BUFF = NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
+		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
 	# 100a - 700a: 245abnp. 245c. 260abc[264abc].
 	ABC = ''
@@ -210,8 +256,13 @@ def validate(record):
 		ABC = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ABC).strip('. ') + '.'
 		ABC = ABC.replace(' - ', u' – ').encode('utf-8')
 
-		BUFF = str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC
-		citace.write(BUFF.replace('....', '...') + '\n')
+		#BUFF = str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC
+		#citace.write(BUFF.replace('....', '...') + '\n')
+		BUFF = NAME + DATA + CTEXT + ABC
+		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
+
+	# write MRC
+	writer.write(metadata)
 
 # ------------------------------------------------------
 # MAIN
@@ -219,7 +270,8 @@ def validate(record):
 
 marcxml.map_xml(validate, DATA)
 
-citace.close()
+#citace.close()
+ucla.close()
 
 # EXIT -------------------
 
