@@ -1,0 +1,219 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# OAI-PMH 2.0 MARCXML Record text collector.
+#
+
+# INCLUDE -------------------
+
+from __future__ import print_function
+
+import argparse,StringIO,smtplib,sys,os,re
+
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime,date,timedelta
+from oaipmh.client import Client
+from oaipmh.metadata import MetadataRegistry
+from pymarc import marcxml
+from lxml.etree import tostring
+
+# VAR -------------------
+
+URL='https://aleph.lib.cas.cz/OAI'
+RECENZE='/usr/local/bin/recenze.csv'
+
+RECLIST=[]
+
+#MAIL_TARGET='mikesova@ucl.cas.cz'
+MAIL_TARGET='malinek@ucl.cas.cz'
+MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
+MAIL_SERVER='listonos.ucl.cas.cz'
+MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
+
+TOTAL=0
+MATCH=0
+
+# DEF -------------------
+
+def MarcXML(xml):
+	handler = marcxml.XmlHandler()
+	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	return handler.records[0]
+
+def valid_date(s):
+	try:
+		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+	except:
+		raise argparse.ArgumentTypeError('Invalid date format.')
+
+def valid_display(s):
+	if s in ('ident', 'marc'): return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid display format.')
+
+def valid_request(s):
+	if s == 'record': return s
+	else:
+		raise argparse.ArgumentTypeError('Invalid request format.')
+
+def notify():
+	html_header = 'Dobrý den,<br><br>Níže najdete seznam nalezených recenzí:<br><br>'
+	html_footer =('<br>---------------------------<br><br>' +
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+	html_body=''
+	for aleph in RECLIST:
+		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+			aleph + '&local_base=AV">' + aleph + '</a><br>')
+	msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
+	msg['Subject'] = 'Recenze'
+	msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+	msg['To'] = MAIL_TARGET
+	try:
+		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+		s.quit()
+	except:
+		try:
+			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+			s.quit()
+		except:
+			print('Sendmail error.')
+
+# ARG -------------------
+
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 MARCXML Validator.")
+listing = parser.add_argument_group('request')
+listing.add_argument('--get', help='Request type. [record]', type=valid_request, default='record')
+required = parser.add_argument_group('validation')
+required.add_argument('--set', help='Records set.')
+required.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+required.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
+optional = parser.add_argument_group('output')
+optional.add_argument('--check', help='Validation control.', action='store_true')
+optional.add_argument('--notify', help='Validation control.', action='store_true')
+args = parser.parse_args()
+
+if args.get == 'record' or args.get == 'ident':
+	if not args.set:
+		parser.error('argument --set is required.')
+	if not args.from_date:
+		parser.error('argument --from is required.')
+	if not args.until_date:
+		parser.error('argument --until is required.')
+
+# INIT -------------------
+
+try:
+	recenze_map = {}
+	with open(RECENZE, 'r') as f:
+		for line in f:
+			rec_name, rec_code = line.decode('utf-8').split('#')
+			recenze_map[rec_code.strip()] = rec_name
+except: recenze_map = {}
+
+registry = MetadataRegistry()
+registry.registerReader('marc21', MarcXML)
+
+oai = Client(URL, registry)
+
+try:
+	if args.get == 'record':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
+except:
+	records=[]
+
+# MAIN -------------------
+
+for record in records:
+
+	header = record[0]
+	metadata = record[1]
+
+	# skip deleted records
+	if header.isDeleted(): continue
+
+	# retry missing metadata(?)
+	if not metadata:
+		print(header.identifier() + ' Missing matadata. Retrying..')
+		retry = oai.getRecord(metadataPrefix='marc21', identifier=header.identifier())
+		if not retry[1]:
+			print(header.identifier() + ' Missing retry metadata.')
+			continue
+		else:
+			header = retry[0]
+			metadata = retry[1]
+
+	# VALIDATION ------------------
+
+	if args.check:
+		
+		# SKIP OLD ------------------
+
+		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
+
+		# SKIP BOT ------------------
+
+		BOT=False
+		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
+			if 'a' in F:
+				if re.match('BATCH', F['a']): BOT=True
+		if BOT: continue
+
+		# SKIP NOT NEW ------------------
+
+		#OUTDATE=False
+		#for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT/KAT
+		#	if 'c' in F:
+		#		CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
+		#		if CAT_DATE >= date.today().replace(day=1): OUTDATE=True# 1st day this month
+		#		if CAT_DATE < (date.today().replace(day=1) - timedelta(days=1)).replace(day=1): OUTDATE=True# 1st day prev. month 
+		#if OUTDATE: continue
+
+		#exi 1xx/6xx-653/700/710/711/730 ------------------
+
+		if 'SIF' in metadata:
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
+		else:
+			SIF = ''
+
+		if metadata.leader[7] == 'm':
+			PASSED=False
+		
+			# TEST A
+			for F in metadata.get_fields('700'):
+				if '7' in F and F['7'] in recenze_map:
+					PASSED=True
+			if '100' in metadata and '7' in metadata['100']:
+				if metadata['100']['7'] in recenze_map:
+					PASSED=True
+		
+			# TEST B
+			REC=False
+			for F in metadata.get_fields('655'):
+				if 'a' in F and F['a'] == 'recenze': REC=True
+			if REC:		
+				for F in metadata.get_fields('600'):
+					if '7' in F and F['7'] in recenze_map:
+						PASSED=True
+
+			if PASSED:
+				RECLIST.append(re.sub('^.*-(\d+)$', '\\1', header.identifier()))
+				MATCH+=1
+
+		TOTAL+=1
+
+# EXIT -------------------
+
+if args.notify: notify()
+
+print('TOTAL:' + str(TOTAL))
+print('MATCH:' + str(MATCH))
+
+sys.exit(0)
+

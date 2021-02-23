@@ -27,6 +27,7 @@ oai-5xx
 oai-marc
 oai-daily
 oai-weekly
+oai-recenze
 oai-monthly
 oai-monthly-7
 oai-monthly-kat
@@ -96,6 +97,7 @@ FILE
          oai-kat - Evaluate field "KAT" data. 
        oai-7-xml - Evaluate subfield "7" datafrom file.
         oai-file - Debug & testing.
+     oai-recenze - Subset match notify.
 
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
