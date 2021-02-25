@@ -57,18 +57,18 @@ def valid_request(s):
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def notify():
-	html_header = '<br>Dobrý den,<br><br>Zasíláme nové záznamy pro web Českého literárního centra:<br><br>'
+	html_header = '<br>Dobrý den,<br><br>Zasíláme nové záznamy pro web Českého literárního centra.<br><br>'
 	html_footer =('<br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
 	html_body=''
 
-	for aleph in RECLIST['A']:
+	for aleph in sorted(RECLIST['A']):
 		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['A'][aleph] + '<br>')
 
 	if RECLIST['A']: html_body+='<br>'
 
-	for aleph in RECLIST['B']:
+	for aleph in sorted(RECLIST['B']):
 		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['B'][aleph] + '<br>')
 
@@ -218,16 +218,16 @@ for record in records:
 						TITLE += '; ' + F['t']
 		
 		if A:
-			print("Got A.")
-			RECLIST['A'][IDENT] =(NAME).encode('utf-8')
+			#print("Got A.")
+			RECLIST['A'][IDENT] =(NAME).strip('.:/ ').encode('utf-8')
 			MATCH+=1
 
 		if B:
-			print("Got B.")
+			#print("Got B.")
 			if not NAME:
-				RECLIST['B'][IDENT] =(TITLE).encode('utf-8')
+				RECLIST['B'][IDENT] = (TITLE).encode('utf-8')
 			else:
-				RECLIST['B'][IDENT] =(NAME + ' - ' + TITLE).encode('utf-8')
+				RECLIST['B'][IDENT] = (NAME + ' - ' + TITLE).encode('utf-8')
 			MATCH+=1
 
 	TOTAL+=1
