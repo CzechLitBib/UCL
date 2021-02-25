@@ -23,13 +23,12 @@ from lxml.etree import tostring
 URL='https://aleph.lib.cas.cz/OAI'
 RECENZE='/usr/local/bin/recenze.csv'
 
-RECLIST=[]
+RECLIST={}
 
-#MAIL_TARGET='mikesova@ucl.cas.cz'
-MAIL_TARGET='malinek@ucl.cas.cz'
-MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
-MAIL_SERVER='listonos.ucl.cas.cz'
-MAIL_SERVER_BACKUP='wf.ucl.cas.cz'
+MAIL_TARGET='xxx'
+MAIL_SENDER='xxx'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
 TOTAL=0
 MATCH=0
@@ -58,28 +57,29 @@ def valid_request(s):
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def notify():
-	html_header = 'Dobrý den,<br><br>Níže najdete seznam nalezených recenzí:<br><br>'
-	html_footer =('<br>---------------------------<br><br>' +
-		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
-	html_body=''
-	for aleph in RECLIST:
-		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-			aleph + '&local_base=AV">' + aleph + '</a><br>')
-	msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
-	msg['Subject'] = 'Recenze'
-	msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-	msg['To'] = MAIL_TARGET
-	try:
-		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
-		s.quit()
-	except:
+	if RECLIST:
+		html_header = '<br>Dobrý den,<br><br>Zasíláme nové záznamy pro web Českého literárního centra:<br><br>'
+		html_footer =('<br>---------------------------<br><br>' +
+			'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+		html_body=''
+		for aleph in RECLIST:
+			html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+				aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST[aleph] + '<br>')
+		msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
+		msg['Subject'] = 'Bibliografie MZK'
+		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+		msg['To'] = MAIL_TARGET
 		try:
-			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
 			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
 			s.quit()
 		except:
-			print('Sendmail error.')
+			try:
+				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+				s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+				s.quit()
+			except:
+				print('Sendmail error.')
 
 # ARG -------------------
 
@@ -153,10 +153,6 @@ for record in records:
 
 	if args.check:
 		
-		# SKIP OLD ------------------
-
-		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
-
 		# SKIP BOT ------------------
 
 		BOT=False
@@ -165,47 +161,50 @@ for record in records:
 				if re.match('BATCH', F['a']): BOT=True
 		if BOT: continue
 
-		# SKIP NOT NEW ------------------
+		# SKIP NOT B12 ------------------
 
-		#OUTDATE=False
-		#for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT/KAT
-		#	if 'c' in F:
-		#		CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
-		#		if CAT_DATE >= date.today().replace(day=1): OUTDATE=True# 1st day this month
-		#		if CAT_DATE < (date.today().replace(day=1) - timedelta(days=1)).replace(day=1): OUTDATE=True# 1st day prev. month 
-		#if OUTDATE: continue
+		B12=False
+		for F in metadata.get_fields('964'):		
+			if 'a' in F and F['a'] == 'B12': B12=True
+		if not B12: continue
 
-		#exi 1xx/6xx-653/700/710/711/730 ------------------
+		# TEST ------------------
 
-		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
-		else:
-			SIF = ''
+		IDENT = re.sub('^.*-(\d+)$', '\\1', header.identifier()) 
 
-		if metadata.leader[7] == 'm':
-			PASSED=False
+		PASSED=False
+		NAME = ''
 		
-			# TEST A
+		# TEST A
+		if metadata.leader[7] == 'm':
 			for F in metadata.get_fields('700'):
 				if '7' in F and F['7'] in recenze_map:
 					PASSED=True
 			if '100' in metadata and '7' in metadata['100']:
 				if metadata['100']['7'] in recenze_map:
 					PASSED=True
-		
-			# TEST B
-			REC=False
-			for F in metadata.get_fields('655'):
-				if 'a' in F and F['a'] == 'recenze': REC=True
-			if REC:		
-				for F in metadata.get_fields('600'):
-					if '7' in F and F['7'] in recenze_map:
-						PASSED=True
-
-			if PASSED:
-				RECLIST.append(re.sub('^.*-(\d+)$', '\\1', header.identifier()))
-				MATCH+=1
-
+			# NAME
+			if '245' in metadata and 'a' in metadata['245']:
+				NAME = metadata['245']['a']
+			
+		# TEST B
+		REC=False
+		for F in metadata.get_fields('655'):
+			if 'a' in F and F['a'] == 'recenze': REC=True
+		if REC:		
+			for F in metadata.get_fields('600'):
+				if '7' in F and F['7'] in recenze_map:
+					PASSED=True
+			#NAME
+			for F in metadata.get_fields('787'):
+				if 'a' in F:
+					if not NAME:
+						NAME = F['a']
+					else:
+						NAME += '; ' + F['a']
+		if PASSED:
+			RECLIST[IDENT] = NAME.encode('utf-8')
+			MATCH+=1
 		TOTAL+=1
 
 # EXIT -------------------
