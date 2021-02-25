@@ -23,7 +23,7 @@ from lxml.etree import tostring
 URL='https://aleph.lib.cas.cz/OAI'
 RECENZE='/usr/local/bin/recenze.csv'
 
-RECLIST={}
+RECLIST={'A':{},'B':{}}
 
 MAIL_TARGET='xxx'
 MAIL_SENDER='xxx'
@@ -57,29 +57,36 @@ def valid_request(s):
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def notify():
-	if RECLIST:
-		html_header = '<br>Dobrý den,<br><br>Zasíláme nové záznamy pro web Českého literárního centra:<br><br>'
-		html_footer =('<br>---------------------------<br><br>' +
-			'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
-		html_body=''
-		for aleph in RECLIST:
-			html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-				aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST[aleph] + '<br>')
-		msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
-		msg['Subject'] = 'Bibliografie MZK'
-		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-		msg['To'] = MAIL_TARGET
+	html_header = '<br>Dobrý den,<br><br>Zasíláme nové záznamy pro web Českého literárního centra:<br><br>'
+	html_footer =('<br>---------------------------<br><br>' +
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+	html_body=''
+
+	for aleph in RECLIST['A']:
+		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['A'][aleph] + '<br>')
+
+	if RECLIST['A']: html_body+='<br>'
+
+	for aleph in RECLIST['B']:
+		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['B'][aleph] + '<br>')
+
+	msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
+	msg['Subject'] = 'Bibliografie MZK'
+	msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+	msg['To'] = MAIL_TARGET
+	try:
+		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+		s.quit()
+	except:
 		try:
-			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
 			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
 			s.quit()
 		except:
-			try:
-				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-				s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
-				s.quit()
-			except:
-				print('Sendmail error.')
+			print('Sendmail error.')
 
 # ARG -------------------
 
@@ -172,17 +179,17 @@ for record in records:
 
 		IDENT = re.sub('^.*-(\d+)$', '\\1', header.identifier()) 
 
-		PASSED=False
-		NAME = ''
+		A,B = False,False
+		NAME,TITLE = '',''
 		
 		# TEST A
 		if metadata.leader[7] == 'm':
 			for F in metadata.get_fields('700'):
 				if '7' in F and F['7'] in recenze_map:
-					PASSED=True
+					A=True
 			if '100' in metadata and '7' in metadata['100']:
 				if metadata['100']['7'] in recenze_map:
-					PASSED=True
+					A=True
 			# NAME
 			if '245' in metadata and 'a' in metadata['245']:
 				NAME = metadata['245']['a']
@@ -194,18 +201,36 @@ for record in records:
 		if REC:		
 			for F in metadata.get_fields('600'):
 				if '7' in F and F['7'] in recenze_map:
-					PASSED=True
+					B=True
 			#NAME
 			for F in metadata.get_fields('787'):
+				#NAME
 				if 'a' in F:
 					if not NAME:
 						NAME = F['a']
 					else:
 						NAME += '; ' + F['a']
-		if PASSED:
-			RECLIST[IDENT] = NAME.encode('utf-8')
+				#TITLE
+				if 't' in F:
+					if not TITLE:
+						TITLE = F['t']
+					else:
+						TITLE += '; ' + F['t']
+		
+		if A:
+			print("Got A.")
+			RECLIST['A'][IDENT] =(NAME).encode('utf-8')
 			MATCH+=1
-		TOTAL+=1
+
+		if B:
+			print("Got B.")
+			if not NAME:
+				RECLIST['B'][IDENT] =(TITLE).encode('utf-8')
+			else:
+				RECLIST['B'][IDENT] =(NAME + ' - ' + TITLE).encode('utf-8')
+			MATCH+=1
+
+	TOTAL+=1
 
 # EXIT -------------------
 
