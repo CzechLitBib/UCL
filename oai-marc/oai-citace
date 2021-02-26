@@ -21,7 +21,7 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 
-vufind = MARCWriter(open('aktualizace-' + datetime.now().strftime('%Y%m%d%H%M') + '.mrc', 'wb'))
+vufind = MARCWriter(open('vufind-' + datetime.now().strftime('%Y-%m-%d-%H') + '.mrc', 'wb'))
 
 # ------------------------------------------------------
 # DEF

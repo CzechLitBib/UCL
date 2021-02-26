@@ -19,8 +19,8 @@ mkdir -p "$DATA_PATH" 2> /dev/null
 
 oai-5xx \
 	--set 'UCLA' \
-	--from "$(date --date="$(date +'%Y-%m-01') -1 month" +'%Y-%m-%d 00:00:00')" \
-	--until "$(date +'%Y-%m-01 00:00:00')" \
+	--from "$(date --date="$(date +'%Y-%m-01') -1 month" '+%Y-%m-%d 00:00:00')" \
+	--until "$(date '+%Y-%m-01 00:00:00')" \
 	--check \
 	--notify
 

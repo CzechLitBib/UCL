@@ -6,7 +6,7 @@
 #
 
 DATA_PATH='/var/www/html/vufind/'
-FILE='vufind.tar.gz'
+FILE="$(date +'vufind-%Y-%m-%d-%H.tar.gz')"
 
 # ------------------------
 
@@ -19,12 +19,14 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 mkdir -p "$DATA_PATH" 2> /dev/null
 
 oai-citace \
-	--set 'UCLA' \
-	--from "$(date --date="$(date +'%Y-%m-%d %H:00:00') -1 hour" +'%Y-%m-%d %H:00:00')" \
-	--until "$(date +'%Y-%m-%d %H:00:00')" \
+	--set UCLA \
+	--from "$(date -d '1 hour ago' '+%Y-%m-%d %H:00:00')" \
+	--until "$(date '+%Y-%m-%d %H:00:00')" \
 	--check
 
-tar --remove-files -czf "$DATA_PATH/$FILE" *.mrc 2>/dev/null
+[ -s *.mrc ] &&	tar --remove-files -czf "$DATA_PATH/$FILE" *.mrc 2>/dev/null
+
+rm *.mrc 2> /dev/null
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
