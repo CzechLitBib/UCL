@@ -25,6 +25,8 @@ oai-7
 oai-kat
 oai-5xx
 oai-marc
+oai-citace
+oai-hourly
 oai-daily
 oai-weekly
 oai-recenze
@@ -39,6 +41,7 @@ sif_code.txt
 
 /etc/crontab:
 
+05 * * * * root oai-hourly >> /var/log/oai-hourly.log 2>&1 &
 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 00 6 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 30 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
@@ -98,7 +101,9 @@ FILE
        oai-7-xml - Evaluate subfield "7" datafrom file.
         oai-file - Debug & testing.
      oai-recenze - Subset match notify.
+      oai-citace - Regular Vufind citace update.
 
+      oai-hourly - Crontab hourly runner.
        oai-daily - Crontab daily runner.
       oai-weekly - Crontab weekly runner.
      oai-monthly - Crontab monthly runner.

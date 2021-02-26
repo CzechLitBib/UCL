@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Crontab hourly runner
+#
+# 15 6 2 * * root oai-hourly >> /var/log/oai-hourly.log 2>&1 &
+#
+
+DATA_PATH='/var/www/html/vufind/'
+FILE='vufind.tar.gz'
+
+# ------------------------
+
+echo "start $(date '+%Y-%m-%d %H:%M:%S')"
+
+#
+# "VuFind citace"
+#
+
+mkdir -p "$DATA_PATH" 2> /dev/null
+
+oai-citace \
+	--set 'UCLA' \
+	--from "$(date --date="$(date +'%Y-%m-%d %H:00:00') -1 hour" +'%Y-%m-%d %H:00:00')" \
+	--until "$(date +'%Y-%m-%d %H:00:00')" \
+	--check
+
+tar --remove-files -czf "$DATA_PATH/$FILE" *.mrc 2>/dev/null
+
+echo "end $(date '+%Y-%m-%d %H:%M:%S')"
+
+exit 0
+
