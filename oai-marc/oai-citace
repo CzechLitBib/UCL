@@ -21,8 +21,6 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 
-vufind = MARCWriter(open('vufind-' + datetime.now().strftime('%Y-%m-%d-%H') + '.mrc', 'wb'))
-
 # ------------------------------------------------------
 # DEF
 # ------------------------------------------------------
@@ -101,6 +99,8 @@ if args.get == 'record' or args.get == 'ident':
 # INIT
 # ------------------------------------------------------
 
+vufind = MARCWriter(open('vufind-' + datetime.now().strftime('%Y-%m-%d-%H') + '.mrc', 'wb'))
+
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
 
@@ -156,6 +156,8 @@ for record in records:
 		metadata.remove_fields('SYS')
 
 		# CITACE ------------------
+
+		BROKEN=False
 	
 		#BASE
 		NAME,DATA,CTEXT='','',''
@@ -257,16 +259,16 @@ for record in records:
 											GTEXT = word_to_lower(GTEXT)
 								else:
 									print(IDENT + '#Missing 787t.')
-									continue
+									BROKEN=True
 							if not MATCH:
 								print(str(IDENT) + '#No match.' + metadata['773']['t'].encode('utf-8') + ' # ' + ' '.join([F.value() for F in metadata.get_fields('787') if 't' in F]).encode('utf-8'))
-								continue
+								BROKEN=True
 						else:
 							print(IDENT + '#No 787.')
-							continue
+							BROKEN=True
 					else:
 						print(IDENT + '#No 773t.')
-						continue
+						BROKEN=True
 				else:
 					# 773a (first..)
 					if 'a' in metadata['773']:
@@ -296,7 +298,9 @@ for record in records:
 			GTEXT = GTEXT.replace('-', u'–')
 
 			BUFF = NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
-			metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
+
+			if not BROKEN:
+				metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
 		# 100a - 700a: 245abnp. 245c. 260abc[264abc].
 		ABC = ''
