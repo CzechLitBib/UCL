@@ -48,9 +48,11 @@ def valid_request(s):
 	else:
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
-def name_to_upper(s):
+def name_to_upper(s,ID):
 	if len(s.split(',')) == 2:
 		return s.split(',')[0].strip().upper() + ', ' + s.split(',')[1].strip() 
+	else:
+		if '[=' in s: print(ID, '#Multiple comma.')
 	return s
 
 def word_to_upper(s):
@@ -153,30 +155,27 @@ for record in records:
 		# Drop SYS
 		metadata.remove_fields('SYS')
 
-		#print(metadata)
-		#sys.exit(1)
-
 		# CITACE ------------------
 	
 		#BASE
 		NAME,DATA,CTEXT='','',''
 		if '100' in metadata and 'a' in metadata['100']:
 			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
-				NAME = name_to_upper(metadata['100']['a'].rstrip(','))
+				NAME = name_to_upper(metadata['100']['a'].rstrip(','),IDENT)
 			else:
 				NAME = metadata['100']['a']
 		for F in metadata.get_fields('700'):
 			if not NAME:
-				NAME = name_to_upper(F['a'].rstrip(','))
+				NAME = name_to_upper(F['a'].rstrip(','),IDENT)
 			else:
-				NAME += u' – ' + name_to_upper(F['a'].rstrip(','))
+				NAME += u' – ' + name_to_upper(F['a'].rstrip(','),IDENT)
 		# NAME 100/700
 		if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
 			if '245' in metadata and 'c' in metadata['245']:
 				if '[=' in metadata['245']['c']:
 					if re.findall('\[=(.+?)\]', metadata['245']['c']):
 						LOW = re.findall('\[=(.+?)\]', metadata['245']['c'].strip())[0]
-						NAME =  metadata['245']['c'].replace(LOW, name_to_upper(LOW)).strip('. ')
+						NAME =  metadata['245']['c'].replace(LOW, name_to_upper(LOW,IDENT)).strip('. ')
 		# 245
 		if '245' in metadata:
 			A = [sub for sub in metadata['245'].get_subfields('a')]
