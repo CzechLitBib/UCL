@@ -20,6 +20,7 @@ from lxml.etree import tostring
 # ------------------------------------------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
+SYS='/var/www/html/vufind/sysno.txt'
 
 # ------------------------------------------------------
 # DEF
@@ -101,6 +102,12 @@ if args.get == 'record' or args.get == 'ident':
 
 vufind = MARCWriter(open('vufind-' + datetime.now().strftime('%Y-%m-%d-%H') + '.mrc', 'wb'))
 
+try:
+	with open(SYS, 'r') as f: sysno = f.read()
+except:
+	print("Missing sysno.txt file.")
+	sys.exit(1)
+
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
 
@@ -143,11 +150,12 @@ for record in records:
 
 	if args.check:
 
-		# skip not new
-		if len(metadata.get_fields('CAT','KAT')) > 1: continue
-
 		# ident
 		IDENT = re.sub('^.*-(\d+)$', '\\1', header.identifier()) 
+
+		# skip not new
+		if int(IDENT) <= int(sysno): continue
+		sysno = IDENT
 
 		# LDR dup
 		metadata.remove_fields('LDR')
@@ -323,6 +331,8 @@ for record in records:
 # EXIT -------------------
 
 vufind.close()
+
+with open(SYS, 'w') as f: f.write(sysno)
 
 sys.exit(0)
 
