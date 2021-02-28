@@ -1,0 +1,29 @@
+#!/usr/bin/python
+#
+# Generate fixed record set
+#
+
+# na vstupu máme hodnotu z polí 1XX, 6XX a 7XX, která není propojena na AUT, např.:
+
+#001251852 60014 L $$aToman, Karel$$xOPRAVA UCL
+
+#k ní mám/připravím csv, které b vypadalo např.
+#$$aToman, Karel$$xOPRAVA UCL; $$aToman, Karel,$$d 1877-1946$$7jk01132611
+
+#a nadefinuji podmínky (budou obvykle stejné pro více polí), zda např. - pokud má pole
+#druhý indikátor 4 a podpole a se shoduje s hodnotou v tabulce, tak:
+#a) přidat všechna podpole z druhé sloupce csv
+#b) odmazat případné podpole x
+#c) doplnit podpole 2 s hodnotou czenas 
+#d) změnit druhý indikátor ze 4 na 7
+
+#tj. zde konkrétně by vzniklo:
+
+#001251852 60017 L $$aToman, Karel,$$d1877-1946$$jk01132611$$2czenas
+
+with open('650.csv', 'r') as f:
+	for line in f:
+		print(line)
+
+
+

@@ -10,6 +10,7 @@ crontab -e
 </pre>
 FILE
 <pre>
+    aleph/ - Generate records for Aleph.
  oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
 json-marc/ - Custom JSON to MARCXML convertor.
  locative/ - Get word's locative with <a href="https://lindat.mff.cuni.cz/services/morphodita/">LINDAT MorphoDiTa</a> REST API.
