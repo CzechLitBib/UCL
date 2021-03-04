@@ -1085,11 +1085,15 @@ for record in records:
 			if 'c' in metadata['245']:
 				for S in re.findall('\[.*?\]', metadata['245']['c']):
 					if re.match('\[=.*\]', S):
-						SPL = re.sub('\[=(.*)\]', '\\1', S).strip().split(' ')
-						if len(SPL) == 2:
-							if SPL[0][0].isupper() and SPL[1][0].isupper():
-								if ',' not in ' '.join(SPL):
-									write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
+						PASS=False
+						if '110' in metadata and 'a' in metadata['110']:
+							if metadata['110']['a'] == S: PASS=True
+						if not PASS:
+							SPL = re.sub('\[=(.*)\]', '\\1', S).strip().split(' ')
+							if len(SPL) == 2:
+								if SPL[0][0].isupper() and SPL[1][0].isupper():
+									if ',' not in ' '.join(SPL):
+										write_error(header.identifier(), '245', SIF, '164', 'Chybný zápis dešifrovaného jména v 245c.')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
