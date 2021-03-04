@@ -385,10 +385,10 @@ for record in records:
 
 		# TEST VALID LINK ------------------
 
-		for F in metadata.get_fields('856'):
-			if 'u' in F:
-				if not url_response(F['u']):
-					write_error(header.identifier(), '856', SIF, '029', 'Nefunkční odkaz v poli 856u.')
+		#for F in metadata.get_fields('856'):
+		#	if 'u' in F:
+		#		if not url_response(F['u']):
+		#			write_error(header.identifier(), '856', SIF, '029', 'Nefunkční odkaz v poli 856u.')
 		
 		# TEST INDICATOR ------------------
 
@@ -1226,6 +1226,17 @@ for record in records:
 #			if 'z' in F:
 #				if '(' not in F['z'] or ')' not in F['z']:
 #					write_error(header.identifier(), '856', SIF, '184', "Podpole 856z neobsahuje závorky.")
+
+		# 500
+		for F in metadata.get_fields('500'):
+			if 'a' in F:
+				if not re.match('.*\.$', F['a']):
+					write_error(header.identifier(), '500', SIF, '185', "Podpole 500a nekončí tečkou.")
+		# 520
+		if '520' in metadata:
+			if 'a' in metadata['520']:
+				if not re.match('.*\.$', metadata['520']['a']):
+					write_error(header.identifier(), '520', SIF, '186', "Podpole 520a nekončí tečkou.")
 
 	COUNTER+=1
 
