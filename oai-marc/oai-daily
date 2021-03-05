@@ -12,7 +12,7 @@ FILENAME="$(date --date='yesterday' '+%Y-%m-%d').html"
 CSVNAME="$(date --date='yesterday' '+%Y-%m-%d').csv"
 
 VUFIND_PATH='/var/www/html/vufind/'
-VUFIND="$(date +'vufind-%Y-%m-%d-%H.tar.gz')"
+VUFIND="$(date --date='yesterday' '+%Y-%m-%d').tar.gz"
 
 # ------------------------
 
@@ -20,17 +20,17 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
 # VUFIND
 
-#mkdir -p "$VUFIND_PATH" 2> /dev/null
+mkdir -p "$VUFIND_PATH" 2> /dev/null
 
-#oai-citace \
-#	--set UCLA \
-#	--from "$(date -d '1 hour ago' '+%Y-%m-%d %H:00:00')" \
-#	--until "$(date '+%Y-%m-%d %H:00:00')" \
-#	--check
+oai-citace \
+	--set UCLA \
+	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
+	--check
 
-#[ -s *.mrc ] &&	tar --remove-files -czf "$VUFIND_PATH/$VUFIND" *.mrc 2>/dev/null
+[ -s *.mrc ] &&	tar --remove-files -czf "$VUFIND_PATH/$VUFIND" *.mrc 2>/dev/null
 
-#rm *.mrc 2> /dev/null
+rm *.mrc 2> /dev/null
 
 # CONTROL
 

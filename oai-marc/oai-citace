@@ -100,7 +100,7 @@ if args.get == 'record' or args.get == 'ident':
 # INIT
 # ------------------------------------------------------
 
-vufind = MARCWriter(open('vufind-' + datetime.now().strftime('%Y-%m-%d-%H') + '.mrc', 'wb'))
+vufind = MARCWriter(open('vufind-' + (datetime.today()-timedelta(days=1)).strftime('%Y-%m-%d') + '.mrc', 'wb'))
 
 try:
 	with open(SYS, 'r') as f: sysno = f.read()
