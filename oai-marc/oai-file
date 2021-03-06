@@ -16,7 +16,9 @@ from pymarc.record import Record
 #DATA='uclec.xml'
 #DATA='uclo.xml'
 DATA='ucla.xml'
-#DATA='CLO964.mrc'
+#DATA='ucla_citace.mrc'
+#DATA='xedice.mrc'
+#DATA='test.mrc'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -36,8 +38,8 @@ DATA='ucla.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file2 = open('600.csv', 'w')
-#file3 = open('700.csv', 'w')
+file1 = open('500.txt', 'w')
+file2 = open('520.txt', 'w')
 
 # WAYBACK ---------
 
@@ -57,7 +59,8 @@ DATA='ucla.xml'
 
 # WAYBACK ---------
 
-#writer = MARCWriter(open('uclec.mrc', 'wb'))
+#writer1 = MARCWriter(open('ucla_citace_bez_edice.mrc', 'wb'))
+#writer2 = MARCWriter(open('ucla_citace_edice.mrc', 'wb'))
 
 #writer1 = MARCWriter(open('clo964_1.mrc', 'wb'))
 #writer2 = MARCWriter(open('clo964_2.mrc', 'wb'))
@@ -67,16 +70,40 @@ DATA='ucla.xml'
 
 # BASE ---------
 
-DATADIR='/var/www/html/964'
-BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
+#DATADIR='/var/www/html/964'
+#BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
+
+# BASE ---------
+
+#reader = MARCReader(file('vufind-2021-03-04.mrc'))
+#for record in reader:
+#	print(record['001'].value())
+
+#reader.close()
 
 #reader = MARCReader(file(DATA))
 
 #for record in reader:
+
+#	metadata = record
+
+#	print(metadata['001'].value())
+
+#	if metadata.leader[7] == 's':
+#		writer2.write(metadata)
+#	else:
+#		writer1.write(metadata)
+
 def validate(record):
 
 #	metadata = Record(force_utf8=True)
 	metadata = record
+
+	for F in metadata.get_fields('500'):
+		file1.write((F.value()[-1:].encode('utf-8') + '\n'))
+	for F in metadata.get_fields('520'):
+		file2.write((F.value()[-1:].encode('utf-8') + '\n'))
+
 
 # ------------------------------------------------------
 
@@ -104,62 +131,35 @@ def validate(record):
 	# UCLEC drop 506 fields
 #	metadata.remove_fields('506')
 
-#	print(metadata['001'].value())
-	
-	#if int(metadata['001'].value()) > 35900:	
-	#	if int(metadata['001'].value()) % 50 == 0:
-	#		raw_input("Press ENTER to continue...")
-
-#	if int(metadata['001'].value()) > 36380 and int(metadata['001'].value()) < 36390:
-#		print(record)
-#		raw_input("Press ENTER to continue...")
-#
 #	COUNTER+=1
 
 	# write MRC
 
-#	if COUNTER > 1284:
-#		writer4.write(metadata)
-#		return		
-#	if COUNTER > 856:
-#		writer3.write(metadata)
-#		return		
-#	if COUNTER > 428:
-#		writer2.write(metadata)
-#		return		
-#	writer1.write(metadata)
-
-#	try:
-#		IDENT = metadata['001'].value()
-#	except:
-#		print('Broken:')
-#		print(metadata)
-
 	# UCLA:  webarchiv
-#	for F in metadata.get_fields('856'):
-#		if 'y' in F:
-#			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
-#			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
-#			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
-#			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
+	#for F in metadata.get_fields('856'):
+	#	if 'y' in F:
+	#		if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+	#		if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+	#		if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+	#		if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
 
 	# UCLA: drop X
-#	X=False
-#	for F in metadata.get_fields('773'):
-#		if X and 'x' in F: F.delete_subfield('x')# drop more than one
-#		if 'x' in F: X = True# catch the first one
+	#X=False
+	#for F in metadata.get_fields('773'):
+	#	if X and 'x' in F: F.delete_subfield('x')# drop more than one
+	#	if 'x' in F: X = True# catch the first one
 
 	# UCLA: add MBK
-#	MBK=False
-#	if '044' in metadata:
-#		if 'a' in metadata['044']:
-#			if metadata['044']['a'] != 'xr': MBK=True
-#	if '008' in metadata:
-#		if metadata['008'].value()[15:17] != 'xr': MBK=True
-#	for F in metadata.get_fields('964'):
-#		if 'CLE' in F.value(): MBK=False
-#	if MBK:
-#		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+	#MBK=False
+	#if '044' in metadata:
+	#	if 'a' in metadata['044']:
+	#		if metadata['044']['a'] != 'xr': MBK=True
+	#if '008' in metadata:
+	#	if metadata['008'].value()[15:17] != 'xr': MBK=True
+	#for F in metadata.get_fields('964'):
+	#	if 'CLE' in F.value(): MBK=False
+	#if MBK:
+	#	metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
 	# 599 UCLO special
 	#for F in metadata.get_fields('599'):
@@ -178,48 +178,42 @@ def validate(record):
 
 	# write MRC
 	#writer.write(metadata)
-#	print(metadata)
 
 # ------------------------------------------------------
 # BASE
 # ------------------------------------------------------
 
-	#if 'SIF' in metadata:
-	#	if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
-	#else:
-	#	SIF = ''
-
 	# LDR dup
-	metadata.remove_fields('LDR')# LDR dup
+#	metadata.remove_fields('LDR')# LDR dup
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 
-	if '964' in metadata and 'FMT' in metadata:# 990 -> FMT
+#	if '964' in metadata and 'FMT' in metadata:# 990 -> FMT
 
-		for F in metadata.get_fields('964'):
-			base = F.value()
-			if base in BASE:
-				sub_base = metadata['FMT'].value()
-				try:
-					os.mkdir(DATADIR + '/'+ base)
-				except: pass
-				try:
-					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
-				except: pass
+#		for F in metadata.get_fields('964'):
+#			base = F.value()
+#			if base in BASE:
+#				sub_base = metadata['FMT'].value()
+#				try:
+#					os.mkdir(DATADIR + '/'+ base)
+#				except: pass
+#				try:
+#					os.mkdir(DATADIR + '/'+ base + '/' + sub_base)
+#				except: pass
 		
-				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.aleph', 'a', 0) as aleph:
+#				with open(DATADIR + '/'+ base + '/' + sub_base + '/' + base + '_' + sub_base + '.aleph', 'a', 0) as aleph:
 					# LEADER
-					aleph.write(str(IDENT) + ' LDR   L ' + metadata.leader.replace(' ', '^').encode('utf-8') + '\n')
-					for F in metadata:
-						if hasattr(F, 'indicators'):
-							# REGULAR FIELD
-							SUB=''
-							for i in range(0, len(F.subfields)/2):
-								SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-							aleph.write(str(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
-						else:
+#					aleph.write(str(IDENT) + ' LDR   L ' + metadata.leader.replace(' ', '^').encode('utf-8') + '\n')
+#					for F in metadata:
+#						if hasattr(F, 'indicators'):
+#							# REGULAR FIELD
+#							SUB=''
+#							for i in range(0, len(F.subfields)/2):
+#								SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#							aleph.write(str(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
+#						else:
 							# SYSTEM FIELD
-							aleph.write(str(IDENT) + ' ' + F.tag + '   L ' + F.value().replace(' ','^').encode('utf-8') + '\n')
+#							aleph.write(str(IDENT) + ' ' + F.tag + '   L ' + F.value().replace(' ','^').encode('utf-8') + '\n')
 
 # ------------------------------------------------------
 # GENERIC
@@ -470,6 +464,21 @@ def validate(record):
 #		)
 
 # ------------------------------------------------------
+# 505 '[]$' g -> t[./]?
+# ------------------------------------------------------
+
+#	IDENT = metadata['001'].value()
+
+#	for F in metadata.get_fields('505'):
+#		if len(F.get_subfields('t')) > 1:
+#			print(metadata)
+#			if '[' in F or ']' in F: print("More T: " + IDENT)
+#		if len(F.get_subfields('t')) == 1:
+#			if '[' in F or ']' in F:
+#				if len(F.get_subfields('g')) > 1:
+#					print("More G: " + IDENT)
+
+# ------------------------------------------------------
 # MAIN
 # ------------------------------------------------------
 
@@ -502,7 +511,7 @@ marcxml.map_xml(validate, DATA)
 #link.close()
 #wayback.close()
 
-aleph.close()
+#aleph.close()
 
 #writer1.close()
 #writer2.close()
@@ -510,8 +519,8 @@ aleph.close()
 #writer4.close()
 
 #file0.close()
-#file1.close()
-#file2.close()
+file1.close()
+file2.close()
 #file3.close()
 
 #print('TOTAL 100:' + str(TOTAL_100))
