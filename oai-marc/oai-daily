@@ -12,7 +12,7 @@ FILENAME="$(date --date='yesterday' '+%Y-%m-%d').html"
 CSVNAME="$(date --date='yesterday' '+%Y-%m-%d').csv"
 
 VUFIND_PATH='/var/www/html/vufind/'
-VUFIND="$(date --date='yesterday' '+%Y-%m-%d').tar.gz"
+VUFIND="vufind-$(date --date='yesterday' '+%Y-%m-%d').tar.gz"
 
 # ------------------------
 
