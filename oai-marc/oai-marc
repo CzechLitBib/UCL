@@ -1232,14 +1232,14 @@ for record in records:
 #					write_error(header.identifier(), '856', SIF, '184', "Podpole 856z neobsahuje závorky.")
 
 		# 500
-		for F in metadata.get_fields('500')[-1:]:#the last one
+		for F in metadata.get_fields('500'):
 			if 'a' in F:
 				if not re.match('.*[.!?]$', F['a']):
 					write_error(hesder.identifier(), '500', SIF, '185', "Podpole 500a nekončí tečkou.")
 		# 520
-		if '520' in metadata:
-			if 'a' in metadata['520']:
-				if not re.match('.*[.!?]$', metadata['520']['a']):
+		for F in metadata.get_fields('520')[-1:]:#the last one
+			if 'a' in F:
+				if not re.match('.*[.!?]$', F['a']):
 					write_error(header.identifier(), '520', SIF, '186', "Podpole 520a nekončí tečkou.")
 
 	COUNTER+=1
