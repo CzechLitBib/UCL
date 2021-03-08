@@ -30,7 +30,7 @@ DATA='ucla.xml'
 #BUFF=''
 
 #SIXTEEN=0
-#COUNTER=0
+COUNTER=0
 
 #csv_773 = open('773.csv', 'w')
 #csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
@@ -38,8 +38,9 @@ DATA='ucla.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-file1 = open('500.txt', 'w')
-file2 = open('520.txt', 'w')
+#file1 = open('500.txt', 'w')
+#file2 = open('520.txt', 'w')
+#file = open('500520.txt', 'w')
 
 # WAYBACK ---------
 
@@ -99,11 +100,15 @@ def validate(record):
 #	metadata = Record(force_utf8=True)
 	metadata = record
 
-	for F in metadata.get_fields('500'):
-		file1.write((F.value()[-1:].encode('utf-8') + '\n'))
-	for F in metadata.get_fields('520'):
-		file2.write((F.value()[-1:].encode('utf-8') + '\n'))
+#	for F in metadata.get_fields('123')[-1:]:
+	#	if not re.match('.*[a-zA-Z]')
+#		print("boo")		
+	#	file1.write((F.value()[-1:].encode('utf-8') + '\n'))
+	#for F in metadata.get_fields('520'):
+	#	file2.write((F.value()[-1:].encode('utf-8') + '\n'))
 
+
+#	sys.exit(1)
 
 # ------------------------------------------------------
 
@@ -467,17 +472,44 @@ def validate(record):
 # 505 '[]$' g -> t[./]?
 # ------------------------------------------------------
 
-#	IDENT = metadata['001'].value()
+	IDENT = metadata['001'].value()
+	
+	MATCH = False	
 
-#	for F in metadata.get_fields('505'):
-#		if len(F.get_subfields('t')) > 1:
-#			print(metadata)
-#			if '[' in F or ']' in F: print("More T: " + IDENT)
-#		if len(F.get_subfields('t')) == 1:
-#			if '[' in F or ']' in F:
-#				if len(F.get_subfields('g')) > 1:
-#					print("More G: " + IDENT)
+	if record.leader[7] == 'm':
 
+		#if '505' in metadata: print(metadata)
+
+		for F in metadata.get_fields('505'):
+			if len(F.get_subfields('t')) != 1:
+				print(IDENT + '# T')
+				continue
+			if len(F.get_subfields('g')) != 1:
+				print(IDENT + '# G')
+				continue	
+			if re.match('.*\[(.+)?\d+(.+)?\]$', F['g']):# -> find all !!
+				print(IDENT + '# NUM')
+				continue	
+			if re.match('.*\[.+\] --$', F['g']):
+				print(IDENT + '# --')
+				continue	
+			if re.match('.*\[.+\]$', F['g']):
+
+				BRACKET = re.sub('.*(\[.+\])$', '\\1', F['g'])
+				MATCH=True			
+
+				if re.match('^\[.+\]$', F['g']):
+					F.delete_subfield('g')
+					F['t'] = F['t'].replace(' /', ' ' + BRACKET + ' /').strip()
+				elif 'r' in F:
+					F['g'] = F['g'].replace(BRACKET, '').strip()
+					F['t'] = F['t'].replace(' /', ' ' + BRACKET + ' /').strip()
+				else:
+					F['g'] = F['g'].replace(BRACKET, '').strip()
+					F['t'] = F['t'].replace(' ,', ' ' + BRACKET + ' ,').strip()
+	
+		if MATCH: print(IDENT + "# MATCH")
+			
 # ------------------------------------------------------
 # MAIN
 # ------------------------------------------------------
