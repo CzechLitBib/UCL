@@ -1208,7 +1208,7 @@ for record in records:
 		# 773 semi-colon
 		for F in metadata.get_fields('773'):
 			if 'g' in F and ';' in F['g']:
-				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) + len(F.get_subfields('9')):
+				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) or len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('9')):
 					write_error(header.identifier(), '773', SIF, '181', 'Neplatný počet středníků v podpoli 773g.')
 		# 773q 773-9 match 
 		for F in metadata.get_fields('773'):
