@@ -5,9 +5,8 @@ Library support software.
 
 TODO
 <pre>
--505 'g'[]$ -> 't' *[./] xml demo
+-505 g[]$ -> t[./] xml demo
 -650 XML demo
--Vufinnd [ototoi]
 </pre>
 BACKUP
 <pre>
