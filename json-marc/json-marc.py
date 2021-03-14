@@ -18,7 +18,7 @@ from pymarc.field import Field
 IN='tmp/retrobi_dump.json'
 #IN='demo.json'
 
-#OUT='retrobi.bib'
+OUT='retrobi.bib'
 AUTLOG='log/aut.log'
 BROKEN='log/broken.log'
 #TRASH='trash.dat'
@@ -281,8 +281,8 @@ autlog = open(AUTLOG, 'w')
 broken = open(BROKEN, 'w')
 #trash = open(TRASH, 'w')
 
-#bib = open(OUT,'w')
-writer = MARCWriter(open('retrobi.mrc','wb'))
+bib = open(OUT,'w')
+#writer = MARCWriter(open('retrobi.mrc','wb'))
 
 # MAIN -----------------
 
@@ -296,7 +296,7 @@ with open(IN, 'rb') as f:
 	
 		record.leader='     nab a22     4a 4500'# overwrite internal(pymarc.record) LDR tag
 		record.add_ordered_field(Field(tag='FMT', data='RS'))
-		record.add_ordered_field(Field(tag='003', data='CZ-PrUCL'))
+		record.add_ordered_field(Field(tag='003', data='CZ PrUCL'))
 		record.add_ordered_field(Field(tag='005', data='20201231'))
 		record.add_ordered_field(Field(tag='040', indicators=['\\','\\'], subfields=['a', 'ABB060','b', 'cze']))
 		#record.add_ordered_field(Field(tag='041', indicators=['0','\\'], subfields=['a', 'cze']))
@@ -316,10 +316,12 @@ with open(IN, 'rb') as f:
 			print("Broken JSON.")# skip broken line
 			continue
 
-		# skip all not state record
+		# skip all non state record
 		if not find('state', jsn): continue
 		# skip segmented for now
 		#if find('state', jsn) != 'FRESH': continue
+		# skip non-segmented for now
+		if find('state', jsn) != 'SEGMENTED': continue
 	
 		#print(json.dumps(jsn))
 		#print(json.dumps(jsn, indent=2))
@@ -508,8 +510,8 @@ with open(IN, 'rb') as f:
 		# WRITE -----------------
 
 		# write MARC21 binary
-		writer.write(record)
-		continue
+		#writer.write(record)
+		#continue
 
 		# write Aleph
 
@@ -546,8 +548,8 @@ with open(IN, 'rb') as f:
 #trash.close()
 broken.close()
 autlog.close()
-#bib.close()
-writer.close()
+bib.close()
+#writer.close()
 
 con.close()
 
