@@ -7,7 +7,7 @@ from __future__ import print_function
 
 import StringIO,requests,lxml.html,time,sys,os,re
 
-from pymarc import marcxml,Field,MARCWriter,MARCReader
+from pymarc import marcxml,Field,MARCWriter,MARCReader, XMLWriter
 from pymarc.record import Record
 
 # VAR -------------------
@@ -15,10 +15,10 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-DATA='ucla.xml'
+#DATA='ucla.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-#DATA='test.mrc'
+DATA='505.xml'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -42,6 +42,8 @@ COUNTER=0
 #file1 = open('520.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
+
+#xml = XMLWriter(open('505.xml', 'w'))
 
 # WAYBACK ---------
 
@@ -96,9 +98,23 @@ COUNTER=0
 #	else:
 #		writer1.write(metadata)
 
+def word_to_upper(s):
+	word,buff = '',''
+	for char in s:
+		if not word and re.match('\w', char, re.UNICODE):
+			char = char.upper()
+			word=True
+		buff += char 
+	return buff
+
 def validate(record):
 
 	metadata = record
+
+	print(record)
+
+	return
+
 
 # ------------------------------------------------------
 
@@ -531,19 +547,15 @@ def validate(record):
 		if len(metadata.get_fields('505')) > 1:
 			for F in metadata.get_fields('505'):
 				record = Record()
-				# BASE
+				# FMT
+				record.add_field(Field(tag = 'FMT', data='AN'))
+				# LDR
 				record.leader = '     naa a22     4i 4500'
-				record.add_ordered_field(Field(tag = '003', data='CZ PrUCL'))
-				record.add_ordered_field(Field(tag = '040', indicators = [' ', ' '], subfields = ['a', 'ABB060','b','cze','e','rda']))
-				record.add_ordered_field(Field(tag = '336', indicators = [' ', ' '], subfields = ['a', 'text','b','text','2','rdacontent']))
-				record.add_ordered_field(Field(tag = '337', indicators = [' ', ' '], subfields = ['a', 'bez média','b','n','2','rdamedia']))
-				record.add_ordered_field(Field(tag = '338', indicators = [' ', ' '], subfields = ['a', 'jiný','b','nz','2','rdacarrier']))
-				record.add_ordered_field(Field(tag = '910', indicators = [' ', ' '], subfields = ['a', 'ABB060']))
-				record.add_ordered_field(Field(tag = '964', indicators = [' ', ' '], subfields = ['a', 'B12']))
-				record.add_ordered_field(Field(tag = 'OWN', indicators = [' ', ' '], subfields = ['a', 'UCLA']))
-				record.add_ordered_field(Field(tag = 'SIF', indicators = [' ', ' '], subfields = ['a', 'SBOR']))
+				#
 				# 001 - KnAV
-				record.add_ordered_field(Field(tag = '001', data='xxxxxxxxxxx'))
+				record.add_field(Field(tag = '001', data='xxxxxxxxxxx'))
+				# 003
+				record.add_field(Field(tag = '003', data='CZ PrUCL'))
 				# 008
 				DATA = '210705'#KnAV
 				YEAR=False
@@ -560,7 +572,9 @@ def validate(record):
 				COUNTRY='xxx'
 				if '044' in F and len(F['044'].get_subfields('a')) == 0: COUNTRY=F['008'][35:37]
 				DATA += LANG + '           ||| ||' + COUNTRY + ' d'
-				record.add_ordered_field(Field(tag = '008', data=DATA))
+				record.add_field(Field(tag = '008', data=DATA))
+				# 040
+				record.add_field(Field(tag = '040', indicators = [' ', ' '], subfields = ['a', 'ABB060','b','cze','e','rda']))
 				# 100
 				DATA=''
 				if 'r' in F:
@@ -575,15 +589,15 @@ def validate(record):
 									 MATCH=False
 							if MATCH:
 								DATA = AUT
-								DATA.indicator1 = 1
+								DATA.indicator1 = '1'
 								DATA.indicator2 = ' '
 								DATA.tag = '100'
-								record.add_ordered_field(DATA)
+								record.add_field(DATA)
 								break
 						if not MATCH:
 							NAME.insert(0, NAME.pop())
 							NAME[0] = NAME[0] + ','
-							record.add_ordered_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME)]))
+							record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME)]))
 				# 245
 				DATA=[]
 				if 't' in F:
@@ -597,13 +611,53 @@ def validate(record):
 							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip()]
 				if 'r' in F:
 					DATA = DATA + ['r', F['r'].strip()]
-				if DATA: record.add_ordered_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
+				if DATA: record.add_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
+				# 336
+				record.add_field(Field(tag = '336', indicators = [' ', ' '], subfields = ['a', 'text', 'b', 'text', '2', 'rdacontent']))
+				# 337
+				record.add_field(Field(tag = '337', indicators = [' ', ' '], subfields = ['a', u'bez média', 'b', 'n', '2', 'rdamedia']))
+				# 338
+				record.add_field(Field(tag = '338', indicators = [' ', ' '], subfields = ['a', u'jiný', 'b', 'nz', '2', 'rdacarrier']))
+				# 524
+				#citace()
 				# 655
-				if 't' in F: record.add_ordered_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t']) ]))
+				if 't' in F: record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'])]))
 				# 773
-				
-				record.add_ordered_field(Field(tag = '773', indicators = ['0', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t']) ]))
-					
+				DATA=[]
+				if '100' in metadata and 'a' in metadata['100']:
+					if '700' in metadata and 'a' in metadata['700']:
+						DATA = DATA + ['a', metadata['100']['a'] + ' - ' + metadata['700']['a']]
+					else:
+						DATA = DATA + ['a', metadata['100']['a']]
+				if '245' in metadata and 'a' in metadata['245']:
+					if 'b' in metadata['245']:
+						DATA = DATA + ['t', metadata['245']['a'] + ' ' + metadata['245']['b']]
+					else:
+						DATA = DATA + ['t', metadata['245']['a']]
+				if '245' in metadata and 'c' in metadata['245']:
+					if not metadata['245']['c'].isupper():
+						DATA = DATA + ['n', word_to_upper(metadata['245']['c'])]
+				if '020' in metadata and 'a' in metadata['020']:
+					DATA = DATA + ['z', metadata['020']['a']]
+				if 'r' in F:
+					DATA = DATA + ['g', F['r']]
+				if '260' in metadata and 'c' in metadata['260']:
+					DATA = DATA + ['9', metadata['260']['c']]
+				if '264' in metadata and 'c' in metadata['264']:
+					DATA = DATA + ['9', metadata['264']['c']]
+				if DATA: record.add_field(Field(tag = '773', indicators = ['0', ' '], subfields = DATA))
+				# 910
+				record.add_field(Field(tag = '910', indicators = [' ', ' '], subfields = ['a', 'ABB060']))
+				# 911
+				record.add_field(Field(tag = '964', indicators = [' ', ' '], subfields = ['a', 'B12']))
+				# LKR # !!! FIX  DIACRITIC
+				record.add_field(Field(tag = 'LKR', indicators = [' ', ' '], subfields = ['a', 'UP', 'b', u'001 zaznam knihy', 'l', 'KNA01']))
+				# OWN
+				record.add_field(Field(tag = 'OWN', indicators = [' ', ' '], subfields = ['a', 'UCLA']))
+				# SIF
+				record.add_field(Field(tag = 'SIF', indicators = [' ', ' '], subfields = ['a', 'SBOR']))
+		
+				xml.write(record)
 
 # ------------------------------------------------------
 # 500 / 520
@@ -653,6 +707,8 @@ marcxml.map_xml(validate, DATA)
 #wayback.close()
 
 #aleph.close()
+
+#xml.close()
 
 #writer1.close()
 #writer2.close()
