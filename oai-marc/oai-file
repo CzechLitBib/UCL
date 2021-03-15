@@ -529,6 +529,10 @@ def validate(record):
 	
 	if record.leader[7] == 'm':
 		if len(metadata.get_fields('505')) > 1:
+
+			#print(metadata)
+			#sys.exit(1)
+
 			for F in metadata.get_fields('505'):
 				record = Record()
 			
@@ -551,10 +555,8 @@ def validate(record):
 				YEAR=False
 				if '260' in F:
 					if 'c' in F['260'] and re.match('^\d{4}$', F['260']['c']): YEAR=F['260']['c']
-					print(str('260#') + F['260'])
 				if '264' in F:
 					if 'c' in F['264'] and re.match('^\d{4}$', F['264']['c']): YEAR=F['264']['c']
-					print(str('264#') + F['264'])
 				if YEAR:
 					DATA += 's' + YEAR + '    '
 				else:
@@ -564,8 +566,33 @@ def validate(record):
 				COUNTRY='xxx'
 				if '044' in F and len(F['044'].get_subfields('a')) == 0: COUNTRY=F['008'][35:37]
 				DATA += LANG + '           ||| ||' + COUNTRY + ' d'
-				record.add_ordered_field(Field(tag = '000', data=DATA))
+				record.add_ordered_field(Field(tag = '008', data=DATA))
 				# 100
+				if 'r' in F:
+					if not ',' in F['r'].strip(','):
+						NAME=F['r'].strip(',').split(' ')
+						MATCH=False
+						for F in metadata.get_fields('700'):
+							print(F.value().encode('utf-8'))
+							for PART in NAME:
+								if PART in F.value():
+									MATCH=True
+								else:
+									 MATCH=False
+							if MATCH:
+								F.indicator1 = 1
+								F.indicator2 = ' '
+								F.tag = '100'
+								record.add_ordered_field(F)
+								break
+						if not MATCH:
+							NAME.insert(0, NAME.pop())
+							NAME[0] = NAME[0] + ','
+							record.add_ordered_field(Field(tag = '100', indicators = ['1',' '], subfields = ['a', ' '.join(NAME)]))
+				#245
+			
+				record.add_ordered_field(Field(tag = '100', indicators = ['1','0'], subfields = ['a', ' '.join(NAME)]))
+				
 
 # ------------------------------------------------------
 # 500 / 520
