@@ -529,25 +529,19 @@ def validate(record):
 	
 	if record.leader[7] == 'm':
 		if len(metadata.get_fields('505')) > 1:
-
-			#print(metadata)
-			#sys.exit(1)
-
 			for F in metadata.get_fields('505'):
 				record = Record()
-			
 				# BASE
 				record.leader = '     naa a22     4i 4500'
 				record.add_ordered_field(Field(tag = '003', data='CZ PrUCL'))
-				record.add_ordered_field(Field(tag = '040', indicators = [' ',' '], subfields = ['a', 'ABB060','b','cze','e','rda']))
-				record.add_ordered_field(Field(tag = '336', indicators = [' ',' '], subfields = ['a', 'text','b','text','2','rdacontent']))
-				record.add_ordered_field(Field(tag = '337', indicators = [' ',' '], subfields = ['a', 'bez média','b','n','2','rdamedia']))
-				record.add_ordered_field(Field(tag = '338', indicators = [' ',' '], subfields = ['a', 'jiný','b','nz','2','rdacarrier']))
-				record.add_ordered_field(Field(tag = '910', indicators = [' ',' '], subfields = ['a', 'ABB060']))
-				record.add_ordered_field(Field(tag = '964', indicators = [' ',' '], subfields = ['a', 'B12']))
-				record.add_ordered_field(Field(tag = 'OWN', indicators = [' ',' '], subfields = ['a', 'UCLA']))
-				record.add_ordered_field(Field(tag = 'SIF', indicators = [' ',' '], subfields = ['a', 'SBOR']))
-				
+				record.add_ordered_field(Field(tag = '040', indicators = [' ', ' '], subfields = ['a', 'ABB060','b','cze','e','rda']))
+				record.add_ordered_field(Field(tag = '336', indicators = [' ', ' '], subfields = ['a', 'text','b','text','2','rdacontent']))
+				record.add_ordered_field(Field(tag = '337', indicators = [' ', ' '], subfields = ['a', 'bez média','b','n','2','rdamedia']))
+				record.add_ordered_field(Field(tag = '338', indicators = [' ', ' '], subfields = ['a', 'jiný','b','nz','2','rdacarrier']))
+				record.add_ordered_field(Field(tag = '910', indicators = [' ', ' '], subfields = ['a', 'ABB060']))
+				record.add_ordered_field(Field(tag = '964', indicators = [' ', ' '], subfields = ['a', 'B12']))
+				record.add_ordered_field(Field(tag = 'OWN', indicators = [' ', ' '], subfields = ['a', 'UCLA']))
+				record.add_ordered_field(Field(tag = 'SIF', indicators = [' ', ' '], subfields = ['a', 'SBOR']))
 				# 001 - KnAV
 				record.add_ordered_field(Field(tag = '001', data='xxxxxxxxxxx'))
 				# 008
@@ -568,31 +562,48 @@ def validate(record):
 				DATA += LANG + '           ||| ||' + COUNTRY + ' d'
 				record.add_ordered_field(Field(tag = '008', data=DATA))
 				# 100
+				DATA=''
 				if 'r' in F:
 					if not ',' in F['r'].strip(','):
 						NAME=F['r'].strip(',').split(' ')
 						MATCH=False
-						for F in metadata.get_fields('700'):
-							print(F.value().encode('utf-8'))
+						for AUT in metadata.get_fields('700'):
 							for PART in NAME:
-								if PART in F.value():
+								if PART in AUT.value():
 									MATCH=True
 								else:
 									 MATCH=False
 							if MATCH:
-								F.indicator1 = 1
-								F.indicator2 = ' '
-								F.tag = '100'
-								record.add_ordered_field(F)
+								DATA = AUT
+								DATA.indicator1 = 1
+								DATA.indicator2 = ' '
+								DATA.tag = '100'
+								record.add_ordered_field(DATA)
 								break
 						if not MATCH:
 							NAME.insert(0, NAME.pop())
 							NAME[0] = NAME[0] + ','
-							record.add_ordered_field(Field(tag = '100', indicators = ['1',' '], subfields = ['a', ' '.join(NAME)]))
-				#245
-			
-				record.add_ordered_field(Field(tag = '100', indicators = ['1','0'], subfields = ['a', ' '.join(NAME)]))
+							record.add_ordered_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME)]))
+				# 245
+				DATA=[]
+				if 't' in F:
+					if ':' in F['t']:
+						DATA = DATA + ['a', re.sub('((?<!:)):.+','\\1', F['t']).strip() + ' :']
+						DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip()]
+					else:
+						if 'r' in F:
+							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip() + ' /']
+						else:
+							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip()]
+				if 'r' in F:
+					DATA = DATA + ['r', F['r'].strip()]
+				if DATA: record.add_ordered_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
+				# 655
+				if 't' in F: record.add_ordered_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t']) ]))
+				# 773
 				
+				record.add_ordered_field(Field(tag = '773', indicators = ['0', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t']) ]))
+					
 
 # ------------------------------------------------------
 # 500 / 520
