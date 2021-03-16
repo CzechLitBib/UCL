@@ -18,7 +18,7 @@ from pymarc.record import Record
 #DATA='ucla.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-DATA='505.xml'
+DATA='book.xml'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -43,7 +43,7 @@ COUNTER=0
 
 #aleph = open('505.aleph', 'w')
 
-#xml = XMLWriter(open('505.xml', 'w'))
+xml = XMLWriter(open('505.xml', 'w'))
 
 # WAYBACK ---------
 
@@ -98,6 +98,13 @@ COUNTER=0
 #	else:
 #		writer1.write(metadata)
 
+def name_to_upper(s,ID):
+	if len(s.split(',')) == 2:
+		return s.split(',')[0].strip().upper() + ', ' + s.split(',')[1].strip() 
+	else:
+		if '[=' in s: print(ID + '#Multiple comma.')
+	return s
+
 def word_to_upper(s):
 	word,buff = '',''
 	for char in s:
@@ -107,14 +114,84 @@ def word_to_upper(s):
 		buff += char 
 	return buff
 
+def word_to_lower(s):
+	word,buff = '',''
+	for char in s:
+		if not word and re.match('\w', char, re.UNICODE):
+			char = char.lower()
+			word=True
+		buff += char 
+	return buff
+
+def citace(record):
+
+	metadata = record
+	IDENT = metadata['001'].value()
+
+	#BASE
+	NAME,DATA,CTEXT='','',''
+	if '100' in metadata and 'a' in metadata['100']:
+		if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
+			NAME = name_to_upper(metadata['100']['a'].rstrip(','), IDENT)
+		else:
+			NAME = metadata['100']['a']
+	for F in metadata.get_fields('700'):
+		if not NAME:
+			NAME = name_to_upper(F['a'].rstrip(','), IDENT)
+		else:
+			NAME += u' – ' + name_to_upper(F['a'].rstrip(','), IDENT)
+	# NAME 100/700
+	if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
+		if '245' in metadata and 'c' in metadata['245']:
+			if '[=' in metadata['245']['c']:
+				if re.findall('\[=(.+?)\]', metadata['245']['c']):
+					LOW = re.findall('\[=(.+?)\]', metadata['245']['c'].strip())[0]
+					NAME =  metadata['245']['c'].replace(LOW, name_to_upper(LOW, IDENT)).strip('. ')
+	# 245
+	if '245' in metadata:
+		A = [sub for sub in metadata['245'].get_subfields('a')]
+		B = [sub for sub in metadata['245'].get_subfields('b') if not re.match('^\[.*\]$', sub.strip('./ '))]
+		NP = [sub for sub in metadata['245'].get_subfields('n','p')]
+
+		DATA = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ''.join(A + B + NP).strip('.:/ ')) + '. '
+		
+		if NAME: DATA = ': ' + DATA
+		# 245c
+		if 'c' in metadata['245']:
+			if ';' in metadata['245']['c']:
+				CTEXT =	re.sub('.*;(.*)', '\\1', metadata['245']['c']).strip('. ') + '. '
+				# capitalize
+				CTEXT = word_to_upper(CTEXT)
+				# remove 245c page ref.
+				CTEXT = re.sub(' \(s\.[^)]+\)', '', CTEXT)
+
+	DATA = DATA.replace(' - ', u' – ')
+	CTEXT = CTEXT.replace(' - ', u' – ')
+
+	# 100a - 700a: 245abnp. 245c. 260abc[264abc].
+	ABC = ''
+	if metadata.leader[7] == 'm':
+		# ABC
+		if '260' in metadata:
+			ABC = ''.join([f.rstrip(' /') for f in metadata['260'].get_subfields('a','b','c')])
+		if '264' in metadata:
+			ABC = ''.join([f.rstrip(' /') for f in metadata['264'].get_subfields('a','b','c')])
+
+		ABC = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ABC).strip('. ') + '.'
+		#ABC = ABC.replace(' - ', u' – ').encode('utf-8')
+		ABC = ABC.replace(' - ', u' – ')
+
+		#BUFF = str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC
+		#citace.write(BUFF.replace('....', '...') + '\n')
+		BUFF = NAME + DATA + CTEXT + ABC
+		return(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
+
 def validate(record):
 
 	metadata = record
 
-	print(record)
-
-	return
-
+#	print(record)
+#	return
 
 # ------------------------------------------------------
 
@@ -487,50 +564,41 @@ def validate(record):
 # 505 '[]$' g -> t[./]? + split
 # ------------------------------------------------------
 
-#	IDENT = metadata['001'].value()
+	IDENT = metadata['001'].value()
 	
 #	MATCH = False	
 
-#	if record.leader[7] == 'm':
-
-		#if '505' in metadata: print(metadata)
-
-#		for F in metadata.get_fields('505'):
-			
-#			if len(F.get_subfields('t')) != 1:
+	if record.leader[7] == 'm':
+		for F in metadata.get_fields('505'):
+			if len(F.get_subfields('t')) != 1:
 #				print(IDENT + '# T')
-#				continue
-#			if len(F.get_subfields('g')) != 1:
+				continue
+			if len(F.get_subfields('g')) != 1:
 #				print(IDENT + '# G')
-#				continue	
+				continue	
 
-#			BRACE = re.findall('(\[[^\[\]]+\])$', F['g'])
+			BRACE = re.findall('(\[[^\[\]]+\])$', F['g'])
 
-#			if BRACE and re.match('.*\d+.*', BRACE[0]):# -> find all !!
+			if BRACE and re.match('.*\d+.*', BRACE[0]):
 #				print(IDENT + '# NUM')
-#				continue	
-#			if re.match('.*\[.+\] --$', F['g']):
+				continue	
+			if re.match('.*\[.+\] --$', F['g']):
 #				print(IDENT + '# --')
-#				continue	
-		
-#			if BRACE:
-				
-#				MATCH = True
+				continue	
+			if BRACE:				
+				MATCH = True
+				BEFORE = F.value()
+				if re.match('^\[.+\]$', F['g']):
+					F.delete_subfield('g')
+					F['t'] = F['t'].replace(' /', ' ' + BRACE[0] + ' /').strip()
+				elif 'r' in F:
+					F['g'] = F['g'].replace(BRACE[0], '').strip()
+					F['t'] = F['t'].replace(' /', ' ' + BRACE[0] + ' /').strip()
+				else:
+					F['g'] = F['g'].replace(BRACE[0], '').strip()
+					F['t'] = F['t'].replace(' ,', ' ' + BRACE[0] + ' ,').strip()
 
-#				BEFORE = F.value()
-
-#				if re.match('^\[.+\]$', F['g']):
-#					F.delete_subfield('g')
-#					F['t'] = F['t'].replace(' /', ' ' + BRACE[0] + ' /').strip()
-#				elif 'r' in F:
-#					F['g'] = F['g'].replace(BRACE[0], '').strip()
-#					F['t'] = F['t'].replace(' /', ' ' + BRACE[0] + ' /').strip()
-#				else:
-#					F['g'] = F['g'].replace(BRACE[0], '').strip()
-#					F['t'] = F['t'].replace(' ,', ' ' + BRACE[0] + ' ,').strip()
-	
 #				print(IDENT + '# MATCH')
-
 #			if MATCH:
 #				file0.write(str(IDENT + ';') + BEFORE.encode('utf-8') + str(';') + F.value().encode('utf-8') + '\n')
 		# write changed record
@@ -541,9 +609,9 @@ def validate(record):
 #					SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
 #				aleph.write(str(IDENT + ' 505' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 	
-	if record.leader[7] == 'm':
+	if metadata.leader[7] == 'm':
 		if len(metadata.get_fields('505')) > 1:
 			for F in metadata.get_fields('505'):
 				record = Record()
@@ -558,23 +626,26 @@ def validate(record):
 				record.add_field(Field(tag = '003', data='CZ PrUCL'))
 				# 008
 				DATA = '210705'#KnAV
-				YEAR=False
-				if '260' in F:
-					if 'c' in F['260'] and re.match('^\d{4}$', F['260']['c']): YEAR=F['260']['c']
-				if '264' in F:
-					if 'c' in F['264'] and re.match('^\d{4}$', F['264']['c']): YEAR=F['264']['c']
-				if YEAR:
-					DATA += 's' + YEAR + '    '
-				else:
-					DATA += 'xXXXX    '
+				YEAR='xXXXX'
+				if '260' in metadata:
+					if 'c' in metadata['260'] and re.match('^\d{4}\.?$', metadata['260']['c']):
+						YEAR= 's' + metadata['260']['c'].strip('.')
+				if '264' in metadata:
+					if 'c' in metadata['264'] and re.match('^\d{4}\.?$', metadata['264']['c']):
+						YEAR= 's' + metadata['264']['c'].strip('.')
+				DATA += YEAR + '    '
 				LANG='xxx'
-				if '041' in F and len(F['041'].get_subfields('a')) <= 1: LANG=F['008'][15:17]
+				if '041' in metadata and len(metadata['041'].get_subfields('a')) <= 1:
+					LANG=metadata['008'].value()[15:18]
+				if '041' not in metadata: LANG=metadata['008'].value()[15:18]
 				COUNTRY='xxx'
-				if '044' in F and len(F['044'].get_subfields('a')) == 0: COUNTRY=F['008'][35:37]
+				if '044' in metadata and len(metadata['044'].get_subfields('a')) == 0:
+					COUNTRY=metadata['008'].value()[35:38]
+				if '044' not in metadata: COUNTRY=metadata['008'].value()[35:38]
 				DATA += LANG + '           ||| ||' + COUNTRY + ' d'
 				record.add_field(Field(tag = '008', data=DATA))
 				# 040
-				record.add_field(Field(tag = '040', indicators = [' ', ' '], subfields = ['a', 'ABB060','b','cze','e','rda']))
+				record.add_field(Field(tag = '040', indicators = [' ', ' '], subfields = ['a', 'ABB060', 'b', 'cze', 'e', 'rda']))
 				# 100
 				DATA=''
 				if 'r' in F:
@@ -588,11 +659,8 @@ def validate(record):
 								else:
 									 MATCH=False
 							if MATCH:
-								DATA = AUT
-								DATA.indicator1 = '1'
-								DATA.indicator2 = ' '
-								DATA.tag = '100'
-								record.add_field(DATA)
+								DATA = AUT.subfields
+								record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = DATA))
 								break
 						if not MATCH:
 							NAME.insert(0, NAME.pop())
@@ -603,15 +671,19 @@ def validate(record):
 				if 't' in F:
 					if ':' in F['t']:
 						DATA = DATA + ['a', re.sub('((?<!:)):.+','\\1', F['t']).strip() + ' :']
-						DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip()]
+						if 'r' in F:	
+							DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip() + ' /']
+						else:
+							DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip()]
 					else:
 						if 'r' in F:
-							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip() + ' /']
+							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip('/ ') + ' /']
 						else:
 							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip()]
 				if 'r' in F:
-					DATA = DATA + ['r', F['r'].strip()]
+					DATA = DATA + ['c', F['r'].strip(', ')]
 				if DATA: record.add_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
+				if not '100' in record and '245' in record: record['245'].indicator1 = '0'
 				# 336
 				record.add_field(Field(tag = '336', indicators = [' ', ' '], subfields = ['a', 'text', 'b', 'text', '2', 'rdacontent']))
 				# 337
@@ -619,9 +691,12 @@ def validate(record):
 				# 338
 				record.add_field(Field(tag = '338', indicators = [' ', ' '], subfields = ['a', u'jiný', 'b', 'nz', '2', 'rdacarrier']))
 				# 524
-				#citace()
+				CITACE = citace(metadata)
+				if CITACE: record.add_field(CITACE)	
 				# 655
-				if 't' in F: record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'])]))
+				if 't' in F:
+					if re.match('.*\[(.+)\]', F['t']):
+						record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'])]))
 				# 773
 				DATA=[]
 				if '100' in metadata and 'a' in metadata['100']:
@@ -637,6 +712,8 @@ def validate(record):
 				if '245' in metadata and 'c' in metadata['245']:
 					if not metadata['245']['c'].isupper():
 						DATA = DATA + ['n', word_to_upper(metadata['245']['c'])]
+				if '245' in metadata:
+					DATA = DATA + ['d', metadata['245'].value()]
 				if '020' in metadata and 'a' in metadata['020']:
 					DATA = DATA + ['z', metadata['020']['a']]
 				if 'r' in F:
@@ -650,8 +727,8 @@ def validate(record):
 				record.add_field(Field(tag = '910', indicators = [' ', ' '], subfields = ['a', 'ABB060']))
 				# 911
 				record.add_field(Field(tag = '964', indicators = [' ', ' '], subfields = ['a', 'B12']))
-				# LKR # !!! FIX  DIACRITIC
-				record.add_field(Field(tag = 'LKR', indicators = [' ', ' '], subfields = ['a', 'UP', 'b', u'001 zaznam knihy', 'l', 'KNA01']))
+				# LKR
+				record.add_field(Field(tag = 'LKR', indicators = [' ', ' '], subfields = ['a', 'UP', 'b', u'001 záznam knihy', 'l', 'KNA01']))
 				# OWN
 				record.add_field(Field(tag = 'OWN', indicators = [' ', ' '], subfields = ['a', 'UCLA']))
 				# SIF
@@ -708,7 +785,7 @@ marcxml.map_xml(validate, DATA)
 
 #aleph.close()
 
-#xml.close()
+xml.close()
 
 #writer1.close()
 #writer2.close()
