@@ -1229,7 +1229,7 @@ for record in records:
 		for F in metadata.get_fields('500'):
 			if 'a' in F:
 				if not re.match('.*[.!?]$', F['a']):
-					write_error(hesder.identifier(), '500', SIF, '185', "Podpole 500a nekončí tečkou.")
+					write_error(header.identifier(), '500', SIF, '185', "Podpole 500a nekončí tečkou.")
 		# 520
 		for F in metadata.get_fields('520')[-1:]:#the last one
 			if 'a' in F:
