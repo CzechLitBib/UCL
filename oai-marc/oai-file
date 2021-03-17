@@ -38,8 +38,17 @@ COUNTER=0
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file0 = open('505.csv', 'w')
-#file1 = open('520.csv', 'w')
+#file0 = open('output/520.txt', 'w')
+#file1 = open('output/655.txt', 'w')
+#file2 = open('output/005.txt', 'w')
+#file3 = open('output/SIF.txt', 'w')
+#file4 = open('output/158.csv', 'w')
+#file5 = open('output/109.csv', 'w')
+#file6 = open('output/100.csv', 'w')
+#file7 = open('output/166.csv', 'w')
+#file8 = open('output/046.csv', 'w')
+#file9 = open('output/141.csv', 'w')
+#file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
 
@@ -123,30 +132,36 @@ def word_to_lower(s):
 		buff += char 
 	return buff
 
-def citace(record):
+def citace(record, page):
 
 	metadata = record
 	IDENT = metadata['001'].value()
 
 	#BASE
+	CNT=0
 	NAME,DATA,CTEXT='','',''
 	if '100' in metadata and 'a' in metadata['100']:
 		if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
 			NAME = name_to_upper(metadata['100']['a'].rstrip(','), IDENT)
 		else:
 			NAME = metadata['100']['a']
+		CNT+=1
 	for F in metadata.get_fields('700'):
 		if not NAME:
 			NAME = name_to_upper(F['a'].rstrip(','), IDENT)
 		else:
 			NAME += u' – ' + name_to_upper(F['a'].rstrip(','), IDENT)
+		CNT+=1
+		if CNT == 3:
+			NAME += ' et al.'
+			break
 	# NAME 100/700
 	if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
 		if '245' in metadata and 'c' in metadata['245']:
 			if '[=' in metadata['245']['c']:
 				if re.findall('\[=(.+?)\]', metadata['245']['c']):
 					LOW = re.findall('\[=(.+?)\]', metadata['245']['c'].strip())[0]
-					NAME =  metadata['245']['c'].replace(LOW, name_to_upper(LOW, IDENT)).strip('. ')
+					NAME = metadata['245']['c'].replace(LOW, name_to_upper(LOW, IDENT)).strip('. ')
 	# 245
 	if '245' in metadata:
 		A = [sub for sub in metadata['245'].get_subfields('a')]
@@ -178,12 +193,13 @@ def citace(record):
 			ABC = ''.join([f.rstrip(' /') for f in metadata['264'].get_subfields('a','b','c')])
 
 		ABC = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ABC).strip('. ') + '.'
-		#ABC = ABC.replace(' - ', u' – ').encode('utf-8')
 		ABC = ABC.replace(' - ', u' – ')
 
-		#BUFF = str(IDENT) + '##m##' + NAME + DATA + CTEXT + ABC
-		#citace.write(BUFF.replace('....', '...') + '\n')
 		BUFF = NAME + DATA + CTEXT + ABC
+		# add page
+		if page:
+			BUFF.strip().rstrip('.')
+			BUFF = re.sub('(.*)\.$', '\\1, s. '+ page, BUFF.strip())
 		return(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
 def validate(record):
@@ -308,6 +324,98 @@ def validate(record):
 # ------------------------------------------------------
 
 #	IDENT = metadata['001'].value()
+
+	# 520
+#	if '520' not in metadata:
+#		file0.write('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV\n')
+	# 655
+#	if '655' not in metadata:
+#		file1.write('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV\n')
+	# 005
+#	if '005' not in metadata:
+#		file2.write('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV\n')
+	# SIF
+#	if 'SIF' not in metadata:
+#		file3.write('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV\n')
+	# 158
+#	if '245' in metadata:
+#		if 'b' in metadata['245']:
+#			if re.match('^\(.*\)$', metadata['245']['b']):
+#				SUB=''
+#				for i in range(0, len(metadata['245'].subfields)/2):
+#					SUB+='$$' + metadata['245'].subfields[i*2] + metadata['245'].subfields[i*2+1]
+#				file4.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + '\n')
+	# 109
+#	if metadata.leader[7] == 'b':
+#		if '008' in metadata:
+#			DATA = metadata['008'].value()[7:15].strip()
+#			if '773' in metadata:
+#				if '9' in metadata['773']:
+#					NINE=False
+#					if DATA == metadata['773']['9']: NINE=True
+#					if '-' in metadata['773']['9']:
+#						if DATA == re.sub('^(.*)-.*','\\1', metadata['773']['9']): NINE=True
+#						if DATA == metadata['773']['9'].replace('-',''): NINE=True
+#					if not NINE:
+#						G=''
+#						if 'g' in metadata['773']: G = str('|') + metadata['773']['g'].encode('utf-8')
+#						file5.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|' + metadata['008'].value()[7:15].strip() + '|') +
+#						metadata['773']['9'].encode('utf-8') + G + '\n'
+#						)
+	# 100
+#	for TAG in ('600', '610', '611', '630' ,'648', '650', '651', '655'):
+#		for F in metadata.get_fields(TAG):
+#			if F.indicator2 == '4':
+#				if '7' in F or '2' in F and F['2'] == 'czenas':
+#					SUB=''
+#					for i in range(0, len(F.subfields)/2):
+#						SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#					file6.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|' + TAG + '|') + SUB.encode('utf-8') + '\n')
+	# 166
+#	if '245' in metadata:
+#		if 'c' in metadata['245']:
+#			if re.match('.*s\. [0-9]+.*', metadata['245']['c']):
+#				SUB=''
+#				for i in range(0, len(metadata['245'].subfields)/2):
+#					SUB+='$$' + metadata['245'].subfields[i*2] + metadata['245'].subfields[i*2+1]
+#				file7.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + '\n')
+
+	# 046
+#	for F in metadata.get_fields('773'):
+#		if F.indicator1 + F.indicator2 != '0 ':
+#			SUB=''
+#			for i in range(0, len(metadata['245'].subfields)/2):
+#				SUB+='$$' + metadata['245'].subfields[i*2] + metadata['245'].subfields[i*2+1]
+#			file8.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + '\n')
+
+	# 141
+#	if '100' in metadata:
+#		if 'c' in metadata['100']:
+#			if re.match('^\[.*\]$', metadata['100']['c']):
+#				C = re.sub('^\[(.*)\]$', '\\1', metadata['100']['c']).strip()
+#				CS = re.sub('^([^(]+).*', '\\1', C).strip()
+#				F = [F['t'] for F in metadata.get_fields('773')[:1] if 't' in F]
+#				FS = [re.sub('^([^\[]+).*','\\1', S['t']).strip() for S in metadata.get_fields('773')[:1] if 't' in S]
+#				if C not in F:
+#					if CS not in FS:
+#						SUB,T='',''
+#						for i in range(0, len(metadata['100'].subfields)/2):
+#							SUB+='$$' + metadata['100'].subfields[i*2] + metadata['100'].subfields[i*2+1]
+#						for F in metadata.get_fields('773')[-1:]:
+#							if 't' in F: T = str('|') + F['t'].encode('utf-8')
+#						file9.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + T + '\n')
+
+	# 245
+#	if '245' in metadata:
+#		C=''
+#		if 'c' in metadata['245']: C = str('|') + metadata['245']['c'].encode('utf-8')
+#		metadata['245'].delete_subfield('c')
+#		SUB=''
+#		for i in range(0, len(metadata['245'].subfields)/2):
+#				SUB+='$$' + metadata['245'].subfields[i*2] + metadata['245'].subfields[i*2+1]
+#		file10.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + C + '\n')
+
+#	return
 
 #	if IDENT  == '002553052': print(metadata)
 
@@ -610,7 +718,10 @@ def validate(record):
 #				aleph.write(str(IDENT + ' 505' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
 
 #	IDENT = metadata['001'].value()
-	
+
+	#if IDENT == '001380908': print(metadata)
+	#return
+
 	if metadata.leader[7] == 'm':
 		if len(metadata.get_fields('505')) > 1:
 			for F in metadata.get_fields('505'):
@@ -621,7 +732,7 @@ def validate(record):
 				record.leader = '     naa a22     4i 4500'
 				#
 				# 001 - KnAV
-				record.add_field(Field(tag = '001', data='xxxxxxxxxxx'))
+				record.add_field(Field(tag = '001', data='xxxxxxxxx'))
 				# 003
 				record.add_field(Field(tag = '003', data='CZ PrUCL'))
 				# 008
@@ -665,21 +776,29 @@ def validate(record):
 						if not MATCH:
 							NAME.insert(0, NAME.pop())
 							NAME[0] = NAME[0] + ','
-							record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME)]))
+							record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME), '4', 'aut']))
 				# 245
 				DATA=[]
 				if 't' in F:
 					if ':' in F['t']:
 						DATA = DATA + ['a', re.sub('((?<!:)):.+','\\1', F['t']).strip() + ' :']
-						if 'r' in F:	
-							DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip() + ' /']
+						if 'r' in F:
+							if re.match('.*:(.*)\[.*', F['t'].strip()):
+								DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip() + ' /']
 						else:
-							DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip()]
+							if re.match('.*:(.*)\[.*', F['t'].strip()):
+								DATA = DATA + ['b', re.sub('.*:(.*)\[.*','\\1', F['t']).strip()]
 					else:
 						if 'r' in F:
-							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip('/ ') + ' /']
+							if re.match('^\[.*\.\.\.\]$', F['t'].strip('/ ')):
+								DATA = DATA + ['a', re.sub('^\[(.*)\.\.\.\]$', '\\1', F['t']).strip('/ ') + ' /']
+							else:
+								DATA = DATA + ['a', re.sub('(.*)\[.*', '\\1', F['t']).strip('/ ') + ' /']# no match = full string fallblack
 						else:
-							DATA = DATA + ['a', re.sub('(.*)\[.*','\\1', F['t']).strip()]
+							if re.match('^\[.*\.\.\.\]$', F['t'].strip()):
+								DATA = DATA + ['a', re.sub('^\[(.*)\.\.\.\]$', '\\1', F['t']).strip()]
+							else:
+								DATA = DATA + ['a', re.sub('(.*)\[.*', '\\1', F['t']).strip()]# no match = full string fallback
 				if 'r' in F:
 					DATA = DATA + ['c', F['r'].strip(', ')]
 				if DATA: record.add_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
@@ -691,12 +810,17 @@ def validate(record):
 				# 338
 				record.add_field(Field(tag = '338', indicators = [' ', ' '], subfields = ['a', u'jiný', 'b', 'nz', '2', 'rdacarrier']))
 				# 524
-				CITACE = citace(metadata)
+				PAGE=''
+				if 'g' in F:
+					 if re.match('^([Ss]\. )?(\[?[0-9]+\]?|\[?[0-9]+\]?-\[?[0-9]+\]?)$', F['g'].strip()):
+					 	PAGE = re.sub('^([Ss]\. )?(\[?[0-9]+\]?|\[?[0-9]+\]?-\[?[0-9]+\]?)$','\\2', F['g'].strip()).replace('[','').replace(']','')
+				CITACE = citace(metadata, PAGE)
 				if CITACE: record.add_field(CITACE)	
 				# 655
 				if 't' in F:
-					if re.match('.*\[(.+)\]', F['t']):
-						record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'])]))
+					if not re.match('^\[.*\.\.\.\]$', F['t'].strip()):
+						if re.match('.*\[(.+)\]', F['t']):
+							record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'])]))
 				# 773
 				DATA=[]
 				if '100' in metadata and 'a' in metadata['100']:
@@ -712,8 +836,8 @@ def validate(record):
 				if '245' in metadata and 'c' in metadata['245']:
 					if not metadata['245']['c'].isupper():
 						DATA = DATA + ['n', word_to_upper(metadata['245']['c'])]
-				if '245' in metadata:
-					DATA = DATA + ['d', metadata['245'].value()]
+				if '264' in metadata:
+					DATA = DATA + ['d', metadata['264'].value()]
 				if '020' in metadata and 'a' in metadata['020']:
 					DATA = DATA + ['z', metadata['020']['a']]
 				if 'r' in F:
@@ -728,7 +852,7 @@ def validate(record):
 				# 911
 				record.add_field(Field(tag = '964', indicators = [' ', ' '], subfields = ['a', 'B12']))
 				# LKR
-				record.add_field(Field(tag = 'LKR', indicators = [' ', ' '], subfields = ['a', 'UP', 'b', u'001 záznam knihy', 'l', 'KNA01']))
+				record.add_field(Field(tag = 'LKR', indicators = [' ', ' '], subfields = ['a', 'UP', 'b', u'001 záznamu knihy', 'l', 'KNA01']))
 				# OWN
 				record.add_field(Field(tag = 'OWN', indicators = [' ', ' '], subfields = ['a', 'UCLA']))
 				# SIF
@@ -796,6 +920,13 @@ xml.close()
 #file1.close()
 #file2.close()
 #file3.close()
+#file4.close()
+#file5.close()
+#file6.close()
+#file7.close()
+#file8.close()
+#file9.close()
+#file10.close()
 
 #print('TOTAL 100:' + str(TOTAL_100))
 #print('SEVEN 100:' + str(SEVEN_100))
@@ -810,4 +941,4 @@ xml.close()
 # EXIT -------------------
 
 sys.exit(0)
-
+		
