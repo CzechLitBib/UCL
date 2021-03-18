@@ -918,7 +918,7 @@ for record in records:
 			if BASE:
 				write_error(header.identifier(), '035', SIF, '140', 'Chybná hodnota v 035a.')
 		# 100c
-		if metadata.leader[7] == 'n':
+		if metadata.leader[7] == 'm':
 			if '100' in metadata and '773' in metadata:
 				if 'c' in metadata['100']:
 					if re.match('^\[.*\]$', metadata['100']['c']):
