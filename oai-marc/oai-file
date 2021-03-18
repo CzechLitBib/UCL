@@ -340,11 +340,13 @@ def validate(record):
 	# 158
 #	if '245' in metadata:
 #		if 'b' in metadata['245']:
-#			if re.match('^\(.*\)$', metadata['245']['b']):
+#			if re.match('^\(.*\)$', metadata['245']['b'].strip('/ ')):
 #				SUB=''
 #				for i in range(0, len(metadata['245'].subfields)/2):
 #					SUB+='$$' + metadata['245'].subfields[i*2] + metadata['245'].subfields[i*2+1]
 #				file4.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + '\n')
+	
+#	return
 	# 109
 #	if metadata.leader[7] == 'b':
 #		if '008' in metadata:
@@ -777,6 +779,9 @@ def validate(record):
 							NAME.insert(0, NAME.pop())
 							NAME[0] = NAME[0] + ','
 							record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME), '4', 'aut']))
+				else:
+					if '100' in metadata:
+						record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = metadata['100'].subfields))
 				# 245
 				DATA=[]
 				if 't' in F:
@@ -801,6 +806,9 @@ def validate(record):
 								DATA = DATA + ['a', re.sub('(.*)\[.*', '\\1', F['t']).strip()]# no match = full string fallback
 				if 'r' in F:
 					DATA = DATA + ['c', F['r'].strip(', ')]
+				else:
+					if '245' in metadata and 'c' in metadata['245']:
+						DATA = DATA + ['c', re.sub('^([^;]+).*', '\\1', metadata['245']['c'])]
 				if DATA: record.add_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
 				if not '100' in record and '245' in record: record['245'].indicator1 = '0'
 				# 336
