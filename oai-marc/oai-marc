@@ -918,7 +918,7 @@ for record in records:
 			if BASE:
 				write_error(header.identifier(), '035', SIF, '140', 'Chybná hodnota v 035a.')
 		# 100c
-		if '100' in metadata:
+		if '100' in metadata and '773' in metadata:
 			if 'c' in metadata['100']:
 				if re.match('^\[.*\]$', metadata['100']['c']):
 					C = re.sub('^\[(.*)\]$', '\\1', metadata['100']['c']).strip()
