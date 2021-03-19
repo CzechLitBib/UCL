@@ -10,16 +10,20 @@ from __future__ import print_function
 
 import argparse,StringIO,sys,os,re
 
-from pymarc import marcxml
+from pymarc import marcxml,MARCReader
 
 # VAR -------------------
 
-IN='/home/bruna/xml/ucla.xml'
+#IN='/home/bruna/xml/ucla.xml'
+IN='/home/bruna/xml/CLO-opr.mrc'
 
-RAW='/var/www/html/7/raw/'
-OUT='/var/www/html/7/data/'
+#RAW='/var/www/html/7/raw/'
+#OUT='/var/www/html/7/data/'
+RAW='/var/www/html/7/CLO/raw/'
+OUT='/var/www/html/7/CLO/data/'
 
-INDEX='/var/www/html/7/index.html'
+#INDEX='/var/www/html/7/index.html'
+INDEX='/var/www/html/7/CLO/index.html'
 
 TAGLIST=[]
 
@@ -54,6 +58,10 @@ INDEX_TOP='''<!doctype html>
 <td width="280" bgcolor="#333333;" align="center" colspan="6"><font color="gold">Bez podpole 7</font></td>
 </tr>
 '''
+
+# INIT -------------------
+
+reader = MARCReader(file(IN))
 
 # DEF -------------------
 
@@ -95,6 +103,11 @@ def validate(record):
 print("Processing data (this may take a while).. ", end='')
 
 #marcxml.map_xml(validate, IN)
+
+for rec in reader:
+	validate(rec)
+
+reader.close()
 
 print("Done.")
 print("Generating statistic:")
