@@ -15,10 +15,10 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-#DATA='ucla.xml'
+DATA='ucla.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-DATA='book.xml'
+#DATA='book.xml'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -47,12 +47,12 @@ COUNTER=0
 #file6 = open('output/100.csv', 'w')
 #file7 = open('output/166.csv', 'w')
 #file8 = open('output/046.csv', 'w')
-#file9 = open('output/141.csv', 'w')
+file9 = open('output/141.csv', 'w')
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
 
-xml = XMLWriter(open('505.xml', 'w'))
+#xml = XMLWriter(open('505.xml', 'w'))
 
 # WAYBACK ---------
 
@@ -323,7 +323,11 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
-#	IDENT = metadata['001'].value()
+	IDENT = metadata['001'].value()
+
+	#if metadata.leader[7] == 'm': print(str(IDENT))
+
+	#return
 
 	# 520
 #	if '520' not in metadata:
@@ -391,22 +395,31 @@ def validate(record):
 #			file8.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + '\n')
 
 	# 141
-#	if '100' in metadata:
-#		if 'c' in metadata['100']:
-#			if re.match('^\[.*\]$', metadata['100']['c']):
-#				C = re.sub('^\[(.*)\]$', '\\1', metadata['100']['c']).strip()
-#				CS = re.sub('^([^(]+).*', '\\1', C).strip()
-#				F = [F['t'] for F in metadata.get_fields('773')[:1] if 't' in F]
-#				FS = [re.sub('^([^\[]+).*','\\1', S['t']).strip() for S in metadata.get_fields('773')[:1] if 't' in S]
-#				if C not in F:
-#					if CS not in FS:
-#						SUB,T='',''
-#						for i in range(0, len(metadata['100'].subfields)/2):
-#							SUB+='$$' + metadata['100'].subfields[i*2] + metadata['100'].subfields[i*2+1]
-#						for F in metadata.get_fields('773')[-1:]:
-#							if 't' in F: T = str('|') + F['t'].encode('utf-8')
-#						file9.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + T + '\n')
 
+	if metadata.leader[7] == 'n':
+		if '100' in metadata and '773' in metadata:
+			if 'c' in metadata['100']:
+				if re.match('^\[.*\]$', metadata['100']['c']):
+					C = re.sub('^\[(.*)\]$', '\\1', metadata['100']['c']).strip()
+					#print(C.encode('utf-8'))
+					CS = re.sub('^([^(]+).*', '\\1', C).strip()
+					#print(CS.encode('utf-8'))
+					F = [F['t'] for F in metadata.get_fields('773')[:1] if 't' in F]
+					#print(str(F).encode('utf-8'))
+					FS = [re.sub('^([^\[]+).*','\\1', S['t']).strip() for S in metadata.get_fields('773')[:1] if 't' in S]
+					#print(str(FS).encode('utf-8'))
+					if F and C not in F[0]:
+						if FS and CS not in FS[0]:
+					#		print(metadata)
+					#		raw_input('press enter..')
+							SUB,T='',''
+							for i in range(0, len(metadata['100'].subfields)/2):
+								SUB+='$$' + metadata['100'].subfields[i*2] + metadata['100'].subfields[i*2+1]
+							for F in metadata.get_fields('773')[-1:]:
+								if 't' in F: T = str('|') + F['t'].encode('utf-8')
+							file9.write(str('https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' + IDENT + '&local_base=AV' + '|') + SUB.encode('utf-8') + T + '\n')
+
+	return
 	# 245
 #	if '245' in metadata:
 #		C=''
@@ -917,7 +930,7 @@ marcxml.map_xml(validate, DATA)
 
 #aleph.close()
 
-xml.close()
+#xml.close()
 
 #writer1.close()
 #writer2.close()
@@ -933,7 +946,7 @@ xml.close()
 #file6.close()
 #file7.close()
 #file8.close()
-#file9.close()
+file9.close()
 #file10.close()
 
 #print('TOTAL 100:' + str(TOTAL_100))
