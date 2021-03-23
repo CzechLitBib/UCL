@@ -815,10 +815,9 @@ def validate(record):
 				if 'r' in F:
 					# C
 					C = F['r'].strip(', ')
-					#C = F['r'].strip('., ')
 				elif '245' in metadata and 'c' in metadata['245']:
 					C = re.sub('^([^;]+).*', '\\1', metadata['245']['c'])
-					#C = re.sub('^([^;]+).*', '\\1', metadata['245']['c']).strip('.')
+				if not re.match('.*\.$'): C = C + '.'# append dot
 				for S in re.findall(' ?\( ?s\. ?.+?\) ?', C):# non-greedy page removal
 					C = C.replace(S, ' ')
 				if C: DATA += ['c', C]
@@ -830,7 +829,6 @@ def validate(record):
 				if DATA: record.add_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
 				#print(str(IDENT + '#') + record['245'].__str__().encode('utf-8'))
 				if not '100' in record and '245' in record: record['245'].indicator1 = '0'
-				if '245' in record and 'c' in record['245']: record['245'].indicator1 = '1'
 				# 336
 				record.add_field(Field(tag = '336', indicators = [' ', ' '], subfields = ['a', 'text', 'b', 'text', '2', 'rdacontent']))
 				# 337
