@@ -821,7 +821,10 @@ def validate(record):
 					C = C.replace(S, ' ')
 				if C: DATA += ['c', C]
 				if len(DATA) == 4:
-						DATA[1] = DATA[1] + ' /'#insert /
+					if 'c' in DATA:
+						DATA[1] = DATA[1] + ' /'# insert /
+					else:
+						DATA[1] = DATA[1] + ' :'# insert :
 				if len(DATA) == 6:
 						DATA[1] = DATA[1] + ' :'# insert :
 						DATA[3] = DATA[3] + ' /'# insert /
@@ -847,38 +850,49 @@ def validate(record):
 							record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'])]))
 				# 773
 				DATA=[]
+				CNT,NAME=0,''
 				if '100' in metadata and 'a' in metadata['100']:
-					DATA = DATA + ['a', metadata['100']['a']]
-					if '700' in metadata and 'a' in metadata['700']:
-						for F in metadata.get_fields('700'):
-							if '4' in F and F['4'] == 'aut':
-							#print(str(IDENT + '#') + metadata['700'].__str__().encode('utf-8'))
-							#DATA = [DATA + + F['a']]
+					NAME += metadata['100']['a']
+					CNT+=1
+				for F in metadata.get_fields('700'):
+					if 'a' in F and '4' in F and F['4'] == 'aut':
+						if not NAME:
+							NAME = F['a'].strip(', ')
+						else:
+							NAME += u' – ' + F['a'].strip(', ')
+						CNT+=1
+					if CNT == 3:
+						NAME += ' et al.'
+						break
+				if NAME: DATA += ['a', NAME]
 				if '245' in metadata and 'a' in metadata['245']:
 					if 'b' in metadata['245']:
-						DATA = DATA + ['t', metadata['245']['a'] + ' ' + metadata['245']['b']]
+						DATA += ['t', metadata['245']['a'] + ' ' + metadata['245']['b'].strip('/ ')]
 					else:
-						DATA = DATA + ['t', metadata['245']['a']]
+						DATA += ['t', metadata['245']['a'].strip('/ ')]
 				if '245' in metadata and 'c' in metadata['245']:
-					if not metadata['245']['c'].isupper():
-						DATA = DATA + ['n', word_to_upper(metadata['245']['c'])]
+					#if not metadata['245']['c'].isupper():
+					#	DATA += ['n', word_to_upper(metadata['245']['c'])]
+					if ';' in metadata['245']['c']:
+						# multiple ; ??
+						DATA += ['n', re.sub('[^;]+;(.*)', '\\1', metadata['245']['c']).strip()]
 				if '264' in metadata:
-					DATA = DATA + ['d', metadata['264'].value()]
+					DATA += ['d', metadata['264'].value()]
 				if '020' in metadata and 'a' in metadata['020']:
-					DATA = DATA + ['z', metadata['020']['a']]
-				if 'r' in F:
-					DATA = DATA + ['g', F['r']]
+					DATA += ['z', metadata['020']['a']]
+				if 'g' in F:
+					DATA += ['g', F['g']]
 				if '260' in metadata and 'c' in metadata['260']:
-					DATA = DATA + ['9', metadata['260']['c']]
+					DATA += ['9', metadata['260']['c']]
 				if '264' in metadata and 'c' in metadata['264']:
-					DATA = DATA + ['9', metadata['264']['c']]
+					DATA += ['9', metadata['264']['c']]
 				if DATA: record.add_field(Field(tag = '773', indicators = ['0', ' '], subfields = DATA))
 				# 910
 				record.add_field(Field(tag = '910', indicators = [' ', ' '], subfields = ['a', 'ABB060']))
 				# 911
 				record.add_field(Field(tag = '964', indicators = [' ', ' '], subfields = ['a', 'B12']))
 				# LKR
-				record.add_field(Field(tag = 'LKR', indicators = [' ', ' '], subfields = ['a', 'UP', 'b', u'001 záznamu knihy', 'l', 'KNA01']))
+				record.add_field(Field(tag = 'LKR', indicators = [' ', ' '], subfields = ['a', 'UP', 'b', metadata['001'].value(), 'c', 'KNA01']))
 				# OWN
 				record.add_field(Field(tag = 'OWN', indicators = [' ', ' '], subfields = ['a', 'UCLA']))
 				# SIF

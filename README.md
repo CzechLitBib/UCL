@@ -3,11 +3,6 @@ DESCRIPTION
 
 Library support software.
 
-TODO
-<pre>
-XY read() + write() demo code
-</pre>
-
 BACKUP
 <pre>
 crontab -e
