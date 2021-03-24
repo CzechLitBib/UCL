@@ -165,11 +165,11 @@ def citace(record, page):
 	# 245
 	if '245' in metadata:
 		A = [sub for sub in metadata['245'].get_subfields('a')]
-		B = [sub for sub in metadata['245'].get_subfields('b') if not re.match('^\[.*\]$', sub.strip('./ '))]
+		B = [re.sub('(.*):.*' ,'\\1', sub).strip() for sub in metadata['245'].get_subfields('b') if not re.match('^\[.*\]$', sub.strip('./ '))]
 		NP = [sub for sub in metadata['245'].get_subfields('n','p')]
 
 		DATA = re.sub('(?<![.])([.,:;/])(?![ .])' ,'\\1 ', ''.join(A + B + NP).strip('.:/ ')) + '. '
-		
+
 		if NAME: DATA = ': ' + DATA
 		# 245c
 		if 'c' in metadata['245']:
@@ -797,7 +797,6 @@ def validate(record):
 					if '100' in metadata:
 						record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = metadata['100'].subfields))
 				# 245
-				#print(F.value().encode('utf-8'))
 				DATA=[]
 				A,B,C='','',''
 				if 't' in F:
@@ -817,7 +816,7 @@ def validate(record):
 					C = F['r'].strip(', ')
 				elif '245' in metadata and 'c' in metadata['245']:
 					C = re.sub('^([^;]+).*', '\\1', metadata['245']['c'])
-				if not re.match('.*\.$'): C = C + '.'# append dot
+				if not re.match('.*\.$', C): C = C + '.'# append dot
 				for S in re.findall(' ?\( ?s\. ?.+?\) ?', C):# non-greedy page removal
 					C = C.replace(S, ' ')
 				if C: DATA += ['c', C]
@@ -827,7 +826,6 @@ def validate(record):
 						DATA[1] = DATA[1] + ' :'# insert :
 						DATA[3] = DATA[3] + ' /'# insert /
 				if DATA: record.add_field(Field(tag = '245', indicators = ['1','0'], subfields = DATA))
-				#print(str(IDENT + '#') + record['245'].__str__().encode('utf-8'))
 				if not '100' in record and '245' in record: record['245'].indicator1 = '0'
 				# 336
 				record.add_field(Field(tag = '336', indicators = [' ', ' '], subfields = ['a', 'text', 'b', 'text', '2', 'rdacontent']))
@@ -850,10 +848,12 @@ def validate(record):
 				# 773
 				DATA=[]
 				if '100' in metadata and 'a' in metadata['100']:
+					DATA = DATA + ['a', metadata['100']['a']]
 					if '700' in metadata and 'a' in metadata['700']:
-						DATA = DATA + ['a', metadata['100']['a'] + ' - ' + metadata['700']['a']]
-					else:
-						DATA = DATA + ['a', metadata['100']['a']]
+						for F in metadata.get_fields('700'):
+							if '4' in F and F['4'] == 'aut':
+							#print(str(IDENT + '#') + metadata['700'].__str__().encode('utf-8'))
+							#DATA = [DATA + + F['a']]
 				if '245' in metadata and 'a' in metadata['245']:
 					if 'b' in metadata['245']:
 						DATA = DATA + ['t', metadata['245']['a'] + ' ' + metadata['245']['b']]
