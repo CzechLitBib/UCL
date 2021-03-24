@@ -582,7 +582,7 @@ for record in records:
 					write_error(header.identifier(), '830', SIF, '078', 'Chybný kód podpole v poli 830.')
 		for F in metadata.get_fields('856'):
 			for SUB in F.subfields[0::2]:
-				if SUB not in ('u', 'y', '4'):
+				if SUB not in ('u', 'y', 'z', '4'):
 					write_error(header.identifier(), '856', SIF, '079', 'Chybný kód podpole v poli 856.')
 		if '910' in metadata:
 			for SUB in metadata['910'].subfields[0::2]:
