@@ -20,7 +20,7 @@ from lxml.etree import tostring
 # ------------------------------------------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-SYS='/var/www/html/vufind/sysno.txt'
+#SYS='/var/www/html/vufind/sysno.txt'
 
 # ------------------------------------------------------
 # DEF
@@ -100,13 +100,14 @@ if args.get == 'record' or args.get == 'ident':
 # INIT
 # ------------------------------------------------------
 
-vufind = MARCWriter(open('vufind-' + (datetime.today()-timedelta(days=1)).strftime('%Y-%m-%d') + '.mrc', 'wb'))
+#vufind = MARCWriter(open('vufind-' + (datetime.today()-timedelta(days=1)).strftime('%Y-%m-%d') + '.mrc', 'wb'))
+vufind = MARCWriter(open('vufind-' + datetime.now().strftime('%Y-%m-%d-%H') + '.mrc', 'wb'))
 
-try:
-	with open(SYS, 'r') as f: sysno = f.read()
-except:
-	print("Missing sysno.txt file.")
-	sys.exit(1)
+#try:
+#	with open(SYS, 'r') as f: sysno = f.read()
+#except:
+#	print("Missing sysno.txt file.")
+#	sys.exit(1)
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -154,8 +155,8 @@ for record in records:
 		IDENT = re.sub('^.*-(\d+)$', '\\1', header.identifier()) 
 
 		# skip not new
-		if int(IDENT) <= int(sysno): continue
-		sysno = IDENT
+		#if int(IDENT) <= int(sysno): continue
+		#sysno = IDENT
 	
 		# TRANSFORM ------------------
 
@@ -366,7 +367,7 @@ for record in records:
 
 vufind.close()
 
-with open(SYS, 'w') as f: f.write(sysno)
+#with open(SYS, 'w') as f: f.write(sysno)
 
 sys.exit(0)
 
