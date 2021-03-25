@@ -168,17 +168,23 @@ for record in records:
 		BROKEN=False
 	
 		#BASE
+		CNT=0
 		NAME,DATA,CTEXT='','',''
 		if '100' in metadata and 'a' in metadata['100']:
 			if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
 				NAME = name_to_upper(metadata['100']['a'].rstrip(','),IDENT)
 			else:
 				NAME = metadata['100']['a']
+			CNT+=1
 		for F in metadata.get_fields('700'):
 			if not NAME:
 				NAME = name_to_upper(F['a'].rstrip(','),IDENT)
 			else:
 				NAME += u' – ' + name_to_upper(F['a'].rstrip(','),IDENT)
+			CNT+=1
+			if CNT == 3:
+				NAME += ' et al.'
+				break
 		# NAME 100/700
 		if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
 			if '245' in metadata and 'c' in metadata['245']:
