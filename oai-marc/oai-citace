@@ -156,12 +156,40 @@ for record in records:
 		# skip not new
 		if int(IDENT) <= int(sysno): continue
 		sysno = IDENT
+	
+		# TRANSFORM ------------------
 
 		# LDR dup
 		metadata.remove_fields('LDR')
 
 		# Drop SYS
 		metadata.remove_fields('SYS')
+
+		# UCLA: webarchiv
+		for F in metadata.get_fields('856'):
+			if 'y' in F:
+				if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+				if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+				if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+				if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
+
+		# UCLA: drop X
+		X=False
+		for F in metadata.get_fields('773'):
+			if X and 'x' in F: F.delete_subfield('x')# drop more than one
+			if 'x' in F: X = True# catch the first one
+
+		# UCLA: add MBK
+		MBK=False
+		if '044' in metadata:
+			if 'a' in metadata['044']:
+				if metadata['044']['a'] != 'xr': MBK=True
+		if '008' in metadata:
+			if metadata['008'].value()[15:17] != 'xr': MBK=True
+		for F in metadata.get_fields('964'):
+			if 'CLE' in F.value(): MBK=False
+		if MBK:
+			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
 		# CITACE ------------------
 
