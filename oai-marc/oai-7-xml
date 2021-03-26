@@ -14,16 +14,16 @@ from pymarc import marcxml,MARCReader
 
 # VAR -------------------
 
-#IN='/home/bruna/xml/ucla.xml'
-IN='/home/bruna/xml/CLO-opr.mrc'
+IN='ucla.xml'
+#IN='CLO-opr.mrc'
 
-#RAW='/var/www/html/7/raw/'
-#OUT='/var/www/html/7/data/'
-RAW='/var/www/html/7/CLO/raw/'
-OUT='/var/www/html/7/CLO/data/'
+RAW='/var/www/html/7/raw/'
+OUT='/var/www/html/7/data/'
+#RAW='/var/www/html/7/CLO/raw/'
+#OUT='/var/www/html/7/CLO/data/'
 
-#INDEX='/var/www/html/7/index.html'
-INDEX='/var/www/html/7/CLO/index.html'
+INDEX='/var/www/html/7/index.html'
+#INDEX='/var/www/html/7/CLO/index.html'
 
 TAGLIST=[]
 
@@ -61,7 +61,15 @@ INDEX_TOP='''<!doctype html>
 
 # INIT -------------------
 
-reader = MARCReader(file(IN))
+#reader = MARCReader(file(IN))
+
+
+if not os.path.isdir(RAW):
+	print("Missing raw output directory!")
+	sys.exit(1)
+if not os.path.isdir(OUT):
+	print("Missing output directory!")
+	sys.exit(1)
 
 # DEF -------------------
 
@@ -74,6 +82,7 @@ def get_value(field):
 	ret = []
 	for sub in field:
 		if sub[0] != '4':
+		#if sub[0] != '4' and sub[0] != 'w':
 			ret.append(sub[1].strip())
 	return ' '.join(ret)
 	
@@ -82,6 +91,12 @@ def validate(record):
 	metadata = record
 
 	ALEPH = record['001'].value()
+
+	#if int(ALEPH) == 614:
+	#	print(metadata)
+	#	sys.exit(1)
+	#else:
+	#	return
 
 	for TAG, VALUE, SEVEN in [(f.tag, get_value(f), f['7']) for f in metadata.fields]:
 		if re.match('(1..|6..|700|710|711|730)', TAG):
@@ -102,12 +117,12 @@ def validate(record):
 
 print("Processing data (this may take a while).. ", end='')
 
-#marcxml.map_xml(validate, IN)
+marcxml.map_xml(validate, IN)
 
-for rec in reader:
-	validate(rec)
-
-reader.close()
+#for rec in reader:
+#	validate(rec)
+#
+#reader.close()
 
 print("Done.")
 print("Generating statistic:")
@@ -268,3 +283,4 @@ ind.write('<br><br></body></html>')
 ind.close()
 
 print("Done.")
+
