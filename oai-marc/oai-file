@@ -15,10 +15,11 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-#DATA='ucla.xml'
+DATA='ucla.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-DATA='book.xml'
+#DATA='book.xml'
+#DATA='CLO-opr.mrc'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -38,7 +39,7 @@ COUNTER=0
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file0 = open('output/520.txt', 'w')
+file0 = open('an_787.csv', 'w')
 #file1 = open('output/655.txt', 'w')
 #file2 = open('output/005.txt', 'w')
 #file3 = open('output/SIF.txt', 'w')
@@ -51,8 +52,8 @@ COUNTER=0
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-
-xml = XMLWriter(open('505.xml', 'w'))
+#xml = XMLWriter(open('505.xml', 'w'))
+#writer = MARCWriter(open('ucla.mrc', 'wb'))
 
 # WAYBACK ---------
 
@@ -97,8 +98,11 @@ xml = XMLWriter(open('505.xml', 'w'))
 #reader = MARCReader(file(DATA))
 
 #for record in reader:
-
 #	metadata = record
+
+#	for F in metadata.get_fields('100'):
+#		if '7' in F:
+#			print(F.value().encode('utf-8'))
 
 #	print(metadata['001'].value())
 
@@ -106,6 +110,9 @@ xml = XMLWriter(open('505.xml', 'w'))
 #		writer2.write(metadata)
 #	else:
 #		writer1.write(metadata)
+
+#reader.close()
+#sys.exit(1)
 
 def name_to_upper(s,ID):
 	if len(s.split(',')) == 2:
@@ -227,43 +234,39 @@ def validate(record):
 	#if metadata['001'].value() == '001232855': return
 
 	# UCLEC: 912 -> 913 ind1 = 2
-#	for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
+	#for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
 
 	# UCLEC: 912 -> 911 ind1 = ' ' ind2 = ' '
-#	for F in [f for f in metadata.get_fields('912') if f.indicator1 + f.indicator2 == '  ']: F.tag = '911'
+	#for F in [f for f in metadata.get_fields('912') if f.indicator1 + f.indicator2 == '  ']: F.tag = '911'
 
 	# UCLEC drop 506 fields
-#	metadata.remove_fields('506')
-
-#	COUNTER+=1
-
-	# write MRC
+	#metadata.remove_fields('506')
 
 	# UCLA:  webarchiv
-	#for F in metadata.get_fields('856'):
-	#	if 'y' in F:
-	#		if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
-	#		if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
-	#		if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
-	#		if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
+#	for F in metadata.get_fields('856'):
+#		if 'y' in F:
+#			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
 
 	# UCLA: drop X
-	#X=False
-	#for F in metadata.get_fields('773'):
-	#	if X and 'x' in F: F.delete_subfield('x')# drop more than one
-	#	if 'x' in F: X = True# catch the first one
+#	X=False
+#	for F in metadata.get_fields('773'):
+#		if X and 'x' in F: F.delete_subfield('x')# drop more than one
+#		if 'x' in F: X = True# catch the first one
 
 	# UCLA: add MBK
-	#MBK=False
-	#if '044' in metadata:
-	#	if 'a' in metadata['044']:
-	#		if metadata['044']['a'] != 'xr': MBK=True
-	#if '008' in metadata:
-	#	if metadata['008'].value()[15:17] != 'xr': MBK=True
-	#for F in metadata.get_fields('964'):
-	#	if 'CLE' in F.value(): MBK=False
-	#if MBK:
-	#	metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+#	MBK=False
+#	if '044' in metadata:
+#		if 'a' in metadata['044']:
+#			if metadata['044']['a'] != 'xr': MBK=True
+#	if '008' in metadata:
+#		if metadata['008'].value()[15:17] != 'xr': MBK=True
+#	for F in metadata.get_fields('964'):
+#		if 'CLE' in F.value(): MBK=False
+#	if MBK:
+#		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
 	# 599 UCLO special
 	#for F in metadata.get_fields('599'):
@@ -281,7 +284,9 @@ def validate(record):
 #		writer.write(metadata)
 
 	# write MRC
-	#writer.write(metadata)
+#	writer.write(metadata)
+
+#	return
 
 # ------------------------------------------------------
 # BASE
@@ -323,7 +328,14 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
-#	IDENT = metadata['001'].value()
+	IDENT = metadata['001'].value()
+
+	if metadata.leader[7] == 'a':
+		if '787' not in metadata:
+			for F in metadata.get_fields('773'):
+				file0.write(str(IDENT) + str(';') + F['t'].encode('utf-8') + str(';') + F.value().encode('utf-8') + '\n') 		
+
+	return
 
 	#if metadata.leader[7] == 'm': print(str(IDENT))
 
@@ -949,14 +961,15 @@ marcxml.map_xml(validate, DATA)
 
 #aleph.close()
 
-xml.close()
+#xml.close()
 
+#writer.close()
 #writer1.close()
 #writer2.close()
 #writer3.close()
 #writer4.close()
 
-#file0.close()
+file0.close()
 #file1.close()
 #file2.close()
 #file3.close()

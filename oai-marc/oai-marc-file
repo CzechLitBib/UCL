@@ -71,6 +71,48 @@ def validate(record):
 	
 	if True:
 
+	
+		# 3RD BATCH ------------------
+
+		if 'SIF' in metadata:
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+		else:
+			SIF = ''
+	
+		# 100-4
+#		if '100' in metadata and '4' not in metadata['100']:
+#			write_error(IDENT, '100', SIF, '179', "Pole 100 nebsahuje žádné podpole '4'.")
+		
+		# 110-4
+#		if '110' in metadata and '4' not in metadata['110']:
+#			write_error(IDENT, '110', SIF, '180', "Pole 110 nebsahuje žádné podpole '4'.")
+
+		# 773 semi-colon
+		for F in metadata.get_fields('773'):
+			if 'g' in F and ';' in F['g']:
+				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) + len(F.get_subfields('9')):
+					write_error(IDENT, '773', SIF, '181', 'Neplatný počet středníků v podpoli 773q.')
+
+		# 773q 773-9 match 
+#		for F in metadata.get_fields('773'):
+#			if 'q' in F and '9' in F:
+#				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
+#					write_error(IDENT, '773', SIF, '182', "V poli 773 se neshoduje počet podpolí 'q' a '9'.")
+	
+		# 856y brace
+#		for F in metadata.get_fields('856'):
+#			if 'y' in F:
+#				if '(' in F['y'] or ')' in F['y']:
+#					write_error(IDENT, '856', SIF, '183', "Podpole 856y obsahuje závorku.")
+
+		# 856z brace
+#		for F in metadata.get_fields('856'):
+#			if 'z' in F:
+#				if '(' not in F['z'] or ')' not in F['z']:
+#					write_error(IDENT, '856', SIF, '184', "Podpole 856z neobsahuje závorku.")
+
+		return
+	
 		# TEST TAG ------------------
 
 		if 'SIF' in metadata:
@@ -973,67 +1015,65 @@ def validate(record):
 			if not PASS:
 				write_error(IDENT, '080', SIF, '178', 'Chybí pole 080.')
 
+
 		# 3RD BATCH ------------------
 
 	
 		# 100-4
 		PASS=False
 		if '100' in metadata and '4' not in metadata['100']:
-			write_error(IDENT, TAG, SIF, '179', "Pole 100 nebsahuje žádné podpole '4'.")
+			write_error(IDENT, '100', SIF, '179', "Pole 100 nebsahuje žádné podpole '4'.")
 		
 		# 110-4
 		if '110' in metadata and '4' not in metadata['110']:
-			write_error(IDENT, TAG, SIF, '180', "Pole 110 nebsahuje žádné podpole '4'.")
+			write_error(IDENT, '110', SIF, '180', "Pole 110 nebsahuje žádné podpole '4'.")
 
 		# 773 semi-colon
 		for F in metadata.get_fields('773'):
 			if 'g' in F and ';' in F['g']:
 				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) + len(F.get_subfields('9')):
-					write_error(IDENT, TAG, SIF, '181', 'Neplatný počet středníků v podpoli 773q.')
+					write_error(IDENT, '773', SIF, '181', 'Neplatný počet středníků v podpoli 773q.')
 		# 773q 773-9 match 
 		for F in metadata.get_fields('773'):
 			if 'q' in F and '9' in F:
 				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
-					write_error(IDENT, TAG, SIF, '182', "V poli 773 se neshoduje počet podpolí 'q' a '9'.")
+					write_error(IDENT, '773', SIF, '182', "V poli 773 se neshoduje počet podpolí 'q' a '9'.")
 	
 		# 856y brace
 		for F in metadata.get_fields('856'):
 			if 'y' in F:
 				if '(' in F['y'] or ')' in F['y']:
-					write_error(IDENT, TAG, SIF, '183', "Podpole 856y obsahuje závorku.")
+					write_error(IDENT, '856', SIF, '183', "Podpole 856y obsahuje závorku.")
 
 		# 856z brace
 		for F in metadata.get_fields('856'):
 			if 'z' in F:
 				if '(' not in F['z'] or ')' not in F['z']:
-					write_error(IDENT, TAG, SIF, '184', "Podpole 856z neobsahuje závorku.")
+					write_error(IDENT, '856', SIF, '184', "Podpole 856z neobsahuje závorku.")
 					
-
-		#5) v podpoli 856z nesmí být ()	
-
 # EXIT -------------------
 
-record = Record()
+#record = Record()
 
-record.leader = '     nam a22     4i 4500'
-field = Field(tag = '001', data='002524717')
-record.add_ordered_field(field)
-field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
-record.add_ordered_field(field)
-field = Field(tag = '100', indicators = ['1',' '], subfields = ['a', 'foo','4', 'boo'])
-record.add_ordered_field(field)
-field = Field(tag = '110', indicators = ['1',' '], subfields = ['a', 'foo', '4', 'boo'])
-record.add_ordered_field(field)
-field = Field(tag = '773', indicators = ['1',' '], subfields = ['g', 'foo;', 'q', 'foo', '9','bar'])
-record.add_ordered_field(field)
-field = Field(tag = '787', indicators = ['1',' '], subfields = ['z', 'boo'])
-record.add_ordered_field(field)
-field = Field(tag = '856', indicators = ['1',' '], subfields = ['z', '(boo)', 'y', 'test'])
-record.add_ordered_field(field)
+#record.leader = '     nam a22     4i 4500'
+#field = Field(tag = '001', data='002524717')
+#record.add_ordered_field(field)
+#field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
+#record.add_ordered_field(field)
+#field = Field(tag = '100', indicators = ['1',' '], subfields = ['a', 'foo','4', 'boo'])
+#record.add_ordered_field(field)
+#field = Field(tag = '110', indicators = ['1',' '], subfields = ['a', 'foo', '4', 'boo'])
+#record.add_ordered_field(field)
+#field = Field(tag = '773', indicators = ['1',' '], subfields = ['g', 'foo;', 'q', 'foo', '9','bar'])
+#record.add_ordered_field(field)
+#field = Field(tag = '787', indicators = ['1',' '], subfields = ['z', 'boo'])
+#record.add_ordered_field(field)
+#field = Field(tag = '856', indicators = ['1',' '], subfields = ['z', '(boo)', 'y', 'test'])
+#record.add_ordered_field(field)
 
-validate(record)
+#validate(record)
 
-#marcxml.map_xml(validate, 'ucla.xml')
+marcxml.map_xml(validate, 'ucla.xml')
 
 csv.close()
 
