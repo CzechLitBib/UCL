@@ -22,11 +22,11 @@ oai-citace \
 	--until "$(date '+%Y-%m-%d %H:00:00')" \
 	--check
 
-[ -s *.mrc ] &&	tar --remove-files -czf "$VUFIND_PATH/$VUFIND" *.mrc 2>/dev/null
+[ -s *.mrc ] &&	tar --remove-files -czf "$VUFIND_PATH/$VUFIND" "*.mrc"
 
 rm *.mrc 2> /dev/null
 
-find $VUFIND_PATH -maxdepth 1 -type f -mtime +14 -exec rm {} \;
+find "$VUFIND_PATH" -maxdepth 1 -type f -mtime +14 -exec rm {} \;
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
