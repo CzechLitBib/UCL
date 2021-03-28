@@ -22,7 +22,7 @@ oai-citace \
 	--until "$(date '+%Y-%m-%d %H:00:00')" \
 	--check
 
-[ -s *.mrc ] &&	tar --remove-files -czf "$VUFIND_PATH/$VUFIND" "*.mrc"
+[ -s *.mrc ] && tar --remove-files -czf "$VUFIND_PATH/$VUFIND" *.mrc
 
 rm *.mrc 2> /dev/null
 
