@@ -15,10 +15,10 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-DATA='ucla.xml'
+#DATA='ucla.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-#DATA='book.xml'
+DATA='book.xml'
 #DATA='CLO-opr.mrc'
 
 #TOTAL_100=0
@@ -31,7 +31,7 @@ DATA='ucla.xml'
 #BUFF=''
 
 #SIXTEEN=0
-COUNTER=0
+#COUNTER=0
 
 #csv_773 = open('773.csv', 'w')
 #csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
@@ -39,7 +39,7 @@ COUNTER=0
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-file0 = open('an_787.csv', 'w')
+#file0 = open('an_787.csv', 'w')
 #file1 = open('output/655.txt', 'w')
 #file2 = open('output/005.txt', 'w')
 #file3 = open('output/SIF.txt', 'w')
@@ -52,7 +52,7 @@ file0 = open('an_787.csv', 'w')
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-#xml = XMLWriter(open('505.xml', 'w'))
+xml = XMLWriter(open('505.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
 
 # WAYBACK ---------
@@ -213,6 +213,14 @@ def validate(record):
 
 	metadata = record
 
+	#if '100' in metadata:
+	#	pos=None
+	#	while '4' in metadata['100']: metadata['100'].delete_subfield('4')
+	#	if '7' in metadata['100']: pos = metadata['100'].subfields.index('7')/2
+	#	metadata['100'].add_subfield('4', u'aut', pos)
+
+	#return
+
 #	print(record)
 #	return
 
@@ -328,14 +336,14 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 
-	if metadata.leader[7] == 'a':
-		if '787' not in metadata:
-			for F in metadata.get_fields('773'):
-				file0.write(str(IDENT) + str(';') + F['t'].encode('utf-8') + str(';') + F.value().encode('utf-8') + '\n') 		
+#	if metadata.leader[7] == 'a':
+#		if '787' not in metadata:
+#			for F in metadata.get_fields('773'):
+#				file0.write(str(IDENT) + str(';') + F['t'].encode('utf-8') + str(';') + F.value().encode('utf-8') + '\n') 		
 
-	return
+#	return
 
 	#if metadata.leader[7] == 'm': print(str(IDENT))
 
@@ -804,10 +812,15 @@ def validate(record):
 						if not MATCH:
 							NAME.insert(0, NAME.pop())
 							NAME[0] = NAME[0] + ','
-							record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME), '4', 'aut']))
+							record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = ['a', ' '.join(NAME)]))
 				else:
 					if '100' in metadata:
 						record.add_field(Field(tag = '100', indicators = ['1', ' '], subfields = metadata['100'].subfields))
+				if '100' in metadata:# insert 'aut'
+					pos=None
+					while '4' in metadata['100']: metadata['100'].delete_subfield('4')
+					if '7' in metadata['100']: pos = metadata['100'].subfields.index('7')/2
+					metadata['100'].add_subfield('4', u'aut', pos)
 				# 245
 				DATA=[]
 				A,B,C='','',''
@@ -828,7 +841,7 @@ def validate(record):
 					C = F['r'].strip(', ')
 				elif '245' in metadata and 'c' in metadata['245']:
 					C = re.sub('^([^;]+).*', '\\1', metadata['245']['c'])
-				if not re.match('.*\.$', C): C = C + '.'# append dot
+				if C and not re.match('.*\.$', C): C = C.strip() + '.'# append dot
 				for S in re.findall(' ?\( ?s\. ?.+?\) ?', C):# non-greedy page removal
 					C = C.replace(S, ' ')
 				if C: DATA += ['c', C]
@@ -969,7 +982,7 @@ marcxml.map_xml(validate, DATA)
 #writer3.close()
 #writer4.close()
 
-file0.close()
+#file0.close()
 #file1.close()
 #file2.close()
 #file3.close()
