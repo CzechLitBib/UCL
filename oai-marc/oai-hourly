@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Crontab daily runner
+# Crontab hourly runner
 #
 # 05 * * * * root oai-hourly >> /var/log/oai-hourly.log 2>&1 &
 #
