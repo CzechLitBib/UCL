@@ -18,8 +18,8 @@ mkdir -p "$VUFIND_PATH" 2> /dev/null
 
 oai-citace \
 	--set UCLA \
-	--from "$(date --date='1 hour ago' '+%Y-%m-%d %H:00:00')" \
-	--until "$(date '+%Y-%m-%d %H:00:00')" \
+	--from "$(date -u --date='1 hour ago' '+%Y-%m-%d %H:00:00')" \
+	--until "$(date -u '+%Y-%m-%d %H:00:00')" \
 	--check
 
 [ -s *.mrc ] && tar --remove-files -czf "$VUFIND_PATH/$VUFIND" *.mrc

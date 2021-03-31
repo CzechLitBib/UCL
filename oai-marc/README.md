@@ -41,7 +41,7 @@ sif_code.txt
 
 /etc/crontab:
 
-05 * * * * root oai-hourly >> /var/log/oai-hourly.log 2>&1 &
+10 * * * * root oai-hourly >> /var/log/oai-hourly.log 2>&1 &
 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
 00 6 * * TUE root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 30 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
