@@ -301,16 +301,16 @@ for record in records:
 											GTEXT = metadata['773']['g'].rstrip('.').replace('-', u'–').strip() + '.'
 											GTEXT = word_to_lower(GTEXT)
 								else:
-									print(IDENT + '#Missing 787t.')
+									#print(IDENT + '#Missing 787t.')
 									BROKEN=True
 							if not MATCH:
-								print(str(IDENT) + '#No match.' + metadata['773']['t'].encode('utf-8') + ' # ' + ' '.join([F.value() for F in metadata.get_fields('787') if 't' in F]).encode('utf-8'))
+								#print(str(IDENT) + '#No match.' + metadata['773']['t'].encode('utf-8') + ' # ' + ' '.join([F.value() for F in metadata.get_fields('787') if 't' in F]).encode('utf-8'))
 								BROKEN=True
 						else:
-							print(IDENT + '#No 787.')
+							#print(IDENT + '#No 787.')
 							BROKEN=True
 					else:
-						print(IDENT + '#No 773t.')
+						#print(IDENT + '#No 773t.')
 						BROKEN=True
 				else:
 					# 773a (first..)
