@@ -39,9 +39,9 @@ DATA='book.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file0 = open('an_787.csv', 'w')
-#file1 = open('output/655.txt', 'w')
-#file2 = open('output/005.txt', 'w')
+#file0 = open('964_520a.csv', 'w')
+#file1 = open('964_500.csv', 'w')
+#file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
 #file4 = open('output/158.csv', 'w')
 #file5 = open('output/109.csv', 'w')
@@ -80,7 +80,6 @@ xml = XMLWriter(open('505.xml', 'w'))
 #writer2 = MARCWriter(open('clo964_2.mrc', 'wb'))
 #writer3 = MARCWriter(open('clo964_3.mrc', 'wb'))
 #writer4 = MARCWriter(open('clo964_4.mrc', 'wb'))
-
 
 # BASE ---------
 
@@ -213,17 +212,6 @@ def validate(record):
 
 	metadata = record
 
-	#if '100' in metadata:
-	#	pos=None
-	#	while '4' in metadata['100']: metadata['100'].delete_subfield('4')
-	#	if '7' in metadata['100']: pos = metadata['100'].subfields.index('7')/2
-	#	metadata['100'].add_subfield('4', u'aut', pos)
-
-	#return
-
-#	print(record)
-#	return
-
 # ------------------------------------------------------
 
 #	global BUFF
@@ -337,6 +325,19 @@ def validate(record):
 # ------------------------------------------------------
 
 #	IDENT = metadata['001'].value()
+
+
+#	if '964' in metadata and '520' in metadata:
+#		file0.write(str(IDENT + ';' + metadata.leader[7] + ';') + metadata['964']['a'].encode('utf-8') + str(';') + metadata['520']['a'].encode('utf-8') + '\n')
+
+#	if '964' in metadata and '500' in metadata:
+#		for F in metadata.get_fields('500'):
+#			file1.write(str(IDENT + ';' + metadata.leader[7] + ';') + metadata['964']['a'].encode('utf-8') + str(';') + F['a'].encode('utf-8') + '\n')
+
+#	if '964' in metadata and '245' in metadata:
+#		file2.write(str(IDENT + ';' + metadata.leader[7] + ';') + metadata['964']['a'].encode('utf-8') + str(';') + metadata['245'].value().encode('utf-8') + '\n')
+
+#	return
 
 #	if metadata.leader[7] == 'a':
 #		if '787' not in metadata:
@@ -870,9 +871,9 @@ def validate(record):
 				if CITACE: record.add_field(CITACE)	
 				# 655
 				if 't' in F:
-					if not re.match('^\[.*\.\.\.\]$', F['t'].strip()):
+					if not re.match('^\[.*\.\.\.\]$', F['t'].strip('/ ')):
 						if re.match('.*\[(.+)\]', F['t']):
-							record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'])]))
+							record.add_field(Field(tag = '655', indicators = [' ', ' '], subfields = ['a', re.sub('.*\[(.+)\]', '\\1', F['t'].strip('/ '))]))
 				# 773
 				DATA=[]
 				CNT,NAME=0,''
@@ -974,7 +975,7 @@ marcxml.map_xml(validate, DATA)
 
 #aleph.close()
 
-#xml.close()
+xml.close()
 
 #writer.close()
 #writer1.close()
