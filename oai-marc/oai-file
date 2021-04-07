@@ -15,10 +15,10 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-DATA='ucla.xml'
+#DATA='ucla.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-#DATA='book.xml'
+DATA='book.xml'
 #DATA='CLO-opr.mrc'
 
 #TOTAL_100=0
@@ -142,7 +142,6 @@ def citace(record, page):
 
 	metadata = record
 	IDENT = metadata['001'].value()
-
 
 	#PREFACE
 	PREFACE=''
@@ -896,12 +895,7 @@ def validate(record):
 					 if re.match('^([Ss]\. )?(\[?[0-9]+\]?|\[?[0-9]+\]?-\[?[0-9]+\]?)$', F['g'].strip()):
 					 	PAGE = re.sub('^([Ss]\. )?(\[?[0-9]+\]?|\[?[0-9]+\]?-\[?[0-9]+\]?)$','\\2', F['g'].strip()).replace('[','').replace(']','')
 				CITACE = citace(metadata, PAGE)
-				if CITACE:
-					record.add_field(CITACE)
-				#	if IDENT == '001053247':
-				#		print(metadata)
-				#		print(str(IDENT) + CITACE.value().encode('utf-8'))
-				#		sys.exit(1)
+				if CITACE: record.add_field(CITACE)
 				# 655
 				if 't' in F:
 					if not re.match('^\[.*\.\.\.\]$', F['t'].strip('/ ')):
@@ -914,14 +908,16 @@ def validate(record):
 					NAME += metadata['100']['a']
 					CNT+=1
 				for F in metadata.get_fields('700'):
-					if 'a' in F and '4' in F and F['4'] == 'aut':
+					if '4' in F and F['4'] == 'aut':
 						if not NAME:
 							NAME = F['a'].strip(', ')
 						else:
 							NAME += u' – ' + F['a'].strip(', ')
 						CNT+=1
-					if CNT == 3:
-						NAME += ' et al.'
+						if CNT == 3:
+							NAME += ' et al.'
+							break
+					else:
 						break
 				if NAME: DATA += ['a', NAME]
 				if '245' in metadata and 'a' in metadata['245']:
@@ -930,11 +926,12 @@ def validate(record):
 					else:
 						DATA += ['t', metadata['245']['a'].strip('/ ')]
 				if '245' in metadata and 'c' in metadata['245']:
-					#if not metadata['245']['c'].isupper():
-					#	DATA += ['n', word_to_upper(metadata['245']['c'])]
-					if ';' in metadata['245']['c']:
-						# multiple ; ??
+					if ';' not in metadata['245']['c'] and metadata['245']['c'][0].isupper():
+						DATA += ['n', word_to_upper(metadata['245']['c'])]
+					if len(re.findall(';', metadata['245']['c'])) == 1:
 						DATA += ['n', re.sub('[^;]+;(.*)', '\\1', metadata['245']['c']).strip()]
+					if len(re.findall(';', metadata['245']['c'])) == 2:
+						DATA += ['n', re.sub('.*;(.*);.*', '\\1', metadata['245']['c']).strip()]
 				if '264' in metadata:
 					DATA += ['d', metadata['264'].value()]
 				if '020' in metadata and 'a' in metadata['020']:
