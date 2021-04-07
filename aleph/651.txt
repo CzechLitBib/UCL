@@ -1,0 +1,345 @@
+Praha OPRAVA UCL;;;151  |a Praha (Česko) |7 ge118011
+Morava OPRAVA UCL;;;151  |a Morava (Česko) |7 ge130070
+USA OPRAVA UCL;;;151  |a Spojené státy americké |7 ge128584
+Brno OPRAVA UCL;;;151  |a Brno (Česko) |7 ge134084
+Vídeň OPRAVA UCL;;;151  |a Vídeň (Rakousko) |7 ge131380
+Čechy OPRAVA UCL;;;151  |a Čechy (Česko) |7 ge135869
+Olomouc OPRAVA UCL;;;151  |a Olomouc (Česko) |7 ge130299
+Plzeň OPRAVA UCL;;;151  |a Plzeň (Česko) |7 ge130439
+SSSR OPRAVA UCL;;;151  |a Sovětský svaz |7 ge128583
+Paříž OPRAVA UCL;;;151  |a Paříž (Francie) |7 ge130380
+Ostrava OPRAVA UCL;;;151  |a Ostrava (Česko) |7 ge128537
+Šumava OPRAVA UCL;;;151  |a Šumava (pohoří) |7 ge128617
+jižní Čechy OPRAVA UCL;;;151  |a Čechy jižní (Česko) |7 ge131648
+Písek OPRAVA UCL;;;151  |a Písek (Česko) |7 ge130565
+jižní Morava OPRAVA UCL;;;151  |a Morava jižní (Česko) |7 ge130073
+Ostravsko OPRAVA UCL;;;151  |a Ostrava (Česko : oblast) |7 ge130341
+střední Evropa OPRAVA UCL;;;151  |a Evropa střední |7 ge137882
+Litomyšl OPRAVA UCL;;;151  |a Litomyšl (Česko) |7 ge129843
+Sudety OPRAVA UCL;;;151  |a Sudety (Česko) |7 ge128482
+východní Čechy OPRAVA UCL;;;151  |a Čechy východní (Česko) |7 ge131655
+Kutná Hora OPRAVA UCL;;;151  |a Kutná Hora (Česko) |7 ge129717
+severní Morava OPRAVA UCL;;;151  |a Morava severní (Česko) |7 ge130074
+Prostějov OPRAVA UCL;;;151  |a Prostějov (Česko) |7 ge130531
+Podkarpatská Rus OPRAVA UCL;;;151  |a Podkarpatská Rus (Ukrajina) |7 ge128545
+ČSR OPRAVA UCL;;;151  |a Česko |7 ge128065
+západní Čechy OPRAVA UCL;;;151  |a Čechy západní (Česko) |7 ge131656
+Náchod OPRAVA UCL;;;151  |a Náchod (Česko) |7 ge130262
+severní Čechy OPRAVA UCL;;;151  |a Čechy severní (Česko) |7 ge131650
+Opava OPRAVA UCL;;;151  |a Opava (Česko) |7 ge130311
+Bratislava OPRAVA UCL;;;151  |a Bratislava (Slovensko) |7 ge128816
+Sobotka OPRAVA UCL;;;151  |a Sobotka (Česko) |7 ge130878
+Karlovy Vary OPRAVA UCL;;;151  |a Karlovy Vary (Česko) |7 ge129535
+Litoměřice OPRAVA UCL;;;151  |a Litoměřice (Česko) |7 ge129846
+Valašsko OPRAVA UCL;;;151  |a Valašsko (Česko) |7 ge131229
+Berlín OPRAVA UCL;;;151  |a Berlín (Německo) |7 ge128749
+Tábor OPRAVA UCL;;;151  |a Tábor (Česko) |7 ge131164
+Těšínsko OPRAVA UCL;;;151  |a Těšínské Slezsko |7 ge128598
+Krkonoše OPRAVA UCL;;;151  |a Krkonoše (Česko a Polsko : pohoří) |7 ge134289
+Londýn OPRAVA UCL;;;151  |a Londýn (Anglie) |7 ge129867
+Přerov OPRAVA UCL;;;151  |a Přerov (Česko) |7 ge130575
+Kroměříž OPRAVA UCL;;;151  |a Kroměříž (Česko) |7 ge129682
+Slovácko OPRAVA UCL;;;151  |a Slovácko (Česko) |7 ge130858
+Jičín OPRAVA UCL;;;151  |a Jičín (Česko) |7 ge129490
+Mladá Boleslav OPRAVA UCL;;;151  |a Mladá Boleslav (Česko) |7 ge130035
+Kolín OPRAVA UCL;;;151  |a Kolín (Česko) |7 ge129619
+Mnichov OPRAVA UCL;;;151  |a Mnichov (Německo) |7 ge130044
+Moskva OPRAVA UCL;;;151  |a Moskva (Rusko) |7 ge130101
+Velká Morava OPRAVA UCL;;;151  |a Velkomoravská říše |7 ge131256
+Pardubice OPRAVA UCL;;;151  |a Pardubice (Česko) |7 ge130369
+Rychnov nad Kněžnou OPRAVA UCL;;;151  |a Rychnov nad Kněžnou (Česko) |7 ge130705
+Liberec OPRAVA UCL;;;151  |a Liberec (Česko) |7 ge128509
+Řím OPRAVA UCL;;;151  |a Řím (Itálie) |7 ge131746
+Krakov OPRAVA UCL;;;151  |a Krakov (Polsko) |7 ge129668
+Jindřichův Hradec OPRAVA UCL;;;151  |a Jindřichův Hradec (Česko) |7 ge129479
+Klatovy OPRAVA UCL;;;151  |a Klatovy (Česko) |7 ge129581
+Varšava OPRAVA UCL;;;151  |a Varšava (Polsko) |7 ge131241
+Příbram OPRAVA UCL;;;151  |a Příbram (Česko) |7 ge130586
+Lipsko OPRAVA UCL;;;151  |a Lipsko (Německo) |7 ge129837
+Slaný OPRAVA UCL;;;151  |a Slaný (Česko) |7 ge130834
+Brixen OPRAVA UCL;;;151  |a Brixen (Itálie) |7 ge134083
+Vodňany OPRAVA UCL;;;151  |a Vodňany (Česko) |7 ge131319
+Kladno OPRAVA UCL;;;151  |a Kladno (Česko) |7 ge129576
+Záhřeb OPRAVA UCL;;;151  |a Záhřeb (Chorvatsko) |7 ge134603
+Naarden OPRAVA UCL;;;151  |a Naarden (Nizozemsko) |7 ge339030
+Smíchov OPRAVA UCL;;;151  |a Smíchov (Praha, Česko) |7 ge128581
+Kostnice OPRAVA UCL;;;151  |a Kostnice (Německo) |7 ge134284
+Louny OPRAVA UCL;;;151  |a Louny (Česko) |7 ge129877
+Strakonice OPRAVA UCL;;;151  |a Strakonice (Česko) |7 ge130962
+střední Čechy OPRAVA UCL;;;151  |a Čechy střední (Česko) |7 ge131654
+Polná OPRAVA UCL;;;151  |a Polná (Jihlava, Česko) |7 ge130477
+Mariánské Lázně OPRAVA UCL;;;151  |a Mariánské Lázně (Česko) |7 ge129964
+Podkrkonoší OPRAVA UCL;;;151  |a Podkrkonoší (Česko) |7 ge137859
+Žižkov OPRAVA UCL;;;151  |a Žižkov (Praha, Česko) |7 ge131624
+Most OPRAVA UCL;;;151  |a Most (Česko) |7 ge130104
+Balkán OPRAVA UCL;;;151  |a Balkánský poloostrov |7 ge134045
+Žďár nad Sázavou OPRAVA UCL;;;151  |a Žďár nad Sázavou (Česko) |7 ge131631
+Jihlava OPRAVA UCL;;;151  |a Jihlava (Česko) |7 ge129468
+Moravská Ostrava OPRAVA UCL;;;151  |a Moravská Ostrava (Ostrava, Česko : oblast) |7 ge828501
+Petrohrad OPRAVA UCL;;;151  |a Petrohrad (Rusko) |7 ge128542
+Lublaň OPRAVA UCL;;;151  |a Lublaň (Slovinsko) |7 ge134327
+Rakovník OPRAVA UCL;;;151  |a Rakovník (Česko) |7 ge130617
+Vysočina OPRAVA UCL;;;151  |a Českomoravská vrchovina (Česko) |7 ge128620
+Třebíč OPRAVA UCL;;;151  |a Třebíč (Česko) |7 ge131185
+Zlín OPRAVA UCL;;;151  |a Zlín (Česko) |7 ge128609
+Benátky OPRAVA UCL;;;151  |a Benátky (Itálie) |7 ge128745
+Semily OPRAVA UCL;;;151  |a Semily (Česko) |7 ge130773
+Pacov OPRAVA UCL;;;151  |a Pacov (Pelhřimov, Česko) |7 ge130357
+Polička OPRAVA UCL;;;151  |a Polička (Česko) |7 ge130474
+Bělehrad OPRAVA UCL;;;151  |a Bělehrad (Srbsko) |7 ge134098
+Amsterodam OPRAVA UCL;;;151  |a Amsterdam (Nizozemsko) |7 ge128661
+Telč OPRAVA UCL;;;151  |a Telč (Česko) |7 ge131052
+Sibiř OPRAVA UCL;;;151  |a Sibiř (Rusko) |7 ge130802
+Jižní Čechy OPRAVA UCL;;;151  |a Čechy jižní (Česko) |7 ge131648
+Libeň OPRAVA UCL;;;151  |a Libeň (Praha, Česko) |7 ge129802
+Vysoké Mýto OPRAVA UCL;;;151  |a Vysoké Mýto (Česko) |7 ge131353
+Malé Svatoňovice OPRAVA UCL;;;151  |a Malé Svatoňovice (Česko) |7 ge129950
+Blaník OPRAVA UCL;;;151  |a Vlašimská pahorkatina (Česko) |7 ge138584
+Mělník OPRAVA UCL;;;151  |a Mělník (Česko) |7 ge130126
+Luhačovice OPRAVA UCL;;;151  |a Luhačovice (Česko) |7 ge129896
+Znojmo OPRAVA UCL;;;151  |a Znojmo (Česko) |7 ge131456
+Malá Strana OPRAVA UCL;;;151  |a Malá Strana (Praha, Česko) |7 ge128513
+Lidice OPRAVA UCL;;;151  |a Lidice (Česko) |7 ge129819
+Brusel OPRAVA UCL;;;151  |a Brusel (Belgie) |7 ge128842
+Scheinfeld OPRAVA UCL;;;151  |a Scheinfeld (Německo) |7 ge307151
+Brandýs nad Orlicí OPRAVA UCL;;;151  |a Brandýs nad Orlicí (Česko) |7 ge128812
+Pešť OPRAVA UCL;;;151  |a Budapešť (Maďarsko) |7 ge128848
+Koločava OPRAVA UCL;;;151  |a Koločava (Ukrajina) |7 ge307120
+Tasov OPRAVA UCL;;;151  |a Tasov (Žďár nad Sázavou, Česko) |7 ge131044
+Beroun OPRAVA UCL;;;151  |a Beroun (Česko) |7 ge134062
+Beskydy OPRAVA UCL;;;151  |a Beskydy (pohoří) |7 ge128756
+Roudnice nad Labem OPRAVA UCL;;;151  |a Roudnice nad Labem (Česko) |7 ge130668
+Vídeň;;;151  |a Vídeň (Rakousko) |7 ge131380
+Terezín OPRAVA UCL;;;151  |a Terezín (Litoměřice, Česko) |7 ge131066
+Žďárec (Česko);;;151  |a Polička-Žďárec u Skutče (Česko : železniční trať) |7 ge222642
+Milán OPRAVA UCL;;;151  |a Milán (Itálie) |7 ge130016
+Franken (Německo);;;151  |a Franky (Německo) |7 ge129156
+Reichenau OPRAVA UCL;;;151  |a Reichenau (Německo : ostrov) |7 ge134451
+Chotkovy sady (Praha, Česko);;;
+Madunice (Slovensko);;;
+Jablonec nad Nisou-Liberec (Česko : tramvajová trať);;;151  |a Liberec-Jablonec nad Nisou (Česko : tramvajová trať) |7 ge944794
+Měšetice (Sedlec-Prčice, Česko);;;
+Nová Víska;;;
+Hostišov (Česko);;;
+Herborn (Německo);;;151  |a Herborn (Hesensko, Německo) |7 ge1097746
+Havlíčkovy sady (Praha, Česko);;;
+Hlboké (Senica, Slovensko);;;
+Katyň (Rusko);;;
+Norrköping (Švédsko);;;
+Československá socialistická republika;;;151  |a Československo |7 ge131689
+Otrhanec (rybník);;;
+Pstrążna (Polsko);;;151  |a Kudowa Zdrój (Polsko) |7 ge251183
+Kynžvart OPRAVA UCL;;;151  |a Lázně Kynžvart (Česko) |7 ge129919
+Šternberk OPRAVA UCL;;;151  |a Šternberk (Česko) |7 ge131548
+Stínadla;;;151  |a Stínadla (Praha, Česko)
+Polerady (Praha-východ, Česko);;;
+Petrovice;;;
+Brno;;;151  |a Brno (Česko) |7 ge134084
+Lusignan (Francie);;;
+Lužánky (Brno, Česko);;;151  |a Lužánky (Brno, Česko : park) |7 ge1087448
+Březnice;;;
+Naučná stezka lišky Bystroušky (Česko);;;
+Žhery (Klučov, Česko);;;151  |a Klučov (Kolín, Česko) |7 ge538013
+Zemianske Podhradie (Slovensko);;;
+Nová Víska u Rokle;;;151  |a Nová Víska u Rokle (Česko)
+Škocjan (Slovinsko);;;
+Dornkappel (Bratislava, Slovensko);;;
+Nové Město;;;
+Bubny (Praha, Česko);;;
+Žerůtky (Blansko, Česko);;;151  |a Žerůtky (Znojmo, Česko) |7 ge564774
+Sobůlky (Česko);;;151  |a Sobůlky (Česko) |7 ge1107154
+Carlsberg;;;
+Lipik (Chorvatsko);;;
+Vysočina;;;151  |a České Horácko (Česko) |7 ge128475
+Březinka (Bělá pod Bezdězem, Česko);;;
+Lincoln (Nebraska);;;
+Kréta OPRAVA UCL;;;151  |a Kréta (Řecko : ostrov) |7 ge134296
+Mezoamerika OPRAVA UCL;;;
+české země;;;151  |a Česko |7 ge128065
+Tartessos OPRAVA UCL;;;151  |a Tartéssos (zaniklé město) |7 ge1085287
+Kraskovo (Slovensko);;;
+Riegrovy sady (Praha, Česko);;;
+Jasenová (Slovensko);;;
+Hradiště (Česko);;;
+Supetar (Chorvatsko);;;
+New Prague (Minnesota);;;
+Havlov (Žďárec, Česko);;;
+Zámostie (Slovensko);;;
+Popocatépetl (Mexiko : hora);;;
+Drženice;;;
+Mauthausen OPRAVA UCL;;;151  |a Mauthausen (Rakousko) |7 ge361272
+Penčice (Česko);;;
+Čuranda (hospoda);;;
+Lübben (Německo);;;
+Griebo (Německo);;;
+Hegrov u Dalečína OPRAVA UCL;;;
+Nové Sedlo;;;
+Nová Huť (Kraków, Polsko);;;151  |a Nowa Huta (Krakov, Polsko) |7 ge590305
+Liege (Belgie);;;151  |a Lutych (Belgie) |7 ge138930
+Certaldo (Itálie);;;
+Březí u Říčan;;;
+Skála;;;
+Námestie Slovenského národného povstania (Bratislava, Slovensko);;;
+Vilímov (Česko : oblast);;;
+Porretta Terme (Itálie);;;
+Wien (Rakousko);;;151  |a Vídeň (Rakousko) |7 ge131380
+Schönau (Německo);;;
+Mirohošť (Ukrajina);;;
+Ellern (Německo);;;
+El Shatt (Egypt);;;
+Plavnica;;;
+byzantská říše;;;151  |a Byzanc |7 ge131496
+Orlovské lesy (Česko);;;151  |a Orlovy (Česko) |7 ge619431
+Mohenžo-daro;;;
+Kychová (Česko);;;
+Kandlův Mlýn (Prachatice, Česko);;;
+Białołęka (Polsko);;;
+Sparta OPRAVA UCL;;;151  |a Sparta (starověký řecký stát) |7 ge130899
+Hanzlberk;;;
+Liborčany (Slovensko);;;
+Řepčice;;;
+New York, město (New York);;;151  |a New York (New York) |7 ge130170
+Pyl;;;
+Klopoty (Orlické Podhůří, Česko);;;
+Chleby (Česko);;;151  |a Chleby (Benešov, Česko) |7 ge596966
+Holič;;;
+Askalona (osada);;;
+Kazan' (Rusko);;;151  |a Kazaň (Rusko) |7 ge260035
+Wannsee (Německo : jezero);;;
+Strž u Staré Huti (Česko);;;
+Monemvasia (Řecko);;;
+Olšanské hřbitovy (Praha, Česko);;;1102  |a Olšanské hřbitovy (Praha, Česko) |7 kn20020322402
+Blatno (Hlinsko, Česko);;;
+Červená Lhota;;;
+Mistřice OPRAVA UCL;;;151  |a Mistřice (Česko) |7 xx0047684
+Oseček (Nymburk, Česko);;;151  |a Oseček (Česko) |7 ge075280
+Luční bouda (Česko : horská chata);;;1102  |a Luční bouda (budova : Pec pod Sněžkou, Česko) |7 olak2014832161
+Uhrovec (Slovensko);;;
+Frymburk OPRAVA UCL;;;
+Holandská Indie;;;151  |a Nizozemská východní Indie |7 ge752760
+Smaragdové jezírko (Česko);;;
+Glavotok (Chorvatsko);;;
+Czechia eczenas;;;
+Aksakovo-Belebej (Rusko);;;
+Kottwitz (Česko);;;151  |a Chotěvice (Česko) |7 ge371627
+Uloža (Slovensko);;;
+Gemerská Poloma (Slovensko);;;
+Munkács (Ukrajina);;;151  |a Mukačevo (Ukrajina) |7 ge160079
+Sankt Peterburg (Rusko);;;151  |a Petrohrad (Rusko) |7 ge128542
+Maria Saal (Rakousko);;;
+Plačkov (Pelhřimov, Česko);;;
+Park Václava Havla (Litoměřice, Česko);;;
+Luh pod Branovem;;;
+Dolní Krupá (Česko);;;
+Betlémské náměstí (Praha, Česko);;;
+Hernborn OPRAVA UCL;;;
+Hrádek (Česko);;;
+Slavíkov u Hronova OPRAVA UCL;;;
+Camaldoli (Itálie);;;
+Olonecká gubernie OPRAVA UCL;;;
+Lido di Dante (Itálie);;;
+Korštejn;;;
+Medjugorje (Bosna a Hercegovina);;;151  |a Medžugorje (Bosna a Hercegovina) |7 ge129991
+Semice;;;
+Zirndorf (Německo);;;
+Prijedor (Bosna a Hercegovina);;;
+Vesec u Sobotky (Česko);;;
+Pescocostanzo (Itálie);;;
+Velká čínská zeď;;;150  |a Velká čínská zeď (Čína) |7 ph207648
+Molenburk (Česko);;;
+Mitrovice;;;
+Červený kláštor (Slovensko);;;
+Mayerling (Rakousko);;;
+Nová Víska (okr. Chomutov, Česko);;;
+Kúty (Slovensko);;;
+Chýnov OPRAVA UCL;;;
+Doľany (Slovensko);;;
+Chyžné (Slovensko);;;
+Polská lidová republika;;;151  |a Polsko |7 ge130478
+Skalice (Česko);;;
+Na Topolce (Praha, Česko : ulice);;;
+Doubravice (Mladá Boleslav, Česko);;;
+Markvartice (Česko);;;
+Liptovská Sielnica (Slovensko);;;
+Rošice (Blatná, Česko);;;
+Erbenova stezka;;;
+Mariánská Hora (Albrechtice v Jizerských horách, Česko);;;
+1648;;;
+Švédské království;;151  |a Švédsko |7 ge134629;
+Mikulovice;;;
+Johannisberg;;;
+Dřevíkov (Vysočina, Česko);;;
+Senomaty OPRAVA UCL;;151  |a Senomaty (Česko) |7 ge518941;
+Kvetnica (Poprad, Slovensko);;;
+Freivaldov (Česko);;151  |a Jeseník (Česko) |7 ge128491;
+Maršovec (Branka u Opavy, Česko);;;
+Penčice OPRAVA UCL;;;
+Finspang (Švédsko);;;
+PLR;;151  |a Polsko |7 ge130478;
+Bílsko OPRAVA UCL;;;
+Omladina OPRAVA UCL;;1102  |a Omladina (hnutí) |7 kn20020322111;
+Tripolis OPRAVA UCL;;151  |a Tripolis (Libye) |7 ge674687;
+Hanušovce (Slovensko);;;
+Rugolo (Itálie);;;
+Záhorie (Senica, Slovensko);;;
+Nové Dvory;;;
+Budeč OPRAVA UCL;;;
+Simancas OPRAVA UCL;;;
+Palackého vrch (Brno, Česko);;;
+Jablonec nad Nisou-oblast (Česko);;;151  |a Jablonec nad Nisou (Česko : oblast) |7 ge129407
+Lounsko (Česko);;151  |a Louny (Česko : oblast) |7 ge129878;
+Bachmač (Ukrajina);;;
+Kristianie OPRAVA UCL;;;
+Kranichfeld (Německo);;;
+Bakar (Chorvatsko);;;
+Černín (Znojmo, Česko);;;
+Rohozná;;;
+Paestum OPRAVA UCL;;151  |a Paestum (zaniklé město) |7 ge114449;
+Sady Svatopluka Čecha (Praha, Česko);;;
+Almunécar;;;
+Lido di Dante;;;
+Biškek (Kyrgyzstán);;;
+Jiráskovo náměstí (Praha, Česko);;;
+Trnová (Praha-západ, Česko);;;
+Frohsdorf (Rakousko) OPRAVA UCL;;;
+Landberg;;;
+Mali Lošinj (Chorvatsko);;;151  |a Lošinj (Chorvatsko : ostrov) |7 ge216293
+Šabachův park (Praha, Česko);;;
+Revel (Estonsko);;151  |a Tallinn (Estonsko) |7 ge131037;
+Doubravice (Česko);;;
+Karvinsko (Česko);;151  |a Karviná (Česko : oblast) |7 ge129546;
+Lučatín (Slovensko);;;
+ČSFR;151  |a Československo |7 ge131689;;
+Fougeres (Francie);;;
+Klempicz;;;
+Pankow (Berlín, Německo);;;
+Zvěřina (Ostrava, Česko);;;
+Vysočina (Česko);;151  |a České Horácko (Česko) |7 ge128475;
+Bibione (Itálie);;;
+Radostice (Brno-venkov, Česko);;;
+Černouček pod Řípem;;;
+Edlach an der Rax (Rakousko);;;
+Wrocław (Polsko);;151  |a Vratislav (Polsko) |7 ge131413;
+Milčice;;;
+Újezd (Česko);;;
+Leskovec (Česko);;;
+Segdenskoye Ozero (Rusko);;;
+Vyšný Kubín (Slovensko);;;
+Počaply (Králův Dvůr, Česko);;;
+Atlantis OPRAVA UCL;;;150  |a Atlantis (mytický ostrov) |7 ph117346
+Nymbursko (Česko);;;151  |a Nymburk (Česko : oblast) |7 ge130259
+Naučná stezka Leoš Janáček očima dětí (Česko);;;
+Avellaneda (Argentina);;;
+Džbán (Česko : vodní nádrž);;;
+Tworki (Polsko);;;
+Fagaraš (Rumunsko : pohoří);;;151  |a Fagarašské hory (Rumunsko : pohoří) |7 ge370349
+Zalavár;;;
+Tepel OPRAVA UCL;;;
+Sebranice (Česko);;;
+Bílá Hora OPRAVA UCL;;;
+Dohňany (Slovensko);;;
+Caorle (Itálie);;;
+Pašovice OPRAVA UCL;;;
+Dajr az-Zor (Sýrie);;;
+Drozdovská Pila (Česko);;;
+Kladina (Česko : rybník);;;

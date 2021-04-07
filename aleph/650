@@ -1,29 +1,62 @@
 #!/usr/bin/python
-#
-# Generate fixed record set
-#
+# -*- coding: utf-8 -*-
 
-# na vstupu máme hodnotu z polí 1XX, 6XX a 7XX, která není propojena na AUT, např.:
+# INCLUDE -------------------
 
-#001251852 60014 L $$aToman, Karel$$xOPRAVA UCL
+from __future__ import print_function
 
-#k ní mám/připravím csv, které b vypadalo např.
-#$$aToman, Karel$$xOPRAVA UCL; $$aToman, Karel,$$d 1877-1946$$7jk01132611
+import StringIO,requests,lxml.html,time,sys,os,re
 
-#a nadefinuji podmínky (budou obvykle stejné pro více polí), zda např. - pokud má pole
-#druhý indikátor 4 a podpole a se shoduje s hodnotou v tabulce, tak:
-#a) přidat všechna podpole z druhé sloupce csv
-#b) odmazat případné podpole x
-#c) doplnit podpole 2 s hodnotou czenas 
-#d) změnit druhý indikátor ze 4 na 7
+from pymarc import marcxml,Field,MARCWriter,MARCReader, XMLWriter
+from pymarc.record import Record
 
-#tj. zde konkrétně by vzniklo:
+# VAR -------------------
 
-#001251852 60017 L $$aToman, Karel,$$d1877-1946$$jk01132611$$2czenas
+IN='651.txt'
+DATA='ucla.xml'
+OUT='651.aleph'
 
-with open('650.csv', 'r') as f:
-	for line in f:
-		print(line)
+# crate map from source
+
+MAP={}
+
+with open(IN, 'r') as src:
+	for line in src:
+		DATA=[]
+		orig,raw = line.strip().split(';;;')
+		if not raw: break
+		for R in raw.split('|')[1:]:
+			DATA.append(R[0])
+			DATA.append(R[1:].strip())
+		MAP[orig] = DATA
 
 
+# loop over data and write all 651 in aleph format
+
+aleph = open(OUT, 'w')
+
+def validate(record):
+
+	metadata = record
+
+	IDENT = metadata['001'].value()
+
+	for F in metadata.getfields('651'):
+		if F['a'] in MAP:
+
+		else:
+			SUB=''
+			for i in range(0, len(F.subfields)/2):
+				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+			aleph.write(str(IDENT) + ' 651' + F.indicator1 + F.indicator2 + ' L ' + SUB + '\n')
+
+# MAIN ------------------------------------------------------
+
+marcxml.map_xml(validate, DATA)
+
+aleph.close()
+
+# EXIT -------------------
+
+sys.exit(0)
 
