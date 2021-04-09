@@ -9,6 +9,8 @@ import StringIO,lxml.html,time,sys,os,re
 
 from pymarc import marcxml
 
+# TODO: Rverse match on join.. (drop '4')
+
 # VAR -------------------
 
 IN='651.txt'
@@ -18,6 +20,7 @@ OUT='651.aleph'
 # MAP -----------
 
 MAP={}
+STAT={}
 
 with open(IN, 'r') as src:
 	for line in src:
@@ -41,6 +44,8 @@ def validate(record):
 
 	IDENT = metadata['001'].value()
 
+	if IDENT == '001376611' or IDENT == '001376612': print(metadata)
+
 	if '651' in metadata:
 		MOD=False
 		for F in metadata.get_fields('651'):
@@ -51,12 +56,19 @@ def validate(record):
 			for F in metadata.get_fields('651'):
 				VAL=F['a'].encode('utf-8')
 				if VAL in MAP:
+					# stat
+					if VAL not in STAT:
+						STAT[VAL]=1
+					else:
+						STAT[VAL]+=1
+					# Aleph
 					SUB=''
 					for i in range(0, len(MAP[VAL])/2):
 						SUB+='$$' +  MAP[VAL][i*2] +  MAP[VAL][i*2+1]
 					SUB+='$$2czenas'
 					aleph.write(str(IDENT + ' 651 7 L ') + SUB + '\n')
 				else:
+					# deault
 					SUB=''
 					for i in range(0, len(F.subfields)/2):
 						SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
@@ -65,6 +77,10 @@ def validate(record):
 # MAIN ------------------------------------------------------
 
 marcxml.map_xml(validate,XML)
+
+with open('651_stat.txt','w') as f:
+	for match in STAT:
+		f.write(str(STAT[match]) + str(' -> ') + match + '\n')
 
 aleph.close()
 
