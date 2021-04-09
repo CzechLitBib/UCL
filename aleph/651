@@ -9,13 +9,21 @@ import StringIO,lxml.html,time,sys,os,re
 
 from pymarc import marcxml
 
-# TODO: Rverse match on join.. (drop '4')
-
 # VAR -------------------
 
 IN='651.txt'
 XML='ucla.xml'
 OUT='651.aleph'
+
+# DEF -----------
+
+def get_value(field):
+	ret = []
+	for sub in field:
+		if sub[0] != '4':
+		#if sub[0] != '4' and sub[0] != 'w':
+			ret.append(sub[1].strip())
+	return ' '.join(ret)
 
 # MAP -----------
 
@@ -32,7 +40,8 @@ with open(IN, 'r') as src:
 		for R in field[1:]:
 			DATA.append(R[0])
 			DATA.append(R[1:].strip())
-		MAP[orig.replace('OPRAVA UCL','').strip()] = DATA
+		#MAP[orig.replace('OPRAVA UCL','').strip()] = DATA
+		MAP[orig] = DATA
 
 # PARSE / WRITE ----------
 
@@ -44,8 +53,6 @@ def validate(record):
 
 	IDENT = metadata['001'].value()
 
-	if IDENT == '001376611' or IDENT == '001376612': print(metadata)
-
 	if '651' in metadata:
 		MOD=False
 		for F in metadata.get_fields('651'):
@@ -54,7 +61,8 @@ def validate(record):
 				break
 		if MOD:
 			for F in metadata.get_fields('651'):
-				VAL=F['a'].encode('utf-8')
+				#VAL=F['a'].encode('utf-8')
+				VAL=get_value(F).encode('utf-8')
 				if VAL in MAP:
 					# stat
 					if VAL not in STAT:
