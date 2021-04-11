@@ -56,7 +56,8 @@ def validate(record):
 	if '651' in metadata:
 		MOD=False
 		for F in metadata.get_fields('651'):
-			if F['a'].encode('utf-8') in MAP:
+			#if F['a'].encode('utf-8') in MAP:
+			if get_value(F).encode('utf-8') in MAP:
 				MOD=True
 				break
 		if MOD:
