@@ -1,0 +1,39 @@
+Pokyny k opravám autoritních polí:
+
+Pokud je v původním záznamu hodnota obsažená na seznamu k hromadné opravě, pak:
+
+1) Pole 100, 110 a 700, 710
+
+a) obsah podpolí nahradit 1:1
+b) z původního pole přidat všechna podpole 4
+c) případně změnit indikátor dle AUT 
+
+2) Pole 600, 610, 611, 630, 648, 650, 651 a 655
+a) obsah podpolí nahradit 1:1
+b) doplnit podpole 2 s hodnotou "czenas" 
+c) druhý indikátor prosím změnit na 7
+d) první indikátor případně změnit dle AUT
+
+Výstup prosím v AS formátu.
+
+Je přitom potřeba, abychom naimportovali všechna pole z daného záznamu,
+i když v nich změna neproběhne. Možná by mi proto přišlo nejjednodušší
+přeimportovat všechna pole 1XX, 6XX a 7XX jako celek. Pak můžeme odkontrolovat,
+že máme na vstupu i výstupu stejný počet řádků.
+
+Možná můžeme vynechat záznamy z bází B12 a B45 (hodnota je uvedena v poli 964a).
+
+Teoreticky se může stát, že budeme potřebovat změnit i číslo pole,
+to bychom kdyžtak probrali ústně jak řešit (a uvidíme, kolik takových případů vůbec bude)
+
+Soupisy by měly tvar:
+
+Novotný, Vladimír OPRAVA UCL; 1001	|a Novotný, Vladimír, |d 1946- |7 jk01090794
+
+Levý sloupec tahám z pokustona odsud: http://pokuston.ucl.cas.cz:38080/7/data/100.stat.html
+Pravý z báze AUT, např. odsud: https://aleph.nkp.cz/F/?func=direct&doc_number=000025946&local_base=AUT
+
+Problém, který vidím,je to, že v levém sloupci nemáte odlišená podpole - je to v pořádku?
+
+Vždy bych připravil csv soubor pro každé pole samostatně.
+
