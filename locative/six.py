@@ -48,9 +48,9 @@ with open(sys.argv[1], 'r') as f:
 					if LOCATIVE:
 						out.write(line.strip() + suffix + ':' + '%%'.join(LOCATIVE) + '\n')
 					else:
-						bad.write(line)
+						bad.write(line.strip() + '\n')
 				else:
-					bad.write(line)
+					bad.write(line.strip() + '\n')
 		else:
 			print("Response error: " + str(r.status))
 		c.close()
