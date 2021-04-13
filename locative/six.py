@@ -17,6 +17,7 @@ out = open('six-out.log', 'w', 0)
 
 with open(sys.argv[1], 'r') as f:
 	for line in f.readlines():
+		orig = line.strip()
 		suffix=''
 		if re.match('^.+ (pod|nad|u) .+$', line.strip()):# split multiline
 			suffix = re.sub('^.+( (pod|nad|u) .+)$','\\1', line.strip())
@@ -27,7 +28,7 @@ with open(sys.argv[1], 'r') as f:
 		if r.status == 200:
 			DATA = json.loads(r.read())['result'][0]
 			if len(DATA) == 0:
-				bad.write(line)
+				bad.write(orig + '\n')
 			else:
 				HAS_U,HAS_E,HAS_S = False, False, False
 				for tag in [res['tag'] for res in DATA]:
@@ -48,9 +49,9 @@ with open(sys.argv[1], 'r') as f:
 					if LOCATIVE:
 						out.write(line.strip() + suffix + ':' + '%%'.join(LOCATIVE) + '\n')
 					else:
-						bad.write(line.strip() + '\n')
+						bad.write(orig + '\n')
 				else:
-					bad.write(line.strip() + '\n')
+					bad.write(orig + '\n')
 		else:
 			print("Response error: " + str(r.status))
 		c.close()
