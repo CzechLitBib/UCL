@@ -59,7 +59,7 @@ def validate(record):
 	metadata.remove_fields('LDR')
 
 	# UCLA skip broken encoding
-	#if metadata['001'].value() == '001852470': return
+	if metadata['001'].value() == '001852470': return
 
 	# UCLA: webarchiv
 	for F in metadata.get_fields('856'):

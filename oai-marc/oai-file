@@ -15,10 +15,10 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-#DATA='ucla.xml'
+DATA='ucla.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-DATA='book.xml'
+#DATA='book.xml'
 #DATA='CLO-opr.mrc'
 
 #TOTAL_100=0
@@ -52,14 +52,14 @@ DATA='book.xml'
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-xml = XMLWriter(open('505.xml', 'w'))
+#xml = XMLWriter(open('505.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
 
 # WAYBACK ---------
 
-#link = open('link.txt', 'r')
-#wayback = open('wayback.csv', 'r')
-#aleph = open('wayback.aleph', 'w')
+link = open('link.txt', 'r')
+wayback = open('wayback.csv', 'r')
+aleph = open('wayback.aleph', 'w')
 
 #WAY={}
 #for LINE in wayback:
@@ -925,7 +925,7 @@ def validate(record):
 						DATA += ['t', metadata['245']['a'] + ' ' + metadata['245']['b'].strip('/ ')]
 					else:
 						DATA += ['t', metadata['245']['a'].strip('/ ')]
-				if '245' in metadata and 'c' in metadata['245']:
+				if '245' in metadata and 'c' in metadata['245']:# remove (s. 14-68), add dot.
 					if ';' not in metadata['245']['c'] and metadata['245']['c'][0].isupper():
 						DATA += ['n', word_to_upper(metadata['245']['c'])]
 					if len(re.findall(';', metadata['245']['c'])) == 1:
@@ -1000,12 +1000,11 @@ marcxml.map_xml(validate, DATA)
 #csv_773.close()
 #csv_787.close()
 
-#link.close()
-#wayback.close()
+link.close()
+wayback.close()
+aleph.close()
 
-#aleph.close()
-
-xml.close()
+#xml.close()
 
 #writer.close()
 #writer1.close()
