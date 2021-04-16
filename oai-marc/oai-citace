@@ -363,7 +363,7 @@ for record in records:
 		# WRITE
 		vufind.write(metadata)
 		# DEBUG
-		print(IDENT)		
+		#print(IDENT)		
 
 # EXIT -------------------
 
