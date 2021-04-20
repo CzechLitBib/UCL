@@ -39,8 +39,8 @@ DATA='book.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file0 = open('964_520a.csv', 'w')
-#file1 = open('964_500a.csv', 'w')
+#file0 = open('505_multi.txt', 'w')
+#file1 = open('505_page.txt', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
 #file4 = open('output/158.csv', 'w')
@@ -117,6 +117,10 @@ INDEX=1
 #reader.close()
 #sys.exit(1)
 
+def name_switch(s):
+	s = s.strip(', ')
+	return s.split(' ')[-1] + ', ' + ' '.join(s.split(' ')[:-1])
+
 def name_to_upper(s,ID):
 	if len(s.split(',')) == 2:
 		return s.split(',')[0].strip().upper() + ', ' + s.split(',')[1].strip() 
@@ -142,20 +146,24 @@ def word_to_lower(s):
 		buff += char 
 	return buff
 
-def citace(record, page):
+def citace(record, fiveofive, page):
 
 	metadata = record
+
 	IDENT = metadata['001'].value()
 
 	#PREFACE
-	PREFACE=''
-	if '100' in metadata and 'a' in metadata['100'] and '245' in metadata and 'a' in metadata['245']:
-		if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
-			PRENAME = name_to_upper(metadata['100']['a'].rstrip(','), IDENT)
-		else:
-			PRENAME = metadata['100']['a']
-		
-		PREFACE = PRENAME + ': ' + re.sub('(.*[^!?])$','\\1.', metadata['245']['a'].strip('=:/ ')) + ' In: '
+	PREFACE,PRENAME='',''
+	#if '100' in record and 'a' in record['100'] and '245' in record and 'a' in record['245']:
+	#	if len(metadata['100']['a'].rstrip(',').split(',')) == 2:
+	#		PRENAME = name_to_upper(metadata['100']['a'].rstrip(','), IDENT)
+	#	else:
+	#		PRENAME = metadata['100']['a']
+	#
+	#	PREFACE = PRENAME + ': ' + re.sub('(.*[^!?])$','\\1.', metadata['245']['a'].strip('=:/ ')) + ' In: '
+	if 't' in fiveofive and 'r' in fiveofive:
+		PRENAME = name_to_upper(name_switch(fiveofive['r']), IDENT)
+		PREFACE = PRENAME + ': ' + re.sub('(.*)\[.+\]$','\\1', fiveofive['t'].strip('/ ')).strip() + ' In: '
 
 	#BASE
 	CNT=0
@@ -342,7 +350,16 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
-#	IDENT = metadata['001'].value()
+	#IDENT = metadata['001'].value()
+
+	#for F in metadata.get_fields('505'):
+	#	if len(F.get_subfields('t')) >=2:
+	#		file0.write(str(IDENT) + 'T\n')
+	#	if len(F.get_subfields('r')) >=2:
+	#		file0.write(str(IDENT) + 'R\n')
+	#	if len(F.get_subfields('g')) >=2:
+	#		file0.write(str(IDENT) + 'G\n')
+	#return
 
 #	if '964' in metadata and '520' in metadata:
 #		BASE=''
@@ -805,6 +822,7 @@ def validate(record):
 	if metadata.leader[7] == 'm':
 		if len(metadata.get_fields('505')) > 1:
 			for F in metadata.get_fields('505'):
+			
 				record = Record()
 				# FMT
 				record.add_field(Field(tag = 'FMT', data='AN'))
@@ -908,12 +926,10 @@ def validate(record):
 				# 524
 				PAGE=''
 				if 'g' in F:
-					 if re.match('^([Ss]\. )?(\[?[0-9]+\]?|\[?[0-9]+\]?-\[?[0-9]+\]?)$', F['g'].strip()):
+					if re.match('^([Ss]\. )?(\[?[0-9]+\]?|\[?[0-9]+\]?-\[?[0-9]+\]?)$', F['g'].strip()):
 					 	PAGE = re.sub('^([Ss]\. )?(\[?[0-9]+\]?|\[?[0-9]+\]?-\[?[0-9]+\]?)$','\\2', F['g'].strip()).replace('[','').replace(']','')
-				CITACE = citace(metadata, PAGE)
+				CITACE = citace(metadata, F, PAGE)
 				if CITACE: record.add_field(CITACE)
-				if '524' in record:
-					print(record['524'].value().encode('utf-8'))
 				# 655
 				if 't' in F:
 					if not re.match('^\[.*\.\.\.\]$', F['t'].strip('/ ')):
