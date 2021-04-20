@@ -1,0 +1,68 @@
+Pri vytvareni zakladni konverze pro pole 773 se nejpreve hleda 'bibliograficka_cast/zdroj/nazev' a 'bibliograficka_cast/zdroj/rok'.
+
+Pokud existuje 'segment_bibliography' Vystupni tvar ma format:
+
+
+773 01    $t nazev $g zbytek $9 rok
+
+
+Hodnota "rok" se v pripade 'segment_bibliography' prebira z 'bibliograficka_cast/zdroj/rok', nebo se extrahuje ze 'segment_bibliography'?
+Co kdyz 'bibliograficka_cast/zdroj/rok' neni dostupny?
+
+XXX
+------------------------------
+přednost má segment_bibliography , ale zatím s tím netřeba ztrácet čas; výhledově bych poprosil,
+že bychom z toho segment bibliography zkusili vytáhnout podrobnější datum (včetně příapdného měsíce a dne)
+
+V pripade ze neni k dispozici 'segment_bibliography' ne vystupni format ve tvaru:
+
+
+773 01    $t nazev $g ? $9 rok
+
+
+Kde 'bibliograficka_cast/zdroj/nazev' je "nazev" a 'bibliograficka_cast/zdroj/rok' je "rok". Co patri do pole 'g'?
+
+
+XXX
+------------
+Do 773g v tomto případě prosím dejte obsah zdroj/rok po návěští R. Vznikalo by tedy:
+
+773gR. XXXX
+kde XXXX je hodnota zdroj/rok
+
+
+Potreboval bych zopakovat zakladni rozrezani 'segment_bibiliography':
+
+Priklad:
+
+In: Národní listy 60, 1920, več. vyd., č. 225, s. 1, 16. 8.||
+
+-Odrizne se 'In: ', odstrani se vsechny svislice '|'.
+-Odrizne se nazev "Narodni listy" = pole T
+WM: Až sem ano.
+Zbytek:
+
+-Pak tu mam nejakou podivnost. Pokud za cislem, ktere ma tri cifry je tecka, pak tecku odstranim??
+WM: Tady, přiznám se, nevím, o co jde. Kdyžtak, prosím, přeskočte. Přemýšlím, kde a proč bych
+chtěl odstraňovat tečku po trojmístném čísle...
+-Prevedu 'str.' na 's.' 
+WM: Ano
+-Pokud najdu 's. cislo' uvnir, presunu na konec.
+WM: Ano
+Toto zapisu jako 'Jg. '/Roc.' + zbytek do pole 9.
+WM: Ano, dle jazyka prosím předsuňte Jg. (německé) či Roč. (české), tj. vzniklo by 
+773t Národní listy
+773g Roč. 60, 1920, več. vyd., č. 225, 16. 8., s. 1
+
+Ad to podpole 9:
+- pokud je vyplněno, má přednost pole rok z položkového rozpisu
+- není-li vyplněno, dejte sem, prosím, letopočet z 773g, tj. první
+řetězec v pořadí, který začíná 17, 18 či 19 a má alespoň 4 numerické znaky,
+tj. mohou být hodnoty:
+1920
+1920/1921
+atp.
+
+Teoreticky by k tomu bylo možné připojit přesné datum na tvar RRRRMMDD,
+ale tím se teď nezdržujte, je tam zase x variant.
+

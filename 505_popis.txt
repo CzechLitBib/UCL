@@ -1,0 +1,93 @@
+001 - doplňte, prosím, jedinečné sysno, abychom data mohli importovat,
+např. dle vzoru sbXXXXXXX - přičemž XXXXXX je vzestupná řada od 000001 výše
+
+100
+- v datech ještě stále vidím případy, kdy v poli 100 není kód aut, např. zde:
+=100  1\$aRak, Jiří,$d1947-$4aui$7jn20000620303   (jiný kód)
+či zde:
+=100  1\$aRagneda, Massimo (žádný kód)
+
+245
+- je v pořádku; drobné chybky jsou dané daty na vstupu
+
+524
+- vypadá OK, jen prosím vždy dodat na konec pole tečku.
+
+Větší problém je pak jen s vytvářením názvů jednotlivých studií.
+Zdá se, že se vždy vytvoří pro první studii v pořadí, např. zde:
+https://vufind.ucl.cas.cz/Record/001366082#details
+vzniká:
+=524 \\$aBLAŽEJOVSKÁ, Alena: Popiš mi tu proměnu. In: BLAŽEJOVSKÁ, Alena - KOPÁČ, Radim: Popiš mi tu proměnu : rozhovory s básníky. Praha : Pulchra, 2010, s. 14-21
+...
+=524 \\$aBLAŽEJOVSKÁ, Alena: Popiš mi tu proměnu. In: BLAŽEJOVSKÁ, Alena - KOPÁČ, Radim: Popiš mi tu proměnu : rozhovory s básníky. Praha : Pulchra, 2010, s. 112-124
+=524 \\$aBLAŽEJOVSKÁ, Alena: Popiš mi tu proměnu. In: BLAŽEJOVSKÁ, Alena - KOPÁČ, Radim: Popiš mi tu proměnu : rozhovory s básníky. Praha : Pulchra, 2010, s. 126-134
+=524 \\$aBLAŽEJOVSKÁ, Alena: Popiš mi tu proměnu. In: BLAŽEJOVSKÁ, Alena - KOPÁČ, Radim: Popiš mi tu proměnu : rozhovory s básníky. Praha : Pulchra, 2010, s. 136-154
+
+Mělo by přitom dle jednotlivého pole 505 vzniknout např.:
+= 524 \\$aBRIKCIUS, Eugen: Mystifikace v mém podání předstírá, že je, co je. In: BLAŽEJOVSKÁ, Alena - KOPÁČ, Radim: Popiš mi tu proměnu : rozhovory s básníky. Praha : Pulchra, 2010, s. 14-21
+
+Kdyžtak, prosím, ještě upravte.
+
+Obecný vzor by měl být 505r (tvar PŘÍJMENÍ, jméno): 505t. In: (pak už je to v pořádku)
+
+
+Občas se vyskytne chybný zápis dat na vstupu - např. toto:
+=245 00$ceditor Josef Tomeš.
+=336 \\$atext$btext$2rdacontent
+=337 \\$abez média$bn$2rdamedia
+=338 \\$ajiný$bnz$2rdacarrier
+=524 \\$aBásník a politik : Sborník z konference k sedmdesátému výročí úmrtí Viktora Dyka. Editor Josef Tomeš. Praha : Akropolis : Společnost Viktora Dyka, 2004.
+=655 \\$afotografie z Dykova pohřbu, snímky památníku na ostrově Lopud a pamětní desky v pražské Dykově ulici
+=773 0\$tBásník a politik : Sborník z konference k sedmdesátému výročí úmrtí Viktora Dyka$92004.
+=910 \\$aABB060
+=964 \\$aB12
+=LKR \\$aUP$b001310767$cKNA01
+=OWN \\$aUCLA
+=SIF \\$aSBOR
+
+vzniká na zákaldě tohoto:
+
+505	0	0	|t [fotografie z Dykova pohřbu, snímky památníku na ostrově Lopud a pamětní desky v pražské Dykově ulici]  |g s. 139-146, od Spolku ke Společnosti Josef Tomeš,  |g s. 147-150 
+
+Můžete mi, prosím, poslat seznam všech polí 505, které obsahují více než jedno pole t, r či g?
+Nechám to opravit.
+
+Je, prosím, možné, že by se stránkový údaj nevytvořil v případě, kdy je na vstupu po pomlčce mezera?
+Např. zde:
+505	0	0	|t Reálná katastrofa v časopise Světozor. Od xylografie k fotografickému seriálu [studie] /  |r Kateřina Piorecká,  |g s. 45- 59 
+Vzniká:
+=245 10$aReálná katastrofa v časopise Světozor. Od xylografie k fotografickému seriálu /$cKateřina Piorecká.
+..
+=524 \\$aBENDOVÁ, Eva - PIORECKÁ, Kateřina - BENDOVÁ, Eva et al.: Živly v nás : katastrofa a její obraz v kultuře 19. století : výstava. Autorky textů Eva Bendová, Kateřina Piorecká. Plzeň : Západočeská galerie, 2016.
+
+Pokud ano, prosím, upravte, popř. pošlete seznam, nechám opravit.
+
+655 a 773
+
+Zdá se mi, že tam zatím nevidím následující úpravy (možná zapadly v textech předchozích mailů):
+
+ 655
+...
+
+U 505T A [] TEDY MOHOU NASTAT TŘI SITUACE:
+A) V 505T JE JEN JEDNA [] A NEPŘEDCHÁZÍ JÍ DVOJTEČKA, PAK JDE O ŽÁNR A OBSAH [] PATŘÍ DO 655
+B) V 505T JE JEN JEDNA [], JEJÍ OBSAH NEKONČÍ NA ... A ZÁROVEŇ JI PŘEDCHÁZÍ :, PAK JDE
+O ANOTACI/POZNÁMKU, KONVERTUJTE PROSÍM DO 520A (INDIKÁTOR 2)
+C) V 505T JSOU DVĚ [], PAK BY MĚLA MÍT DRUHÁ Z NICH HODNOTU "BÁSEŇ" A PATŘÍ DO 655,
+PRVNÍ V POŘADÍ OBSAHUJE PODNÁZEV A PATŘÍ DO 245B
+
+POKUD NASTANE JAKÁKOLI JINÁ SITUACE, TJ.
+A) V 505T JSOU DVĚ [] A DRUHÁ Z NICH NEOBSAHUJE "BÁSEŇ", NEBO
+B) V 505T JE JEDNA [], KTERÁ NENÍ PO DVOJTEČCE, ALE KONČÍ NA "..."
+POŠLETE MI PROSÍM VÝPIS TAKOVÝCH HODNOT, OPRAVÍME NA VSTUPU RUČNĚ
+
+
+773
+a) Stále se vytvářejí nenáležité čárky v poli 773a po hodnotě konvertované z pole 100
+Např. zde:
+=773 0\$aKylián, Jiří,$tBudižkněčemu$nz francouzského originálu Bon qu'à ça ... přeložil Michal Lázňovský.$dPraha : Národní divadlo, 2019.$z978-80-7258-727-8$92019.
+(LINK: https://vufind.ucl.cas.cz/Record/002568998#details )
+=773 0\$aLábus, Václav, - Bartošek, Jaroslav - Borovská, Hana et al.$tEurolingua & Eurolitteraria 2006$z978-80-7372-182-4$92007.
+(LINK: https://vufind.ucl.cas.cz/Record/001347192#details )
+
+b) Zatím se nevytváří pole 773g, které by mělo obsahovat hodnotu z pole 505r (stránkový rozsah).
