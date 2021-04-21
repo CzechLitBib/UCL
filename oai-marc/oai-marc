@@ -1266,7 +1266,7 @@ for record in records:
 		#		if F['4'] not in metadata['100']['4']: ROLE=False
 		#if not ROLE and 245 in metadata and 'c' in metadata['245']:
 		#	if ';' not in metadata['245']['c']:
-		#		write_error(header.identifier(), '245', SIF, '189', 'Chybi popis vedlejsi role v 245c.')
+		#		write_error(header.identifier(), '245', SIF, '189', 'Chybí popis vedlejší role v 245c.')
 
 	COUNTER+=1
 
