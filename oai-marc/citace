@@ -97,21 +97,24 @@ def validate(record):
 			NAME = metadata['100']['a']
 		CNT+=1
 	for F in metadata.get_fields('700'):
-		if not NAME:
-			NAME = name_to_upper(F['a'].rstrip(','), IDENT)
+		if '4' in F and F['4'] == 'aut':
+			if not NAME:
+				NAME = name_to_upper(F['a'].rstrip(','), IDENT)
+			else:
+				NAME += u' – ' + name_to_upper(F['a'].rstrip(','), IDENT)
+			CNT+=1
+			if CNT == 3:
+				NAME += ' et al.'
+				break
 		else:
-			NAME += u' – ' + name_to_upper(F['a'].rstrip(','), IDENT)
-		CNT+=1
-		if CNT == 3:
-			NAME += ' et al.'
-			break
+			continue
 	# NAME 100/700
-	if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
-		if '245' in metadata and 'c' in metadata['245']:
-			if '[=' in metadata['245']['c']:
-				if re.findall('\[=(.+?)\]', metadata['245']['c']):
-					LOW = re.findall('\[=(.+?)\]', metadata['245']['c'].strip())[0]
-					NAME = metadata['245']['c'].replace(LOW, name_to_upper(LOW, IDENT)).strip('. ')
+	#if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
+	#	if '245' in metadata and 'c' in metadata['245']:
+	#		if '[=' in metadata['245']['c']:
+	#			if re.findall('\[=(.+?)\]', metadata['245']['c']):
+	#				LOW = re.findall('\[=(.+?)\]', metadata['245']['c'].strip())[0]
+	#				NAME = metadata['245']['c'].replace(LOW, name_to_upper(LOW, IDENT)).strip('. ')
 	# 245
 	if '245' in metadata:
 		A = [sub for sub in metadata['245'].get_subfields('a')]
