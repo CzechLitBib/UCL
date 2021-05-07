@@ -54,8 +54,8 @@ INDEX_TOP='''<!doctype html>
 <table border="1" cellpadding="8px" style="border-collapse:collapse;">
 <tr>
 <td width="30" bgcolor="#333333;" align="center"><font color="gold">Pole</font></td>
-<td width="280" bgcolor="#333333;" align="center" colspan="6"><font color="gold">Podpole 7</font></td>
-<td width="280" bgcolor="#333333;" align="center" colspan="6"><font color="gold">Bez podpole 7</font></td>
+<td width="280" bgcolor="#333333;" align="center" colspan="5"><font color="gold">Podpole 7</font></td>
+<td width="280" bgcolor="#333333;" align="center" colspan="5"><font color="gold">Bez podpole 7</font></td>
 </tr>
 '''
 
@@ -149,8 +149,8 @@ for TAG in sorted(TAGLIST):
 	DB = {}
 	SORT = {}
 
-	htm = open(OUT + TAG + '.html', 'a')
-	htm.write(HTML_TOP)
+	#htm = open(OUT + TAG + '.html', 'a')
+	#htm.write(HTML_TOP)
 	srt = open(OUT + TAG + '.stat.html', 'a')
 	srt.write(SRT_TOP)
 	srt_csv = open(OUT + TAG + '.stat.csv', 'a')
@@ -163,15 +163,15 @@ for TAG in sorted(TAGLIST):
 				if value not in DB: DB[value] = []
 				DB[value].append(aleph.strip())
 	# gen html
-	for value in DB:
-		SORT[value] = len(DB[value])
-		for aleph in DB[value]:
-			htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-				aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
-			)
-			CNT+=1
-	htm.write(HTML_BOTTOM)	
-	htm.close()
+	#for value in DB:
+	#	SORT[value] = len(DB[value])
+	#	for aleph in DB[value]:
+	#		htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+	#			aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+	#		)
+	#		CNT+=1
+	#htm.write(HTML_BOTTOM)	
+	#htm.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
@@ -192,8 +192,8 @@ for TAG in sorted(TAGLIST):
 	DB = {}
 	SORT = {}
 
-	htm = open(OUT + TAG + '.7.html', 'a')
-	htm.write(HTML_TOP)
+	#htm = open(OUT + TAG + '.7.html', 'a')
+	#htm.write(HTML_TOP)
 	srt = open(OUT + TAG + '.7.stat.html', 'a')
 	srt.write(SRT_TOP)
 	srt_csv = open(OUT + TAG + '.7.stat.csv', 'a')
@@ -206,15 +206,15 @@ for TAG in sorted(TAGLIST):
 				if value not in DB: DB[value] = []
 				DB[value].append(aleph.strip())
 	# gen html
-	for value in DB:
-		SORT[value] = len(DB[value])
-		for aleph in DB[value]:
-			htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-				aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
-			)
-			CNT_7+=1
-	htm.write(HTML_BOTTOM)	
-	htm.close()
+	#for value in DB:
+	#	SORT[value] = len(DB[value])
+	#	for aleph in DB[value]:
+	#		htm.write('<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+	#			aleph + '&local_base=AV">' + aleph + '</a> <font color="white">' + value + '</font></p>\n'
+	#		)
+	#		CNT_7+=1
+	#htm.write(HTML_BOTTOM)	
+	#htm.close()
 	# gen stat
 	if re.match('6..', TAG): TYPE='Subject'
 	if re.match('630', TAG): TYPE='LinkedResource'
@@ -233,7 +233,7 @@ for TAG in sorted(TAGLIST):
 	# write index
 	ind.write('<tr>' + '\n')
 	ind.write('<td width="30" align="center"><font color="gold">' + TAG + '</font></td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	#ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
 	ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.7.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
 	ind.write('<td width="40" align="right">'+ str(CNT_7) + '</td>' + '\n')
 	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.7.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
@@ -243,7 +243,7 @@ for TAG in sorted(TAGLIST):
 		ind.write('<td width="40" align="center">' + str(CNT_7*100/(CNT + CNT_7)) + '%</td>' + '\n')
 	except:
 		ind.write('<td width="40" align="center">0%</td>' + '\n')
-	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
+	#ind.write('<td width="60" align="center"><a href="data/' + TAG + '.html" style="text-decoration:none;color:white">HTML</a></td>' + '\n')
 	ind.write('<td width="40" align="center"><a href="raw/' + TAG + '.csv" style="text-decoration:none;color:white">CSV</a></td>' + '\n')
 	ind.write('<td width="40" align="right">' + str(CNT) + '</td>' + '\n')
 	ind.write('<td width="60" align="center"><a href="data/' + TAG + '.stat.html" style="text-decoration:none;color:white">STAT</a></td>' + '\n')
