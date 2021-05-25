@@ -21,7 +21,8 @@ AUTMAP = {
 	'id.loc.gov':'LCCN',
 	'viaf.org':'VIAF',
 	'www.worldcat.org':'WorldCat',
-	'www.getty.edu':'ULAN'
+	'www.getty.edu':'ULAN',
+	'orcid.org':'ORCID'
 }
 
 f = open(IN, 'r')
