@@ -5,6 +5,8 @@
 
 import requests,StringIO,lxml.html,json,time,sys,re
 
+# VAR ----------------------
+
 IN='koha_100.csv'
 OUT='koha_wiki.csv'
 
@@ -24,6 +26,8 @@ AUTMAP = {
 
 f = open(IN, 'r')
 out = open(OUT, 'w')
+
+# MAIN ----------------------
 
 session = requests.Session()
 
@@ -50,15 +54,12 @@ for line in f:
 							ID = re.sub('^\[[^ ]+(.*)\]$', '\\1', span.text).replace(' ','').strip()
 							BUFF += ';' + AUTMAP[aut] + ';' + ID
 					if not MATCH: print("No map: " + span.text + '\n' + TPL)
-				# write!
-				out.write(BUFF + '\n')
-	#	sys.exit(1)
-#	sys.exit(2)
-	# do not stress the server
-	time.sleep(0.5)
+				out.write(BUFF + '\n')# Write!
+	time.sleep(0.1)# Do not stress the server.
+
+# END ----------------------
 
 session.close()
-
 out.close()
 f.close()
 
