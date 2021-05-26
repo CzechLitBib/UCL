@@ -16,9 +16,10 @@ from pymarc.record import Record
 #DATA='uclec.xml'
 #DATA='uclo.xml'
 #DATA='ucla.xml'
+DATA='uclo_koha.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
-DATA='book.xml'
+#DATA='book.xml'
 #DATA='CLO-opr.mrc'
 
 #TOTAL_100=0
@@ -31,7 +32,7 @@ DATA='book.xml'
 #BUFF=''
 
 #SIXTEEN=0
-#COUNTER=0
+COUNTER=0
 
 #csv_773 = open('773.csv', 'w')
 #csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
@@ -39,7 +40,7 @@ DATA='book.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file0 = open('505_multi.txt', 'w')
+#file0 = open('260264008773.txt', 'w')
 #file1 = open('505_page.txt', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
@@ -52,8 +53,17 @@ DATA='book.xml'
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-xml = XMLWriter(open('505.xml', 'w'))
+#xml = XMLWriter(open('koha_024.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
+
+# KOHA ---------
+
+KOHAMAP={}
+
+with open('koha_wiki.csv', 'r') as f:
+	for line in f:
+		data = line.split(';')
+		KOHAMAP[data[0]] = data[1:]
 
 # WAYBACK ---------
 
@@ -73,7 +83,7 @@ xml = XMLWriter(open('505.xml', 'w'))
 
 # 505 ---------
 
-INDEX=1
+#INDEX=1
 
 # WAYBACK ---------
 
@@ -185,7 +195,7 @@ def citace(record, fiveofive, page):
 				NAME += ' et al.'
 				break
 		else:
-			break
+			continue
 
 	# NAME 100/700
 	#if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
@@ -243,7 +253,7 @@ def validate(record):
 #	global BUFF
 #	global BUFF_100, BUFF_600, BUFF_700, TOTAL_100, SEVEN_100, TOTAL_600, SEVEN_600, TOTAL_700, SEVEN_700
 #	global SIXTEEN
-	global INDEX
+#	global INDEX
 
 	# LDR dup
 #	metadata.remove_fields('LDR')# LDR dup
@@ -349,6 +359,95 @@ def validate(record):
 # ------------------------------------------------------
 # GENERIC
 # ------------------------------------------------------
+
+	IDENT = metadata['001'].value()
+
+
+	# KOHA
+
+	COUNTER+=1
+
+	if IDENT in KOHAMAP:
+		for i in range(0, len(KOHAMAP[IDENT]/2)):
+			metadata.add_ordered_field(Field(tag='024', indicators=['7',' '], subfields=['a', KOHAMAP[IDENT][2*i+1].strip(), '2',  KOHAMAP[INDET][2*i]].strip()))
+		xml.write(metadata)
+
+	return
+
+#	for F in metadata.get_fields('100'):
+#		if '7' in metadata['100']:
+#			print(IDENT + ';' + metadata['100']['7'])
+
+#	for F in metadata.get_fields():
+#		if F.tag not in ['100', '600', '700']:
+#			if '<' in F.value() or '>' in F.value():
+#				if F.tag != '245' and F.tag != '773':
+#					print(IDENT + '->' + F.tag)
+#				if F.tag == '245':
+#					if 'c' in F:
+#						if '<' not in F['c'] and '>' not in F['c']:
+#							print(IDENT + '->' + F.tag)
+#					else:
+#						print(IDENT + '->' + F.tag)
+#				if F.tag == '773':
+#					if 'q' in F:
+#						if '<' not in F['q'] and '>' not in F['q']:
+#							print(IDENT + '->' + F.tag)
+#					else:
+#						print(IDENT + '->' + F.tag)
+#						
+#	return
+
+#	DATA=IDENT + ';'
+
+#	if '260' in metadata and 'c' in metadata['260']:
+#		DATA += metadata['260']['c'].encode('utf-8') + ';'
+#	else:
+#		DATA += ';'
+
+#	PASS=0
+#	for F in metadata.get_fields('264'):
+#		if 'c' in F: PASS+=1
+#	if PASS > 0:
+#		ALL = [F['c'] for F in metadata.get_fields('264') if 'c' in F]
+#		if len(ALL) == 1:
+#			DATA +=	ALL[0].encode('utf-8') + ';'
+#		else:
+#			DATA +=	'#'.join(ALL).encode('utf-8') + ';'
+#	else:
+#		DATA += ';'
+
+#	if '008' in metadata:
+#		DATA += metadata['008'].value().encode('utf-8') + ';'
+#	else:
+#		DATA += ';'
+
+#	PASS=0
+#	for F in metadata.get_fields('773'):
+#		if '9' in F: PASS+=1
+#	if PASS > 0:
+#		ALL = [F['9'] for F in metadata.get_fields('773') if '9' in F]
+#		if len(ALL) == 1:
+#			DATA +=	ALL[0].encode('utf-8')
+#		else:
+#			DATA +=	'#'.join(ALL).encode('utf-8')
+
+#	file0.write(DATA + '\n')
+
+#	return
+
+	# 245c
+#	ROLE=True
+#	for F in metadata.get_fields('700'):
+#		if '4' in F and 'aut' not in F.get_subfields('4'): ROLE=False
+#	for F in metadata.get_fields('506'):
+#		if 'a' in F and F['a'] == '162': ROLE=True
+#	if '100' in metadata and 'ive' in metadata['100'].get_subfields('4'): ROLE=True
+#	if not ROLE and '100' in metadata:
+#		if '245' in metadata and 'c' in metadata['245']:
+#			if ';' not in metadata['245']['c']:
+#				file0.write('https://vufind.ucl.cas.cz/Record/' + str(IDENT) + '#details\n')
+#	return
 
 	#IDENT = metadata['001'].value()
 
@@ -1069,7 +1168,7 @@ xml.close()
 #print('SEVEN 700:' + str(SEVEN_700))
 
 #print(str(SIXTEEN))
-#print(str(COUNTER))
+print(str(COUNTER))
 
 # EXIT -------------------
 
