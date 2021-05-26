@@ -39,7 +39,10 @@ for line in f:
 	if req1.status_code == 200:
 		search = json.loads(req1.text, strict=False)
 		if search['query']['searchinfo']['totalhits'] > 0:
-			TITLE = search['query']['search'][0]['title']
+			if IDENT == '716' or IDENT == '37538':# Karek Capek
+				TITLE = search['query']['search'][1]['title']
+			else:
+				TITLE = search['query']['search'][0]['title']
 			req2 = session.get(WIKIBASE + WIKITEMPLATE + TITLE)
 			if req2.status_code == 200:
 				exptpl = json.loads(req2.text, strict=False)
