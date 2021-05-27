@@ -14,9 +14,9 @@ from pymarc.record import Record
 
 #DATA='demo.xml'
 #DATA='uclec.xml'
-DATA='uclo.xml'
+#DATA='uclo.xml'
 #DATA='ucla.xml'
-#DATA='uclo_koha.xml'
+DATA='uclo_koha.xml'
 #DATA='koha_024.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
@@ -43,8 +43,8 @@ DATA='uclo.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-file0 = open('clo_400bc.csv', 'w')
-file1 = open('clo_500bc.csv', 'w')
+file0 = open('koha_100bc.csv', 'w')
+#file1 = open('clo_500bc.csv', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
 #file4 = open('output/158.csv', 'w')
@@ -395,41 +395,57 @@ def validate(record):
 	else:
 		IDENT = ''
 
-	for F in metadata.get_fields('400'):
-		if 'b' in metadata['400'] and 'c' in metadata['400']:
+	for F in metadata.get_fields('100'):
+		if 'b' in F and 'c' in F:
 			SUB=''
 			for i in range(0, len(F.subfields)/2):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
 			file0.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
-		elif 'b' in metadata['400']:
+		elif 'b' in F:
 			SUB=''
 			for i in range(0, len(F.subfields)/2):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
 			file0.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
-	
-		elif 'c' in metadata['400']:
+		elif 'c' in F:
 			SUB=''
 			for i in range(0, len(F.subfields)/2):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
 			file0.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
 
-	for F in metadata.get_fields('500'):
-		if 'b' in metadata['500'] and 'c' in metadata['500']:
-			SUB=''
-			for i in range(0, len(F.subfields)/2):
-				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-			file1.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
-		elif 'b' in metadata['500']:
-			SUB=''
-			for i in range(0, len(F.subfields)/2):
-				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-			file1.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
-	
-		elif 'c' in metadata['500']:
-			SUB=''
-			for i in range(0, len(F.subfields)/2):
-				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-			file1.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
+
+#	for F in metadata.get_fields('400'):
+#		if 'b' in F and 'c' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file0.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
+#		elif 'b' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file0.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
+#		elif 'c' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file0.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
+
+#	for F in metadata.get_fields('500'):
+#		if 'b' in F and 'c' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file1.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
+#		elif 'b' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file1.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
+#		elif 'c' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file1.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
 	
 	return
 
@@ -1230,7 +1246,7 @@ marcxml.map_xml(validate, DATA)
 #writer4.close()
 
 file0.close()
-file1.close()
+#file1.close()
 #file2.close()
 #file3.close()
 #file4.close()
