@@ -193,17 +193,22 @@ for record in records:
 			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
 		# UCLA remove << >>
-		for F in metadata.get_fields('100','600','700'):
+		for F in metadata.get_fields('100', '600', '700'):
 			LHT = False
 			SUB = F.subfields
 			for i in range(0, len(SUB)):
-				if '<<' in SUB[i] and '>>' in SUB[i]:
-					SUB[i] = SUB[i].replace('<<','').replace('>>','')
+				if re.findall('<<[^<]*>>', SUB[i]):
+					SUB[i] = re.sub('<<([^<]*)>>', '\\1', SUB[i])
 					LHT = True
-			if LHT: F.subfields = SUB
+			if LHT:
+				F.subfields = SUB
+
 		if '245' in metadata and 'c' in metadata['245']:
-			if '<<' in metadata['245']['c'] and '>>' in metadata['245']['c']:
-				metadata['245']['c'] = metadata['245']['c'].replace('<<','').replace('>>','')
+			LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
+			if LHT:
+				metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])	
+			for LH in LHT:
+				metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a',  re.sub('<<([^<]*)>>', '\\1', LH)]))
 
 		# CITACE ------------------
 
