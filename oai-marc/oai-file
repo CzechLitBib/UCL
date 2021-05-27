@@ -14,9 +14,10 @@ from pymarc.record import Record
 
 #DATA='demo.xml'
 #DATA='uclec.xml'
-#DATA='uclo.xml'
+DATA='uclo.xml'
 #DATA='ucla.xml'
-DATA='uclo_koha.xml'
+#DATA='uclo_koha.xml'
+#DATA='koha_024.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
 #DATA='book.xml'
@@ -32,7 +33,9 @@ DATA='uclo_koha.xml'
 #BUFF=''
 
 #SIXTEEN=0
-COUNTER=0
+#TOTAL=0
+#COUNTER=0
+
 
 #csv_773 = open('773.csv', 'w')
 #csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
@@ -40,8 +43,8 @@ COUNTER=0
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file0 = open('260264008773.txt', 'w')
-#file1 = open('505_page.txt', 'w')
+file0 = open('clo_400bc.csv', 'w')
+file1 = open('clo_500bc.csv', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
 #file4 = open('output/158.csv', 'w')
@@ -58,12 +61,12 @@ COUNTER=0
 
 # KOHA ---------
 
-KOHAMAP={}
+#KOHAMAP={}
 
-with open('koha_wiki.csv', 'r') as f:
-	for line in f:
-		data = line.split(';')
-		KOHAMAP[data[0]] = data[1:]
+#with open('koha_wiki.csv', 'r') as f:
+#	for line in f:
+#		data = line.split(';')
+#		KOHAMAP[data[0]] = data[1:]
 
 # WAYBACK ---------
 
@@ -360,19 +363,91 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
-	IDENT = metadata['001'].value()
 
+ 	#UCLA remove << >>
+
+#	print(metadata)
+
+#	for F in metadata.get_fields('100', '600', '700'):
+#		LHT = False
+#		SUB = F.subfields
+#		for i in range(0, len(SUB)):
+#			if re.findall('<<[^<]*>>', SUB[i]):
+#				SUB[i] = re.sub('<<([^<]*)>>', '\\1', SUB[i])
+#				LHT = True
+#		if LHT:
+#			F.subfields = SUB
+#
+#	if '245' in metadata and 'c' in metadata['245']:
+#		LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
+#		if LHT: metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])	
+#		for LH in LHT:
+#			metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a',  re.sub('<<([^<]*)>>', '\\1', LH)]))
+#
+#	print(metadata)
+
+#	return
+
+	# CLO 100/400/500bc
+
+	if '001' in metadata:
+		IDENT = metadata['001'].value()
+	else:
+		IDENT = ''
+
+	for F in metadata.get_fields('400'):
+		if 'b' in metadata['400'] and 'c' in metadata['400']:
+			SUB=''
+			for i in range(0, len(F.subfields)/2):
+				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+			file0.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
+		elif 'b' in metadata['400']:
+			SUB=''
+			for i in range(0, len(F.subfields)/2):
+				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+			file0.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
+	
+		elif 'c' in metadata['400']:
+			SUB=''
+			for i in range(0, len(F.subfields)/2):
+				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+			file0.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
+
+	for F in metadata.get_fields('500'):
+		if 'b' in metadata['500'] and 'c' in metadata['500']:
+			SUB=''
+			for i in range(0, len(F.subfields)/2):
+				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+			file1.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
+		elif 'b' in metadata['500']:
+			SUB=''
+			for i in range(0, len(F.subfields)/2):
+				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+			file1.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
+	
+		elif 'c' in metadata['500']:
+			SUB=''
+			for i in range(0, len(F.subfields)/2):
+				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+			file1.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
+	
+	return
 
 	# KOHA
 
-	COUNTER+=1
+#	global COUNTER, TOTAL
 
-	if IDENT in KOHAMAP:
-		for i in range(0, len(KOHAMAP[IDENT]/2)):
-			metadata.add_ordered_field(Field(tag='024', indicators=['7',' '], subfields=['a', KOHAMAP[IDENT][2*i+1].strip(), '2',  KOHAMAP[INDET][2*i]].strip()))
-		xml.write(metadata)
+#	TOTAL+=1
 
-	return
+#	if IDENT in KOHAMAP:
+#		COUNTER+=1
+#		for i in range(0, len(KOHAMAP[IDENT])/2):
+#			metadata.add_ordered_field(Field(tag='024', indicators=['7',' '], subfields=['a', str(KOHAMAP[IDENT][2*i+1]).strip(), '2', str(KOHAMAP[IDENT][2*i]).strip()]))
+#		xml.write(metadata)
+
+#	print(metadata)
+
+#	return
 
 #	for F in metadata.get_fields('100'):
 #		if '7' in metadata['100']:
@@ -1117,6 +1192,12 @@ def validate(record):
 #record.add_ordered_field(field)
 #field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
 #record.add_ordered_field(field)
+#field = Field(tag = '100', indicators = [' ',' '], subfields = ['a', 'cnb<<foo>>00000000','b', u's<<b ubez média,oo>>fsdfsdfsdf <<foo>>','c','sdfsdfsdfsdf'])
+#record.add_ordered_field(field)
+#field = Field(tag = '100', indicators = [' ',' '], subfields = ['a', 'cnb000000000','b', u's<<>>fsdfsdfsdf <<foo>>','c','sdfsdfsdfsdf'])
+#record.add_ordered_field(field)
+#field = Field(tag = '245', indicators = [' ',' '], subfields = ['a', 'cnb000000000','c', u'ss<<b bez média,ar>>dfs; dfsdfsdf <<foo>>','d','sdfsdfsdfsdf'])
+#record.add_ordered_field(field)
 
 #validate(record)
 
@@ -1140,7 +1221,7 @@ marcxml.map_xml(validate, DATA)
 #wayback.close()
 #aleph.close()
 
-xml.close()
+#xml.close()
 
 #writer.close()
 #writer1.close()
@@ -1148,8 +1229,8 @@ xml.close()
 #writer3.close()
 #writer4.close()
 
-#file0.close()
-#file1.close()
+file0.close()
+file1.close()
 #file2.close()
 #file3.close()
 #file4.close()
@@ -1168,9 +1249,10 @@ xml.close()
 #print('SEVEN 700:' + str(SEVEN_700))
 
 #print(str(SIXTEEN))
-print(str(COUNTER))
+#print(str(TOTAL))
+#print(str(COUNTER))
 
 # EXIT -------------------
 
 sys.exit(0)
-		
+
