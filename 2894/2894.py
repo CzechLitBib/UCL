@@ -38,59 +38,52 @@ with open(IN, 'r') as f:
 	DATA_856=''
 
 	IDENT=''
-	BUFFER=''
+	BUFFER={}
 
 	for line in f:
 		#if TOKEN: print('-------------------------------')
 		if TOKEN_SYS:
 			DATA_SYS += line.strip()
 			if not line.strip():
-				#print(DATA_SYS)
 				IDENT=DATA_SYS
+				BUFFER[IDENT]={}
 				TOKEN_SYS=False
 				DATA_SYS=''
 		if TOKEN_022:
 			DATA_022 += line.strip()
 			if not line.strip():
-				#print(DATA_022)
 				TOKEN_022=False
-				BUFFER+=IDENT + ';022;' + get_field(DATA_022) + '\n'
+				BUFFER[IDENT]['022']  = get_field(DATA_022)
 				DATA_022=''
 		if TOKEN_100:
 			DATA_100 += line.strip()
 			if not line.strip():
-				#print(DATA_100)
 				TOKEN_100=False
-				BUFFER+=IDENT + ';100;' + get_field(DATA_100) + '\n'
-				#print(BUFFER)
+				BUFFER[IDENT]['100'] = get_field(DATA_100)
 				DATA_100=''
 		if TOKEN_245:
 			DATA_245 += line.strip()
 			if not line.strip():
-				#print(DATA_245)
 				TOKEN_245=False
-				BUFFER+=IDENT + ';245;' + get_field(DATA_245) + '\n'
+				BUFFER[IDENT]['245'] = get_field(DATA_245)
 				DATA_245=''
 		if TOKEN_260:
 			DATA_260 += line.strip()
 			if not line.strip():
-				#print(DATA_260)
 				TOKEN_260=False
-				BUFFER+=IDENT + ';260;' + get_field(DATA_260) + '\n'
+				BUFFER[IDENT]['260'] = get_field(DATA_260)
 				DATA_260=''
 		if TOKEN_264:
 			DATA_264 += line.strip()
 			if not line.strip():
-				#print(DATA_264)
 				TOKEN_264=False
-				BUFFER+=IDENT + ';264;' + get_field(DATA_264) + '\n'
+				BUFFER[IDENT]['264'] = get_field(DATA_264)
 				DATA_264=''
 		if TOKEN_856:
 			DATA_856 += line.strip()
 			if not line.strip():
-				#print(DATA_856)
 				TOKEN_856=False
-				BUFFER+=IDENT + ';856;' + get_field(DATA_856) + '\n'
+				BUFFER[IDENT]['856'] = get_field(DATA_856)
 				DATA_856=''
 
 		if 'Záznam dokumentu' in line: TOKEN=True
@@ -103,7 +96,14 @@ with open(IN, 'r') as f:
 		if re.match('^      856( 1|4|41)$', line.rstrip()): TOKEN_856=True
 
 with open(OUT, 'w') as f:
-	f.write(BUFFER)
+	for key in BUFFER:
+		LINE=key
+		for field in ('100','245','260','264','856'):
+			if field in BUFFER[key]:
+				LINE+='|' + BUFFER[key][field]
+			else:
+				LINE+='|'
+		f.write(LINE + '\n')
 
 sys.exit(0)
 
