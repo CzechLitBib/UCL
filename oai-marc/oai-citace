@@ -192,6 +192,19 @@ for record in records:
 		if MBK:
 			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
+		# UCLA remove << >>
+		for F in metadata.get_fields('100','600','700'):
+			LHT = False
+			SUB = F.subfields
+			for i in range(0, len(SUB)):
+				if '<<' in SUB[i] and '>>' in SUB[i]:
+					SUB[i] = SUB[i].replace('<<','').replace('>>','')
+					LHT = True
+			if LHT: F.subfields = SUB
+		if '245' in metadata and 'c' in metadata['245']:
+			if '<<' in metadata['245']['c'] and '>>' in metadata['245']['c']:
+				metadata['245']['c'] = metadata['245']['c'].replace('<<','').replace('>>','')
+
 		# CITACE ------------------
 
 		BROKEN=False
