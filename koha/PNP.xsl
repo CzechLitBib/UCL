@@ -6,11 +6,9 @@
   <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
   <xsl:strip-space elements="*"/>
 
-  <xsl:template match="marc:datafield[@tag=910]"/>
-
-  <xsl:template match="@* | node()">
+  <xsl:template match="@*|node()">
     <xsl:copy>
-      <xsl:apply-templates select="@* | node()"/>
+      <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
 
