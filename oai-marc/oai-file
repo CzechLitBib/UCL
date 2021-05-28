@@ -15,13 +15,14 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-#DATA='ucla.xml'
-DATA='uclo_koha.xml'
+DATA='ucla.xml'
+#DATA='uclo_koha.xml'
 #DATA='koha_024.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
 #DATA='book.xml'
 #DATA='CLO-opr.mrc'
+#DATA='vu.mrc'
 
 #TOTAL_100=0
 #SEVEN_100=0
@@ -43,8 +44,8 @@ DATA='uclo_koha.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-file0 = open('koha_100bc.csv', 'w')
-#file1 = open('clo_500bc.csv', 'w')
+file0 = open('245c_brace.csv', 'w')
+file1 = open('787at4.csv', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
 #file4 = open('output/158.csv', 'w')
@@ -56,7 +57,7 @@ file0 = open('koha_100bc.csv', 'w')
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-#xml = XMLWriter(open('koha_024.xml', 'w'))
+#xml = XMLWriter(open('koha_one.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
 
 # KOHA ---------
@@ -114,7 +115,17 @@ file0 = open('koha_100bc.csv', 'w')
 #reader = MARCReader(file(DATA))
 
 #for record in reader:
+
 #	metadata = record
+
+#	IDENT = metadata['001'].value()
+
+#	print(IDENT)
+
+	#IDENT = metadata['001'].value()
+
+
+	#if IDENT == '002638598': print(metadata)
 
 #	for F in metadata.get_fields('100'):
 #		if '7' in F:
@@ -364,9 +375,25 @@ def validate(record):
 # ------------------------------------------------------
 
 
- 	#UCLA remove << >>
+	# UCLA 787at4/245c <>
 
-#	print(metadata)
+	IDENT = metadata['001'].value()
+
+	for F in metadata.get_fields('245'):
+		if 'c' in F:
+			if '<' in F['c']:
+				file0.write(str(IDENT + ';') + F['c'].encode('utf-8') + '\n')
+	
+	for F in metadata.get_fields('787'):
+		if 't' in F and '4' in F:
+			T4 =  F['t'].encode('utf-8') + str(' [') + F['4'].encode('utf-8') + str("]\n") 
+			if 'a' in F:
+				file1.write(str(IDENT + ';') + F['a'].encode('utf-8') + str(': ') + T4)
+			else:
+				file1.write(str(IDENT + ';') + T4)
+	return
+
+ 	#UCLA remove << >>
 
 #	for F in metadata.get_fields('100', '600', '700'):
 #		LHT = False
@@ -390,27 +417,27 @@ def validate(record):
 
 	# CLO 100/400/500bc
 
-	if '001' in metadata:
-		IDENT = metadata['001'].value()
-	else:
-		IDENT = ''
+#	if '001' in metadata:
+#		IDENT = metadata['001'].value()
+#	else:
+#		IDENT = ''
 
-	for F in metadata.get_fields('100'):
-		if 'b' in F and 'c' in F:
-			SUB=''
-			for i in range(0, len(F.subfields)/2):
-				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-			file0.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
-		elif 'b' in F:
-			SUB=''
-			for i in range(0, len(F.subfields)/2):
-				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-			file0.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
-		elif 'c' in F:
-			SUB=''
-			for i in range(0, len(F.subfields)/2):
-				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-			file0.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
+#	for F in metadata.get_fields('100'):
+#		if 'b' in F and 'c' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file0.write(str(IDENT + ';BC;') + SUB.encode('utf-8') + '\n')
+#		elif 'b' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file0.write(str(IDENT + ';B;') + SUB.encode('utf-8') + '\n')
+#		elif 'c' in F:
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+#			file0.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
 
 
 #	for F in metadata.get_fields('400'):
@@ -447,7 +474,7 @@ def validate(record):
 #				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
 #			file1.write(str(IDENT + ';C;') + SUB.encode('utf-8') + '\n')
 	
-	return
+#	return
 
 	# KOHA
 
@@ -1246,7 +1273,7 @@ marcxml.map_xml(validate, DATA)
 #writer4.close()
 
 file0.close()
-#file1.close()
+file1.close()
 #file2.close()
 #file3.close()
 #file4.close()
