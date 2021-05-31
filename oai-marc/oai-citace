@@ -210,6 +210,19 @@ for record in records:
 			for LH in LHT:
 				metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a',  re.sub('<<([^<]*)>>', '\\1', LH)]))
 
+		# UCLA 592
+
+		for F in metadata.get_fields('787'):
+			if 't' in F and '4' in F:
+				if 'a' in F:
+					metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+						subfields=['a', F['a'] + ': ' + F['t'], 'b', F['4']]
+					))
+				else:
+					metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+						subfields=['a', F['t'], 'b', F['4']]
+					))
+
 		# CITACE ------------------
 
 		BROKEN=False
