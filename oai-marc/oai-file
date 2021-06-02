@@ -15,8 +15,9 @@ from pymarc.record import Record
 #DATA='demo.xml'
 #DATA='uclec.xml'
 #DATA='uclo.xml'
-DATA='ucla.xml'
-#DATA='uclo_koha.xml'
+#DATA='ucla.xml'
+DATA='uclo_koha.xml'
+#DATA='koha_slovnik_856.xml'
 #DATA='koha_024.xml'
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
@@ -37,15 +38,14 @@ DATA='ucla.xml'
 #TOTAL=0
 #COUNTER=0
 
-
 #csv_773 = open('773.csv', 'w')
 #csv_773.write('IDENT|SIF|LDR|VUFIND|VALUE|a|t|x|n|d|b|k|y|g|q|9|z\n')
 
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-file0 = open('245c_brace.csv', 'w')
-file1 = open('787at4.csv', 'w')
+#file0 = open('koha_856.xml', 'w')
+#file1 = open('787at4.csv', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
 #file4 = open('output/158.csv', 'w')
@@ -57,8 +57,17 @@ file1 = open('787at4.csv', 'w')
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-#xml = XMLWriter(open('koha_one.xml', 'w'))
+xml = XMLWriter(open('koha_slovnik_856.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
+
+# KOHA ---------
+
+SLOVNIK={}
+
+with open('slovnik.csv', 'r') as f:
+	for line in f:
+		data = line.split(';')
+		SLOVNIK[data[0].lower()] = [data[1], data[2]]# name -> link, tanyoubi
 
 # KOHA ---------
 
@@ -374,24 +383,55 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
+	IDENT = metadata['001'].value()
+
+	# KOHA 856 + FIX CLO
+
+	if '964' in metadata:
+		metadata.remove_fields('964')
+		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields= ['a', 'CLO']))
+
+	if '100' in metadata:
+		if 'a' in metadata['100'] and 'd' in metadata['100']:
+			MATCH=False
+			if metadata['100']['a'].lower().strip(',') in SLOVNIK:
+				for Y in re.findall('\d{4}', SLOVNIK[metadata['100']['a'].lower().strip(',')][1]):
+					if Y in metadata['100']['d']: MATCH=True
+				if MATCH:
+					metadata.add_ordered_field(Field(tag='856', indicators=['4','2'],
+						subfields= [
+							'u', SLOVNIK[metadata['100']['a'].lower().strip(',')][0],
+							'y', 'Slovník české literatury po roce 1945',
+							'4','N'
+						]
+					))
+					print("OK")
+					# write
+					xml.write(metadata)
+
+	#return
 
 	# UCLA 787at4/245c <>
 
-	IDENT = metadata['001'].value()
+#	IDENT = metadata['001'].value()
 
-	for F in metadata.get_fields('245'):
-		if 'c' in F:
-			if '<' in F['c']:
-				file0.write(str(IDENT + ';') + F['c'].encode('utf-8') + '\n')
+	#for F in metadata.get_fields('245'):
+	#	if 'c' in F:
+	#		if '<' in F['c']:
+	#			file0.write(str(IDENT + ';') + F['c'].encode('utf-8') + '\n')
 	
-	for F in metadata.get_fields('787'):
-		if 't' in F and '4' in F:
-			T4 =  F['t'].encode('utf-8') + str(' [') + F['4'].encode('utf-8') + str("]\n") 
-			if 'a' in F:
-				file1.write(str(IDENT + ';') + F['a'].encode('utf-8') + str(': ') + T4)
-			else:
-				file1.write(str(IDENT + ';') + T4)
-	return
+#	for F in metadata.get_fields('787'):
+#		if 't' in F and '4' in F:
+#			if 'a' in F:
+#				metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+#					subfields=['a', F['a'] + ': ' + F['t'], 'b', F['4']]
+#				))
+#			else:
+#				metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+#					subfields=['a', F['t'], 'b', F['4']]
+#				))
+#
+#	print(metadata)
 
  	#UCLA remove << >>
 
@@ -491,6 +531,8 @@ def validate(record):
 #	print(metadata)
 
 #	return
+
+#       ################
 
 #	for F in metadata.get_fields('100'):
 #		if '7' in metadata['100']:
@@ -1237,9 +1279,11 @@ def validate(record):
 #record.add_ordered_field(field)
 #field = Field(tag = '100', indicators = [' ',' '], subfields = ['a', 'cnb<<foo>>00000000','b', u's<<b ubez média,oo>>fsdfsdfsdf <<foo>>','c','sdfsdfsdfsdf'])
 #record.add_ordered_field(field)
-#field = Field(tag = '100', indicators = [' ',' '], subfields = ['a', 'cnb000000000','b', u's<<>>fsdfsdfsdf <<foo>>','c','sdfsdfsdfsdf'])
+#field = Field(tag = '787', indicators = [' ',' '], subfields = ['a', u'fúuuuo', 't', u'bááár', '4', u'fóóó"xbar'])
 #record.add_ordered_field(field)
-#field = Field(tag = '245', indicators = [' ',' '], subfields = ['a', 'cnb000000000','c', u'ss<<b bez média,ar>>dfs; dfsdfsdf <<foo>>','d','sdfsdfsdfsdf'])
+#field = Field(tag = '787', indicators = [' ',' '], subfields = ['t', 'bar', '4', 'foobar'])
+#record.add_ordered_field(field)
+#field = Field(tag = '787', indicators = [' ',' '], subfields = ['t', 'bar'])
 #record.add_ordered_field(field)
 
 #validate(record)
@@ -1264,7 +1308,7 @@ marcxml.map_xml(validate, DATA)
 #wayback.close()
 #aleph.close()
 
-#xml.close()
+xml.close()
 
 #writer.close()
 #writer1.close()
@@ -1272,8 +1316,8 @@ marcxml.map_xml(validate, DATA)
 #writer3.close()
 #writer4.close()
 
-file0.close()
-file1.close()
+#file0.close()
+#file1.close()
 #file2.close()
 #file3.close()
 #file4.close()
