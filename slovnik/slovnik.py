@@ -44,7 +44,7 @@ for CHAR in LETTER:
 			if uplace: UPLACE = uplace[0].text.replace('\n','').strip().encode('utf-8')
 			sday = o[i].xpath('.//span[@class="datumumrti"]')
 			if sday: SDAY = sday[0].text.replace('\n','').strip().encode('utf-8')
-			splace = o[i].xpath('.//span[@class="mistomrti"]')
+			splace = o[i].xpath('.//span[@class="mistoumrti"]')
 			if splace: SPLACE = splace[0].text.replace('\n','').strip().encode('utf-8')
 			# write
 			out.write(FN + ';' + L + ';' + UDAY + ';' + UPLACE + ';' + SDAY + ';' + SPLACE + '\n')
