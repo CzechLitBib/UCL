@@ -67,7 +67,7 @@ SLOVNIK={}
 with open('slovnik.csv', 'r') as f:
 	for line in f:
 		data = line.split(';')
-		SLOVNIK[data[0].lower()] = [data[1], data[2]]# name -> link, tanyoubi
+		SLOVNIK[data[0].lower()] = [data[0], data[1], data[2], 0]# name -> link, tanyoubi, match
 
 # KOHA ---------
 
@@ -395,21 +395,21 @@ def validate(record):
 		if 'a' in metadata['100'] and 'd' in metadata['100']:
 			MATCH=False
 			if metadata['100']['a'].lower().strip(',') in SLOVNIK:
-				for Y in re.findall('\d{4}', SLOVNIK[metadata['100']['a'].lower().strip(',')][1]):
+				for Y in re.findall('\d{4}', SLOVNIK[metadata['100']['a'].lower().strip(',')][2]):
 					if Y in metadata['100']['d']: MATCH=True
 				if MATCH:
 					metadata.add_ordered_field(Field(tag='856', indicators=['4','2'],
 						subfields= [
-							'u', SLOVNIK[metadata['100']['a'].lower().strip(',')][0],
+							'u', SLOVNIK[metadata['100']['a'].lower().strip(',')][1],
 							'y', 'Slovník české literatury po roce 1945',
 							'4','N'
 						]
 					))
-					print("OK")
+					SLOVNIK[metadata['100']['a'].lower().strip(',')][3] = 1
 					# write
 					xml.write(metadata)
 
-	#return
+	return
 
 	# UCLA 787at4/245c <>
 
@@ -1309,6 +1309,12 @@ marcxml.map_xml(validate, DATA)
 #aleph.close()
 
 xml.close()
+
+with open('slovnik_no_match.txt', 'w') as f:
+	for key in SLOVNIK:
+		if SLOVNIK[key][3] == 0:
+			f.write(SLOVNIK[key][0] + '\n')
+
 
 #writer.close()
 #writer1.close()

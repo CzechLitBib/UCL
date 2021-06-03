@@ -33,11 +33,12 @@ for CHAR in LETTER:
 			if name:
 				if name[0].text:
 					FN = name[0].text.strip().encode('utf-8')
+			if not FN: continue
 			link = o[i].xpath('.//a')
 			if link:
 				L = LINK + link[0].get('href').strip('./').encode('utf-8')
-				if link[0].text:
-					FN = link[0].text.strip().encode('utf-8')
+			#	if link[0].text:
+			#		FN = link[0].text.strip().encode('utf-8')
 			uday = o[i].xpath('.//span[@class="datumnarozeni"]')
 			if uday: UDAY = uday[0].text.replace('\t','').replace('\n','').strip().encode('utf-8')
 			uplace = o[i].xpath('.//span[@class="mistonarozeni"]')
