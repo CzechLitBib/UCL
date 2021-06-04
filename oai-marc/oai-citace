@@ -215,7 +215,6 @@ for record in records:
 					))
 
 		# UCLA 592
-
 		if '630' in metadata and 'a' in metadata['630']:
 			metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
 				subfields=['a', metadata['630']['a']]
