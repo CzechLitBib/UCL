@@ -67,7 +67,9 @@ SLOVNIK={}
 with open('slovnik.csv', 'r') as f:
 	for line in f:
 		data = line.split(';')
-		SLOVNIK[data[0].lower()] = [data[0], data[1], data[2], 0]# name -> link, tanyoubi, match
+		#if 'BINAR' in data[0]:
+		#	print(data[0].decode('utf-8').lower().strip())
+		SLOVNIK[data[0].decode('utf-8').lower().strip()] = [data[0].decode('utf-8'), data[1], data[2], 0]# name ->  orig, link, tanyoubi, match
 
 # KOHA ---------
 
@@ -383,6 +385,9 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
+	#print(metadata)
+	#return
+
 	IDENT = metadata['001'].value()
 
 	# KOHA 856 + FIX CLO
@@ -390,11 +395,18 @@ def validate(record):
 	if '964' in metadata:
 		metadata.remove_fields('964')
 		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields= ['a', 'CLO']))
+		
+	#if IDENT == '931':
+	#	print(metadata['100']['a'].lower().strip(','))
+	#	if  metadata['100']['a'].lower().strip(',') in SLOVNIK: print("gotcha")
+	#	if  metadata['100']['a'].lower().strip(',') not in SLOVNIK: print("failed!")
+	#	sys.exit(1)
 
 	if '100' in metadata:
 		if 'a' in metadata['100'] and 'd' in metadata['100']:
 			MATCH=False
 			if metadata['100']['a'].lower().strip(',') in SLOVNIK:
+				#if IDENT == '961': print("Match!")
 				for Y in re.findall('\d{4}', SLOVNIK[metadata['100']['a'].lower().strip(',')][2]):
 					if Y in metadata['100']['d']: MATCH=True
 				if MATCH:
@@ -419,7 +431,12 @@ def validate(record):
 	#	if 'c' in F:
 	#		if '<' in F['c']:
 	#			file0.write(str(IDENT + ';') + F['c'].encode('utf-8') + '\n')
-	
+
+#	if '630' in metadata and 'a' in metadata['630']:
+#		metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+#			subfields=['a', metadata['630']['a']]
+#		))
+
 #	for F in metadata.get_fields('787'):
 #		if 't' in F and '4' in F:
 #			if 'a' in F:
@@ -430,8 +447,6 @@ def validate(record):
 #				metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
 #					subfields=['a', F['t'], 'b', F['4']]
 #				))
-#
-#	print(metadata)
 
  	#UCLA remove << >>
 
@@ -449,10 +464,11 @@ def validate(record):
 #		LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
 #		if LHT: metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])	
 #		for LH in LHT:
-#			metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a',  re.sub('<<([^<]*)>>', '\\1', LH)]))
+#			SUB = re.findall('<<([^>[]+)', LH)
+#			if SUB:
+#				metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a', SUB[0].strip()]))
 #
 #	print(metadata)
-
 #	return
 
 	# CLO 100/400/500bc
@@ -1279,6 +1295,10 @@ def validate(record):
 #record.add_ordered_field(field)
 #field = Field(tag = '100', indicators = [' ',' '], subfields = ['a', 'cnb<<foo>>00000000','b', u's<<b ubez média,oo>>fsdfsdfsdf <<foo>>','c','sdfsdfsdfsdf'])
 #record.add_ordered_field(field)
+#field = Field(tag = '245', indicators = [' ',' '], subfields = ['a', 'c000000','b', 'foo','c','<<boo [[foo]]>>'])
+#record.add_ordered_field(field)
+#field = Field(tag = '630', indicators = [' ',' '], subfields = ['a', 'idontcare','b', 'foo','c','sdf<<[= foobar]>>sdfsdfsdf'])
+#record.add_ordered_field(field)
 #field = Field(tag = '787', indicators = [' ',' '], subfields = ['a', u'fúuuuo', 't', u'bááár', '4', u'fóóó"xbar'])
 #record.add_ordered_field(field)
 #field = Field(tag = '787', indicators = [' ',' '], subfields = ['t', 'bar', '4', 'foobar'])
@@ -1310,10 +1330,12 @@ marcxml.map_xml(validate, DATA)
 
 xml.close()
 
+#print(SLOVNIK)
+
 with open('slovnik_no_match.txt', 'w') as f:
 	for key in SLOVNIK:
 		if SLOVNIK[key][3] == 0:
-			f.write(SLOVNIK[key][0] + '\n')
+			f.write(SLOVNIK[key][0].encode('utf-8') + '\n')
 
 
 #writer.close()
