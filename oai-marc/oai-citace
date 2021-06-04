@@ -192,7 +192,7 @@ for record in records:
 		if MBK:
 			metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
-		# UCLA remove << >>
+		# UCLA 953 - remove << >>
 		for F in metadata.get_fields('100', '600', '700'):
 			LHT = False
 			SUB = F.subfields
@@ -208,9 +208,18 @@ for record in records:
 			if LHT:
 				metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])	
 			for LH in LHT:
-				metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a',  re.sub('<<([^<]*)>>', '\\1', LH)]))
+				SUB = re.findall('<<([^>[]+)', LH)
+				if SUB:
+					metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '],
+						subfields=['a', SUB[0].strip()]
+					))
 
 		# UCLA 592
+
+		if '630' in metadata and 'a' in metadata['630']:
+			metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+				subfields=['a', metadata['630']['a']]
+			))
 
 		for F in metadata.get_fields('787'):
 			if 't' in F and '4' in F:
