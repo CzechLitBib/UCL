@@ -16,7 +16,7 @@ from pymarc.record import Record
 #DATA='uclec.xml'
 #DATA='uclo.xml'
 #DATA='ucla.xml'
-DATA='uclo_koha.xml'
+#DATA='uclo_koha.xml'
 #DATA='koha_slovnik_856.xml'
 #DATA='koha_024.xml'
 #DATA='ucla_citace.mrc'
@@ -44,7 +44,8 @@ DATA='uclo_koha.xml'
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-#file0 = open('koha_856.xml', 'w')
+file0 = open('slovnik_vufind_valid.txt', 'w')
+file1 = open('slovnik_vufind_invalid.txt', 'w')
 #file1 = open('787at4.csv', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
@@ -57,19 +58,17 @@ DATA='uclo_koha.xml'
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-xml = XMLWriter(open('koha_slovnik_856.xml', 'w'))
+#xlm = XMLWriter(open('koha_slovnik_856.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
 
 # KOHA ---------
 
-SLOVNIK={}
+#SLOVNIK={}
 
-with open('slovnik.csv', 'r') as f:
-	for line in f:
-		data = line.split(';')
-		#if 'BINAR' in data[0]:
-		#	print(data[0].decode('utf-8').lower().strip())
-		SLOVNIK[data[0].decode('utf-8').lower().strip()] = [data[0].decode('utf-8'), data[1], data[2], 0]# name ->  orig, link, tanyoubi, match
+#with open('slovnik.csv', 'r') as f:
+#	for line in f:
+#		data = line.split(';')
+#		SLOVNIK[data[0].decode('utf-8').lower().strip()] = [data[0].decode('utf-8'), data[1], data[2], 0]# name ->  orig, link, tanyoubi, match
 
 # KOHA ---------
 
@@ -402,25 +401,52 @@ def validate(record):
 	#	if  metadata['100']['a'].lower().strip(',') not in SLOVNIK: print("failed!")
 	#	sys.exit(1)
 
+#	if '100' in metadata:
+#		if 'a' in metadata['100'] and 'd' in metadata['100']:
+#			MATCH=False
+#			if metadata['100']['a'].lower().strip(',') in SLOVNIK:
+#				#if IDENT == '961': print("Match!")
+#				for Y in re.findall('\d{4}', SLOVNIK[metadata['100']['a'].lower().strip(',')][2]):
+#					if Y in metadata['100']['d']: MATCH=True
+#				if MATCH:
+#					metadata.add_ordered_field(Field(tag='856', indicators=['4','2'],
+#						subfields= [
+#							'u', SLOVNIK[metadata['100']['a'].lower().strip(',')][1],
+#							'y', 'Slovník české literatury po roce 1945',
+#							'4','N'
+#						]
+#					))
+#					SLOVNIK[metadata['100']['a'].lower().strip(',')][3] = 1
+#					# write
+#					xml.write(metadata)
+	
+	MATCH=False
+
 	if '100' in metadata:
-		if 'a' in metadata['100'] and 'd' in metadata['100']:
-			MATCH=False
-			if metadata['100']['a'].lower().strip(',') in SLOVNIK:
-				#if IDENT == '961': print("Match!")
+		if 'a' in metadata['100'] and 'd' in metadata['100'] and '7' in metadata['100']:
+			if metadata['100']['a'].lower().strip(',') in SLOVNIK and SLOVNIK[metadata['100']['a'].lower().strip(',')][3] != 1:
 				for Y in re.findall('\d{4}', SLOVNIK[metadata['100']['a'].lower().strip(',')][2]):
 					if Y in metadata['100']['d']: MATCH=True
 				if MATCH:
-					metadata.add_ordered_field(Field(tag='856', indicators=['4','2'],
-						subfields= [
-							'u', SLOVNIK[metadata['100']['a'].lower().strip(',')][1],
-							'y', 'Slovník české literatury po roce 1945',
-							'4','N'
-						]
-					))
+					file0.write(
+						SLOVNIK[metadata['100']['a'].lower().strip(',')][0].encode('utf-8') +
+						str(';https://vufind.ucl.cas.cz/Search/Results?lookfor=' + metadata['100']['7'] + "&type=Author\n")
+					)
 					SLOVNIK[metadata['100']['a'].lower().strip(',')][3] = 1
-					# write
-					xml.write(metadata)
 
+	if not MATCH:
+		for F in metadata.get_fields('600'):
+			if 'a' in F and 'd' in F and '7' in F:
+				if F['a'].lower().strip(',') in SLOVNIK and SLOVNIK[F['a'].lower().strip(',')][3] != 1:
+					for Y in re.findall('\d{4}', SLOVNIK[F['a'].lower().strip(',')][2]):
+						if Y in F['d']: MATCH=True
+					if MATCH:
+						file0.write(
+							SLOVNIK[F['a'].lower().strip(',')][0].encode('utf-8') +
+								str(';https://vufind.ucl.cas.cz/Search/Results?lookfor=' + F['7'] + "&type=Author\n")
+							)
+						SLOVNIK[F['a'].lower().strip(',')][3] = 1
+						break
 	return
 
 	# UCLA 787at4/245c <>
@@ -1283,6 +1309,30 @@ def validate(record):
 #			file1.write(str(IDENT + ';') + F.value().encode('utf-8') + '\n')
 
 # ------------------------------------------------------
+# SLOVNIK - VUFIND
+# ------------------------------------------------------
+
+session = requests.Session()
+
+#session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
+
+
+req = session.get('https://vufind.ucl.cas.cz/Search/Results?lookfor=jk2342332423234&Type=Author')
+if req and req.status_code == 200:
+	if 'No Results!' in req.text: print("ok")
+
+
+#with open('slovnik_vufind.csv','r') as f:
+#	for line in f:
+#		name,link = line.split(';')
+#		req = session.get(link)
+#		if req and req.status_code == 200:
+#			if 'No Results!' in req.text:
+#				file1.write(line)
+#			else:
+#				file0.write(line)
+
+# ------------------------------------------------------
 # MAIN
 # ------------------------------------------------------
 
@@ -1308,7 +1358,7 @@ def validate(record):
 
 #validate(record)
 
-marcxml.map_xml(validate, DATA)
+#marcxml.map_xml(validate, DATA)
 
 #with open('x.csv','w') as edice:
 #	edice.write(BUFF)
@@ -1328,14 +1378,14 @@ marcxml.map_xml(validate, DATA)
 #wayback.close()
 #aleph.close()
 
-xml.close()
+#xml.close()
 
 #print(SLOVNIK)
 
-with open('slovnik_no_match.txt', 'w') as f:
-	for key in SLOVNIK:
-		if SLOVNIK[key][3] == 0:
-			f.write(SLOVNIK[key][0].encode('utf-8') + '\n')
+#with open('slovnik_no_match.txt', 'w') as f:
+#	for key in SLOVNIK:
+#		if SLOVNIK[key][3] == 0:
+#			f.write(SLOVNIK[key][0].encode('utf-8') + '\n')
 
 
 #writer.close()
@@ -1344,8 +1394,8 @@ with open('slovnik_no_match.txt', 'w') as f:
 #writer3.close()
 #writer4.close()
 
-#file0.close()
-#file1.close()
+file0.close()
+file1.close()
 #file2.close()
 #file3.close()
 #file4.close()
