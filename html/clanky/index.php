@@ -17,8 +17,7 @@ if (!empty($_POST)) {
 	file_put_contents('data/'. $id . '.csv', $output . "\n");
 
 	if (isset($_FILES['file'])) {
-		$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-		move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '.' . $ext);
+		move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . base64_encode($_FILES['file']['name']));
 	}
 }
 ?>
