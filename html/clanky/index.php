@@ -6,23 +6,23 @@ $value = ['author','name','source','quote','place','publisher','year','link','pu
 
 $output = '';
 
-foreach($value as $v) {
-	if (!empty($_POST[$v])) {
-		$v == 'public' ? $output .= $_POST[$v] : $output .= $_POST[$v] . ';';
-	} else {
-		$output .= ';';
+if (!empty($_POST)) {
+
+	foreach($value as $v) {
+		if (isset($_POST[$v])) {
+			$v == 'public' ? $output .= $_POST[$v] : $output .= $_POST[$v] . ';';
+		} else {
+			$output .= ';';
+		}
+	}
+
+	file_put_contents('data/'. $id . '.csv', $output . "\n");
+
+	if (isset($_FILES['file'])) {
+		$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+		move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '.' . $ext);
 	}
 }
-
-file_put_contents('data/'. $id . '.csv', $output . "\n");
-
-if (isset($_FILES['file'])) {
-
-	$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-
-	move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '.' . $ext);
-}
-
 ?>
 
 <html>
