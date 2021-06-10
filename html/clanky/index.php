@@ -32,7 +32,7 @@ if (isset($_FILES['file'])) {
 <table><tr><td><img src="/clanky/sova.png"></td><td>Formulář pro zadávání článku.</td></tr></table>
 
 <?php
-	if (!empty($_POST)) { echo '<font color="red"><b>Hotovo.</b></font>'; }
+	if (!empty($_POST)) { echo '<font color="red"><b>Uloženo.</b></font>'; }
 ?>
 
 <p><hr width="500"></p>
