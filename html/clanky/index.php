@@ -54,7 +54,7 @@ if (isset($_FILES['file'])) {
 <tr><td align="right"><u><b>Ostatní</b></u></td></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30"></td></tr>
-<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:330px;border-radius:5px;" type="file" name="file"></td></tr>
+<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td></tr>
 <tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="yes"><label>Ano</label> <input type="radio" name="public" value="no" checked><label>Ne</label></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right"><input type="submit" value="Odeslat"></td></tr>
