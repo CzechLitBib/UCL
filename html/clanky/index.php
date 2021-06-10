@@ -14,7 +14,7 @@ foreach($value as $v) {
 	}
 }
 
-file_put_contents('data/'. $id . '.csv', $output);
+file_put_contents('data/'. $id . '.csv', $output . "\n");
 
 if (isset($_FILES['file'])) {
 
