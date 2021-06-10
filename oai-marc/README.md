@@ -48,49 +48,8 @@ sif_code.txt
 00 4 1 * * root oai-monthly-7 >> /var/log/oai-monthly-7.log 2>&1 &
 00 5 1 * * root oai-monthly-kat >> /var/log/oai-monthly-kat.log 2>&1 &
 </pre>
-APACHE
-<pre>
-        DocumentRoot /var/www/html
-
-        &lt;Directory /var/www/html&gt;
-                Options +Indexes
-                HeaderName /include/HEADER.html
-                ReadmeName /include/README.html
-                AddIcon /icons/world2.gif ..
-                IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable IgnoreClient
-                IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
-                IndexIgnore .??* include *.csv
-                IndexStyleSheet /include/STYLE.css
-                AllowOverride Indexes
-        &lt;/Directory&gt;
-
-        &lt;Directory /var/www/html/nkp/&gt;
-                Options +Indexes
-                HeaderName /nkp/include/HEADER.html
-                ReadmeName /nkp/include/README.html
-                AddIcon /icons/world2.gif ..
-                IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable IgnoreClient
-                IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
-                IndexIgnore .. .??* include
-                IndexStyleSheet  /nkp/include/STYLE.css
-                AllowOverride Indexes 
-        &lt;/Directory&gt;
-
-        &lt;Directory /var/www/html/nkp/*/&gt;
-                Options +Indexes
-                HeaderName /nkp/include/HEADER.html
-                ReadmeName /nkp/include/README.html
-                AddIcon /icons/world2.gif ..
-                IndexOptions FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* HTMLTable IgnoreClient
-                IndexOptions SuppressHTMLPreamble SuppressDescription SuppressLastModified SuppressSize SuppressRules SuppressColumnSorting
-                IndexIgnore .??* include
-                IndexStyleSheet  /nkp/include/STYLE.css
-                AllowOverride Indexes 
-        &lt;/Directory&gt;
-</pre>
 FILE
 <pre>
-           html/ - Apache AutoIndexing HTML structure.
             773/ - Covert Aleph record 773 to 856.
 
         oai-marc - OAI-OMH 2.0 MARCXML record validation.
