@@ -1,9 +1,7 @@
 <?php
 
 $id = uniqid();
-
 $value = ['author','name','source','quote','place','publisher','year','link','public'];
-
 $output = '';
 
 if (!empty($_POST)) {
