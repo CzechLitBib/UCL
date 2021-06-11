@@ -1,14 +1,9 @@
 <html>
 <head></head>
 <body bgcolor="lightgrey">
-
 <div align="center">
-<br><img src="/aktualizace/sova.png">
-<br>
-<p><b>Formulář pro aktualizaci kontrolních seznamů.</b></p>
-<br>
-
-<form method="post" action='index.php'>
+<table><tr><td><img src="/aktualizace/sova.png"><td><td>Formulář pro aktualizaci kontrolních seznamů.</td></tr></table>
+<form action="." method="post">
 
 <?php
 
@@ -26,20 +21,16 @@ foreach ($pole as $p) {
 		}
 	}
 }
-
 ?>
 
 </form>
 <p><hr width="500"></p>
 
 <?php
-
 if (!empty($_POST)) { echo '<font color="red"><b>Hotovo.</b></font>'; }
-
 ?>
 
 </div>
 </body>
 </html>
-
 
