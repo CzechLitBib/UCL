@@ -13,11 +13,19 @@ if (!empty($_POST)) {
 			$output .= ';';
 		}
 	}
-
+	// write CSV
 	file_put_contents('data/'. $id . '.csv', $output . "\n");
 
 	if (isset($_FILES['file'])) {
-		move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . base64_encode($_FILES['file']['name']));
+		if ($_FILES['file']['error'] == 0) {
+			// test PDF
+			$finfo = new finfo(FILEINFO_MIME_TYPE);
+			$ftype = $finfo->file($_FILES['file']['tmp_name']);
+			// write file
+			if ($ftype == 'application/pdf') {
+				move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . base64_encode($_FILES['file']['name']));
+			}
+		}
 	}
 }
 ?>
@@ -33,7 +41,7 @@ if (!empty($_POST)) {
 ?>
 
 <p><hr width="500"></p>
-<form method="post" action="index.php" enctype="multipart/form-data">
+<form method="post" action="." enctype="multipart/form-data">
 <table>
 <tr><td align="right"><u><b>Základní údaje</b></u></td></tr>
 <tr height="8px"></tr>
@@ -51,8 +59,8 @@ if (!empty($_POST)) {
 <tr><td align="right"><u><b>Ostatní</b></u></td></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30"></td></tr>
-<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td></tr>
-<tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="yes"><label>Ano</label> <input type="radio" name="public" value="no" checked><label>Ne</label></td></tr>
+<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file">   <img src="/clanky/help.png" title='Pouze soubory typu PDF. Maximalní velikost 2MB.'></td></tr>
+<tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right"><input type="submit" value="Odeslat"></td></tr>
 </table>
