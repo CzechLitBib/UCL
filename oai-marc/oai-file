@@ -7,7 +7,7 @@ from __future__ import print_function
 
 import traceback,StringIO,requests,lxml.html,time,sys,os,re
 
-from pymarc import marcxml,Field,MARCWriter,MARCReader, XMLWriter
+from pymarc import marcxml,Field,MARCWriter,MARCReader,XMLWriter
 from pymarc.record import Record
 
 # VAR -------------------
@@ -22,7 +22,7 @@ from pymarc.record import Record
 #DATA='ucla_citace.mrc'
 #DATA='xedice.mrc'
 #DATA='book.xml'
-#DATA='CLO-opr.mrc'
+DATA='CLO.mrc'
 #DATA='vu.mrc'
 
 #TOTAL_100=0
@@ -44,8 +44,8 @@ from pymarc.record import Record
 #csv_787 = open('787.csv', 'w')
 #csv_787.write('IDENT|SIF|LDR|VUFIND|VALUE|i|a|t|n|d|b|k|h|z|y|4|x\n')
 	
-file0 = open('slovnik_vufind_valid.txt', 'w')
-file1 = open('slovnik_vufind_invalid.txt', 'w')
+#file0 = open('slovnik_vufind_valid.txt', 'w')
+#file1 = open('slovnik_vufind_invalid.txt', 'w')
 #file1 = open('787at4.csv', 'w')
 #file2 = open('964_245.csv', 'w')
 #file3 = open('output/SIF.txt', 'w')
@@ -58,7 +58,7 @@ file1 = open('slovnik_vufind_invalid.txt', 'w')
 #file10 = open('output/245.csv', 'w')
 
 #aleph = open('505.aleph', 'w')
-#xlm = XMLWriter(open('koha_slovnik_856.xml', 'w'))
+xml = XMLWriter(open('PNP_CLO.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
 
 # KOHA ---------
@@ -116,8 +116,26 @@ file1 = open('slovnik_vufind_invalid.txt', 'w')
 
 # BASE ---------
 
-#reader = MARCReader(file('vufind-2021-03-04.mrc'))
-#for record in reader:
+reader = MARCReader(file('CLO.mrc'))
+for record in reader:
+	# fix LDR dup
+	record.remove_fields('LDR')
+	# fix 964
+	if '964' in record:
+		record.remove_fields('964')
+		record.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields= ['a', 'CLO']))
+
+	#drop
+	DROPLIST=[]
+	for F in record:
+		if F.tag not in ('001','046','100','368','370','372','400','678'):
+			if F.tag not in DROPLIST: DROPLIST.append(F.tag)
+
+	for TAG in DROPLIST: record.remove_fields(TAG)
+
+	#write
+	xml.write(record)
+
 #	print(record['001'].value())
 
 #reader.close()
@@ -271,6 +289,11 @@ def citace(record, fiveofive, page):
 def validate(record):
 
 	metadata = record
+
+	print(type(metadata))
+
+	sys.exit(1)
+
 
 # ------------------------------------------------------
 
@@ -1312,14 +1335,14 @@ def validate(record):
 # SLOVNIK - VUFIND
 # ------------------------------------------------------
 
-session = requests.Session()
+#session = requests.Session()
 
 #session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
 
 
-req = session.get('https://vufind.ucl.cas.cz/Search/Results?lookfor=jk2342332423234&Type=Author')
-if req and req.status_code == 200:
-	if 'No Results!' in req.text: print("ok")
+#req = session.get('https://vufind.ucl.cas.cz/Search/Results?lookfor=jk2342332423234&Type=Author')
+#if req and req.status_code == 200:
+#	if 'No Results!' in req.text: print("ok")
 
 
 #with open('slovnik_vufind.csv','r') as f:
@@ -1378,7 +1401,7 @@ if req and req.status_code == 200:
 #wayback.close()
 #aleph.close()
 
-#xml.close()
+xml.close()
 
 #print(SLOVNIK)
 
@@ -1394,8 +1417,8 @@ if req and req.status_code == 200:
 #writer3.close()
 #writer4.close()
 
-file0.close()
-file1.close()
+#file0.close()
+#file1.close()
 #file2.close()
 #file3.close()
 #file4.close()
