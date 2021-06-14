@@ -62,7 +62,7 @@ if (!empty($_POST)) {
 <tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td>   <img src="/clanky/help.png" title='Pouze soubory typu PDF. Maximalní velikost 2MB.'></td></tr>
 <tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
 <tr height="8px"></tr>
-<tr><td align="right"><input type="submit" value="Odeslat"></td></tr>
+<tr><td></td><td align="left"><input type="submit" value="Odeslat"></td></tr>
 </table>
 </form>
 <p><hr width="500"></p>
