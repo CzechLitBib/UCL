@@ -5,15 +5,17 @@
 
 from __future__ import print_function
 
-import StringIO,lxml.html,time,sys,os,re
+import sys,os,re
 
 from pymarc import marcxml
 
 # VAR -------------------
 
-IN='651.txt'
 XML='ucla.xml'
-OUT='651.aleph'
+
+IN='input/651_wm.txt'
+OUT='651_wm.aleph'
+OUTSTAT='651_stat.txt'
 
 # DEF -----------
 
@@ -34,9 +36,11 @@ with open(IN, 'r') as src:
 	for line in src:
 		DATA=[]
 		orig,raw = line.strip().split(';;;')
-		if not raw: break
+		if not raw:
+			continue
 		field = raw.split('|')
-		if not '151' in field[0]: break
+		if '150' not in field[0] and '151' not in field[0]:
+			continue
 		for R in field[1:]:
 			DATA.append(R[0])
 			DATA.append(R[1:].strip())
@@ -56,13 +60,11 @@ def validate(record):
 	if '651' in metadata:
 		MOD=False
 		for F in metadata.get_fields('651'):
-			#if F['a'].encode('utf-8') in MAP:
 			if get_value(F).encode('utf-8') in MAP:
 				MOD=True
 				break
 		if MOD:
 			for F in metadata.get_fields('651'):
-				#VAL=F['a'].encode('utf-8')
 				VAL=get_value(F).encode('utf-8')
 				if VAL in MAP:
 					# stat
@@ -77,17 +79,17 @@ def validate(record):
 					SUB+='$$2czenas'
 					aleph.write(str(IDENT + ' 651 7 L ') + SUB + '\n')
 				else:
-					# deault
+					# default
 					SUB=''
 					for i in range(0, len(F.subfields)/2):
 						SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-					aleph.write(str(IDENT + ' 651' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8')+ '\n')
+					aleph.write(str(IDENT + ' 651' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
 
 # MAIN ------------------------------------------------------
 
-marcxml.map_xml(validate,XML)
+marcxml.map_xml(validate, XML)
 
-with open('651_stat.txt','w') as f:
+with open(OUTSTAT, 'w') as f:
 	for match in STAT:
 		f.write(str(STAT[match]) + str(' -> ') + match + '\n')
 
