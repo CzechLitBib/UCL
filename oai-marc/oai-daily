@@ -18,6 +18,10 @@ CSVNAME="$(date --date='yesterday' '+%Y-%m-%d').csv"
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
+# CLANKY
+
+#clanky
+
 # VUFIND
 
 #mkdir -p "$VUFIND_PATH" 2> /dev/null

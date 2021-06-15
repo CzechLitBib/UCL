@@ -1,0 +1,51 @@
+#!/usr/bin/python
+#
+# Owncloud WebDAV upload
+#
+
+from _future_ import print
+
+import easywebdav,StringIO,sys,os
+
+DATA='xxx'
+
+URL='xxx'
+TOKEN='xxx'
+PASS='xx'
+
+try:
+	webdav = easywebdav.connect(URL, username=TOKEN, password=PASS)
+except:
+	print('Owncload connection error!')
+	sys.exit(1)
+
+# get CSV file
+csv = StringIO.StringIO()
+try:
+	webdav.download('extern.csv', csv)
+except:
+	print('CSV load error!')
+	sys.exit(2)
+
+# get ID
+ID=[]
+for fn in os.listdir(DATA):
+	if re.match('^[a-f0-9]+_.*', fn):
+		uid = re.sub('^([a-f0-9)_.*', '\\1', fn)
+		if uid not in ID: ID.append(uid)
+
+# update CSV & upload
+
+for uid in ID:
+	try:
+		upload 
+	except:	
+		print('Upload failed:' + fn)
+		continue
+
+# update CSV
+
+# upload file
+
+# clean
+
