@@ -35,7 +35,7 @@ if ($valid) {
 			$finfo = new finfo(FILEINFO_MIME_TYPE);
 			$ftype = $finfo->file($_FILES['file']['tmp_name']);
 			if ($ftype == 'application/pdf') {
-				move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . base64_encode($_FILES['file']['name']));
+				move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . preg_replace('/^\.+|\/|\.+$/', '_', $_FILES['file']['name']));
 			}
 		}
 	}

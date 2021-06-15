@@ -1,3 +1,8 @@
+REQURE
+<pre>
+
+mod-rewrite mod-ssl php5-gd
+</pre>
 
 APACHE
 <pre>
