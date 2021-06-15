@@ -1,11 +1,25 @@
 <?php
 
+// restore session
+session_start();
+
+//get uniqe ID
 $id = uniqid();
+
 $value = ['author','name','source','quote','place','publisher','year','link','public'];
-$output = '';
+$output='';
 
+// captcha
+$valid=False;
 if (!empty($_POST)) {
+	if (isset($_POST['code'])) {
+		if ($_SESSION['captcha'] == $_POST['code']) { $valid=True; }
+	}
+}
 
+if ($valid) {
+
+	// write CSV
 	foreach($value as $v) {
 		if (isset($_POST[$v])) {
 			$v == 'public' ? $output .= $_POST[$v] : $output .= $_POST[$v] . ';';
@@ -13,21 +27,20 @@ if (!empty($_POST)) {
 			$output .= ';';
 		}
 	}
-	// write CSV
 	file_put_contents('data/'. $id . '.csv', $output . "\n");
 
+	// write file
 	if (isset($_FILES['file'])) {
 		if ($_FILES['file']['error'] == 0) {
-			// test PDF
 			$finfo = new finfo(FILEINFO_MIME_TYPE);
 			$ftype = $finfo->file($_FILES['file']['tmp_name']);
-			// write file
 			if ($ftype == 'application/pdf') {
 				move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . base64_encode($_FILES['file']['name']));
 			}
 		}
 	}
 }
+
 ?>
 
 <html>
@@ -37,7 +50,17 @@ if (!empty($_POST)) {
 <table><tr><td><img src="/clanky/sova.png"></td><td>Formulář pro zaslání článku.</td></tr></table>
 
 <?php
-	if (!empty($_POST)) { echo '<font color="red"><b>Uloženo.</b></font>'; }
+
+if (!empty($_POST)) {
+	if (isset($_POST['code'])) {
+		if ($valid) {
+			echo '<font color="red"><b>Uloženo.</b></font>';
+		} else  {
+			echo '<font color="red"><b>Nesprávný kód.</b></font>';
+		}
+	}
+}
+
 ?>
 
 <p><hr width="500"></p>
@@ -61,6 +84,8 @@ if (!empty($_POST)) {
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30"></td></tr>
 <tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td>   <img src="/clanky/help.png" title='Pouze soubory typu PDF. Maximalní velikost 2MB.'></td></tr>
 <tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
+<tr height="8px"></tr>
+<tr><td align="right"><img src="captcha.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3"></td></tr>
 <tr height="8px"></tr>
 <tr><td></td><td align="left"><input type="submit" value="Odeslat"></td></tr>
 </table>
