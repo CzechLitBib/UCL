@@ -3,9 +3,9 @@
 putenv('GDFONTPATH=' . realpath('.'));
 
 // session
-$session = session_start();
+session_start();
 
-$captcha = '';
+$secret = '';
 $abc = '0123456789';
 
 // image
@@ -17,17 +17,17 @@ imagerectangle($im, 0, 0, 129, 39, $black);
 
 for($i=0; $i < 5; $i++) {
 	$ran = rand(0, 4);
-	$captcha .= $abc[rand(0, strlen($abc)-1)];
+	$secret .= $abc[rand(0, strlen($abc)-1)];
 	imagettftext($im, 22+$ran, 0, 15+(20*$i), 30, $black, 'font', $captcha[$i]);
 }
 
 // code
-$_SESSION['captcha'] = $captcha;
+$_SESSION['secret'] = $secret;
 
 // header
 header('Content-Type: image/png');
-header("Cache-Control: no-cache, must-revalidate"); 
-header("Expires: Sat, 26 Jul 2042 05:00:00 GMT");
+header('Cache-Control: no-cache, must-revalidate'); 
+header('Expires: Sat, 26 Jul 2042 05:00:00 GMT');
 
 imagepng($im);
 imagedestroy($im);
