@@ -18,7 +18,7 @@ imagerectangle($im, 0, 0, 129, 39, $black);
 for($i=0; $i < 5; $i++) {
 	$ran = rand(0, 4);
 	$secret .= $abc[rand(0, strlen($abc)-1)];
-	imagettftext($im, 22+$ran, 0, 15+(20*$i), 30, $black, 'font', $captcha[$i]);
+	imagettftext($im, 22+$ran, 0, 15+(20*$i), 30, $black, 'font', $secret[$i]);
 }
 
 // code
