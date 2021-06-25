@@ -1,0 +1,286 @@
+diff -Naurp pyoai-2.5.0-src/setup.py pyoai-2.5.0/setup.py
+--- pyoai-2.5.0-src/setup.py	2017-07-03 21:38:39.000000000 +0200
++++ pyoai-2.5.0/setup.py	2021-06-25 11:54:26.349629686 +0200
+@@ -3,7 +3,7 @@ from os.path import join, dirname
+ 
+ setup(
+     name='pyoai',
+-    version='2.5.1(unreleased)',
++    version='2.5.0',
+     author='Infrae',
+     author_email='info@infrae.com',
+     url='http://www.infrae.com/download/oaipmh',
+diff -Naurp pyoai-2.5.0-src/src/oaipmh/tests/createbrokendata.py pyoai-2.5.0/src/oaipmh/tests/createbrokendata.py
+--- pyoai-2.5.0-src/src/oaipmh/tests/createbrokendata.py	2017-07-03 21:38:39.000000000 +0200
++++ pyoai-2.5.0/src/oaipmh/tests/createbrokendata.py	2021-06-25 12:12:02.008679839 +0200
+@@ -20,55 +20,55 @@ client = FakeCreaterClient(
+ #print "isDeleted:", header.isDeleted()
+ #print
+ 
+-print "Identify"
++print("Identify")
+ identify = client.identify()
+-print "repositoryName:", identify.repositoryName()
+-print "baseURL:", identify.baseURL()
+-print "protocolVerson:", identify.protocolVersion()
+-print "adminEmails:", identify.adminEmails()
+-print "earliestDatestamp:", identify.earliestDatestamp()
+-print "deletedRecords:", identify.deletedRecord()
+-print "granularity:", identify.granularity()
+-print "compression:", identify.compression()
+-print
++print("repositoryName:", identify.repositoryName())
++print("baseURL:", identify.baseURL())
++print("protocolVerson:", identify.protocolVersion())
++print("adminEmails:", identify.adminEmails())
++print("earliestDatestamp:", identify.earliestDatestamp())
++print("deletedRecords:", identify.deletedRecord())
++print("granularity:", identify.granularity())
++print("compression:", identify.compression())
++print()
+ 
+-print "ListIdentifiers"
+-headers = client.listIdentifiers(from_=datetime(2006, 02, 8),
++print("ListIdentifiers")
++headers = client.listIdentifiers(from_=datetime(2006, 2, 8),
+                                  metadataPrefix='oai_dc')
+ for header in headers:
+-    print "identifier:", header.identifier()
+-    print "datestamp:", header.datestamp()
+-    print "setSpec:", header.setSpec()
+-    print "isDeleted:", header.isDeleted()
+-print
++    print("identifier:", header.identifier())
++    print("datestamp:", header.datestamp())
++    print("setSpec:", header.setSpec())
++    print("isDeleted:", header.isDeleted())
++print()
+ 
+-print "ListMetadataFormats"
++print("ListMetadataFormats")
+ for prefix, schema, ns in client.listMetadataFormats():
+-    print "metadataPrefix:", prefix
+-    print "schema:", schema
+-    print "metadataNamespace:", ns
+-print
++    print("metadataPrefix:", prefix)
++    print("schema:", schema)
++    print("metadataNamespace:", ns)
++print()
+ 
+-print "ListRecords"
++print("ListRecords")
+ for header, metadata, about in client.listRecords(
+-    from_=datetime(2006, 02, 8), metadataPrefix='oai_dc'):
+-    print "header"
+-    print "identifier:", header.identifier()
+-    print "datestamp:", header.datestamp()
+-    print "setSpec:", header.setSpec()
+-    print "isDeleted:", header.isDeleted()
++    from_=datetime(2006, 2, 8), metadataPrefix='oai_dc'):
++    print("header")
++    print("identifier:", header.identifier())
++    print("datestamp:", header.datestamp())
++    print("setSpec:", header.setSpec())
++    print("isDeleted:", header.isDeleted())
+     #print "metadata"
+     #for fieldname in fieldnames:
+     #    print "%s:" % fieldname, metadata.getField(fieldname)
+-    print "about"
+-    print about
+-print
++    print("about")
++    print(about)
++print()
+ 
+-print "ListSets"
++print("ListSets")
+ for setSpec, setName, setDescription in client.listSets():
+-    print "setSpec:", setSpec
+-    print "setName:", setName
+-    print "setDescription:", setDescription
+-print
++    print("setSpec:", setSpec)
++    print("setName:", setName)
++    print("setDescription:", setDescription)
++print()
+ 
+ client.save()
+diff -Naurp pyoai-2.5.0-src/src/oaipmh/tests/createdata_deleted_records.py pyoai-2.5.0/src/oaipmh/tests/createdata_deleted_records.py
+--- pyoai-2.5.0-src/src/oaipmh/tests/createdata_deleted_records.py	2017-07-03 21:38:39.000000000 +0200
++++ pyoai-2.5.0/src/oaipmh/tests/createdata_deleted_records.py	2021-06-25 12:11:47.496418717 +0200
+@@ -6,40 +6,40 @@ server = FakeCreaterServerProxy(
+     '/home/eric/CVS_checkouts/oai/tests/fake2')
+ 
+ #deleted record
+-print "GetRecord"
++print("GetRecord")
+ header, metadata, about = server.getRecord(
+     metadataPrefix='oai_dc', identifier='hdl:1765/1160')
+-print "identifier:", header.identifier()
+-print "datestamp:", header.datestamp()
+-print "setSpec:", header.setSpec()
+-print "isDeleted:", header.isDeleted()
+-print
++print("identifier:", header.identifier())
++print("datestamp:", header.datestamp())
++print("setSpec:", header.setSpec())
++print("isDeleted:", header.isDeleted())
++print()
+ 
+ #normal record
+-print "GetRecord"
++print("GetRecord")
+ header, metadata, about = server.getRecord(
+     metadataPrefix='oai_dc', identifier='hdl:1765/1162')
+-print "identifier:", header.identifier()
+-print "datestamp:", header.datestamp()
+-print "setSpec:", header.setSpec()
+-print "isDeleted:", header.isDeleted()
+-print
++print("identifier:", header.identifier())
++print("datestamp:", header.datestamp())
++print("setSpec:", header.setSpec())
++print("isDeleted:", header.isDeleted())
++print()
+ 
+-print "ListRecords"
++print("ListRecords")
+ for header, metadata, about in server.listRecords(
+-    from_=datetime(2004, 01, 01), until=datetime(2004, 02, 01),
++    from_=datetime(2004, 1, 1), until=datetime(2004, 2, 1),
+     metadataPrefix='oai_dc'):
+-    print "header"
+-    print "identifier:", header.identifier()
+-    print "datestamp:", header.datestamp()
+-    print "setSpec:", header.setSpec()
+-    print "isDeleted:", header.isDeleted()
+-    print "metadata"
++    print("header")
++    print("identifier:", header.identifier())
++    print("datestamp:", header.datestamp())
++    print("setSpec:", header.setSpec())
++    print("isDeleted:", header.isDeleted())
++    print("metadata")
+     if metadata is not None:
+         for fieldname in metadata.getMap().keys():
+-            print "%s:" % fieldname, metadata.getField(fieldname)
+-    print "about"
+-    print about
+-print
++            print("%s:" % fieldname, metadata.getField(fieldname))
++    print("about")
++    print(about)
++print()
+ 
+ server.save()
+diff -Naurp pyoai-2.5.0-src/src/oaipmh/tests/createdata.py pyoai-2.5.0/src/oaipmh/tests/createdata.py
+--- pyoai-2.5.0-src/src/oaipmh/tests/createdata.py	2017-07-03 21:38:39.000000000 +0200
++++ pyoai-2.5.0/src/oaipmh/tests/createdata.py	2021-06-25 12:12:29.717178449 +0200
+@@ -5,64 +5,64 @@ client = FakeCreaterClient(
+     'http://dspace.ubib.eur.nl/oai/',
+     '/home/faassen/py/oai/tests/fake2')
+ 
+-print "GetRecord"
++print("GetRecord")
+ header, metadata, about = client.getRecord(
+     metadataPrefix='oai_dc', identifier='hdl:1765/315')
+-print "identifier:", header.identifier()
+-print "datestamp:", header.datestamp()
+-print "setSpec:", header.setSpec()
+-print "isDeleted:", header.isDeleted()
+-print
++print("identifier:", header.identifier())
++print("datestamp:", header.datestamp())
++print("setSpec:", header.setSpec())
++print("isDeleted:", header.isDeleted())
++print()
+ 
+-print "Identify"
++print("Identify")
+ identify = client.identify()
+-print "repositoryName:", identify.repositoryName()
+-print "baseURL:", identify.baseURL()
+-print "protocolVerson:", identify.protocolVersion()
+-print "adminEmails:", identify.adminEmails()
+-print "earliestDatestamp:", identify.earliestDatestamp()
+-print "deletedRecords:", identify.deletedRecord()
+-print "granularity:", identify.granularity()
+-print "compression:", identify.compression()
+-print
++print("repositoryName:", identify.repositoryName())
++print("baseURL:", identify.baseURL())
++print("protocolVerson:", identify.protocolVersion())
++print("adminEmails:", identify.adminEmails())
++print("earliestDatestamp:", identify.earliestDatestamp())
++print("deletedRecords:", identify.deletedRecord())
++print("granularity:", identify.granularity())
++print("compression:", identify.compression())
++print()
+ 
+-print "ListIdentifiers"
+-headers = client.listIdentifiers(from_=datetime(2003, 04, 10),
++print("ListIdentifiers")
++headers = client.listIdentifiers(from_=datetime(2003, 4, 10),
+                                  metadataPrefix='oai_dc')
+ for header in headers:
+-    print "identifier:", header.identifier()
+-    print "datestamp:", header.datestamp()
+-    print "setSpec:", header.setSpec()
+-    print "isDeleted:", header.isDeleted()
+-print
++    print("identifier:", header.identifier())
++    print("datestamp:", header.datestamp())
++    print("setSpec:", header.setSpec())
++    print("isDeleted:", header.isDeleted())
++print()
+ 
+-print "ListMetadataFormats"
++print("ListMetadataFormats")
+ for prefix, schema, ns in client.listMetadataFormats():
+-    print "metadataPrefix:", prefix
+-    print "schema:", schema
+-    print "metadataNamespace:", ns
+-print
++    print("metadataPrefix:", prefix)
++    print("schema:", schema)
++    print("metadataNamespace:", ns)
++print()
+ 
+-print "ListRecords"
++print("ListRecords")
+ for header, metadata, about in client.listRecords(
+-    from_=datetime(2003, 04, 10), metadataPrefix='oai_dc'):
+-    print "header"
+-    print "identifier:", header.identifier()
+-    print "datestamp:", header.datestamp()
+-    print "setSpec:", header.setSpec()
+-    print "isDeleted:", header.isDeleted()
++    from_=datetime(2003, 4, 10), metadataPrefix='oai_dc'):
++    print("header")
++    print("identifier:", header.identifier())
++    print("datestamp:", header.datestamp())
++    print("setSpec:", header.setSpec())
++    print("isDeleted:", header.isDeleted())
+     #print "metadata"
+     #for fieldname in fieldnames:
+     #    print "%s:" % fieldname, metadata.getField(fieldname)
+-    print "about"
+-    print about
+-print
++    print("about")
++    print(about)
++print()
+ 
+-print "ListSets"
++print("ListSets")
+ for setSpec, setName, setDescription in client.listSets():
+-    print "setSpec:", setSpec
+-    print "setName:", setName
+-    print "setDescription:", setDescription
++    print("setSpec:", setSpec)
++    print("setName:", setName)
++    print("setDescription:", setDescription)
+ print
+ 
+ client.save()
