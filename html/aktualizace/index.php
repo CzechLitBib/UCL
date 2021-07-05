@@ -1,8 +1,23 @@
+<?php
+
+session_start();
+
+$_SESSION['page'] = 'aktualizace';
+
+if(empty($_SESSION['auth'])) {
+	header('Location: ../index.php');
+	exit();
+}
+
+?>
+
+
 <html>
 <head></head>
 <body bgcolor="lightgrey">
 <div align="center">
 <table><tr><td><img src="/aktualizace/sova.png"><td><td>Formulář pro aktualizaci kontrolních seznamů.</td></tr></table>
+<p><hr width="500"></p>
 <form action="." method="post">
 
 <?php
@@ -21,6 +36,7 @@ foreach ($pole as $p) {
 		}
 	}
 }
+
 ?>
 
 </form>

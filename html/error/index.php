@@ -1,60 +1,46 @@
+<?php
+
+session_start();
+
+$_SESSION['page'] = 'error';
+
+if(empty($_SESSION['auth'])) {
+	header('Location: index.php');
+	exit();
+
+
+$errors = array(
+	array('000', 'Chybí pole SIF.', "Záznam neobsahuje žádné pole SIF."),
+	array('001', 'Chybí pole XXX.', "Záznam neobsahuje některé z povinných polí (001, 003, 005, 008, 040, 245, 520, 655, 910, 964, nebo OWN)."),
+	array('002', 'Chybí pole KAT/CAT.', "Záznam neobsahuje žádné pole KAT, nebo CAT."),
+	array('003', 'Chybí pole LDR.', "Záznam neobsahuje žádné pole LDR"),
+	array('004', 'Chybná hodnota v poli 003.', "Pole 003 neobsahuje hodnotu 'CZ PrUCL'."),
+	array('005', 'Chybná hodnota v podpoli 040a.', "Podpole 040a neobsahuje hodnotu 'ABB060'"),
+);
+
+}
+
+?>
+
 <!doctype html>
 <html>
 <head><meta charset="utf-8"></head>
 <body bgcolor="lightgrey">
-
 <div align="center">
-<br><img src="/error/sova.png">
-<br>
-Popis chybových zpráv kontrolního programu OAI-MARC.
-<br>
-<br>
+<table><tr><td><img src="/error/sova.png"></td><td>Popis chybových zpráv</td></tr></table>
 
-<p>
-<table cellpadding="5" width="700">
-<tr><td width="42" align="center"><font color="red"><b>000</b></font></td><td width="650"><b>Chybí pole SIF.</b></td></tr>
-<tr><td></td><td width="650"><div align="justify">Záznam neobsahuje žádné pole SIF.</div></td></tr>
-</table>
-</p>
+<?php
 
-<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
-<table cellpadding="5" width="700">
-<tr><td width="42" align="center"><font color="red"><b>001</b></font></td><td width="650"><b>Chybí pole XXX.</b></td></tr>
-<tr><td></td><td width="650"><div align="justify">Záznam neobsahuje některé z povinných polí (001, 003, 005, 008, 040, 245, 520, 655, 910, 964, nebo OWN).</div></td></tr>
-</table>
-</p>
+foreach($errors as $error) {
+	echo '<p><table cellpadding="5" width="700">';
+	echo '<tr><td width="42" align="center"><font color="red"><b>' . $error[0] . '</b></font></td><td width="650"><b>' . $error[1] . '</b></td></tr>';
+	echo '<tr><td></td><td width="650"><div align="justify">' . $error[2] . '</div></td></tr>';
+	echo '</table></p>';
+	echo '<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>';
+}
 
-<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
-<table cellpadding="5" width="700">
-<tr><td width="42" align="center"><font color="red"><b>002</b></font></td><td width="650"><b>Chybí pole KAT/CAT.</b></td></tr>
-<tr><td></td><td width="650"><div align="justify">Záznam neobsahuje žádné pole KAT, nebo CAT.</div></td></tr>
-</table>
+?>
 
-<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
-<p>
-<table cellpadding="5" width="700">
-<tr><td width="42" align="center"><font color="red"><b>003</b></font></td><td width="650"><b>Chybí pole LDR.</b></td></tr>
-<tr><td></td><td width="650"><div align="justify">Záznam neobsahuje žádné pole LDR.</div></td></tr>
-</table>
-</p>
-
-<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
-<p>
-<table cellpadding="5" width="700">
-<tr><td width="42" align="center"><font color="red"><b>004</b></font></td><td width="650"><b>Chybná hodnota v poli 003.</b></td></tr>
-<tr><td></td><td width="650"><div align="justify">Pole 003 neobsahuje hodnotu 'CZ PrUCL'.</div></td></tr>
-</table>
-</p>
-
-<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
-<p>
-<table cellpadding="5" width="700">
-<tr><td width="42" align="center"><font color="red"><b>005</b></font></td><td width="650"><b>Chybná hodnota v podpoli 040a.</b></td></tr>
-<tr><td></td><td width="650"><div align="justify">Podpole 040a neobsahuje hodnotu 'ABB060'.</div></td></tr>
-</table>
-</p>
-
-<p><hr width="650" style=" border:none; height:1px; background-color: black;"></p>
 <p>
 <table cellpadding="5" width="700">
 <tr><td width="42" align="center"><font color="red"><b>006</b></font></td><td width="650"><b>Chybná hodnota v podpoli 040b.</b></td></tr>

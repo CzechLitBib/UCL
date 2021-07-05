@@ -1,7 +1,13 @@
 <?php
 
-// restore session
 session_start();
+
+//$_SESSION['page'] = 'clanky';
+//
+//if(empty($_SESSION['auth'])) {
+//	header('Location:  ../index.php');
+//	exit();
+//}
 
 //get uniqe ID
 $id = uniqid();
