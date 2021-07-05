@@ -101,12 +101,6 @@ def write_error(id,tag,sif,code,code_text):
 	if SIF not in ERROR: ERROR[SIF] = {}
 	if aleph not in ERROR[SIF]: ERROR[SIF][aleph] = []
 	ERROR[SIF][aleph].append((code,code_text))
-	# write daily HTML
-	log.write(
-		'<p><a style="color:#6DAE42;" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-		aleph + '&local_base=AV">' + aleph + '</a>' + '{}'.format(' [<font color="gold">' + sif + '</font>]' if sif else '') +
-		' [<font color="gold">' + code + '</font>] <font color="white">' + code_text + '</font></p>\n'
-	)
 	# write daily CSV
 	csv.write(aleph + ';' + sif + ';' + code + ';' + code_text + '\n')
 
