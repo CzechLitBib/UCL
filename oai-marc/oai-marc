@@ -1,14 +1,11 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
 #
 # OAI-PMH 2.0 MARCXML Record validator.
 #
 
 # INCLUDE -------------------
 
-from __future__ import print_function
-
-import argparse,StringIO,urllib2,smtplib,sys,os,re
+import argparse,io,urllib.request,smtplib,sys,os,re
 
 from email.mime.text import MIMEText
 from datetime import datetime
@@ -20,7 +17,6 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-LOG='oai-marc.html'
 CSV='oai-marc.csv'
 
 COUNTRY_CODE='/usr/local/bin/country_code.txt'
@@ -30,21 +26,9 @@ SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
-MAIL_SENDER='xxx'
-MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
-
-HTML_HEADER='''<!doctype html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="background-color:black;color:#6DAE42;">
-<br>[ <a href="CSVPLACEHOLDER" style="color:white; text-decoration:none;">CSV</a> ]
-<br>
-'''
-
-HTML_FOOTER='''</body>
-</html>
-'''
+MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
+MAIL_SERVER='listonos.ucl.cas.cz'
+MAIL_SERVER_BACKUP='mail2.ucl.cas.cz'
 
 COUNTER=0
 MATCH=0
@@ -53,7 +37,7 @@ MATCH=0
 
 def MarcXML(xml):
 	handler = marcxml.XmlHandler()
-	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	marcxml.parse_xml(io.StringIO(tostring(xml, encoding='utf-8')), handler)
 	return handler.records[0]
 
 def valid_date(s):
@@ -74,9 +58,9 @@ def valid_request(s):
 
 def url_response(url):
 	try:
-		req = urllib2.Request(url)
+		req = urllib.request.Request(url)
 		req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0')
-		if urllib2.urlopen(req, timeout=10).getcode() == 200: return 1
+		if urllib.request.urlopen(req, timeout=10).getcode() == 200: return 1
 	except: pass
 	return 0
 
@@ -367,9 +351,9 @@ for record in records:
 			elif 'g' not in F:
 				ADD=False
 				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): ADD=True
-				if VAL and u'příl.' in VAL and u'příloha' in F['t']: ADD =True
+				if VAL and 'příl.' in VAL and 'příloha' in F['t']: ADD =True
 				if '[samizdat]' in F['t']: ADD=True
-				if u'Literární archiv' in F['t']: ADD=True
+				if 'Literární archiv' in F['t']: ADD=True
 				if not ADD:
 					write_error(header.identifier(), '773', SIF, '024', 'Chybný zápis přílohy v opakovaném poli 773.')
 		for F in metadata.get_fields('787'):
@@ -845,7 +829,7 @@ for record in records:
 		if metadata.leader:
 			if metadata.leader[7] != 'm': CNB=False
 		for F in metadata.get_fields('506'):
-			if re.match(u'^Bez čísla ČNB.*', F.value()): CNB=False
+			if re.match('^Bez čísla ČNB.*', F.value()): CNB=False
 		for F in metadata.get_fields('964'):
 			if F.value() == 'SMZ': CNB=False
 		if CNB:
@@ -1003,14 +987,14 @@ for record in records:
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0':
 				if '700' not in metadata:
-					if u'Nepodepsáno.' not in [F.value() for F in metadata.get_fields('500')]:
+					if 'Nepodepsáno.' not in [F.value() for F in metadata.get_fields('500')]:
 						BIO=False
 						for B in [F['a'] for F in metadata.get_fields('655') if 'a' in F]:
 							if B in (
-								u'biografické poznámky',
-								u'bibliografické poznámky',
-								u'bio-bibliografické poznámky',
-								u'biograficko-bibliografické poznámky'
+								'biografické poznámky',
+								'bibliografické poznámky',
+								'bio-bibliografické poznámky',
+								'biograficko-bibliografické poznámky'
 							): BIO=True
 						if not BIO:
 							write_error(header.identifier(), '245', SIF, '155', 'Chybný 1. indikátor pole 245c, nebo chybí pole 700, "Nepodepsáno." v 500, či nejde o bbp.')
@@ -1276,15 +1260,11 @@ for record in records:
 # EXIT -------------------
 
 if args.get != 'record':
-	print('TOTAL ' + str(COUNTER))
-
+    print('TOTAL ' + str(COUNTER))
 if args.check:
-	print('MATCH ' + str(MATCH))
-	if records and MATCH == 0: log.write('<p><font color="white">Žádný záznam.</font></p>')
+    print('MATCH ' + str(MATCH))
+if args.notify:
+    notify()
 
-if args.notify: notify()
-
-log.write(HTML_FOOTER)
-log.close()
 csv.close()
 

@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Crontab daily runner
+#
+# 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
+#
+
+DATA_PATH='/var/www/html/daily/data'
+
+CSVNAME="$(date --date='yesterday' '+%Y-%m-%d').csv"
+
+# ------------------------
+
+echo "start $(date '+%Y-%m-%d %H:%M:%S')"
+
+oai-marc \
+	--set UCLA \
+	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
+	--check \
+	--notify
+
+mkdir -p "$DATA_PATH/$(date --date='yesterday' '+%Y/%m')" 2> /dev/null
+
+mv -f oai-marc.csv "$DATA_PATH/$(date --date='yesterday' '+%Y/%m')/$CSVNAME" 2> /dev/null
+
+echo "end $(date '+%Y-%m-%d %H:%M:%S')"
+
+exit 0
+
