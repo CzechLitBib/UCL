@@ -9,8 +9,8 @@ $authorized = False;
 
 if (isset($_POST['name']) and isset($_POST['pass'])) {
 	
-	$ldap_dn = 'xxx';
-	$ldap_conn = ldap_connect('xxx');
+	$ldap_dn = 'uid=' . $_POST['name'] . ',ou=Users,dc=ucl,dc=cas,dc=cz';
+	$ldap_conn = ldap_connect('ldap://147.231.80.195');
 
 	ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 	ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
@@ -41,7 +41,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		echo '<font color="red">Přihlášení selhalo.</font>';
 	} else {
 		$_SESSION['auth'] = True;
-		if (!isset($_SESSION['page'])) { $_SESSION['page'] = 'main.php'; }
+		if (!isset($_SESSION['page'])) { $_SESSION['page'] = 'main'; }
 		header('Location: ' . $_SESSION['page']);
 		exit();
 	}	

@@ -5,7 +5,7 @@ session_start();
 $_SESSION['page'] = 'aktualizace';
 
 if(empty($_SESSION['auth'])) {
-	header('Location: ../index.php');
+	header('Location: /');
 	exit();
 }
 

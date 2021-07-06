@@ -2,10 +2,10 @@
 
 session_start();
 
-$_SESSION['page'] = 'daily';
+$_SESSION['page'] = 'weekly';
 
 if(empty($_SESSION['auth'])) {
-	header('Location: ../index.php');
+	header('Location: /');
 	exit();
 }
 
