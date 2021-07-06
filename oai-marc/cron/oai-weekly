@@ -5,7 +5,8 @@
 # 00 5 * * * root oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 #
 
-EMAIL='xxx'
+SENDER='xxx'
+TARGET='xxx'
 URL='xxx'
 
 DATA_PATH='/var/www/html/weekly/data'
@@ -37,17 +38,30 @@ mv -f oai-marc.csv "$DATA_PATH/$CSVNAME" 2> /dev/null
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
-cat << EOF | mail -s 'Kontrolní zpráva' $EMAIL
+sendmail -r $SENDER $TARGET << EOL
+From: Kontrola MARC <webmaster@vyvoj.ucl.cas.cz>
+To: $TARGET
+Subject: =?utf-8?B?S29udHJvbG7DrSB6cHLDoXZh?=
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html>
+<head><meta charset='utf-8'></head>
+<body>
+<br>
+<div align="justify" style="width:90%">
 Dobrý den,
-
+<br><br>
 Kontrolní zpráva je dostupná na adrese:
-
-$URL
-
----------------------------
-TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,
-NEODPOVÍDEJTE NA NI.
-EOF
+<br><br>
+<a target="_blank" href="$URL">$URL</a>
+<br><br>
+---------------------------<br>
+TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
+</div>
+</body>
+</html>
+EOL
 
 exit 0
 
