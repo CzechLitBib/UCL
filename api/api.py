@@ -2,8 +2,16 @@
 #
 # MARCXML REST API
 #
+#
+#  PKEY ID INT - record ('ident' [INT],'date' [INT],'metadata' [TEXT])
+#  INDEX ident ( indent);
+#  INDEX epoch ( date);
+#
+# row.fetch_one('ident');
+# yield list(iso_range); -> SELECT BETWEEN;
+#
 
-#import pymarc
+from pymarc import MARCWriter
 
 from flask import Flask
 from flask_restful import Resource, Api
