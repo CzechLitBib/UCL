@@ -26,14 +26,14 @@ if(empty($_SESSION['auth'])) {
 </head>
 <body>
 <div align="center">
-<table><tr><td><img src="sova.png"><td><td>UCL Vývoj</td></tr></table>
+<table><tr><td><img src="/sova.png"><td><td>UCL Vývoj</td></tr></table>
 <p><hr width="500"></p>
 <table border="0">
 <tr><td id="icon"><img src="dir.png"/></td><td id="link"><a href="daily">denní</a></td></tr>
 <tr><td id="icon"><img src="dir.png"/></td><td id="link"><a href="weekly">týdenní</a></td></tr>
 <tr><td id="icon"><img src="dir.png"/></td><td id="link"><a href="kat">KAT</a></td></tr>
 <tr><td id="icon"><img src="dir.png"/></td><td id="link"><a href="nkp">NKP</a></td></tr>
-<tr><td id="icon"><img src="link.png"/></td><td id="link"><a href="7">7</a></td></tr>
+<tr><td id="icon"><img src="link.png"/></td><td id="link"><a href="seven">7</a></td></tr>
 <tr><td id="icon"><img src="link.png"/></td><td id="link"><a href="error">chybové kódy</a></td></tr>
 <tr><td id="icon"><img src="link.png"/></td><td id="link"><a href="clanky">články</a></td></tr>
 <tr><td id="icon"><img src="link.png"/></td><td id="link"><a href="aktualizace">aktualizace</a></td></tr>

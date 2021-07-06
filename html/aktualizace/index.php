@@ -16,7 +16,7 @@ if(empty($_SESSION['auth'])) {
 <head></head>
 <body bgcolor="lightgrey">
 <div align="center">
-<table><tr><td><img src="/aktualizace/sova.png"><td><td>Formulář pro aktualizaci kontrolních seznamů.</td></tr></table>
+<table><tr><td><img src="/sova.png"><td><td>Formulář pro aktualizaci kontrolních seznamů.</td></tr></table>
 <p><hr width="500"></p>
 <form action="." method="post">
 

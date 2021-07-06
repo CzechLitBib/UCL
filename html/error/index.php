@@ -11,12 +11,11 @@ if(empty($_SESSION['auth'])) {
 
 ?>
 
-<!doctype html>
 <html>
 <head><meta charset="utf-8"></head>
 <body bgcolor="lightgrey">
 <div align="center">
-<table><tr><td><img src="/error/sova.png"></td><td>Popis chybových zpráv</td></tr></table>
+<table><tr><td><img src="/sova.png"></td><td>Popis chybových zpráv</td></tr></table>
 
 <?php
 
