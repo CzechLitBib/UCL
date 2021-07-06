@@ -1,14 +1,11 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
 #
 # OAI-PMH 2.0 MARCXML Record text collector.
 #
 
 # INCLUDE -------------------
 
-from __future__ import print_function
-
-import argparse,StringIO,smtplib,sys,os,re
+import argparse,io,smtplib,sys,os,re
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -21,7 +18,7 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-RECENZE='/usr/local/bin/recenze.csv'
+RECENZE='/usr/local/bin/recenze.txt'
 
 RECLIST={'A':{},'B':{}}
 
@@ -37,7 +34,7 @@ MATCH=0
 
 def MarcXML(xml):
 	handler = marcxml.XmlHandler()
-	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	marcxml.parse_xml(io.StringIO(tostring(xml, encoding='utf-8').decode('utf-8')), handler)
 	return handler.records[0]
 
 def valid_date(s):
@@ -72,7 +69,7 @@ def notify():
 		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['B'][aleph] + '<br>')
 
-	msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
+	msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
 	msg['Subject'] = 'Bibliografie MZK'
 	msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
 	msg['To'] = MAIL_TARGET
