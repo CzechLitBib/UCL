@@ -2,7 +2,7 @@
 
 session_start();
 
-$_SESSION['page'] = 'daily';
+$_SESSION['page'] = 'weekly';
 
 if(empty($_SESSION['auth'])) {
 	header('Location: /');
@@ -26,10 +26,10 @@ if(empty($_SESSION['auth'])) {
 
 <?php
 
-default = date("Y-m-d", strtotime("-1 day"));
+$default = date("Y-m-d", strtotime("Tuesday"));
 if (!empty($_POST['date'])){ $default = $_POST['date']; }
 
-echo "<input type='date' name='date' value='" . date("Y-m-d", strtotime("-1 day")) . "' min='2020-03-02' max='" . date("Y-m-d", strtotime("-1 day")) . "'>\n";
+echo "<input type='date' name='date' value='" . $default . "' max='" . date("Y-m-d", strtotime("Tuesday")) . "' step='7'>\n";
 
 ?>
 
@@ -41,10 +41,15 @@ echo "<input type='date' name='date' value='" . date("Y-m-d", strtotime("-1 day"
 
 if (!empty($_POST['date'])){
 	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_POST['date'])) {
-	
-		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})-\d{2}/', '${1}/${2}', $_POST['date']) . '/' . $_POST['date'] . '.csv';
-		
+
+		$file = 'data/'
+		. date("Y-m-d", strtotime($_POST['date']) - 8*24*3600) . '_'
+		. date("Y-m-d", strtotime($_POST['date']) - 2*24*3600) . '.csv';
+
 		if (($csv = fopen($file, "r")) !== FALSE) {
+	
+			echo "<table>\n";
+
 			while (($data = fgetcsv($csv, 1000, ";")) !== FALSE) {
 				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
 					. $data[0] . "&local_base=AV" . "'><b>" . $data[0] . "</b></a></td><td align='right'>"
@@ -52,13 +57,13 @@ if (!empty($_POST['date'])){
 					. "]</td><td>" . $data[3] . "</td></tr>\n";
 			}
 			fclose($csv);
+			echo "</table>\n";
+			
 		}
 	}
 }
 
 ?>
-
-</table>
 <p><hr width="500"></p>
 </div>
 </body>

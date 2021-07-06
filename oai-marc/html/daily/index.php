@@ -26,34 +26,39 @@ if(empty($_SESSION['auth'])) {
 
 <?php
 
-echo "<input type='date' name='date' value='" . date("Y-m-d", strtotime("-1 day")) . "' min='2020-03-02' max='" . date("Y-m-d", strtotime("-1 day")) . "'>\n";
+$default = date("Y-m-d", strtotime("-1 day"));
+if (!empty($_POST['date'])) { $default = $_POST['date']; }
+
+echo "<input type='date' name='date' value='" . $default . "' min='2020-03-02' max='" . date("Y-m-d", strtotime("-1 day")) . "'>\n";
 
 ?>
 
 <input type='submit' value='Zobrazit'>
 </form>
-<table>
 
 <?php
 
 if (!empty($_POST['date'])){
-
-	$file =  'data/' . preg_replace('/(\d{4})-(\d{2})-\d{2}/', '${1}/${2}', $_POST['date']) . '/' . $_POST['date'] . '.csv';
-
-	if (($csv = fopen($file, "r")) !== FALSE) {
-		while (($data = fgetcsv($csv, 1000, ";")) !== FALSE) {
-			echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
-				. $data[0] . "&local_base=AV" . "'><b>" . $data[0] . "</b></a></td><td align='right'>"
-				. "" . $data[1] . "</td><td>" . "[<a href='../error/#" . $data[2] . "'><b>" . $data[2] . "</b></a>"
-				. "]</td><td>" . $data[3] . "</td></tr>\n";
+	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_POST['date'])) {
+	
+		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})-\d{2}/', '${1}/${2}', $_POST['date']) . '/' . $_POST['date'] . '.csv';
+		
+		if (($csv = fopen($file, "r")) !== FALSE) {
+			echo "<table>\n";
+			while (($data = fgetcsv($csv, 1000, ";")) !== FALSE) {
+				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
+					. $data[0] . "&local_base=AV" . "'><b>" . $data[0] . "</b></a></td><td align='right'>"
+					. "" . $data[1] . "</td><td>" . "[<a href='../error/#" . $data[2] . "'><b>" . $data[2] . "</b></a>"
+					. "]</td><td>" . $data[3] . "</td></tr>\n";
+			}
+			fclose($csv);
+			echo "</table>\n";
 		}
-		fclose($csv);
 	}
 }
 
 ?>
 
-</table>
 <p><hr width="500"></p>
 </div>
 </body>
