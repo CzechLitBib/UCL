@@ -56,7 +56,7 @@ def valid_request(s):
 def notify():
 	html_header = '<br>Dobrý den,<br><br>Zasíláme nové záznamy pro web Českého literárního centra.<br><br>'
 	html_footer =('<br>---------------------------<br><br>' +
-		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 	html_body=''
 
 	for aleph in sorted(RECLIST['A']):
@@ -69,21 +69,23 @@ def notify():
 		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['B'][aleph] + '<br>')
 
-	msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
-	msg['Subject'] = 'Bibliografie MZK'
-	msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-	msg['To'] = MAIL_TARGET
-	try:
-		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
-		s.quit()
-	except:
+	if html_body:
+
+		msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
+		msg['Subject'] = 'Bibliografie MZK'
+		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+		msg['To'] = MAIL_TARGET
 		try:
-			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
 			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
 			s.quit()
 		except:
-			print('Sendmail error.')
+			try:
+				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+				s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+				s.quit()
+			except:
+				print('Sendmail error.')
 
 # ARG -------------------
 
@@ -113,7 +115,7 @@ try:
 	recenze_map = {}
 	with open(RECENZE, 'r') as f:
 		for line in f:
-			rec_name, rec_code = line.decode('utf-8').split('#')
+			rec_name, rec_code = line.split('#')
 			recenze_map[rec_code.strip()] = rec_name
 except: recenze_map = {}
 
@@ -215,16 +217,14 @@ for record in records:
 						TITLE += '; ' + F['t']
 		
 		if A:
-			#print("Got A.")
-			RECLIST['A'][IDENT] =(NAME).strip('.:/ ').encode('utf-8')
+			RECLIST['A'][IDENT] =(NAME).strip('.:/ ')
 			MATCH+=1
 
 		if B:
-			#print("Got B.")
 			if not NAME:
-				RECLIST['B'][IDENT] = (TITLE).encode('utf-8')
+				RECLIST['B'][IDENT] = (TITLE)
 			else:
-				RECLIST['B'][IDENT] = (NAME + ' - ' + TITLE).encode('utf-8')
+				RECLIST['B'][IDENT] = (NAME + ' - ' + TITLE)
 			MATCH+=1
 
 	TOTAL+=1

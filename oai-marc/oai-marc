@@ -67,7 +67,7 @@ def url_response(url):
 def notify():
 	html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
 	html_footer =('<br>Prosíme o opravu.<br>---------------------------<br><br>' +
-		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 	for sif in ERROR:
 		if sif in sif_code:# match email address
 			html_body=''
@@ -75,7 +75,7 @@ def notify():
 				for error in ERROR[sif][aleph]:
 					html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 						aleph + '&local_base=AV">' + aleph + '</a> ' + ' [' + error[0] + '] ' + error[1] + '<br>')
-			msg = MIMEText((html_header + html_body + html_footer), 'html', 'utf-8')
+			msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
 			msg['Subject'] = 'Kontrolní zpráva'
 			msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
 			msg['To'] = sif_code[sif]
