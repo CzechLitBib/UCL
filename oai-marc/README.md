@@ -31,10 +31,6 @@ oai-marc
 oai-citace
 oai-recenze
 
-country_code.txt
-lang_code.txt
-role_code.txt
-sif_code.txt
 </pre>
 FILE
 <pre>
@@ -51,10 +47,10 @@ FILE
   field.py.patch - Allow non-standard control field(FMT).
      pyoai.patch - Python3 test file patch.
 
-country_code.txt - MARC country code file.
-   lang_code.txt - MARC language code file.
-   role_code.txt - MARC role code file.
-    sif_code.txt - MARC sif code file.
+     country.txt - MARC country code file.
+        lang.txt - MARC language code file.
+        role.txt - MARC role code file.
+         sif.txt - MARC sif code file.
      recenze.csv - Data file oai-recenze.
 </pre>
 SOURCE
