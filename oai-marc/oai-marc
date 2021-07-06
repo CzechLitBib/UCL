@@ -75,7 +75,7 @@ def notify():
 				for error in ERROR[sif][aleph]:
 					html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 						aleph + '&local_base=AV">' + aleph + '</a> ' + ' [' + error[0] + '] ' + error[1] + '<br>')
-			msg = MIMEText((html_header + html_body + html_footer).decode('utf-8'), 'html', 'utf-8')
+			msg = MIMEText((html_header + html_body + html_footer), 'html', 'utf-8')
 			msg['Subject'] = 'Kontrolní zpráva'
 			msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
 			msg['To'] = sif_code[sif]
