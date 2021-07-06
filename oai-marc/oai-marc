@@ -26,9 +26,9 @@ SIF_CODE='/usr/local/bin/sif_code.txt'
 
 ERROR={}
 
-MAIL_SENDER='webmaster@pokuston.ucl.cas.cz'
-MAIL_SERVER='listonos.ucl.cas.cz'
-MAIL_SERVER_BACKUP='mail2.ucl.cas.cz'
+MAIL_SENDER='xxx'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
 COUNTER=0
 MATCH=0
@@ -37,7 +37,7 @@ MATCH=0
 
 def MarcXML(xml):
 	handler = marcxml.XmlHandler()
-	marcxml.parse_xml(io.StringIO(tostring(xml, encoding='utf-8')), handler)
+	marcxml.parse_xml(io.StringIO(tostring(xml, encoding='utf-8').decode('utf-8')), handler)
 	return handler.records[0]
 
 def valid_date(s):
@@ -93,7 +93,7 @@ def notify():
 
 def write_error(id,tag,sif,code,code_text):
 	aleph = re.sub('^.*-(\d+)$', '\\1', id)
-	SIF = sif.decode('utf-8').lower()
+	SIF = sif.lower()
 	# error counter
 	global MATCH
 	MATCH+=1
@@ -141,13 +141,7 @@ if args.get == 'ident':
 # INIT -------------------
 
 try:
-	log = open(LOG, 'w', 0)
-	log.write(HTML_HEADER)
-except:
-	print('LOG: Read only FS exiting..')
-	exit(1)
-try:
-	csv = open(CSV, 'w', 0)
+    csv = open(CSV, 'w')
 except:
 	print('CSV: Read only FS exiting..')
 	exit(1)
@@ -167,7 +161,7 @@ try:
 	sif_code = {}
 	with open(SIF_CODE, 'r') as f:
 		for line in f:
-			acct_code, acct_addr = line.decode('utf-8').split(':')
+			acct_code, acct_addr = line.split(':')
 			sif_code[acct_code] = acct_addr.strip()
 except: sif_code = {}
 
@@ -178,19 +172,19 @@ oai = Client(URL, registry)
 
 record,header,about='','',''
 records=[]
-try:
-	if args.get == 'record':
-		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
-	if args.get == 'list':
-		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-	if args.get == 'ident':
-		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-	if args.get == 'set':
-		records = oai.listSets()
-	if args.get == 'meta':
-		records = oai.listMetadataFormats()
-except:
-	log.write('<p><font color="white">Žádný záznam.</font></p>')
+#try:
+if args.get == 'record':
+	header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
+if args.get == 'list':
+	records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+if args.get == 'ident':
+	records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+if args.get == 'set':
+	records = oai.listSets()
+if args.get == 'meta':
+	records = oai.listMetadataFormats()
+#except:
+#	print('Žádný záznam.')
 
 # MAIN -------------------
 
@@ -258,7 +252,7 @@ for record in records:
 		# TEST TAG ------------------
 
 		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].encode('utf-8')
+			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a']
 		else:
 			SIF = ''
 			write_error(header.identifier(), 'SIF', SIF, '000', 'Chybí pole SIF.')
