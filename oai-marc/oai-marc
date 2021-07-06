@@ -19,10 +19,10 @@ from lxml.etree import tostring
 URL='https://aleph.lib.cas.cz/OAI'
 CSV='oai-marc.csv'
 
-COUNTRY_CODE='/usr/local/bin/country_code.txt'
-LANG_CODE='/usr/local/bin/lang_code.txt'
-ROLE_CODE='/usr/local/bin/role_code.txt'
-SIF_CODE='/usr/local/bin/sif_code.txt'
+COUNTRY_CODE='/usr/local/bin/country.txt'
+LANG_CODE='/usr/local/bin/lang.txt'
+ROLE_CODE='/usr/local/bin/role.txt'
+SIF_CODE='/usr/local/bin/sif.txt'
 
 ERROR={}
 
