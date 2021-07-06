@@ -2,7 +2,7 @@
 
 session_start();
 
-$_SESSION['page'] = 'weekly';
+$_SESSION['page'] = 'daily';
 
 if(empty($_SESSION['auth'])) {
 	header('Location: /');
@@ -12,20 +12,53 @@ if(empty($_SESSION['auth'])) {
 ?>
 
 <html>
-<head></head>
-<body bgcolor="lightgrey">
+<head>
+<style>
+	body	{background-color: lightgrey;}
+	a	{text-decoration: none; color: black;}
+</style>
+</head>
+<body>
 <div align="center">
 <table><tr><td><img src="/sova.png"><td><td>Kontrola Aleph protokolem OAI-PMH.</td></tr></table>
 <p><hr width="500"></p>
-<form action="." method="post">
+<form method='post' action='.' enctype='multipart/form-data'>
 
 <?php
 
-echo '<input type="date" name="date" value="' . $today . '" min="2019-01-01" max="'. $today . '" step="7">';
+default = date("Y-m-d", strtotime("-1 day"));
+if (!empty($_POST['date'])){ $default = $_POST['date']; }
+
+echo "<input type='date' name='date' value='" . date("Y-m-d", strtotime("-1 day")) . "' min='2020-03-02' max='" . date("Y-m-d", strtotime("-1 day")) . "'>\n";
 
 ?>
 
+<input type='submit' value='Zobrazit'>
 </form>
+<table>
+
+<?php
+
+if (!empty($_POST['date'])){
+	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_POST['date'])) {
+	
+		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})-\d{2}/', '${1}/${2}', $_POST['date']) . '/' . $_POST['date'] . '.csv';
+		
+		if (($csv = fopen($file, "r")) !== FALSE) {
+			while (($data = fgetcsv($csv, 1000, ";")) !== FALSE) {
+				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
+					. $data[0] . "&local_base=AV" . "'><b>" . $data[0] . "</b></a></td><td align='right'>"
+					. "" . $data[1] . "</td><td>" . "[<a href='../error/#" . $data[2] . "'><b>" . $data[2] . "</b></a>"
+					. "]</td><td>" . $data[3] . "</td></tr>\n";
+			}
+			fclose($csv);
+		}
+	}
+}
+
+?>
+
+</table>
 <p><hr width="500"></p>
 </div>
 </body>
