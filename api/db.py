@@ -1,45 +1,59 @@
 #!/usr/bin/python3
 #
-# Record API DB 
+# Vufind Record API DB 
 #
 
-import sqlite3
+import sqlite3,time,sys
 
-from pymarc import MARCReader
+from pymarc import marcxml
 
-IN='text.xml'
-DB='record.db'
+IN='test.xml'
+DB='vufind.db'
+BATCH=[]
 
-def db_create(DB):
-	con = sqlite3.connect(DB)
-	cur = con.cursor()
-	cur.execute("CREATE TABLE record (id, ident, timestamp, metadata);")
-	cur.execute("CREATE INDEX 'ident_index' ON record (ident);")
-	cur.execute("CREATE INDEX 'timestamp_index' ON record (timestamp);")
-	con.commit()
-	con.close()
-	return
+# CREATE DB
 
-def db_write():
-	con = sqlite3.connect(DB)
-	cur = con.cursor()
-	buff=[ID,A,B,C,D,Q,W,ZERO,TWO,SEVEN]
-	cur.execute("INSERT INTO t (id,a,b,c,d,q,w,zero,two,seven) VALUES (?,?,?,?,?,?,?,?,?,?);", buff)
-	con.commit()
-	con.close()
-	return
+con = sqlite3.connect(DB)
+cur = con.cursor()
+cur.execute("CREATE TABLE record (ident TEXT, timestamp INTEGER, metadata TEXT);")
+cur.execute("CREATE UNIQUE INDEX 'ident_index' ON record (ident);")
+cur.execute("CREATE INDEX 'timestamp_index' ON record (timestamp);")
+con.commit()
+con.close()
 
-def db_write_batch():
-	con = sqlite3.connect(DB)
-	cur = con.cursor()
-	buff=[ID,A,B,C,D,Q,W,ZERO,TWO,SEVEN]
-	cur.execute("INSERT INTO t (id,a,b,c,d,q,w,zero,two,seven) VALUES (?,?,?,?,?,?,?,?,?,?);", buff)
-	con.commit()
-	con.close()
-	return
+# POPULATE DB
 
-def db_fetch_row():
-	return
+def load_xml(record):
 
-def db_fetch_list(iso08601_range):
-	yield generator
+	ident = record['001'].value()
+	timestamp = int(time.mktime(time.strptime(record['005'].value(), '%Y%m%d%H%M%S.%f')))
+	metadata = record.as_json()
+
+	BATCH.append((ident, timestamp, metadata))
+
+marcxml.map_xml(load_xml, IN)
+
+con = sqlite3.connect(DB)
+cur = con.cursor()
+cur.executemany("INSERT INTO record (ident,timestamp, metadata) VALUES (?, ?, ?);", BATCH)
+con.commit()
+con.close()
+
+# UPDATE DB
+
+def load_xml(record):
+
+	ident = record['001'].value()
+	timestamp = int(time.mktime(time.strptime(record['005'].value(), '%Y%m%d%H%M%S.%f')))
+	metadata = record.as_json()
+
+	BATCH.append((ident, timestamp, metadata))
+
+marcxml.map_xml(load_xml, IN)
+
+con = sqlite3.connect(DB)
+cur = con.cursor()
+cur.executemany("INSERT INTO record (ident,timestamp, metadata) VALUES (?, ?, ?);", BATCH)
+con.commit()
+con.close()
+
