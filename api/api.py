@@ -3,7 +3,7 @@
 # MARCXML REST API
 #
 
-import sqlite3
+import sqlite3,json
 
 from flask import Flask
 from flask_restful import Resource, Api
@@ -17,12 +17,13 @@ api = Api(app)
 
 class Record(Resource):
 	def get(self, ident):
+		con = sqlite3.connect(DB)
 		cur = con.cursor()
 		cur.execute("SELECT metadata FROM record WHERE ident = ?", (ident,))
 		return json.loads(cur.fetchone()[0])
 
 class ListRecords(Resource):
-	def get(self, interval)
+	def get(self, interval):
 		date_min,date_max = interval.split('-')
 		con = sqlite3.connect(DB)
 		cur = con.cursor()
