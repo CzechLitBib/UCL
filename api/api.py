@@ -1,16 +1,18 @@
 #!/usr/bin/python3
 #
-# RAW/XML/JSON REST API
+# DEVEL REST API
 #
 
 import sqlite3,json
 
-from flask import Flask,make_response,g# global
+from pymarc import marcxml
+
+from flask import Flask,make_response,g
 from flask_restful import Resource, Api
 
 # VAR -------------------------
 
-DB='vufind.db'# ident | timestamp |  metadata
+DB='vufind.db'# record [ ident TEXT | timestamp INT |  metadata TEXT ]
 
 HELP='''<!DOCTYPE html>
 <html><head><title>DEVEL REST API</title><meta charset="utf-8"></head>
@@ -48,11 +50,18 @@ HELP='''<!DOCTYPE html>
 </body>
 </html>'''
 
+XML_HEAD='''<?xml version="1.0" encoding="UTF-8"?>
+<collection
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+  xmlns="http://www.loc.gov/MARC21/slim">'''
+
+XML_FOOT='</collection>'
+
 # INIT -------------------------
 
 app = Flask(__name__)
-#api = Api(app, default_mediatype='application/json')
-api = Api(app)
+api = Api(app, default_mediatype='application/json')
 
 # DATABASE -------------------------
 
@@ -77,21 +86,27 @@ def query_db(query, args=(), one=False):
 
 # CONTENT -------------------------
 
-#@api.representation('application/json')
-#def output_json(data, code, headers=None):
-#	resp = make_response(json.dumps({'response' : data}), code)
-#	resp.headers.extend(headers or {})
-#	return resp
+@api.representation('application/json')
+def output_json(data, code, headers=None):
+	resp = make_response(json.dumps(marcxml.as_json(data)), code)
+	resp.headers.extend(headers or {})
+	return resp
 
-#@api.representation('application/xml')
-#def output_xml(data, code, headers=None):
-#	#res = make_response('<?xml version="1.0" encoding="UTF-8" standalone="no" ?><data>' + data + '</data>', code)
-#	resp = make_response('<?xml version="1.0" encoding="UTF-8" standalone="no" ?><data></data>', code)
-#	resp.headers.extend(headers or {})
-#	return resp
+@api.representation('application/xml')
+def output_xml(data, code, headers=None):
+	resp = make_response(XML_HEAD + data + XML_FOOT, code)
+	resp.headers.extend(headers or {})
+	return resp
 
-#api.representations['application/json'] = output_json
-#api.representations['application/xml'] = output_xml
+@api.representation('application/octet-stream')
+def output_raw(data, code, headers=None):
+	resp = make_response(''.join(data), code)
+	resp.headers.extend(headers or {})
+	return resp
+
+api.representations['application/json'] = output_json
+api.representations['application/xml'] = output_xml
+api.representations['application/ocetet-stream'] = output_raw
 
 # ROUTING -------------------------
 
@@ -104,12 +119,12 @@ class GetRecord(Resource):
 	def get(self, ident):
 		data = query_db("SELECT metadata FROM record WHERE ident = ?", (ident,), one=True)
 		if not data: return {'null':'nada'}
-		return json.loads(data['metadata'])
+		return data['metadata']
 
 class ListRecords(Resource):
 	def get(self, iso8601_from, iso8601_until):
 		data = query_db("SELECT metadata FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (iso8601_from, iso8601_until))
-		return json.loads([row['metadata'] for row in data][1])
+		return (row['metadata'] for row in data)
 
 api.add_resource(API, '/api/')
 api.add_resource(GetRecord, '/api/GetRecord/<ident>')

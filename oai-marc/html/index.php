@@ -9,8 +9,8 @@ $authorized = False;
 
 if (isset($_POST['name']) and isset($_POST['pass'])) {
 	
-	$ldap_dn = 'uid=' . $_POST['name'] . ',ou=Users,dc=ucl,dc=cas,dc=cz';
-	$ldap_conn = ldap_connect('ldap://147.231.80.195');
+	$ldap_dn = 'xxx';
+	$ldap_conn = ldap_connect('xxx');
 
 	ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 	ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
