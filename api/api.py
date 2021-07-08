@@ -10,10 +10,49 @@
 
 import sqlite3,json
 
-from flask import Flask,g
+from flask import Flask,make_response,g# global
 from flask_restful import Resource, Api
 
 DB='vufind.db'# ident | timestamp |  metadata
+
+HELP='''
+<!DOCTYPE html>
+<html><head><title>DEVEL REST API</title><meta charset="utf-8"></head>
+<body bgcolor="lightgrey">
+<div align="center">
+<br><b>DEVEL REST API</b><br><br>
+<table cellspacing="4">
+
+<tr><td><b>GET</b></td></tr>
+<tr><td></td><td>/api/GetRecord/&lt;ident&gt;</td></tr>
+<tr><td></td></tr>
+<tr><td></td><td><i>https://vyvoj.ucl.cas.cz/api/GetRecord/1</i></td></tr>
+<tr><td><b>GET</b></td></tr>
+<tr><td></td><td>/api/ListIdentifiers/&lt;iso8601_datetime_from&gt;/&lt;iso8601_datetime_until&gt;</td></tr>
+<tr><td></td></tr>
+<tr><td></td><td><i>https://vyvoj.ucl.cas.cz/api/ListIdentifiers/2021-07-11 09:00:00/2021-07-11 10:00:00</i></td></tr>
+<tr><td><b>GET</b></td></tr>
+<tr><td></td><td>/api/ListRecords/&lt;iso8601_datetime_from&gt;/&lt;iso8601_datetime_until&gt;</td></tr>
+<tr><td></td></tr>
+<tr><td></td><td><i>https://vyvoj.ucl.cas.cz/api/ListRecords/2021-07-11 09:00:00/2021-07-11 10:00:00</i></td></tr>
+
+<tr><td height="20px"></td></tr>
+
+<tr><td><b>Header:</b></td><td>(<i>default</i>)</td></tr>
+<tr><td></td><td>Accept: application/json</td></tr>
+<tr><td></td><td>Response: <i>MARC-JSON</i></td></tr>
+<tr><td><b>Header</b></td></tr>
+<tr><td></td><td>Accept: application/xml</td></tr>
+<tr><td></td><td>Response: <i>MARC-XML</i></td></tr>
+<tr><td><b>Header</b></td></tr>
+<tr><td></td><td>Accept: application/octet-stream</td></tr>
+<tr><td></td><td>Response: <i>MARC-21</i></td></tr>
+</table>
+
+</div>
+</body>
+</html>
+'''
 
 #API
 
@@ -39,11 +78,16 @@ def query_db(query, args=(), one=False):
 	cur.close()
 	return (rv[0] if rv else None) if one else rv
 
-@api.representations('application/xml')
+@api.representation('application/xml')
 def output_xml(data, code, headers=None):
     res = make_response('<?xml version="1.0" encoding="UTF-8" standalone="no" ?><data>' + data + '</data>', code)
     res.headers.extend(headers or {})
     return res
+
+class API(Resource):
+	def get(self):
+		headers = {'Content-Type': 'text/html'}
+		return make_response(HELP, 200, headers)
 
 class GetRecord(Resource):
 	def get(self, ident):
@@ -55,6 +99,7 @@ class ListRecords(Resource):
 		data = query_db("SELECT metadata FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (iso8601_from, iso8601_until))
 		return json.loads([row['metadata'] for row in data][1])
 
+api.add_resource(API, '/api/')
 api.add_resource(GetRecord, '/api/GetRecord/<ident>')
 api.add_resource(ListRecords, '/api/ListRecords/<iso8601_from>/<iso8601_until>')
 
