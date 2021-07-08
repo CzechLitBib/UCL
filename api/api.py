@@ -2,27 +2,22 @@
 #
 # RAW/XML/JSON REST API
 #
-# https://vyvoj.ucl.cas.cz:4433/api/GetRecord/1
-# https://vyvoj.ucl.cas.cz:4433/api/ListRecords/1611700000-1611750000
-#
-# headers={"accept":"application/json"}
-#
 
 import sqlite3,json
 
 from flask import Flask,make_response,g# global
 from flask_restful import Resource, Api
 
+# VAR -------------------------
+
 DB='vufind.db'# ident | timestamp |  metadata
 
-HELP='''
-<!DOCTYPE html>
+HELP='''<!DOCTYPE html>
 <html><head><title>DEVEL REST API</title><meta charset="utf-8"></head>
 <body bgcolor="lightgrey">
 <div align="center">
 <br><b>DEVEL REST API</b><br><br>
 <table cellspacing="4">
-
 <tr><td><b>GET</b></td></tr>
 <tr><td></td><td>/api/GetRecord/&lt;ident&gt;</td></tr>
 <tr><td></td></tr>
@@ -35,29 +30,31 @@ HELP='''
 <tr><td></td><td>/api/ListRecords/&lt;iso8601_datetime_from&gt;/&lt;iso8601_datetime_until&gt;</td></tr>
 <tr><td></td></tr>
 <tr><td></td><td><i>https://vyvoj.ucl.cas.cz/api/ListRecords/2021-07-11 09:00:00/2021-07-11 10:00:00</i></td></tr>
-
 <tr><td height="20px"></td></tr>
-
-<tr><td><b>Header:</b></td><td>(<i>default</i>)</td></tr>
-<tr><td></td><td>Accept: application/json</td></tr>
-<tr><td></td><td>Response: <i>MARC-JSON</i></td></tr>
 <tr><td><b>Header</b></td></tr>
+<tr><td></td></tr>
+<tr><td></td><td>Accept: application/json</td></tr>
+<tr><td></td><td>Response: <i>MARC-JSON (default)</i></td></tr>
+<tr><td><b>Header</b></td></tr>
+<tr><td></td></tr>
 <tr><td></td><td>Accept: application/xml</td></tr>
 <tr><td></td><td>Response: <i>MARC-XML</i></td></tr>
 <tr><td><b>Header</b></td></tr>
+<tr><td></td></tr>
 <tr><td></td><td>Accept: application/octet-stream</td></tr>
 <tr><td></td><td>Response: <i>MARC-21</i></td></tr>
 </table>
-
 </div>
 </body>
-</html>
-'''
+</html>'''
 
-#API
+# INIT -------------------------
 
 app = Flask(__name__)
+#api = Api(app, default_mediatype='application/json')
 api = Api(app)
+
+# DATABASE -------------------------
 
 def get_db():
 	db = getattr(g, '_database', None)
@@ -78,11 +75,25 @@ def query_db(query, args=(), one=False):
 	cur.close()
 	return (rv[0] if rv else None) if one else rv
 
-@api.representation('application/xml')
-def output_xml(data, code, headers=None):
-    res = make_response('<?xml version="1.0" encoding="UTF-8" standalone="no" ?><data>' + data + '</data>', code)
-    res.headers.extend(headers or {})
-    return res
+# CONTENT -------------------------
+
+#@api.representation('application/json')
+#def output_json(data, code, headers=None):
+#	resp = make_response(json.dumps({'response' : data}), code)
+#	resp.headers.extend(headers or {})
+#	return resp
+
+#@api.representation('application/xml')
+#def output_xml(data, code, headers=None):
+#	#res = make_response('<?xml version="1.0" encoding="UTF-8" standalone="no" ?><data>' + data + '</data>', code)
+#	resp = make_response('<?xml version="1.0" encoding="UTF-8" standalone="no" ?><data></data>', code)
+#	resp.headers.extend(headers or {})
+#	return resp
+
+#api.representations['application/json'] = output_json
+#api.representations['application/xml'] = output_xml
+
+# ROUTING -------------------------
 
 class API(Resource):
 	def get(self):
@@ -92,6 +103,7 @@ class API(Resource):
 class GetRecord(Resource):
 	def get(self, ident):
 		data = query_db("SELECT metadata FROM record WHERE ident = ?", (ident,), one=True)
+		if not data: return {'null':'nada'}
 		return json.loads(data['metadata'])
 
 class ListRecords(Resource):
@@ -102,6 +114,8 @@ class ListRecords(Resource):
 api.add_resource(API, '/api/')
 api.add_resource(GetRecord, '/api/GetRecord/<ident>')
 api.add_resource(ListRecords, '/api/ListRecords/<iso8601_from>/<iso8601_until>')
+
+# MAIN -------------------------
 
 if __name__ == '__main__':
     app.run(debug=True)
