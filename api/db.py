@@ -13,13 +13,20 @@ BATCH=[]
 
 # CREATE DB
 
+#con = sqlite3.connect(DB)
+#cur = con.cursor()
+#cur.execute("CREATE TABLE record (ident TEXT, timestamp INTEGER, metadata TEXT);")
+#cur.execute("CREATE UNIQUE INDEX 'ident_index' ON record (ident);")
+#cur.execute("CREATE INDEX 'timestamp_index' ON record (timestamp);")
+#con.commit()
+#con.close()
+
 con = sqlite3.connect(DB)
 cur = con.cursor()
-cur.execute("CREATE TABLE record (ident TEXT, timestamp INTEGER, metadata TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'ident_index' ON record (ident);")
-cur.execute("CREATE INDEX 'timestamp_index' ON record (timestamp);")
-con.commit()
+cur.execute("SELECT metadata FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (0,9999999999))
+print(cur.fetchall())
 con.close()
+sys.exit(1)
 
 # POPULATE DB
 
