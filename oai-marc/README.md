@@ -1,36 +1,89 @@
 
 DESCRIPTION
 
-Harverst OAI-PMH 2.0 record set and validate data.
+MARC-XML / OAI-PMH toolkit.
 
 INSTALL
 <pre>
-apt-get install python3-lxml python3-six [yaz-client]
+# EXTRA
 
-<a href="https://pypi.org/project/pyoai/#files">pyoai-2.5.0.tar.gz</a>
+net-tools tcpdump mc
 
-tar xzf pyoai-2.5.0.tar.gz
-cd pyoai-2.5.0
+# POSTFIX
 
-patch pyoai.patch
+apt-get install postfix
 
-python3 setup.py install
+"Satellite system"
 
-<a href="https://pypi.org/project/pymarc/#files">pymarc-4.0.0.tar.gz</a>
+xxx [relay]
 
-tar xzf pymarc-4.0.0.tar.gz
-cd pymarc-4.0.0
-python3 setup.py install
+/etc/aliases:
 
-/usr/local/bin/:
+webmaster: root
 
-oai-7
-oai-kat
-oai-5xx
-oai-marc
-oai-citace
-oai-recenze
+postalias /etc/aliases
+postfix reload
 
+# SSL
+
+cd /usr/local/share/ca-certificates
+wget -O TERENA_SSL_CA_3.crt https://pki.cesnet.cz/certs/TERENA_SSL_CA_3.pem
+update-ca-certificates
+
+apt-get install certbot
+certbot certonly -d xxx
+
+# GIT
+
+apt-get install git
+
+ssh-kegen -t ed25519
+
+# DAVFS
+
+apt-get install davfs2
+
+usermod -a -G davfs2 xxx
+
+/etc/davfs2/davfs2.conf:
+
+use_locks	0
+
+/etc/davfs2/secrets:
+
+/home/xxx xxx xxx
+
+/etc/fstab:
+
+https://xxx/public.php/webdav/ /home/xxx davfs rw,user 0 0
+
+# NGINX
+
+apt-get install nginx php7.3 php7.3-fpm php7.3-cli php7-gd php7-ldap php7.3-sqlite3
+
+mkdir -p /var/www/html/.well-known/acme-challenge
+chown -R www-data:www-data /var/www/html/.well-known
+
+# MARC
+
+field.patch
+
+# OAI
+
+apt-get install python3-lxml python3-six
+
+pyoai.patch
+
+# API
+
+apt-get install python3-flask python3-restful
+
+cp api/vufind-api.service /etc/systemd/system/
+systemctl enable vufind-api.service
+
+# CRON
+crontab -e
+0 1     * * *   cd ~/UCL && git add . && git commit -m "Git auto backup." && git push origin master >> ~/git.log 2>&1 &
 </pre>
 FILE
 <pre>
@@ -39,19 +92,22 @@ FILE
          oai-mdt - Z39.50 yaz-client wrapper.
            oai-7 - Evaluate subfield "7" data. 
          oai-kat - Evaluate field "KAT" data. 
-       oai-7-xml - Evaluate subfield "7" datafrom file.
-        oai-file - Debug & testing.
      oai-recenze - Subset match notify.
-      oai-citace - Regular Vufind citace update.
 
+           patch/
   field.py.patch - Allow non-standard control field(FMT).
      pyoai.patch - Python3 test file patch.
 
+           code/
      country.txt - MARC country code file.
         lang.txt - MARC language code file.
         role.txt - MARC role code file.
          sif.txt - MARC sif code file.
      recenze.csv - Data file oai-recenze.
+
+           html/ - PHP7 Website.
+            api/ -Flask  REST API.
+           cron/ - Cron schedule.
 </pre>
 SOURCE
 

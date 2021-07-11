@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+#
+# Create Vufind Record API DB 
+#
+
+import sqlite3
+
+DB='vufind.db'
+
+con = sqlite3.connect(DB)
+cur = con.cursor()
+cur.execute("CREATE TABLE record (ident TEXT, timestamp INTEGER, json TEXT, xml TEXT, marc TEXT);")
+cur.execute("CREATE UNIQUE INDEX 'ident_index' ON record (ident);")
+cur.execute("CREATE INDEX 'timestamp_index' ON record (timestamp);")
+con.commit()
+con.close()
+

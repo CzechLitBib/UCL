@@ -1,0 +1,13 @@
+[Unit]
+Description=Vufind REST API
+After=network.target auditd.service
+
+[Service]
+Type=simple
+ExecStart=/home/bruna/api/api.py > vufind-api.log 2>&1 &
+WorkingDirectory=/home/bruna/api
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
