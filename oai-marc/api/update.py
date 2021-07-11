@@ -2,7 +2,6 @@
 #
 # Update database from OAI-PMH 2.0
 #
-#from datetime import datetime,date,timedelta
 
 import argparse,sqlite3,time,sys,io,re
 

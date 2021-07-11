@@ -3,9 +3,7 @@
 # DEVEL REST API
 #
 
-import sqlite3,json
-
-from pymarc import marcxml
+import sqlite3
 
 from flask import Flask,make_response,g,render_template,request
 from flask_restful import Resource, Api
