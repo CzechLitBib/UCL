@@ -5,28 +5,11 @@
 # 05 * * * * root oai-hourly >> /var/log/oai-hourly.log 2>&1 &
 #
 
-VUFIND_PATH='/var/www/html/vufind/'
-VUFIND="vufind-$(date '+%Y-%m-%d-%H').tar.gz"
-
-# ------------------------
-
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
 # VUFIND
 
-mkdir -p "$VUFIND_PATH" 2> /dev/null
-
-oai-citace \
-	--set UCLA \
-	--from "$(date -u --date='1 hour ago' '+%Y-%m-%d %H:00:00')" \
-	--until "$(date -u '+%Y-%m-%d %H:00:00')" \
-	--check
-
-[ -s *.mrc ] && tar --remove-files -czf "$VUFIND_PATH/$VUFIND" *.mrc
-
-rm *.mrc 2> /dev/null
-
-find "$VUFIND_PATH" -maxdepth 1 -type f -name "*.gz" -mtime +7 -exec rm {} \;
+vufind-update --from "$(date -u --date='1 hour ago' '+%Y-%m-%d %H:00:00')" --until "$(date -u '+%Y-%m-%d %H:00:00')"
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 

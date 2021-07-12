@@ -5,8 +5,8 @@
 # 00 4 1 * * root oai-monthly >> /var/log/oai-monthly-7.log 2>&1 &
 #
 
-SEVEN_DATA="/var/www/html/nkp/měsíční/$(date --date="$(date) -2 day" +'%Y/%m')/data"
-SEVEN_BRIG_DATA="/var/www/html/nkp/NKP/$(date --date="$(date) -2 day" +'%Y/%m')/data"
+SEVEN_DATA="/var/www/html/seven/data/$(date --date="$(date) -2 day" +'%Y/%m')"
+SEVEN_BRIG_DATA="/var/www/html/nkp/data/$(date --date="$(date) -2 day" +'%Y/%m')"
 
 # ------------------------
 
