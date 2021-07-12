@@ -105,9 +105,11 @@ FILE
          sif.txt - MARC sif code file.
      recenze.csv - Data file oai-recenze.
 
-           html/ - PHP7 Website.
             api/ -Flask  REST API.
            cron/ - Cron schedule.
+           html/ - PHP7 Website.
+            api/ -Flask  REST API.
+            xml/ - MARCXML file parsing.
 </pre>
 SOURCE
 
