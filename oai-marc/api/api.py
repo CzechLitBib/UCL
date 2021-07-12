@@ -5,6 +5,7 @@
 
 import sqlite3,re
 
+from datetime import datetime
 from flask import Flask,make_response,g,render_template,request,abort
 from flask_restful import Resource,Api
 
@@ -92,16 +93,27 @@ class ListRecords(Resource):
 		prefix = 'json'
 		if request.headers.get('Accept') == 'application/marcxml': prefix='xml'
 		if request.headers.get('Accept') == 'application/octet-stream': prefix='marc'
-		_from = request.args.get('from')
-		_until = request.args.get('until')
+		iso8601_from = request.args.get('from')
+		iso8601_until = request.args.get('until')
+		if not iso8601_from: return abort(400, "Missing 'from' argument.")
+		if not iso8601_until: return abort(400, "Missing 'until' argument.")
+		try: _from = datetime.fromisoformat(iso8601_from).replace('Z','+00:00')
+		except:
+			return abort(400, "Invalid 'from' argument: <iso8601_datetime>.")
+		try: _until = datetime.fromisoformat(iso8601_from).replace('Z','+00:00')
+		except:
+			return abort(400, "Invalid 'until' argument: <iso8601_datetime>.")
 		data = query_db("SELECT {} FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;".format(prefix), (_from,_until))
 		if data: return [row[prefix] for row in data]
 
 class ListIdentifiers(Resource):
 	def get(self):
 		prefix = 'json'
-		_from = request.args.get('from')
-		_until = request.args.get('until')
+		iso8601_from = request.args.get('from')
+		iso8601_until = request.args.get('until')
+		if not iso8601_from: return abort(400, "Missing 'from' argument.")
+		if not iso8601_until: return abort(400, "Missing 'until' argument.")
+
 		if request.headers.get('Accept') == 'application/marcxml': prefix='xml'
 		data = query_db("SELECT ident FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (_from,_until))
 		if prefix == 'xml':

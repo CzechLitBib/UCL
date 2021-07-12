@@ -13,7 +13,6 @@ from oaipmh.metadata import MetadataRegistry
 
 OAI_URL='https://aleph.lib.cas.cz/OAI'
 OAI_SET='UCLA'
-
 DB='vufind.db'
 
 # DEF -------------------
@@ -61,7 +60,7 @@ parser.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=v
 parser.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 args = parser.parse_args()
 
-if not args.from_date: parser.error('argument -from is required.')
+if not args.from_date: parser.error('argument --from is required.')
 if not args.until_date: parser.error('argument --until is required.')
 
 # OAI -------------------
