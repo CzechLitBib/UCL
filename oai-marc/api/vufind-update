@@ -3,17 +3,17 @@
 # Update database from OAI-PMH 2.0
 #
 
-import argparse,sqlite3,time,sys,io,re
+import argparse,sqlite3,sys,io,re
 
 from pymarc import marcxml,Field
-from datetime import datetime
+from datetime import datetime,timedelta
 from lxml.etree import tostring
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
 
 OAI_URL='https://aleph.lib.cas.cz/OAI'
 OAI_SET='UCLA'
-DB='vufind.db'
+DB='/usr/local/bin/api/vufind.db'
 
 # DEF -------------------
 
@@ -325,7 +325,7 @@ for record in records:
 
 	# Write
 	ident = metadata['001'].value()
-	timestamp = int(time.mktime(time.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f')))
+	timestamp = int(datetime.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f').timestamp())
 	json = metadata.as_json()
 	xml = marcxml.record_to_xml(metadata)
 	marc = metadata.as_marc()
@@ -335,7 +335,7 @@ for record in records:
 con = sqlite3.connect(DB)
 cur = con.cursor()
 cur.executemany("INSERT INTO record (ident, timestamp, json, xml, marc) VALUES (?,?,?,?,?) ON CONFLICT (ident) DO UPDATE SET timestamp=excluded.timestamp, json=excluded.json, xml=excluded.xml, marc=excluded.marc;", BATCH)
-#cur.execute("DELETE FROM record WHERE timestamp < (?);",(datetime.today()-timedelta(days=1).strftime('%y%m'),))
+cur.execute("DELETE FROM record WHERE timestamp < (?);",(int((datetime.now()-timedelta(days=7)).timestamp()) ,))
 con.commit()
 con.close()
 
