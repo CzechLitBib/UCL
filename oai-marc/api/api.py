@@ -3,10 +3,10 @@
 # DEVEL REST API
 #
 
-import sqlite3
+import sqlite3,re
 
 from flask import Flask,make_response,g,render_template,request
-from flask_restful import Resource, Api
+from flask_restful import Resource,Api,inputs,abort
 
 # VAR -------------------------
 
@@ -55,7 +55,6 @@ def output_json(data, code, headers=None):
 
 @api.representation('application/marcxml')
 def output_xml(data, code, headers=None):
-	#resp = make_response(XML_HEAD + ''.join(data['xml']) + XML_FOOT, code)
 	resp = make_response(XML_HEAD + data + XML_FOOT, code)
 	resp.headers.extend(headers or {})
 	return resp
@@ -79,42 +78,33 @@ class API(Resource):
 
 class GetRecord(Resource):
 	def get(self, ident):
-		if request.headers['Accept'] == 'application/marcxml':
-			data = query_db("SELECT xml FROM record WHERE ident = ?", (ident,), one=True)
-			return data['xml']
-		elif request.headers['Accept'] == 'application/octet-stream':
-			data = query_db("SELECT marc FROM record WHERE ident = ?", (ident,), one=True)
-			return data['marc']
-		else:
-			data = query_db("SELECT json FROM record WHERE ident = ?", (ident,), one=True)
-			return data['json']
+		if not re.match('^\d{9}$', ident): return abort(400, "Invalid identifier.")
+		output='json'
+		if request.headers['Accept'] == 'application/marcxml': output='xml'
+		if request.headers['Accept'] == 'application/octet-stream': output='marc'
+		data = query_db("SELECT {} FROM record WHERE ident = ?".format(output), (ident,), one=True)
+		return data[output]
 
 class ListRecords(Resource):
-	def get(self, iso8601_from, iso8601_until):
-		if request.headers['Accept'] == 'application/marcxml':
-			data = query_db("SELECT xml FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (iso8601_from, iso8601_until))
-			return (row['xml'] for row in data)
-		elif request.headers['Accept'] == 'application/octet-stream':
-			data = query_db("SELECT marc FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (iso8601_from, iso8601_until))
-			return (row['marc'] for row in data)
-		else:
-			data = query_db("SELECT json FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (iso8601_from, iso8601_until))
-			return (row['json'] for row in data)
+	def get(self, iso8601_interval):
+		output='json'
+		if request.headers['Accept'] == 'application/marcxml': output='xml'
+		if request.headers['Accept'] == 'application/octet-stream': output='marc'
+		data = query_db("SELECT {} FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;".format(output), (output,iso8601_from, iso8601_until))
+		if data: return [row[output] for row in data]
 
 class ListIdentifiers(Resource):
 	def get(self, iso8601_from, iso8601_until):
 		data = query_db("SELECT ident FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (iso8601_from, iso8601_until))
 		if request.headers['Accept'] == 'application/marcxml':
-			return (row['ident'] for row in data)
+			return ['<Identifier>' + row['ident'] + '</Identifier>' for row in data]
 		else:
-			headers = {'Content-Type': 'application/json'}
-			data = query_db("SELECT ident FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;", (iso8601_from, iso8601_until))
-			return (row['ident'] for row in data)
-
+			return [row['ident'] for row in data]
+				
 api.add_resource(API, '/api/')
 api.add_resource(GetRecord, '/api/GetRecord/<ident>')
-api.add_resource(ListRecords, '/api/ListRecords/<iso8601_from>/<iso8601_until>')
-api.add_resource(ListIdentifiers, '/api/ListIdentifiers/<iso8601_from>/<iso8601_until>')
+api.add_resource(ListRecords, '/api/ListRecords/<iso8601_interval>')
+api.add_resource(ListIdentifiers, '/api/ListIdentifiers/<iso8601_interval>')
 
 # MAIN -------------------------
 
