@@ -78,7 +78,8 @@ pyoai.patch
 
 apt-get install python3-flask python3-restful
 
-cp api/vufind-api.service /etc/systemd/system/
+cp api /usr/locail/bin
+cp /usr/local/bin/api/vufind-api.service /etc/systemd/system/
 systemctl enable vufind-api.service
 
 # CRON
@@ -105,10 +106,9 @@ FILE
          sif.txt - MARC sif code file.
      recenze.csv - Data file oai-recenze.
 
-            api/ -Flask  REST API.
-           cron/ - Cron schedule.
+            api/ - Flask REST API.
+           cron/ - Cron scheduling.
            html/ - PHP7 Website.
-            api/ -Flask  REST API.
             xml/ - MARCXML file parsing.
 </pre>
 SOURCE

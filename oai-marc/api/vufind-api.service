@@ -4,8 +4,8 @@ After=network.target auditd.service
 
 [Service]
 Type=simple
-ExecStart=/home/bruna/api/api.py > vufind-api.log 2>&1 &
-WorkingDirectory=/home/bruna/api
+ExecStart=vufind-api > /var/log/vufind-api.log 2>&1 &
+WorkingDirectory=/usr/local/bin/api
 Restart=on-failure
 
 [Install]
