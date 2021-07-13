@@ -172,19 +172,19 @@ oai = Client(URL, registry)
 
 record,header,about='','',''
 records=[]
-#try:
-if args.get == 'record':
-	header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
-if args.get == 'list':
-	records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-if args.get == 'ident':
-	records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-if args.get == 'set':
-	records = oai.listSets()
-if args.get == 'meta':
-	records = oai.listMetadataFormats()
-#except:
-#	print('Žádný záznam.')
+try:
+	if args.get == 'record':
+		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
+	if args.get == 'list':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'ident':
+		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
+except:
+	print('Žádný záznam.')
 
 # MAIN -------------------
 

@@ -70,7 +70,10 @@ registry.registerReader('marc21', MarcXML)
 
 oai = Client(OAI_URL, registry)
 
-records = oai.listRecords(metadataPrefix='marc21', set=OAI_SET, from_=args.from_date, until=args.until_date)
+try:
+	records = oai.listRecords(metadataPrefix='marc21', set=OAI_SET, from_=args.from_date, until=args.until_date)
+except:
+	records=[]
 
 # MAIN -------------------
 
@@ -83,6 +86,8 @@ for record in records:
 
 	# ident
 	ident = metadata['001'].value()
+
+	print(ident)
 
 	# skip deleted records
 	if header.isDeleted(): continue
