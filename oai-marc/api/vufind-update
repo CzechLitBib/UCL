@@ -87,8 +87,6 @@ for record in records:
 	# ident
 	ident = metadata['001'].value()
 
-	print(ident)
-
 	# skip deleted records
 	if header.isDeleted(): continue
 
