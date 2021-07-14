@@ -2,31 +2,27 @@
 #
 # Crontab monthly runner
 #
-# 15 6 2 * * root oai-monthly >> /var/log/oai-monthly.log 2>&1 &
+# 00 7 2 * * root oai-mod >> /var/log/oai-monthly.log 2>&1 &
 #
 
-DATA_PATH='/tmp/5xx'
-
-# ------------------------
+#
+# "5xx", "KAT", "7"
+#
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
-#
-# "5xx"
-#
+KAT_DATA="/var/www/html/kat/data/$(date --date="$(date) -2 day" +'%Y/%m')"
+SEVEN_DATA="/var/www/html/seven/data/$(date --date="$(date) -2 day" +'%Y/%m')"
+NKP_DATA="/var/www/html/nkp/data/$(date --date="$(date) -2 day" +'%Y/%m')"
 
-mkdir -p "$DATA_PATH" 2> /dev/null
+mkdir -p "$KAT" 2> /dev/null
+mkdir -p "$SEVEN_DATA" 2> /dev/null
+mkdir -p "$NKP_DATA" 2> /dev/null
 
-oai-5xx \
+oai-mod \
 	--set 'UCLA' \
-	--from "$(date --date="$(date +'%Y-%m-01') -1 month" '+%Y-%m-%d 00:00:00')" \
-	--until "$(date '+%Y-%m-01 00:00:00')" \
-	--check \
-	--notify
-
-rm -r "$DATA_PATH" 2> /dev/null
-
-echo "5xx done."
+	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
