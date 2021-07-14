@@ -84,10 +84,9 @@ def run(DATA):
 		IDENT = record['001'].value()
 
 		# SIF
-		if 'SIF' in record:
-			if 'a' in record['SIF']: SIF = record['SIF']['a'].lower()
-		else:
-			SIF = ''
+		SIF = ''
+		if 'SIF' in record and 'a' in record['SIF']:
+			SIF = record['SIF']['a'].lower()
 
 		# data
 		for TAG, VALUE in [(f.tag, f.value()) for f in record.fields]:

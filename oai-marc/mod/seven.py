@@ -3,8 +3,6 @@
 # subfield '7' module
 #
 
-# INCLUDE -------------------
-
 import smtplib,sys,os,re
 
 from email.mime.text import MIMEText

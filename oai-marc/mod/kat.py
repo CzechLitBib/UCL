@@ -3,32 +3,34 @@
 # 'CAT/KAT' module
 #
 
-import sys,os,re
+import json
+
+from datetime import datetime,timedelta
 
 # VAR -------------------
 
-LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
-LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
-
 KAT_CODE='/usr/local/bin/code/kat.txt'
-OUT_DATA='/var/www/html/kat/data/' + LAST_MONTH_DIR
-
-DATA={}
-
-# initialize struct
-other={}
-for key in list(SIF_MAP.keys()): other[key] = 0
-# initialize data
-for key in list(SIF_MAP.keys()): DATA[key] = {'sif_count':0, 'cat_count':0, 'sif_cat_count':0, 'other':other.copy(), 'cat_id':[]}
+LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
+DATA_DIR='/var/www/html/kat/data/' + (datetime.today()-timedelta(days=1)).strftime('%Y/%m')
 
 # DEF -------------------
 
-def get_catlist(metadata):
-	catlist = metadata.get_fields('CAT','KAT')
+def get_sif_map():
+        try:
+                kat_code = {}
+                with open(KAT_CODE, 'r') as f:
+                        for line in f:
+                                acct_name, acct_code = line.split(':')
+                                sif_code[acct_name] = acct_code.strip()
+                return kat_code
+        except:
+                return {}
+
+def get_kat(record):
 	out = []
-	for F in catlist:# remove all bots
-		if 'a' in F and 'BATCH' not in F['a']:
-			if 'c' in F and F['c'][0:6] == LAST_MONTH_DIR.replace('/',''):
+	for F in record.get_fields('CAT','KAT'):
+		if 'a' in F and 'BATCH' not in F['a']:# not a bot
+			if 'c' in F and F['c'][0:6] == LAST_MONTH.replace('/',''):
 				out.append(F['a'])
 	return out
 
@@ -37,33 +39,41 @@ def get_key(val,lst):
 		if cat == val:
 			return sif
 
-def run(records):
+def run(DATA):
 
-	for record in records:
+	BUFF={}
 
-		header = record[0]
-		metadata = record[1]
+	# initialize data
+	for key in kat_map():
+		BUFF[key] = {
+			'sif_count':0,
+			'cat_count':0,
+			'sif_cat_count':0,
+			'other': {},
+			'cat_id':[]
+		}
 
-		# skip deleted records
-		if header.isDeleted(): continue
+	# SIF/CAT map
+	sif_cat_map = get_sif_map()
 
-		ALEPH = re.sub('^.*-(\d+)$', '\\1', header.identifier()).encode('utf-8')
+	for record in DATA:
 
+		# ident
+		record['001'].value()
+	
+		# SIF
 		SIF=''
-		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']:
-				SIF = metadata['SIF']['a'].upper().encode('utf-8')
-
-		catlist = get_catlist(metadata)
+		if 'SIF' in record and 'a' in record['SIF']:
+				SIF = record['SIF']['a'].upper()
 
 		# SIF count
-		if SIF in list(SIF_MAP.keys()):
-			DATA[SIF]['sif_count']+=1
+		if SIF in sif_cat_map:
+			BUFF[SIF]['sif_count']+=1
 
 		# KAT count	
-		for cat in catlist:
-			if cat in list(SIF_MAP.values()):
-				if SIF in list(SIF_MAP.keys()):
+		for cat in get_cat_list(record):
+			if cat in sif_cat_map.values():
+				if SIF in sif_cat_map:
 					# SELF
 					if SIF == get_key(cat,SIF_MAP):
 						# KAT count
