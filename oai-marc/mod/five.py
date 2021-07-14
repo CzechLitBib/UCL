@@ -3,16 +3,15 @@
 # 5xx module
 #
 
-# INCLUDE -------------------
+import smtplib,urllib,io,re
 
-import urllib,smtplib,sys,os,re
-
+from datetime import datetime,timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # VAR -------------------
 
-SIF_CODE='/usr/local/bin/sif_code.txt'
+SIF_CODE='/usr/local/bin/code/sif.txt'
 
 MAIL_SENDER='xxx'
 MAIL_SERVER='xxx'
@@ -20,37 +19,34 @@ MAIL_SERVER_BACKUP='xxx'
 
 # DEF -------------------
 
-def notify():
-	body = ('Dobrý den,<br><br>V příloze naleznete seznam všech textových polí z vašich záznamů za poslední měsíc.<br><br>' +
-		'Prosíme o jazykovou kontrolu (např. kontrola gramatiky ve Wordu) a opravu.<br>---------------------------<br><br>' +
-		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>'
+def notify(buff,sif_code):
+	body = ('<br>Dobrý den,<br><br>V příloze naleznete seznam všech textových polí z vašich záznamů za poslední měsíc.<br><br>' +
+		'Prosíme o jazykovou kontrolu (např. kontrola gramatiky ve Wordu) a opravu.<br><br>---------------------------<br><br>' +
+		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
 		)
-	for SIF in sif_code:
+	for SIF in buff:
+		# rewind
+		buff[SIF].seek(0)
+		# send buffer as CSV attachment
+		msg = MIMEMultipart()
+		msg.attach(MIMEText(body, 'html', 'utf-8'))
+		att = MIMEText(buff[SIF].read(), _charset='utf-8')
+		att['Content-Disposition'] = "attachment; filename*=utf-8''" + urllib.parse.quote((SIF + '.csv'))
+		msg.attach(att)
+		msg['Subject'] = 'Kontrolní zpráva - texty'
+		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+		msg['To'] = sif_code[SIF]
 		try:
-			f = open(OUTDIR + '/' + SIF + '.csv', 'r')
-			msg = MIMEMultipart()
-			msg.attach(MIMEText(body.decode('utf-8'), 'html', 'utf-8'))
-			att = MIMEText(f.read(), _charset='utf-8')
-			att['Content-Disposition'] = "attachment; filename*=utf-8''" + urllib.parse.quote((SIF + '.csv').encode('utf-8'))
-			msg.attach(att)
-			msg['Subject'] = 'Kontrolní zpráva'
-			msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-			msg['To'] = sif_code[SIF]
+			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+			s.sendmail(MAIL_SENDER sif_code[SIF], msg.as_string())
+			s.quit()
+		except:
 			try:
-				s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
 				s.sendmail(MAIL_SENDER, sif_code[SIF], msg.as_string())
 				s.quit()
 			except:
-				try:
-					s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-					s.sendmail(MAIL_SENDER, sif_code[SIF], msg.as_string())
-					s.quit()
-				except:
-					print('Sendmail error.')
-			f.close()
-		except:
-			pass
-# INIT -------------------
+				print('Sendmail error.')
 
 def sif():
 	try:
@@ -63,38 +59,43 @@ def sif():
 	except:
 		return {}
 
-def run(records):
+def run(DATA):
 
-	for record in records:
+	# IO data list
+	buff={}
 
-		header = record[0]
-		metadata = record[1]
+	# SIF code list
+	sif_code = sif()
 
-		# skip deleted records
-		if header.isDeleted(): continue
+	for record in DATA:
 
-		# SKIP NOT NEW ------------------
-
+		# only newly created
 		OUTDATE=False
-		for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT/KAT
+		for F in record.get_fields('CAT','KAT')[:1]:# first CAT/KAT
 			if 'c' in F:
-				CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
-				if CAT_DATE >= date.today().replace(day=1): OUTDATE=True# 1st day this month
-				if CAT_DATE < (date.today().replace(day=1) - timedelta(days=1)).replace(day=1): OUTDATE=True# 1st day prev. month 
+				CAT_DATE = datetime.strptime(F['c'], '%Y%m%d')
+				# 1st day this month
+				if CAT_DATE >= datetime.today().replace(day=1): OUTDATE=True
+				# 1st day prev. month 
+				if CAT_DATE < (datetime.today().replace(day=1) - timedelta(days=1)).replace(day=1): OUTDATE=True 
 		if OUTDATE: continue
 
-		# 1xx/6xx-653/700/710/711/730 ------------------
+		# ident
+		IDENT = record['001'].value()
 
-		if 'SIF' in metadata:
-			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a'].lower()
+		# SIF
+		if 'SIF' in record:
+			if 'a' in record['SIF']: SIF = record['SIF']['a'].lower()
 		else:
 			SIF = ''
 
-		for TAG, VALUE in [(f.tag, f.value()) for f in metadata.fields]:
-			if TAG != '599':
-				if re.match('(245|246|5..)', TAG):
-					if SIF in sif_code:
-						continue
-						# write attachment file buffer 
+		# data
+		for TAG, VALUE in [(f.tag, f.value()) for f in record.fields]:
+			if TAG != '599' and re.match('(245|246|5..)', TAG):
+				if SIF in sif_code:
+					if SIF not in buff: buff[SIF] = io.StringIO()
+					buff[SIF].write(IDENT + ';' + SIF + ';' + VALUE + "\n")
 
+	# Notify
+	notify(buff,sif_code)
 

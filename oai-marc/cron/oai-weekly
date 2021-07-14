@@ -33,7 +33,6 @@ oai-marc \
 	--until "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
 	--check
 
-mkdir -p "$DATA_PATH" 2>/dev/null
 mv -f oai-marc.csv "$DATA_PATH/$CSVNAME" 2> /dev/null
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
