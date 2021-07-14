@@ -20,7 +20,7 @@ def get_sif_map():
                 kat_code = {}
                 with open(KAT_CODE, 'r') as f:
                         for line in f:
-                                acct_name, acct_code = line.split(':')
+                                acct_name, acct_code = line.split('#')
                                 sif_code[acct_name] = acct_code.strip()
                 return kat_code
         except:
