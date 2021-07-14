@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+#
+# OAI-PMH 2.0 modular.
+#
+
+# INCLUDE -------------------
+
+import argparse,io,sys
+
+from datetime import datetime
+from oaipmh.client import Client
+from oaipmh.metadata import MetadataRegistry
+from pymarc import marcxml
+from lxml.etree import tostring
+
+from mod import five,kat,seven
+
+# VAR -------------------
+
+URL='https://aleph.lib.cas.cz/OAI'
+
+# DEF -------------------
+
+def MarcXML(xml):
+	handler = marcxml.XmlHandler()
+	marcxml.parse_xml(io.StringIO(tostring(xml, encoding='utf-8')), handler)
+	return handler.records[0]
+
+def valid_date(s):
+	try:
+		return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+	except:
+		raise argparse.ArgumentTypeError('Invalid date format.')
+
+# ARG -------------------
+
+parser = argparse.ArgumentParser(description="OAI PMH 2.0 Loader.")
+parser.add_argument('--set', help='Records set.')
+parser.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+parser.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
+args = parser.parse_args()
+
+if not args.set:
+	parser.error('argument --set is required.')
+if not args.from_date:
+	parser.error('argument --from is required.')
+if not args.until_date:
+	parser.error('argument --until is required.')
+
+# INIT -------------------
+
+registry = MetadataRegistry()
+registry.registerReader('marc21', MarcXML)
+
+oai = Client(URL, registry)
+
+try:
+	records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+except:
+	records=[]
+
+# MAIN -------------------
+
+five.run(records)
+kat.run(records)
+seven.run(records)
+
+# EXIT -------------------
+
+sys.exit(0)
+

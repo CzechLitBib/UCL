@@ -91,12 +91,15 @@ crontab -e
 </pre>
 FILE
 <pre>
-        oai-marc - OAI-OMH 2.0 MARCXML record validation.
-         oai-5xx - Send dumped 245/246/5xx text for correction. 
+        oai-marc - OAI-PMH 2.0 MARCXML record validation.
          oai-mdt - Z39.50 yaz-client wrapper.
-           oai-7 - Evaluate subfield "7" data. 
-         oai-kat - Evaluate field "KAT" data. 
+         oai-mod - Modular OAI-PMH loader.
      oai-recenze - Subset match notify.
+
+            mod/
+            five - Send dumped 245/246/5xx text for correction. 
+           seven - Evaluate subfield "7" data. 
+             kat - Evaluate field "KAT" data. 
 
            patch/
   field.py.patch - Allow non-standard control field(FMT).
@@ -112,7 +115,7 @@ FILE
             api/ - Flask REST API.
            cron/ - Cron scheduling.
            html/ - PHP7 Website.
-            xml/ - MARCXML file parsing.
+            xml/ - XML file parsing.
 </pre>
 SOURCE
 
