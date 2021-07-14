@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 #
-# OAI-PMH 2.0 modular.
+# OAI-PMH 2.0 modular loader.
 #
-
-# INCLUDE -------------------
 
 import argparse,io,sys
 
@@ -13,7 +11,7 @@ from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
 from lxml.etree import tostring
 
-from mod import five,kat,seven
+from mod import five#,kat,seven
 
 # VAR -------------------
 
@@ -23,7 +21,7 @@ URL='https://aleph.lib.cas.cz/OAI'
 
 def MarcXML(xml):
 	handler = marcxml.XmlHandler()
-	marcxml.parse_xml(io.StringIO(tostring(xml, encoding='utf-8')), handler)
+	marcxml.parse_xml(io.StringIO(tostring(xml, encoding='utf-8').decode('utf-8')), handler)
 	return handler.records[0]
 
 def valid_date(s):
@@ -61,11 +59,17 @@ except:
 
 # MAIN -------------------
 
-five.run(records)
-kat.run(records)
-seven.run(records)
+DATA=[]
 
-# EXIT -------------------
+for record in records:
+	# skip deleted
+	if record[0].isDeleted(): continue
+	# write DATA
+	DATA.append(record[1])
+
+five.run(DATA)
+#kat.run(DATA)
+#seven.run(DATA)
 
 sys.exit(0)
 

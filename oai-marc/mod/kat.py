@@ -3,8 +3,6 @@
 # 'CAT/KAT' module
 #
 
-# INCLUDE -------------------
-
 import sys,os,re
 
 # VAR -------------------
@@ -12,35 +10,8 @@ import sys,os,re
 LAST_MONTH=(datetime.today()-timedelta(days=1)).strftime('%y%m')
 LAST_MONTH_DIR=(datetime.today()-timedelta(days=1)).strftime('%Y/%m')
 
+KAT_CODE='/usr/local/bin/code/kat.txt'
 OUT_DATA='/var/www/html/kat/data/' + LAST_MONTH_DIR
-
-SIF_MAP={
-'AG':'UCLAG',
-'DM':'UCLDM',
-'DAN':'UCLDR',
-'FAP':'UCLFP',
-'GR':'UCLGR',
-'NÚS':'UCLJF',
-'JCH':'UCLJCH',
-'JHK':'UCLJK',
-'JS':'UCLJS',
-'KB':'UCLKB',
-'LS':'UCLLS',
-'LUV':'UCLLUV',
-'MF':'UCLMF',
-'IM':'UCLMI',
-'MAK':'UCLMK',
-'SKU':'UCLMS',
-'PHA':'UCLPH',
-'PET':'UCLPL',
-'PAV':'UCLPN',
-'PV':'UCLPV',
-'RCE':'UCLRCE',
-'RE':'UCLRE',
-'SRA':'UCLST',
-'TP':'UCLTP',
-'VM':'UCLVM'
-}
 
 DATA={}
 

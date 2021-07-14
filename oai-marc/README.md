@@ -109,7 +109,8 @@ FILE
         lang.txt - MARC language code file.
         role.txt - MARC role code file.
          sif.txt - MARC sif code file.
-     recenze.csv - Data file oai-recenze.
+     recenze.txt - Data file oai-recenze.
+         kat.txt - Aleph editor SIF.
 
             api/ - Flask REST API.
            cron/ - Cron scheduling.
