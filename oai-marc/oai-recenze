@@ -18,7 +18,7 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-RECENZE='/usr/local/bin/recenze.txt'
+RECENZE='/usr/local/bin/code/recenze.txt'
 
 RECLIST={'A':{},'B':{}}
 
