@@ -66,7 +66,7 @@ def url_response(url):
 
 def notify():
 	html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
-	html_footer =('<br>Prosíme o opravu.<br>---------------------------<br><br>' +
+	html_footer =('<br>Prosíme o opravu.<br><br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 	for sif in ERROR:
 		if sif in sif_code:# match email address

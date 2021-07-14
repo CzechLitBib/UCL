@@ -53,9 +53,9 @@ def is_worker(metadata):
 
 def notify():
 	for mail in MAIL_TARGET:
-		html = ('Dobrý den,<br><br>Výstupní data za uplynulý měsíc jsou dotupná na adrese:<br><br>' +
-			'<a target="_blank" href="http://pokuston.ucl.cas.cz:38080/nkp/">http://pokuston.ucl.cas.cz:38080/nkp</a><br><br>' +
-			'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY,<br>NEODPOVÍDEJTE NA NI.<br>')
+		html = ('<br>Dobrý den,<br><br>Výstupní data za uplynulý měsíc jsou dotupná na adrese:<br><br>' +
+			'<a target="_blank" href="http://vyvoj.ucl.cas.cz/nkp">http://vyvoj.cas.cz/nkp</a><br><br>' +
+			'---------------------------<br><br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 		msg = MIMEText(html.decode('utf-8'), 'html', 'utf-8')
 		msg['Subject'] = 'UCL - Kontrolní zpráva'
 		msg['From'] = 'UCL Kontrola <' + MAIL_SENDER + '>'
