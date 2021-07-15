@@ -59,7 +59,7 @@ https://xxx/public.php/webdav/ /home/xxx davfs rw,user 0 0
 
 # NGINX
 
-apt-get install nginx php7.3 php7.3-fpm php7.3-cli php7-gd php7-ldap php7.3-sqlite3
+apt-get install nginx php7.3 php7.3-fpm php7.3-cli php7-gd php7-ldap php7-json php7.3-sqlite3
 
 mkdir -p /var/www/html/.well-known/acme-challenge
 chown -R www-data:www-data /var/www/html/.well-known

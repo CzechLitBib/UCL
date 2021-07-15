@@ -85,7 +85,10 @@ for record in records:
 	metadata = record[1]
 
 	# ident
-	ident = metadata['001'].value()
+	if '001' in metadata:
+		ident = metadata['001'].value()
+	else:
+		continue
 
 	# skip deleted records
 	if header.isDeleted(): continue
