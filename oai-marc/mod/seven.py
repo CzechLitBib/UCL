@@ -79,7 +79,10 @@ def run(records):
 		tag_list=[]
 
 		# ident
-		ident = record['001'].value()
+		if '001' in record:
+			ident = record['001'].value()
+		else:
+			continue
 
 		# 1xx/6xx-653/700/710/711/730 ------------------
 		for tag, value, seven in [(f.tag, get_value(f), f['7']) for f in record.fields]:

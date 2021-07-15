@@ -62,7 +62,10 @@ def run(DATA):
 	for record in DATA:
 
 		# ident
-		ident = record['001'].value()
+		if '001' in record:
+			ident = record['001'].value()
+		else:
+			continue
 
 		# SIF
 		SIF=''

@@ -81,7 +81,10 @@ def run(DATA):
 		if OUTDATE: continue
 
 		# ident
-		IDENT = record['001'].value()
+		if '001' in record:
+			IDENT = record['001'].value()
+		else:
+			continue
 
 		# SIF
 		SIF = ''
