@@ -1,40 +1,69 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
-# Owncloud WebDAV upload
+# Owncloud WebDAV uploader
 #
 
-from _future_ import print
+import easywebdav,smtplib,io,os,re
 
-import easywebdav,StringIO,sys,os
+from email.mime.text import MIMEText
 
-DATA='xxx'
+# VAR -----------------------------------
 
-URL='xxx'
+DATA='/var/www/html/clanky/data/'
+
+SERVER='xxx'
 TOKEN='xxx'
-PASS='xx'
+PASS='xxx'
+PATH='xxx'
 
-try:
-	webdav = easywebdav.connect(URL, username=TOKEN, password=PASS)
-except:
-	print('Owncload connection error!')
-	sys.exit(1)
+MAIL_SENDER='xxx'
+MAIL_TARGET='xxx'
+MAIL_SERVER='xxx'
+MAIL_SERVER_BACKUP='xxx'
 
-# get CSV file
-csv = StringIO.StringIO()
-try:
-	webdav.download('extern.csv', csv)
-except:
-	print('CSV load error!')
-	sys.exit(2)
+CSV = io.StringIO()
+
+# DEF -----------------------------------
+
+def notify():
+	html_header='Dobrý den,<br><br>Nové články:<br><br>'
+	html_footer='<br><br>---------------------------<br><br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
+	html_body=''
+	for i in ID: html_body+=(i + '<br>')
+	msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
+	msg['Subject'] = 'Formulář - Články'
+	msg['From'] = 'Vývoj <' + MAIL_SENDER + '>'
+	msg['To'] = MAIL_TARGET
+	try:
+		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+		s.quit()
+	except:
+		try:
+			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
+			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+			s.quit()
+		except:
+			print('Sendmail error.')
+
+# MAIN -----------------------------------
+
+#webdav = easywebdav.connect(SERVER, username=TOKEN, password=PASS, protocol='https',port='443')
+#webdav.cd(PATH)
+
+#webdav.download('extern.csv', CSV)
+#CSV.write('debug4\n')
+#CSV.seek(0)
+#webdav.upload(CSV, 'extern.csv')
 
 # get ID
 ID=[]
 for fn in os.listdir(DATA):
 	if re.match('^[a-f0-9]+_.*', fn):
-		uid = re.sub('^([a-f0-9)_.*', '\\1', fn)
+		uid = re.sub('^([a-f0-9]+)_.*', '\\1', fn)
 		if uid not in ID: ID.append(uid)
 
-# update CSV & upload
+# upload csv / file
 
 for uid in ID:
 	try:

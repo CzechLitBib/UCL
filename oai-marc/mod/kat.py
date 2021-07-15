@@ -30,7 +30,7 @@ def get_cat(record):
 	out = []
 	for F in record.get_fields('CAT','KAT'):
 		if 'a' in F and 'BATCH' not in F['a']:# not a bot
-			if 'c' in F and F['c'][0:6] == (datetime.today()-timedelta(days=1)).strftime('%y%m'):
+			if 'c' in F and F['c'][0:6] == (datetime.today()-timedelta(days=1)).strftime('%Y%m'):
 				out.append(F['a'])
 	return out
 
@@ -75,8 +75,8 @@ def run(DATA):
 
 		# KAT count	
 		for cat in get_cat(record):
-			if cat in sif_cat_map:
-				if SIF in sif_cat_map.values():
+			if cat in sif_cat_map.values():
+				if SIF in sif_cat_map:
 					# SELF
 					if SIF == get_key(cat,sif_cat_map):
 						# KAT count
