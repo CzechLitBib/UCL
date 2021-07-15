@@ -11,9 +11,9 @@
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
-KAT_DATA="/var/www/html/kat/data/$(date --date="$(date) -2 day" +'%Y/%m')"
-SEVEN_DATA="/var/www/html/seven/data/$(date --date="$(date) -2 day" +'%Y/%m')"
-NKP_DATA="/var/www/html/nkp/data/$(date --date="$(date) -2 day" +'%Y/%m')"
+KAT_DATA="/var/www/html/kat/data/$(date --date="$(date) -1 day" +'%Y/%m')"
+SEVEN_DATA="/var/www/html/seven/data/$(date --date="$(date) -1 day" +'%Y/%m')"
+NKP_DATA="/var/www/html/nkp/data/$(date --date="$(date) -1 day" +'%Y/%m')"
 
 mkdir -p "$KAT" 2> /dev/null
 mkdir -p "$SEVEN_DATA" 2> /dev/null
