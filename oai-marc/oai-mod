@@ -11,7 +11,7 @@ from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
 from lxml.etree import tostring
 
-from mod import five#,kat,seven
+from mod import five,kat,seven
 
 # VAR -------------------
 
@@ -68,8 +68,8 @@ for record in records:
 	DATA.append(record[1])
 
 five.run(DATA)
-#kat.run(DATA)
-#seven.run(DATA)
+kat.run(DATA)
+seven.run(DATA)
 
 sys.exit(0)
 
