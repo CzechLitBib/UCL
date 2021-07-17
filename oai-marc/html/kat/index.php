@@ -27,10 +27,48 @@ if(empty($_SESSION['auth'])) {
 
 <?php
 
-$default = date("Y-m", strtotime("-1 day"));
-if (!empty($_POST['date'])) { $default = $_POST['date']; }
+$month_map = [
+	'01' => 'Leden',
+	'02' => 'Únor',
+	'03' => 'Březen',
+	'04' => 'Duben',
+	'05' => 'Květen',
+	'06' => 'Červen',
+	'07' => 'Červenec',
+	'08' => 'Srpen',
+	'09' => 'Září',
+	'10' => 'Říjen',
+	'11' => 'Listopad',
+	'12' => 'Prosinec',
+];
 
-echo "<input type='month' name='month' value='" . $default . "' min='2021-07' max='" . date("Y-m", strtotime("-1 day")) . "'>\n";
+echo "<label for='month'>Měsíc: </label><select id='month' name='month'>\n";
+
+foreach($month_map as $m => $mon) {
+	if ($mon == $_SESSION['kat_month']) {
+		echo "<option selected>" . $mon . "</option>\n";
+	} elseif ($m == date('m', strtotime("-1 month"))) {
+		echo "<option selected>" . $mon . "</option>\n";
+	} else {
+		echo "<option>" . $mon  . "</option>\n";
+	}
+}
+
+echo "</select>\n";
+
+echo "<label for='rok'>Rok: </label><select id='year' name='year'>\n";
+
+foreach (range(2021,  date('Y', strtotime("-1 month"))) as $y) {
+	if ($y == $_SESSION['kat_year']) {
+		echo "<option selected>" . $y . "</option>\n";
+	} elseif ($y == date('Y', strtotime("-1 month"))) {
+		echo "<option selected>" . $y . "</option>\n";
+	} else {
+		echo "<option>" . $y . "</option>\n";
+	}
+}
+
+echo "</select>\n";
 
 ?>
 
@@ -39,7 +77,7 @@ echo "<input type='month' name='month' value='" . $default . "' min='2021-07' ma
 
 <?php
 
-if (!empty($_POST['date'])){
+if (!empty($_POST['month']) and  !empty($_POST['year'])){
 	if (preg_match('/\d{4}-\d{2}/', $_POST['date'])) {
 	
 		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})/', '${1}/${2}', $_POST['date']) . '/' . $_POST['date'] . '.json';
@@ -64,6 +102,8 @@ if (!empty($_POST['date'])){
 			echo "</table>\n";
 		}
 	}
+	$_SESSION['kat_month'] = $_POST['month'];
+	$_SESSION['kat_year'] = $_POST['year'];
 }
 
 ?>
