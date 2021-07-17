@@ -7,7 +7,11 @@ $_SESSION['page'] = 'kat';
 if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
+
 }
+
+if (!isset($_SESSION['kat_month'])) { $_SESSION['kat_month'] = null; }
+if (!isset($_SESSION['kat_year'])) { $_SESSION['kat_year'] = null; }
 
 ?>
 
@@ -78,32 +82,34 @@ echo "</select>\n";
 <?php
 
 if (!empty($_POST['month']) and  !empty($_POST['year'])){
-	if (preg_match('/\d{4}-\d{2}/', $_POST['date'])) {
+	if (preg_match('/\d{2}/', array_search($_POST['month'], $month_map)) and preg_match('/\d{4}/', $_POST['year'])) {
 	
-		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})/', '${1}/${2}', $_POST['date']) . '/' . $_POST['date'] . '.json';
-		
-		if (($json = fopen($file, "r")) !== FALSE) {
-			#print_r(json.decode(fread($data)));
-			$data = json.decode(fread($json));
-			fclose($json);
-			echo "<table>\n";
+		$file =  'data/' . $_POST['year'] . '/' . array_search($_POST['month'],$month_map) . '/data.json';
+
+		if (file_exists($file)) {
+			$data = json_decode(file_get_contents($file), true);
+			echo "<table style='border-collapse: collapse;' border='1px'>\n";
 			# header
-			echo '<tr><td></td><td>SIF</td><td>KAT</td><td>SIF+KAT</td>';
-			foreach ($data as $sif) { echo '<td>' . $sif . '</td>';	}
+			echo '<tr><td></td><td><b>SIF</b></td><td><b>KAT</b></td><td><b>SIF+KAT</b>/</td>';
+			foreach (array_keys($data) as $sif) { echo '<td width="35"><b>' . $sif . '</b></td>';	}
 			echo "</tr>\n";
 			# line
-			foreach ($data as $sif) {
-				echo '<tr><td>' . $sif . '</td><td>' . $sif['sif_count'] . '</td><td>' . $sif['cat_count'] . '</td><td>' . $sif['sif_cat_count'] . '</td>';
-				foreach(array_values($sif['other']) as $other) {
-					echo '<td>' . $other . '</td>';
+			foreach (array_keys($data) as $sif) {
+				echo '<tr><td><b>' . $sif . '</b></td><td>' . $data[$sif]['sif_count'] . '</td><td>' . $data[$sif]['cat_count'] . '</td><td>' . $data[$sif]['sif_cat_count'] . '</td>';
+				foreach (array_keys($data) as $other) {
+					if (!array_key_exists($other, $data[$sif]['other'])) {
+						echo '<td>0</td>';
+					} else { echo '<td>'. $data[$sif]['other'][$other] . '</td>'; }
 				}
 				echo "</tr>\n";
 			}
 			echo "</table>\n";
+
+			$_SESSION['kat_month'] = $_POST['month'];
+			$_SESSION['kat_year'] = $_POST['year'];
 		}
+
 	}
-	$_SESSION['kat_month'] = $_POST['month'];
-	$_SESSION['kat_year'] = $_POST['year'];
 }
 
 ?>
