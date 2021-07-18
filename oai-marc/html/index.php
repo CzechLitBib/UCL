@@ -24,12 +24,13 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 ?>
 
 <html>
-<head><title>UCL Vývoj</title></head>
+<head><title>UCL Vývoj</title>
+</head>
 <body bgcolor="lightgrey">
 <div align="center">
 <table><tr><td><img src="sova.png"></td><td>UCL Vývoj</td></tr></table>
 <form action='.' method="post">
-<label>Login:</label><input size="4" type="text" name="name" required>
+<label>Login:</label><input size="4" id="name" type="text" name="name" required autofocus>
 <label>Heslo:</label><input size="4" type="password" name="pass" required>
 <input type="submit" value="Odeslat">
 </form>

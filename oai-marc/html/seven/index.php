@@ -7,25 +7,206 @@ $_SESSION['page'] = 'seven';
 if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
+
 }
+
+if (!isset($_SESSION['seven_month'])) { $_SESSION['seven_month'] = null; }
+if (!isset($_SESSION['seven_year'])) { $_SESSION['seven_year'] = null; }
 
 ?>
 
 <html>
-<head></head>
-<body bgcolor="lightgrey">
+<head>
+<style>
+	body	{background-color: lightgrey;}
+	a	{text-decoration: none; color: black;}
+</style>
+</head>
+<body>
 <div align="center">
-<table><tr><td><img src="/sova.png"><td><td>Statistika podpole 7</td></tr></table>
+<table><tr><td><img src="/sova.png"></td><td>Statistika podpole 7.</td></tr>
+</table>
 <p><hr width="500"></p>
-<form action="." method="post">
+<form method='post' action='.' enctype='multipart/form-data'>
 
 <?php
 
-echo '<input type="date" name="date" value="' . $today . '" min="2019-01-01" max="'. $today . '">';
+$month_map = [
+	'01' => 'Leden',
+	'02' => 'Únor',
+	'03' => 'Březen',
+	'04' => 'Duben',
+	'05' => 'Květen',
+	'06' => 'Červen',
+	'07' => 'Červenec',
+	'08' => 'Srpen',
+	'09' => 'Září',
+	'10' => 'Říjen',
+	'11' => 'Listopad',
+	'12' => 'Prosinec',
+];
+
+echo "<label for='month'>Měsíc: </label><select id='month' name='month'>\n";
+
+foreach($month_map as $m => $mon) {
+	if ($mon == $_SESSION['seven_month']) {
+		echo "<option selected>" . $mon . "</option>\n";
+	} elseif ($m == date('m', strtotime("-1 month"))) {
+		echo "<option selected>" . $mon . "</option>\n";
+	} else {
+		echo "<option>" . $mon  . "</option>\n";
+	}
+}
+
+echo "</select>\n";
+
+echo "<label for='rok'>Rok: </label><select id='year' name='year'>\n";
+
+foreach (range(2021,  date('Y', strtotime("-1 month"))) as $y) {
+	if ($y == $_SESSION['seven_year']) {
+		echo "<option selected>" . $y . "</option>\n";
+	} elseif ($y == date('Y', strtotime("-1 month"))) {
+		echo "<option selected>" . $y . "</option>\n";
+	} else {
+		echo "<option>" . $y . "</option>\n";
+	}
+}
+
+echo "</select>\n";
 
 ?>
 
+<input type='submit' value='Zobrazit'>
 </form>
+
+<?php
+
+function getLines($file)
+{
+	$f = fopen($file, 'rb');
+	$lines = 0;
+	while (!feof($f)) {
+		$lines += substr_count(fread($f, 8192), "\n");
+	}
+	fclose($f);
+	return $lines;
+}
+
+if (!empty($_POST['month']) and !empty($_POST['year'])) {
+	if (preg_match('/\d{2}/', array_search($_POST['month'], $month_map)) and preg_match('/\d{4}/', $_POST['year'])) {
+	
+		$dir =  'data/' . $_POST['year'] . '/' . array_search($_POST['month'],$month_map);
+
+		# NEW
+
+		$new = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.(?!old).*/', $var); } );
+		$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $new));
+		$no_seven = 0;
+		$seven = 0;
+
+		if (!empty($tags)) { 
+			echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
+			. "<td></td><td colspan='4'><b>Podpole 7</b></td>"
+			. "<td colspan='4'><b>Bez podpole 7</b></td></tr>";
+			foreach ($tags as $tag)	{
+				$has_seven = 0;
+				$has_no_seven = 0;
+				if(in_array($tag . '.7.csv', $new)) {
+					$has_seven = getLines($dir . '/' . $tag . '.7.csv');
+					$seven += $has_seven;
+				}
+				if(in_array($tag . '.csv', $new)) {
+					$has_no_seven = getLines($dir . '/' . $tag . '.csv');
+					$no_seven += $has_no_seven;
+				}
+				if (!empty($has_seven)) {
+					echo '<tr><td><b>'  . $tag . ' </b></td>'
+					. '<td><a href="' . $dir . '/' . $tag . '.7.csv">CSV</a></td>'
+					. '<td>' . $has_seven . '</td>'
+					. '<td><a href="' . $dir . '/' . $tag . '.7.stat.csv">STAT</a></td>'
+					. '<td>' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
+				} else {
+					echo '<tr><td><b>'  . $tag . '</b></td><td></td><td>0</td><td></td><td>0%</td>';
+				}
+				if (!empty($has_no_seven)) {
+					echo '<td><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
+					. '<td>' . $has_no_seven . '</td>'
+					. '<td><a href="' . $dir . '/' . $tag . '.stat.csv">STAT</a></td>'
+					. '<td>' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
+				} else {
+					echo "<td></td><td>0</td><td></td><td>0%</td></tr>\n";
+				}
+			}
+			echo '</table><br>';
+		
+			echo '<table width="250">';
+			echo '<tr><td align="right">Podpole 7</td><td align="right">'. $seven . '</td>'
+			. '<td align="right">' . round($seven/($seven + $no_seven)*100) . "%</td></tr>\n";
+			echo '<tr><td align="right">Bez Podpole 7</td><td align="right">'. $no_seven . '</td>'
+			. '<td align="right">' . round($no_seven/($seven + $no_seven)*100) . "%</td></tr>\n";
+			echo '<tr><td align="right">Celkem</td><td align="right">'. ($seven + $no_seven) . "</td></tr>\n";
+			echo '</table><br>';
+		}
+
+		# OLD	
+	
+		$old = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.old.*/', $var); } );
+		$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $old));
+		$no_seven = 0;
+		$seven = 0;
+	
+		if (!empty($tags)) { 
+			echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
+			. "<td></td><td colspan='4'><b>Podpole 7</b></td>"
+			. "<td colspan='4'><b>Bez podpole 7</b></td></tr>";
+			foreach ($tags as $tag)	{
+				$has_seven = 0;
+				$has_no_seven = 0;
+				if(in_array($tag . '.old.7.csv', $old)) {
+					$has_seven = getLines($dir . '/' . $tag . '.old.7.csv');
+					$seven += $has_seven;
+				}
+				if(in_array($tag . '.old.csv', $old)) {
+					$has_no_seven = getLines($dir . '/' . $tag . '.old.csv');
+					$no_seven += $has_no_seven;
+				}
+				if (!empty($has_seven)) {
+					echo '<tr><td><b>'  . $tag . ' </b></td>'
+					. '<td><a href="' . $dir . '/' . $tag . '.old.7.csv">CSV</a></td>'
+					. '<td>' . $has_seven . '</td>'
+					. '<td><a href="' . $dir . '/' . $tag . '.old.7.stat.csv">STAT</a></td>'
+					. '<td>' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
+				} else {
+					echo '<tr><td><b>'  . $tag . '</b></td><td></td><td>0</td><td></td><td>0%</td>';
+				}
+				if (!empty($has_no_seven)) {
+					echo '<td><a href="' . $dir . '/' . $tag . '.old.csv">CSV</a></td>'
+					. '<td>' . $has_no_seven . '</td>'
+					. '<td><a href="' . $dir . '/' . $tag . '.old.stat.csv">STAT</a></td>'
+					. '<td>' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
+				} else {
+					echo "<td></td><td>0</td><td></td><td>0%</td></tr>\n";
+				}
+			}
+			echo '</table><br>';
+	
+			echo '<table width="250">';
+			echo '<tr><td align="right">Podpole 7</td><td align="right">'. $seven . '</td>'
+			. '<td align="right">' . round($seven/($seven + $no_seven)*100) . "%</td></tr>\n";
+			echo '<tr><td align="right">Bez Podpole 7</td><td align="right">'. $no_seven . '</td>'
+			. '<td align="right">' . round($no_seven/($seven + $no_seven)*100) . "%</td></tr>\n";
+			echo '<tr><td align="right">Celkem</td><td align="right">'. ($seven + $no_seven) . "</td></tr>\n";
+			echo '</table>';
+		}
+
+		$_SESSION['seven_month'] = $_POST['month'];
+		$_SESSION['seven_year'] = $_POST['year'];
+
+	}
+}
+
+?>
+
 <p><hr width="500"></p>
 </div>
 </body>
