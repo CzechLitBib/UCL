@@ -1,19 +1,39 @@
 NGINX
 <pre>
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# https://www.nginx.com/resources/wiki/start/
+# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
+# https://wiki.debian.org/Nginx/DirectoryStructure
+#
+# In most cases, administrators will remove this file from sites-enabled/ and
+# leave it as reference inside of sites-available where it will continue to be
+# updated by the nginx packaging team.
+#
+# This file will automatically load configuration files provided by other
+# applications, such as Drupal or Wordpress. These applications will be made
+# available underneath a path with that package name, such as /drupal8.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+#
 server {
 	listen 80;
 	listen [::]:80;
 
 	root /var/www/html;
 
-	server_name vyvoj.ucl.cas.cz;
+	server_name xxx;
 
 	location /.well-known/acme-challenge/ {
 		try_files $uri $uri/ =404;
 	}
 
 	location / {
-		return 301 https://vyvoj.ucl.cas.cz;
+		return 301 https://xxx;
 	}
 }
 
@@ -23,18 +43,22 @@ server {
 	listen 4433 ssl;
 	listen [::]:4433 ssl;
 
-	server_name vyvoj.ucl.cas.cz;
+	server_name xxx;
 
 	root /var/www/html;
 
 	index index.php;
 
-	ssl_certificate /etc/letsencrypt/live/vyvoj.ucl.cas.cz/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/vyvoj.ucl.cas.cz/privkey.pem;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+	add_header X-Frame-Options "DENY";
+	add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+
+	ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 
-	#error_page 497 https://vyvoj.ucl.cas.cz;
-	error_page 497 https://vyvoj.ucl.cas.cz:4433;
+	#error_page 497 https://xxx;
+	error_page 497 https://xxx:4433;
 
 	location ~ \.php {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
@@ -50,10 +74,14 @@ server {
 	}
 
 	location /api {
+		allow xxx;
+		deny all;
 		proxy_pass http://127.0.0.1:5000;
 	}
 }
+
 </pre>
 SOURCE
 
 https://github.com/KyomaHooin/UCL
+
