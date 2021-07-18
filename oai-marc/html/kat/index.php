@@ -90,7 +90,7 @@ if (!empty($_POST['month']) and  !empty($_POST['year'])){
 			$data = json_decode(file_get_contents($file), true);
 			echo "<table style='border-collapse: collapse;' border='1px'>\n";
 			# header
-			echo '<tr><td></td><td><b>SIF</b></td><td><b>KAT</b></td><td><b>SIF+KAT</b>/</td>';
+			echo '<tr><td></td><td><b>SIF</b></td><td><b>KAT</b></td><td><b>SIF+KAT</b></td>';
 			foreach (array_keys($data) as $sif) { echo '<td width="35"><b>' . $sif . '</b></td>';	}
 			echo "</tr>\n";
 			# line

@@ -20,7 +20,8 @@ if(empty($_SESSION['auth'])) {
 </head>
 <body>
 <div align="center">
-<table><tr><td><img src="/sova.png"><td><td>Kontrola Aleph protokolem OAI-PMH.</td></tr></table>
+<table><tr><td><img src="/sova.png"></td><td>Kontrola Aleph protokolem OAI-PMH.</td></tr>
+</table>
 <p><hr width="500"></p>
 <form method='post' action='.' enctype='multipart/form-data'>
 
@@ -53,6 +54,8 @@ if (!empty($_POST['date'])){
 			}
 			fclose($csv);
 			echo "</table>\n";
+		} else {
+			echo "<font color='red'>Žádná data.</font>\n";
 		}
 	}
 }

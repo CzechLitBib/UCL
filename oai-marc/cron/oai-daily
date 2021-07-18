@@ -22,7 +22,9 @@ oai-marc \
 
 mkdir -p "$DATA_PATH/$(date --date='yesterday' '+%Y/%m')" 2> /dev/null
 
-mv -f oai-marc.csv "$DATA_PATH/$(date --date='yesterday' '+%Y/%m')/$CSVNAME" 2> /dev/null
+[ -s oai-marc.csv ] && mv -f oai-marc.csv "$DATA_PATH/$(date --date='yesterday' '+%Y/%m')/$CSVNAME" 2> /dev/null
+
+rm oai-marc.csv 2>/dev/null
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 

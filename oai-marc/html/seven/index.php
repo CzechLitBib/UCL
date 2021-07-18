@@ -10,9 +10,6 @@ if(empty($_SESSION['auth'])) {
 
 }
 
-if (!isset($_SESSION['seven_month'])) { $_SESSION['seven_month'] = null; }
-if (!isset($_SESSION['seven_year'])) { $_SESSION['seven_year'] = null; }
-
 ?>
 
 <html>
@@ -49,9 +46,9 @@ $month_map = [
 echo "<label for='month'>Měsíc: </label><select id='month' name='month'>\n";
 
 foreach($month_map as $m => $mon) {
-	if ($mon == $_SESSION['seven_month']) {
+	if ($mon == $_POST['month']) {
 		echo "<option selected>" . $mon . "</option>\n";
-	} elseif ($m == date('m', strtotime("-1 month"))) {
+	} elseif (empty($_POST['month']) and $m == date('m', strtotime("-1 month"))) {
 		echo "<option selected>" . $mon . "</option>\n";
 	} else {
 		echo "<option>" . $mon  . "</option>\n";
@@ -62,10 +59,10 @@ echo "</select>\n";
 
 echo "<label for='rok'>Rok: </label><select id='year' name='year'>\n";
 
-foreach (range(2021,  date('Y', strtotime("-1 month"))) as $y) {
-	if ($y == $_SESSION['seven_year']) {
+foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
+	if ($y == $_POST['year']) {
 		echo "<option selected>" . $y . "</option>\n";
-	} elseif ($y == date('Y', strtotime("-1 month"))) {
+	} elseif (empty($_POST['year']) and $y == date('Y', strtotime("-1 month"))) {
 		echo "<option selected>" . $y . "</option>\n";
 	} else {
 		echo "<option>" . $y . "</option>\n";
@@ -105,9 +102,11 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 		$seven = 0;
 
 		if (!empty($tags)) { 
+			echo "<u>Záznamy založené ve zvoleném datu.</u><br><br>";
+
 			echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='4'><b>Podpole 7</b></td>"
-			. "<td colspan='4'><b>Bez podpole 7</b></td></tr>";
+			. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
+			. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
 				$has_no_seven = 0;
@@ -120,21 +119,22 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 					$no_seven += $has_no_seven;
 				}
 				if (!empty($has_seven)) {
-					echo '<tr><td><b>'  . $tag . ' </b></td>'
-					. '<td><a href="' . $dir . '/' . $tag . '.7.csv">CSV</a></td>'
-					. '<td>' . $has_seven . '</td>'
-					. '<td><a href="' . $dir . '/' . $tag . '.7.stat.csv">STAT</a></td>'
-					. '<td>' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
+					echo '<tr><td align="center"><b>'  . $tag . ' </b></td>'
+					. '<td align="center"><a href="' . $dir . '/' . $tag . '.7.csv">CSV</a></td>'
+					. '<td align="right">' . $has_seven . '</td>'
+					. '<td align="center"><a href="' . $dir . '/' . $tag . '.7.stat.csv">STAT</a></td>'
+					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
-					echo '<tr><td><b>'  . $tag . '</b></td><td></td><td>0</td><td></td><td>0%</td>';
+					echo '<tr><td align="center"><b>'
+					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
-					echo '<td><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
-					. '<td>' . $has_no_seven . '</td>'
-					. '<td><a href="' . $dir . '/' . $tag . '.stat.csv">STAT</a></td>'
-					. '<td>' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
+					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
+					. '<td align="right">' . $has_no_seven . '</td>'
+					. '<td align="center"><a href="' . $dir . '/' . $tag . '.stat.csv">STAT</a></td>'
+					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td>0</td><td></td><td>0%</td></tr>\n";
+					echo "<td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
 				}
 			}
 			echo '</table><br>';
@@ -145,7 +145,7 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 			echo '<tr><td align="right">Bez Podpole 7</td><td align="right">'. $no_seven . '</td>'
 			. '<td align="right">' . round($no_seven/($seven + $no_seven)*100) . "%</td></tr>\n";
 			echo '<tr><td align="right">Celkem</td><td align="right">'. ($seven + $no_seven) . "</td></tr>\n";
-			echo '</table><br>';
+			echo '</table>';
 		}
 
 		# OLD	
@@ -154,11 +154,14 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 		$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $old));
 		$no_seven = 0;
 		$seven = 0;
-	
-		if (!empty($tags)) { 
+
+		if (!empty($tags)) {
+			if (!empty($new)) { echo '<br>'; }
+			echo "<u>Záznamy založené před zvoleným datem.</u><br><br>";
+
 			echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='4'><b>Podpole 7</b></td>"
-			. "<td colspan='4'><b>Bez podpole 7</b></td></tr>";
+			. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
+			. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
 				$has_no_seven = 0;
@@ -171,21 +174,22 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 					$no_seven += $has_no_seven;
 				}
 				if (!empty($has_seven)) {
-					echo '<tr><td><b>'  . $tag . ' </b></td>'
-					. '<td><a href="' . $dir . '/' . $tag . '.old.7.csv">CSV</a></td>'
-					. '<td>' . $has_seven . '</td>'
-					. '<td><a href="' . $dir . '/' . $tag . '.old.7.stat.csv">STAT</a></td>'
-					. '<td>' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
+					echo '<tr><td align="center"><b>'  . $tag . ' </b></td>'
+					. '<td align="center"><a href="' . $dir . '/' . $tag . '.old.7.csv">CSV</a></td>'
+					. '<td align="right">' . $has_seven . '</td>'
+					. '<td align="center"><a href="' . $dir . '/' . $tag . '.old.7.stat.csv">STAT</a></td>'
+					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
-					echo '<tr><td><b>'  . $tag . '</b></td><td></td><td>0</td><td></td><td>0%</td>';
+					echo '<tr><td align="center"><b>'
+					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
-					echo '<td><a href="' . $dir . '/' . $tag . '.old.csv">CSV</a></td>'
-					. '<td>' . $has_no_seven . '</td>'
-					. '<td><a href="' . $dir . '/' . $tag . '.old.stat.csv">STAT</a></td>'
-					. '<td>' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
+					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.old.csv">CSV</a></td>'
+					. '<td align="right">' . $has_no_seven . '</td>'
+					. '<td align="center"><a href="' . $dir . '/' . $tag . '.old.stat.csv">STAT</a></td>'
+					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td>0</td><td></td><td>0%</td></tr>\n";
+					echo "<td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
 				}
 			}
 			echo '</table><br>';
@@ -199,9 +203,7 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 			echo '</table>';
 		}
 
-		$_SESSION['seven_month'] = $_POST['month'];
-		$_SESSION['seven_year'] = $_POST['year'];
-
+		if (empty($new) and empty($old)) { echo "<font color='red'>Žádná data.</font>\n"; }
 	}
 }
 
