@@ -90,6 +90,11 @@ for record in records:
 	else:
 		continue
 
+	if '005' in metadata:
+		timestamp = int(datetime.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f').timestamp())
+	else:
+		continue
+
 	# skip deleted records
 	if header.isDeleted(): continue
 
@@ -329,21 +334,22 @@ for record in records:
 		BUFF = NAME + DATA + CTEXT + ABC
 		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
-	# Write
-	ident = metadata['001'].value()
-	timestamp = int(datetime.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f').timestamp())
+	# UPDATE
 	json = metadata.as_json()
 	xml = marcxml.record_to_xml(metadata)
 	marc = metadata.as_marc()
 
 	BATCH.append((ident, timestamp, json, xml, marc))
 
+# WRITE SQL
 con = sqlite3.connect(DB)
 cur = con.cursor()
 cur.executemany("INSERT INTO record (ident, timestamp, json, xml, marc) VALUES (?,?,?,?,?) ON CONFLICT (ident) DO UPDATE SET timestamp=excluded.timestamp, json=excluded.json, xml=excluded.xml, marc=excluded.marc;", BATCH)
 cur.execute("DELETE FROM record WHERE timestamp < (?);",(int((datetime.now()-timedelta(days=7)).timestamp()) ,))
 con.commit()
 con.close()
+
+# EXIT -------------------
 
 sys.exit(0)
 
