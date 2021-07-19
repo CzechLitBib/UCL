@@ -2,9 +2,7 @@
 
 session_start();
 
-//get uniqe ID
 $id = uniqid();
-
 $value = ['author','name','source','quote','place','publisher','year','link','public'];
 $output='';
 
@@ -43,7 +41,7 @@ if ($valid) {
 <body bgcolor="lightgrey">
 <div align="center">
 <table><tr><td><img src="/sova.png"></td><td>Formulář pro zaslání článku.</td></tr></table>
-<p><hr width="500"></p>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method="post" action="." enctype="multipart/form-data">
 <table>
 <tr><td align="right"><u><b>Základní údaje</b></u></td></tr>
@@ -97,14 +95,15 @@ if ($valid) {
 <tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td>   <img src="/clanky/help.png" title='Pouze soubory typu PDF. Maximalní velikost 2MB.'></td></tr>
 <tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
 <tr height="8px"></tr>
-<tr><td align="right"><img src="validation.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3"></td></tr>
+<tr><td align="right"><img src="validation.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3" required></td></tr>
 <tr height="8px"></tr>
 <tr><td></td><td align="left"><input type="submit" value="Odeslat"></td></tr>
 </table>
 </form>
-<p><hr width="500"></p>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
 <?php
+
 if (isset($_POST['code'])) {
 	if ($valid) {
 		echo '<font color="red">Uloženo.</font>';
@@ -112,6 +111,7 @@ if (isset($_POST['code'])) {
 		echo '<font color="red">Neplatný kód.</font>';
 	}
 }
+
 ?>
 
 </div>

@@ -16,8 +16,8 @@ if(empty($_SESSION['auth'])) {
 <head></head>
 <body bgcolor="lightgrey">
 <div align="center">
-<table><tr><td><img src="/sova.png"><td><td>Formulář pro aktualizaci kontrolních seznamů.</td></tr></table>
-<p><hr width="500"></p>
+<table><tr><td><img src="/sova.png"></td><td>Formulář pro aktualizaci kontrolních seznamů.</td></tr></table>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form action="." method="post">
 
 <?php
@@ -40,7 +40,7 @@ foreach ($pole as $p) {
 ?>
 
 </form>
-<p><hr width="500"></p>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
 <?php
 if (!empty($_POST)) { echo '<font color="red"><b>Hotovo.</b></font>'; }

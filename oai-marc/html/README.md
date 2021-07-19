@@ -1,25 +1,5 @@
 NGINX
 <pre>
-##
-# You should look at the following URL's in order to grasp a solid understanding
-# of Nginx configuration files in order to fully unleash the power of Nginx.
-# https://www.nginx.com/resources/wiki/start/
-# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
-# https://wiki.debian.org/Nginx/DirectoryStructure
-#
-# In most cases, administrators will remove this file from sites-enabled/ and
-# leave it as reference inside of sites-available where it will continue to be
-# updated by the nginx packaging team.
-#
-# This file will automatically load configuration files provided by other
-# applications, such as Drupal or Wordpress. These applications will be made
-# available underneath a path with that package name, such as /drupal8.
-#
-# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
-##
-
-# Default server configuration
-#
 server {
 	listen 80;
 	listen [::]:80;
@@ -33,15 +13,13 @@ server {
 	}
 
 	location / {
-		return 301 https://xxx;
+		return 301 https://vyvoj.ucl.cas.cz;
 	}
 }
 
 server {
-	#listen 443 ssl;
-	#listen [::]:443 ssl;
-	listen 4433 ssl;
-	listen [::]:4433 ssl;
+	listen 443 ssl;
+	listen [::]:443 ssl;
 
 	server_name xxx;
 
@@ -57,8 +35,7 @@ server {
 	ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 
-	#error_page 497 https://xxx;
-	error_page 497 https://xxx:4433;
+	error_page 497 https://xxx;
 
 	location ~ \.php {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
@@ -68,18 +45,19 @@ server {
 		include		fastcgi_params;
 	}
 
-	location /clanky/data {
+	# Clanky + API from outside only
+	location ~ ^/(?!api|clanky) {
+		allow xxx;
 		deny all;
-		return 403;
 	}
 
+	# API permission
 	location /api {
 		allow xxx;
 		deny all;
 		proxy_pass http://127.0.0.1:5000;
 	}
 }
-
 </pre>
 SOURCE
 

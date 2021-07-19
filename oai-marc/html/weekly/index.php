@@ -21,7 +21,7 @@ if(empty($_SESSION['auth'])) {
 <body>
 <div align="center">
 <table><tr><td><img src="/sova.png"></td><td>Kontrola Aleph protokolem OAI-PMH.</td></tr></table>
-<p><hr width="500"></p>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method='post' action='.' enctype='multipart/form-data'>
 
 <?php
@@ -65,7 +65,7 @@ if (!empty($_POST['date'])){
 }
 
 ?>
-<p><hr width="500"></p>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 </div>
 </body>
 </html>

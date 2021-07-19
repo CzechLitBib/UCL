@@ -26,7 +26,7 @@ if (!isset($_SESSION['kat_year'])) { $_SESSION['kat_year'] = null; }
 <div align="center">
 <table><tr><td><img src="/sova.png"></td><td>Statistika pole CAT/KAT.</td></tr>
 </table>
-<p><hr width="500"></p>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method='post' action='.' enctype='multipart/form-data'>
 
 <?php
@@ -114,7 +114,7 @@ if (!empty($_POST['month']) and  !empty($_POST['year'])){
 
 ?>
 
-<p><hr width="500"></p>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 </div>
 </body>
 </html>
