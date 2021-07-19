@@ -38,7 +38,7 @@ def notify(buff,sif_code):
 		msg['To'] = sif_code[SIF]
 		try:
 			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-			s.sendmail(MAIL_SENDER sif_code[SIF], msg.as_string())
+			s.sendmail(MAIL_SENDER, sif_code[SIF], msg.as_string())
 			s.quit()
 		except:
 			try:
