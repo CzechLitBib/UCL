@@ -7,7 +7,6 @@ $_SESSION['page'] = 'ucla';
 if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
-
 }
 
 ?>

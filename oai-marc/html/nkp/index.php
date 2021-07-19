@@ -7,7 +7,6 @@ $_SESSION['page'] = 'nkp';
 if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'nkp') {
 	header('Location: /');
 	exit();
-
 }
 
 ?>

@@ -7,7 +7,6 @@ $_SESSION['page'] = 'kat';
 if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
-
 }
 
 if (!isset($_SESSION['kat_month'])) { $_SESSION['kat_month'] = null; }

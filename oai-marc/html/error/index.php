@@ -4,10 +4,10 @@ session_start();
 
 $_SESSION['page'] = 'error';
 
-if(empty($_SESSION['auth'])) {
-	header('Location: /');
-	exit();
-}
+#if(empty($_SESSION['auth'])) {
+#	header('Location: /');
+#	exit();
+#}
 
 ?>
 
@@ -41,7 +41,6 @@ if (!$db) {
 
 ?>
 
-<br>
 </div>
 </body>
 </html>
