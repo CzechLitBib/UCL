@@ -4,7 +4,7 @@ session_start();
 
 $_SESSION['page'] = 'kat';
 
-if(empty($_SESSION['auth'])) {
+if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
 
