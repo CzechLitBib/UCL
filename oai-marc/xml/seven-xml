@@ -1,0 +1,106 @@
+#!/usr/bin/python3
+#
+# MARCXML subfield '7' stat.
+#
+
+import os,re
+
+from pymarc import marcxml,MARCReader
+
+# VAR -------------------
+
+XML='ucla.xml'
+#MARC='CLO.mrc'
+DATA='/var/www/html/ucla/data'
+#DATA='/var/www/html/clo/data'
+
+taglist = []
+
+# INIT -------------------
+
+#reader = MARCReader(file(MARC))
+
+# DEF -------------------
+
+def get_value(field):
+	data = []
+	for sub in field:
+		if sub[0] != '4':
+		#if sub[0] != '4' and sub[0] != 'w':
+			data.append(sub[1].strip())
+	return ' '.join(data)
+	
+def validate(record):
+
+	if '001' in record:
+		ident = record['001'].value()
+	else:
+		continue
+
+	for tag, value, seven in [(f.tag, get_value(f), f['7']) for f in record.fields]:
+		if tag != '653' and re.match('(1..|6..|700|710|711|730)', tag):
+			# update tag-list
+			if tag not in TAGLIST: TAGLIST.append(tag)
+			# raw data
+			if not seven and value:
+				try:
+					with open(DATA + '/' +tag + '.csv', 'a') as f:
+						f.write(value + '||' + ident + '\n')
+				except:
+					print('Non Unicode ID: ' + ident + ' TAG: ' + tag)
+			if seven and value:
+				try:
+					with open(DATA + '/' + tag + '.7.csv', 'a') as f:
+						f.write(value + '||' + ident + '\n')
+				except:
+					print('Non Unicode ID: ' + ident + ' TAG: ' + tag)
+
+# MAIN -------------------
+
+marcxml.map_xml(validate, IN)
+
+#for rec in reader:
+#	validate(rec)
+#
+#reader.close()
+
+for TAG in sorted(taglist):
+
+	# NO SEVEN
+
+	DB = {}
+	SORT = {}
+
+	sort_csv = open(DATA + '/' + TAG + '.stat.csv', 'a')
+
+	if os.path.exists(DATA + '/' + TAG + '.csv'):
+		with open(DATA + '/' + TAG + '.csv', 'r') as f:
+			for line in f:
+				value,aleph = line.split('||')
+				if value not in DB: DB[value] = []
+				DB[value].append(aleph.strip())
+
+	for value in DB: SORT[value] = len(DB[value])
+
+	for value in sorted(SORT, key=SORT.get, reverse=True):
+		sort_csv.write(str(SORT[value]) + '||' + value + '\n')
+	sort_csv.close()
+
+	# SEVEN
+
+	DB = {}
+	SORT = {}
+
+	sort_csv = open(DATA + '/' + TAG + '.7.stat.csv', 'a')
+	
+	if os.path.exists(DATA + '/' + TAG + '.7.csv'):
+		with open(DATA + '/' + TAG + '.7.csv', 'r') as f:
+			for line in f:
+				value,aleph = line.split('||')
+				if value not in DB: DB[value] = []
+				DB[value].append(aleph.strip())
+	# gen stat
+	for value in sorted(SORT, key=SORT.get, reverse=True):
+		sort_csv.write(str(SORT[value]) + '||' + value + '\n')
+	sort_csv.close()
+

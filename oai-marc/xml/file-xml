@@ -1,0 +1,227 @@
+#!/usr/bin/python3
+#
+# XML / MARC parsing
+#
+
+import io,requests,lxml.html,time,sys,os,re
+
+from pymarc import marcxml,Field,MARCWriter,MARCReader,XMLWriter
+from pymarc.record import Record
+
+# ------------------------------------------------------
+# VAR
+# ------------------------------------------------------
+
+#DATA='vu.mrc'
+#aleph = open('505.aleph', 'w')
+#xml = XMLWriter(open('PNP_CLO.xml', 'w'))
+#writer = MARCWriter(open('ucla.mrc', 'wb'))
+#file = open('file.csv', 'w')
+
+# 964 ---------
+
+#DATADIR='/var/www/html/964'
+#BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
+
+# KOHA to API ---------
+
+#reader = MARCReader(file('CLO.mrc'))
+#for record in reader:
+#	
+#	# fix LDR dup
+#	record.remove_fields('LDR')
+#
+#	# fix 964
+#	if '964' in record:
+#		record.remove_fields('964')
+#		record.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields= ['a', 'CLO']))
+#
+#	#drop
+#	DROPLIST=[]
+#	for F in record:
+#		if F.tag not in ('001','046','100','368','370','372','400','678'):
+#			if F.tag not in DROPLIST: DROPLIST.append(F.tag)
+#
+#	for TAG in DROPLIST: record.remove_fields(TAG)
+#
+#	#write
+#	xml.write(record)
+
+# ------------------------------------------------------
+# DEF
+# ------------------------------------------------------
+
+def validate(record):
+
+	metadata = record
+
+# ------------------------------------------------------
+# PATCH
+# ------------------------------------------------------
+
+	# LDR dup
+#	metadata.remove_fields('LDR')# LDR dup
+
+#	if metadata['001'].value() == '001232606': metadata.remove_fields('506')# UCLEC broken control field
+#	if metadata['001'].value() == '001852470': return # UCLA skip broken encoding
+	
+	# UCLEC drop records
+	#if metadata['001'].value() in ['001676249','002194963','002265478','001232724','002549375','001232855']: return
+	#if metadata['001'].value() == '001232855': return
+
+	# UCLEC: 912 -> 913 ind1 = 2
+	#for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
+
+	# UCLEC: 912 -> 911 ind1 = ' ' ind2 = ' '
+	#for F in [f for f in metadata.get_fields('912') if f.indicator1 + f.indicator2 == '  ']: F.tag = '911'
+
+	# UCLEC drop 506 fields
+	#metadata.remove_fields('506')
+
+	# UCLA:  webarchiv
+#	for F in metadata.get_fields('856'):
+#		if 'y' in F:
+#			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
+#			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
+
+	# UCLA: drop X
+#	X=False
+#	for F in metadata.get_fields('773'):
+#		if X and 'x' in F: F.delete_subfield('x')# drop more than one
+#		if 'x' in F: X = True# catch the first one
+
+	# UCLA: add MBK
+#	MBK=False
+#	if '044' in metadata:
+#		if 'a' in metadata['044']:
+#			if metadata['044']['a'] != 'xr': MBK=True
+#	if '008' in metadata:
+#		if metadata['008'].value()[15:17] != 'xr': MBK=True
+#	for F in metadata.get_fields('964'):
+#		if 'CLE' in F.value(): MBK=False
+#	if MBK:
+#		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+
+	# 599 UCLO special
+	#for F in metadata.get_fields('599'):
+	#	if 'a' in F:
+	#		BUFF+=F['a'] + str('|') + IDENT + '\n'
+
+	# UCLO 599a
+#	XEDICE=False
+#	for F in metadata.get_fields('599'):
+#		if 'a' in F and F['a'] == 'xedice':
+#			XEDICE=True
+#	if XEDICE:
+#		COUNTER+=1
+#		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'XEDICE']))
+#		writer.write(metadata)
+
+# ------------------------------------------------------
+# GENERIC
+# ------------------------------------------------------
+
+	IDENT = metadata['001'].value()
+
+# ------------------------------------------------------
+# Webarchiv
+# ------------------------------------------------------
+
+	# GET DATA
+
+	# drop idnes.cz, ihned.cz, webarchiv.cz, email.seznam.cz
+
+#	IDENT = metadata['001'].value()
+	
+#	INT=False
+#	for F in metadata.get_fields('964'):
+#		if F.value() == 'INT': INT=True
+#	if INT:
+#		ARCH=False
+#		for F in metadata.get_fields('856'):
+#			if F['y'] in ['WebArchiv', 'Webarchiv']: ARCH=True
+#		if not ARCH:
+#			for F in metadata.get_fields('856'):
+#				if F['y']  == 'online':
+#					link.write(str(IDENT) + '##' + F['u'].encode('utf-8') + '\n')
+#
+#	return
+
+# GET LINK
+
+#session = requests.Session()
+
+#session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
+
+#for LINK in link:
+
+#	ID=LINK.split('##')[0].strip()
+#	BASE=LINK.split('##')[1].replace('http://', '').replace('https://', '').strip()
+#	URL='https://wayback.webarchiv.cz/wayback/*/' + BASE
+
+	#try:
+	#	req = session.get(URL)
+	#except Exception as e:
+	#	print(e.args)
+	#	sys.exit(1)
+
+#	req = session.get(URL, verify=False)
+
+#	if req and req.status_code == 200:
+#		try:
+#			p = lxml.html.HTMLParser()
+#			t = lxml.html.parse(StringIO.StringIO(req.text), p)
+#			url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
+
+#			wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href').encode('utf-8') + '\n')
+#		except:
+#			pass
+
+#	continue	
+
+	# WRITE ALEPH
+
+#	IDENT = metadata['001'].value()
+
+#	if IDENT in WAY:
+#		print(IDENT)
+#		for F in metadata.get_fields('856'):
+		
+#			SUB=''
+#			for i in range(0, len(F.subfields)/2):
+#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
+
+#			if F['u'] == 'https://' + WAY[IDENT]['ORIG'] or F['u'] == 'http://' + WAY[IDENT]['ORIG']:
+#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
+#				aleph.write(str(IDENT + ' 85642 L $$u') + WAY[IDENT]['ARCH'].encode('utf-8') + '$$yWebarchiv$$4N\n')
+#			else:
+#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
+#	return
+
+# ------------------------------------------------------
+# MAIN
+# ------------------------------------------------------
+
+#record = Record()
+
+#record.leader = '     nam a22     4i 4500'
+#field = Field(tag = '001', data='002524717')
+#record.add_ordered_field(field)
+#field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
+#record.add_ordered_field(field)
+
+#validate(record)
+
+#marcxml.map_xml(validate, DATA)
+
+#aleph.close()
+#xml.close()
+#writer.close()
+#file.close()
+
+# EXIT -------------------
+
+sys.exit(0)
+
