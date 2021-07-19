@@ -4,7 +4,7 @@ session_start();
 
 $_SESSION['page'] = 'nkp';
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'nkp') {
+if(empty($_SESSION['auth']) or ($_SESSION['group'] !== 'nkp' and $_SESSION['group'] !== 'admin')) {
 	header('Location: /');
 	exit();
 }
