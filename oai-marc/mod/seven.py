@@ -184,7 +184,7 @@ def run(records):
 		if BRIG_SORT:
 			with open(NKP + TAG + '.7.stat.csv', 'w') as brig_stat_csv:
 				for value in sorted(BRIG_SORT, key=BRIG_SORT.get, reverse=True):
-					brig_srt_csv.write(str(BRIG_SORT[value]) + '||' + value + '\n')
+					brig_stat_csv.write(str(BRIG_SORT[value]) + '||' + value + '\n')
 
 		# WRITE OLDER
 
