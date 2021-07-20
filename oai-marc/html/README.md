@@ -45,16 +45,14 @@ server {
 		include		fastcgi_params;
 	}
 
-	# Clanky + API from outside only
-	location ~ ^/(?!api|clanky) {
+	# Clanky from outside only
+	location ~ ^/(?!clanky) {
 		allow xxx;
 		deny all;
 	}
 
 	# API permission
 	location /api {
-		allow xxx;
-		deny all;
 		proxy_pass http://127.0.0.1:5000;
 	}
 }
