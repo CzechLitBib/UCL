@@ -40,7 +40,7 @@ if ($valid) {
 <head></head>
 <body bgcolor="lightgrey">
 <div align="center">
-<table><tr><td><img src="/sova.png"></td><td>Formulář pro zaslání článku.</td></tr></table>
+<table><tr><td><img src="/clanky/sova.png"></td><td>Formulář pro zaslání článku.</td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method="post" action="." enctype="multipart/form-data">
 <table>
