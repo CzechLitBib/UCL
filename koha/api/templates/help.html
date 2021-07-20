@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html><head><title>Vufind REST API</title><meta charset="utf-8"></head>
+<body bgcolor="lightgrey">
+<div align="center">
+<table><tr><td><img src="/sova.png"/></td><td>Vufind REST API</td></tr></table>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+<table cellspacing="4">
+<tr><td><b>GET</b></td></tr>
+<tr><td></td><td>/api/GetRecord?identifier=&lt;000000000-999999999&gt;</td></tr>
+<tr><td></td></tr>
+<tr><td></td><td><a style="color:black;" target="_blank" href="/api/GetRecord?identifier=002674774"><i>/api/GetRecord?identifier=002674774</i></a></td></tr>
+<tr><td><b>GET</b></td></tr>
+<tr><td></td><td>/api/ListRecords?from=&lt;iso8601_datetime&gt;&until=&lt;iso8601_datetime&gt;</td></tr>
+<tr><td></td></tr>
+<tr><td></td><td><a style="color:black;" target="_blank" href="/api/ListRecords?from=2021-07-12 10:00:00&until=2021-07-12 11:00:00"><i>/api/ListRecords?from=2021-07-12 10:00:00&until=2021-07-12 11:00:00</i></a></td></tr>
+<tr><td><b>GET</b></td></tr>
+<tr><td></td><td>/api/ListIdentifiers?from=&lt;iso8601_datetime&gt;&until=&lt;so8601_datetime&gt;</td></tr>
+<tr><td></td></tr>
+<tr><td></td><td><a style="color:black;" target="_blank" href="/api/ListIdentifiers?from=2021-07-12 10:00:00&until=2021-07-12 11:00:00"><i>/api/ListIdentifiers?from=2021-07-12 11:00:00&until=2021-07-12 11:00:00</i></a></td></tr>
+<tr><td></td></tr>
+<tr><td><b>Header&nbsp;&nbsp;</b></td></tr>
+<tr><td></td><td>Accept: application/json</td></tr>
+<tr><td></td><td>Response: <i>MARC-JSON (default)</i></td></tr>
+<tr><td><b>Header </b></td></tr>
+<tr><td></td><td>Accept: application/marcxml</td></tr>
+<tr><td></td><td>Response: <i>MARC-XML</i></td></tr>
+<tr><td><b>Header </b></td></tr>
+<tr><td></td><td>Accept: application/octet-stream</td></tr>
+<tr><td></td><td>Response: <i>MARC-21</i></td></tr>
+<tr><td></td></tr>
+<tr><td><b>Code</b></td></tr>
+<tr><td></td><td>200 - Ok.</td></tr>
+<tr><td></td><td>204 - No Content.</td></tr>
+<tr><td></td><td>400 - Bad Request.</td></tr>
+<tr><td></td><td>404 - Not Found.</td></tr>
+<tr><td></td></tr>
+</table>
+<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+</br>
+</div>
+</body>
+</html>

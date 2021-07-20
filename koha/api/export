@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# CLI Koha CLO export
+#
+# --starting_authid='1'
+# --ending_authid='10'
+
+export PERL5LIB='/usr/share/koha/lib'
+export KOHA_CONF='/etc/koha/sites/clo/koha-conf.xml'
+
+perl /usr/share/koha/bin/export_records.pl \
+	--record-type='auths' \
+	--format='xml' \
+	--filename='CLO.xml'
+
+exit 0
+

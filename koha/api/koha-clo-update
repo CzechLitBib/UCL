@@ -1,0 +1,76 @@
+#!/usr/bin/python3
+#
+# Update database from OAI-PMH 2.0
+#
+
+import sqlite3,sys,io,re
+
+from pymarc import marcxml,Field
+from datetime import datetime,timedelta
+from lxml.etree import tostring
+
+DATA='/usr/local/bin/api/CLO.xml'
+DB='/usr/local/bin/api/koha-clo.db'
+
+# MAIN -------------------
+
+BATCH=[]
+
+def process(record):
+
+	metadata = record
+
+	# ident
+	if '001' in metadata:
+		ident = metadata['001'].value()
+	else:
+		continue
+
+	if '005' in metadata:
+		timestamp = int(datetime.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f').timestamp())
+	else:
+		continue
+
+	# LDR dup
+	metadata.remove_fields('LDR')# Leader duplicate (Aleph)
+
+	# Drop SYS
+	metadata.remove_fields('SYS')# Invalid control field (Aleph)
+
+	# fix 964
+	if '964' in record:
+		metadata.remove_fields('964')
+		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields= ['a', 'CLO']))
+
+	#drop
+	DROPLIST=[]
+	for F in metadata:
+		if F.tag not in ('001','046','100','368','370','372','400','678'):
+			if F.tag not in DROPLIST: DROPLIST.append(F.tag)
+
+	for TAG in DROPLIST: metadata.remove_fields(TAG)
+
+	# UPDATE
+	json = metadata.as_json()
+	xml = marcxml.record_to_xml(metadata)
+	marc = metadata.as_marc()
+
+	BATCH.append((ident, timestamp, json, xml, marc))
+
+# MAIN -------------------
+
+# Dump KOHA
+marcxml.map_xml(process, DATA)
+
+# Write SQL
+con = sqlite3.connect(DB)
+cur = con.cursor()
+cur.executemany("INSERT INTO record (ident, timestamp, json, xml, marc) VALUES (?,?,?,?,?) ON CONFLICT (ident) DO UPDATE SET timestamp=excluded.timestamp, json=excluded.json, xml=excluded.xml, marc=excluded.marc;", BATCH)
+cur.execute("DELETE FROM record WHERE timestamp < (?);",(int((datetime.now()-timedelta(days=7)).timestamp()) ,))
+con.commit()
+con.close()
+
+# EXIT -------------------
+
+sys.exit(0)
+

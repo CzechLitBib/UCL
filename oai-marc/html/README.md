@@ -45,7 +45,7 @@ server {
 		include		fastcgi_params;
 	}
 
-	# Clanky + API only only
+	# Clanky + API only
 	location ~ ^/(?!api|clanky) {
 		allow xxx;
 		deny all;

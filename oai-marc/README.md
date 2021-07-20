@@ -76,7 +76,7 @@ pyoai.patch
 
 # API
 
-apt-get install python3-flask python3-restful
+apt-get install python3-flask python3-flask-restful
 
 cp api /usr/locail/bin
 ln -s /usr/local/bin/api/vufind-update /usr/local/bin/vufind-update
