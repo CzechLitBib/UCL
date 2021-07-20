@@ -9,6 +9,8 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	exit();
 }
 
+if(!isset($_SESSION['daily'])) { $_SESSION['daily'] = Null; }
+
 if (!empty($_POST['date'])) {
 	$_SESSION['daily'] = $_POST['date'];
 	header("Location: " . $_SERVER['REQUEST_URI']);

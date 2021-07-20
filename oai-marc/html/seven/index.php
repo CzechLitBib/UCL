@@ -9,6 +9,9 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	exit();
 }
 
+if(!isset($_SESSION['seven_month'])) { $_SESSION['seven_month'] = Null; }
+if(!isset($_SESSION['seven_year'])) { $_SESSION['seven_year'] = Null; }
+
 if (!empty($_POST['month']) and !empty($_POST['year'])) {
         $_SESSION['seven_month'] = $_POST['month'];
         $_SESSION['seven_year'] = $_POST['year'];

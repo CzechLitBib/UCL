@@ -9,6 +9,9 @@ if(empty($_SESSION['auth']) or ($_SESSION['group'] !== 'nkp' and $_SESSION['grou
 	exit();
 }
 
+if(!isset($_SESSION['nkp_month'])) { $_SESSION['nkp_month'] = Null; }
+if(!isset($_SESSION['nkp_year'])) { $_SESSION['nkp_year'] = Null; }
+
 if (!empty($_POST['month']) and !empty($_POST['year'])) {
         $_SESSION['nkp_month'] = $_POST['month'];
         $_SESSION['nkp_year'] = $_POST['year'];
