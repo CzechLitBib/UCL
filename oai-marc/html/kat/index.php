@@ -119,6 +119,7 @@ if (!empty($_SESSION['kat_month']) and !empty($_SESSION['kat_year'])){
 ?>
 
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+<table width='500'><tr><td width="450" align="right"><a href="/main"><img src="/back.png"></a></td></tr></table>
 </div>
 </body>
 </html>

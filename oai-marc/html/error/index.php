@@ -41,6 +41,7 @@ if (!$db) {
 
 ?>
 
+<table width='650'><tr><td width="450" align="right"><a href="/main"><img src="/back.png"></a></td></tr></table>
 </div>
 </body>
 </html>
