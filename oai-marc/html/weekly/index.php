@@ -9,6 +9,12 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	exit();
 }
 
+if (!empty($_POST['date'])) {
+        $_SESSION['weekly'] = $_POST['date'];
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit();
+}
+
 ?>
 
 <html>
@@ -27,9 +33,10 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 <?php
 
 $default = date("Y-m-d", strtotime("last Tuesday"));
-if (!empty($_POST['date'])){ $default = $_POST['date']; }
+if (!empty($_SESSION['weekly'])){ $default = $_SESSION['weekly']; }
 
-echo "<input type='date' name='date' value='" . $default . "' max='" . date("Y-m-d", strtotime("last Tuesday")) . "' step='7'>\n";
+//echo "<input type='date' name='date' value='" . $default . "' max='" . date("Y-m-d", strtotime("last Tuesday")) . "' step='7'>\n";
+echo "<input type='date' name='date' value='" . $default . "' max='" . date("Y-m-d", strtotime("Tuesday")) . "' step='7'>\n";
 
 ?>
 
@@ -39,12 +46,12 @@ echo "<input type='date' name='date' value='" . $default . "' max='" . date("Y-m
 
 <?php
 
-if (!empty($_POST['date'])){
-	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_POST['date'])) {
+if (!empty($_SESSION['weekly'])){
+	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_SESSION['weekly'])) {
 
 		$file = 'data/'
-		. date("Y-m-d", strtotime($_POST['date']) - 8*24*3600) . '_'
-		. date("Y-m-d", strtotime($_POST['date']) - 2*24*3600) . '.csv';
+		. date("Y-m-d", strtotime($_SESSION['weekly']) - 8*24*3600) . '_'
+		. date("Y-m-d", strtotime($_SESSION['weekly']) - 2*24*3600) . '.csv';
 
 		if (($csv = fopen($file, "r")) !== FALSE) {
 	

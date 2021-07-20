@@ -9,6 +9,12 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	exit();
 }
 
+if (!empty($_POST['date'])) {
+	$_SESSION['daily'] = $_POST['date'];
+	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
+}
+
 ?>
 
 <html>
@@ -28,7 +34,7 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 <?php
 
 $default = date("Y-m-d", strtotime("-1 day"));
-if (!empty($_POST['date'])) { $default = $_POST['date']; }
+if (!empty($_SESSION['daily'])) { $default = $_SESSION['daily']; }
 
 echo "<input type='date' name='date' value='" . $default . "' min='2020-03-02' max='" . date("Y-m-d", strtotime("-1 day")) . "'>\n";
 
@@ -39,10 +45,10 @@ echo "<input type='date' name='date' value='" . $default . "' min='2020-03-02' m
 
 <?php
 
-if (!empty($_POST['date'])){
-	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_POST['date'])) {
+if (!empty($_SESSION['daily'])){
+	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_SESSION['daily'])) {
 	
-		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})-\d{2}/', '${1}/${2}', $_POST['date']) . '/' . $_POST['date'] . '.csv';
+		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})-.*/', '${1}/${2}', $_SESSION['daily']) . '/' . $_SESSION['daily'] . '.csv';
 		
 		if (($csv = fopen($file, "r")) !== FALSE) {
 			echo "<table>\n";

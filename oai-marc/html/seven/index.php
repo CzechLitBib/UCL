@@ -9,6 +9,13 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	exit();
 }
 
+if (!empty($_POST['month']) and !empty($_POST['year'])) {
+        $_SESSION['seven_month'] = $_POST['month'];
+        $_SESSION['seven_year'] = $_POST['year'];
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit();
+}
+
 ?>
 
 <html>
@@ -45,9 +52,9 @@ $month_map = [
 echo "<label for='month'>Měsíc: </label><select id='month' name='month'>\n";
 
 foreach($month_map as $m => $mon) {
-	if ($mon == $_POST['month']) {
+	if ($mon == $_SESSION['seven_month']) {
 		echo "<option selected>" . $mon . "</option>\n";
-	} elseif (empty($_POST['month']) and $m == date('m', strtotime("-1 month"))) {
+	} elseif (empty($_SESSION['seven_month']) and $m == date('m', strtotime("-1 month"))) {
 		echo "<option selected>" . $mon . "</option>\n";
 	} else {
 		echo "<option>" . $mon  . "</option>\n";
@@ -59,9 +66,9 @@ echo "</select>\n";
 echo "<label for='rok'>Rok: </label><select id='year' name='year'>\n";
 
 foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
-	if ($y == $_POST['year']) {
+	if ($y == $_SESSION['seven_year']) {
 		echo "<option selected>" . $y . "</option>\n";
-	} elseif (empty($_POST['year']) and $y == date('Y', strtotime("-1 month"))) {
+	} elseif (empty($_SESSION['seven_year']) and $y == date('Y', strtotime("-1 month"))) {
 		echo "<option selected>" . $y . "</option>\n";
 	} else {
 		echo "<option>" . $y . "</option>\n";
@@ -88,10 +95,10 @@ function getLines($file)
 	return $lines;
 }
 
-if (!empty($_POST['month']) and !empty($_POST['year'])) {
-	if (preg_match('/\d{2}/', array_search($_POST['month'], $month_map)) and preg_match('/\d{4}/', $_POST['year'])) {
+if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
+	if (preg_match('/\d{2}/', array_search($_SESSION['seven_month'], $month_map)) and preg_match('/\d{4}/', $_SESSION['seven_year'])) {
 	
-		$dir =  'data/' . $_POST['year'] . '/' . array_search($_POST['month'],$month_map);
+		$dir =  'data/' . $_SESSION['seven_year'] . '/' . array_search($_SESSION['seven_month'],$month_map);
 
 		# NEW
 
