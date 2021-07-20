@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# DEVEL REST API
+# KOHA CLO REST API
 #
 
 import sqlite3,json,re
@@ -11,7 +11,7 @@ from flask_restful import Resource,Api
 
 # VAR -------------------------
 
-DB='koha-clo.db'# record[ident|timestamp|json|xml|marc]
+DB='/usr/local/bin/koha-clo.db'# record[ident|timestamp|json|xml|marc]
 
 XML_HEAD=b'''<?xml version="1.0" encoding="UTF-8"?>
 <collection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -134,13 +134,13 @@ class ListIdentifiers(Resource):
 		else:
 			return '', 204
 
-api.add_resource(API, '/api/')
-api.add_resource(GetRecord, '/api/GetRecord')
-api.add_resource(ListRecords, '/api/ListRecords')
-api.add_resource(ListIdentifiers, '/api/ListIdentifiers')
+api.add_resource(API, '/')
+api.add_resource(GetRecord, '/GetRecord')
+api.add_resource(ListRecords, '/ListRecords')
+api.add_resource(ListIdentifiers, '/ListIdentifiers')
 
 # MAIN -------------------------
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
 

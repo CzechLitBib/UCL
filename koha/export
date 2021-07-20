@@ -11,7 +11,7 @@ export KOHA_CONF='/etc/koha/sites/clo/koha-conf.xml'
 perl /usr/share/koha/bin/export_records.pl \
 	--record-type='auths' \
 	--format='xml' \
-	--filename='CLO.xml'
+	--filename='/usr/local/bin/CLO.xml'
 
 exit 0
 

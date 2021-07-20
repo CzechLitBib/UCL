@@ -99,7 +99,7 @@ apt-get install python3-flask python3-restful
 
 /usr/local/bin/api/
 
-systemctl enable koha-clo-api.service
+apt-get install libapache2-mod-wsgi-py3
 </pre>
 Z3950
 <pre>

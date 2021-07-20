@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# Update database from OAI-PMH 2.0
+# Update database from XML
 #
 
 import sqlite3,sys,io,re
@@ -9,8 +9,8 @@ from pymarc import marcxml,Field
 from datetime import datetime,timedelta
 from lxml.etree import tostring
 
-DATA='/usr/local/bin/api/CLO.xml'
-DB='/usr/local/bin/api/koha-clo.db'
+DATA='/usr/local/bin/CLO.xml'
+DB='/usr/local/bin/koha-clo.db'
 
 # MAIN -------------------
 
