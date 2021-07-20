@@ -55,10 +55,9 @@ if (!empty($_SESSION['weekly'])){
 		. date("Y-m-d", strtotime($_SESSION['weekly']) - 8*24*3600) . '_'
 		. date("Y-m-d", strtotime($_SESSION['weekly']) - 2*24*3600) . '.csv';
 
-		if (($csv = fopen($file, "r")) !== FALSE) {
-	
+		if (file_exists($file)) {
+			$csv = fopen($file, "r");
 			echo "<table>\n";
-
 			while (($data = fgetcsv($csv, 1000, ";")) !== FALSE) {
 				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
 					. $data[0] . "&local_base=AV" . "'><b>" . $data[0] . "</b></a></td><td align='right'>"

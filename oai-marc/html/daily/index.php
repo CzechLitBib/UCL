@@ -52,7 +52,8 @@ if (!empty($_SESSION['daily'])){
 	
 		$file =  'data/' . preg_replace('/(\d{4})-(\d{2})-.*/', '${1}/${2}', $_SESSION['daily']) . '/' . $_SESSION['daily'] . '.csv';
 		
-		if (($csv = fopen($file, "r")) !== FALSE) {
+		if (file_exists($file)) {
+			$csv = fopen($file,'r');
 			echo "<table>\n";
 			while (($data = fgetcsv($csv, 1000, ";")) !== FALSE) {
 				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
