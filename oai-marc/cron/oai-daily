@@ -13,6 +13,12 @@ CSVNAME="$(date --date='yesterday' '+%Y-%m-%d').csv"
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
+# CLANKY
+
+webdav-clanky
+
+# OAI
+
 oai-marc \
 	--set UCLA \
 	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \

@@ -14,11 +14,12 @@ if (isset($_POST['code']) and isset($_SESSION['secret'])) {
 
 if ($valid) {
 	// CSV
+	$output .= $id . '|';
 	foreach($value as $val) {
 		if (isset($_POST[$val])) {
-			$val == 'public' ? $output .= $_POST[$val] : $output .= $_POST[$val] . ';';
+			$val == 'public' ? $output .= $_POST[$val] : $output .= $_POST[$val] . '|';
 		} else {
-			$output .= ';';
+			$output .= '|';
 		}
 	}
 	file_put_contents('data/' . $id . '.csv', $output . "\n");

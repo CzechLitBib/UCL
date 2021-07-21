@@ -41,6 +41,7 @@ ssh-kegen -t ed25519
 
 # DAVFS
 
+apt-get install python3-easywebdav
 apt-get install davfs2
 
 usermod -a -G davfs2 xxx
@@ -94,6 +95,7 @@ FILE
          oai-mdt - Z39.50 yaz-client wrapper.
          oai-mod - Modular OAI-PMH loader.
      oai-recenze - Subset match notify.
+   webdav-clanky - WebDAV uploader.
 
             mod/
             five - Send dumped 245/246/5xx text for correction. 
