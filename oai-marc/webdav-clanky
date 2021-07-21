@@ -26,6 +26,7 @@ MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
 
 buff = io.BytesIO()# CSV buffer
+ID={}# File ID
 
 # DEF -----------------------------------
 
@@ -55,8 +56,6 @@ def notify():
 webdav = easywebdav.connect(SERVER, username=TOKEN, password=PASS, protocol='https')
 
 print('[.] Searching DATA.')
-ID={}
-
 for fn in os.listdir(DATA):
 	if re.match('^[a-z0-9]{13}\.csv$', fn):
 		if fn[:13] not in ID:# PDF already
