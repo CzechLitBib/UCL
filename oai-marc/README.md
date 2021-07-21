@@ -86,6 +86,13 @@ cp /usr/local/bin/api/vufind-api.service /etc/systemd/system/
 systemctl enable vufind-api.service
 
 # CRON
+
+/etc/crontab:
+10 *    * * *   root    oai-hourly >> /var/log/oai-hourly.log 2>&1 &
+00 5    * * *   root    oai-daily >> /var/log/oai-daily.log 2>&1 &
+00 6    * * TUE root    oai-weekly >> /var/log/oai-weekly.log 2>&1 &
+00 7    1 * *   root    oai-monthly >> /var/log/oai-monthly.log 2>&1 &
+
 crontab -e
 0 1     * * *   cd ~/UCL && git add . && git commit -m "Git auto backup." && git push origin master >> ~/git.log 2>&1 &
 </pre>
