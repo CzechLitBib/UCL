@@ -12,9 +12,9 @@ from lxml.etree import tostring
 DATA='/usr/local/bin/CLO.xml'
 DB='/usr/local/bin/koha-clo.db'
 
-# MAIN -------------------
-
 BATCH=[]
+
+# DEF -------------------
 
 def process(record):
 
@@ -24,12 +24,12 @@ def process(record):
 	if '001' in metadata:
 		ident = metadata['001'].value()
 	else:
-		continue
+		return
 
 	if '005' in metadata:
 		timestamp = int(datetime.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f').timestamp())
 	else:
-		continue
+		return
 
 	# LDR dup
 	metadata.remove_fields('LDR')# Leader duplicate (Aleph)
@@ -60,13 +60,16 @@ def process(record):
 # MAIN -------------------
 
 # Dump KOHA
-marcxml.map_xml(process, DATA)
+try:
+	marcxml.map_xml(process, DATA)
+except:
+	print('Missing or empty CLO.xml.')
+	sys.exit(1)
 
 # Write SQL
 con = sqlite3.connect(DB)
 cur = con.cursor()
 cur.executemany("INSERT INTO record (ident, timestamp, json, xml, marc) VALUES (?,?,?,?,?) ON CONFLICT (ident) DO UPDATE SET timestamp=excluded.timestamp, json=excluded.json, xml=excluded.xml, marc=excluded.marc;", BATCH)
-cur.execute("DELETE FROM record WHERE timestamp < (?);",(int((datetime.now()-timedelta(days=7)).timestamp()) ,))
 con.commit()
 con.close()
 

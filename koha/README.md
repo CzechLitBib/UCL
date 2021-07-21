@@ -100,6 +100,10 @@ apt-get install python3-flask python3-restful
 /usr/local/bin/api/
 
 apt-get install libapache2-mod-wsgi-py3
+
+/etc/crontab:
+00 1    * * *   root    koha-clo-export >> /var/log/koha-clo-api.log 2>&1 &
+00 2    * * *   root    koha-clo-update >> /var/log/koha-clo-api.log 2>&1 &
 </pre>
 Z3950
 <pre>
