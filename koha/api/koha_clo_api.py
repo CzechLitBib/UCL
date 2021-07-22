@@ -81,9 +81,10 @@ class GetRecord(Resource):
 	def get(self):
 		prefix = 'json'
 		ident = request.args.get('identifier')
+		if not ident: return abort(400, "Missing 'identifier' argument.")
 		if request.headers.get('Accept') == 'application/marcxml': prefix='xml'
 		if request.headers.get('Accept') == 'application/octet-stream': prefix='marc'
-		if not ident or not re.match('^\d{9}$', ident):
+		if not not re.match('^\d{9}$', ident):
 			return abort(400, "Invalid identifier: <000000000-999999999>.")
 		data = query_db("SELECT {} FROM record WHERE ident = ?".format(prefix), (ident,), one=True)
 		if data:
