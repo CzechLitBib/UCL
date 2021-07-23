@@ -1173,8 +1173,8 @@ for record in records:
 		# 3RD BATCH ------------------
 
                 # 100-4
-		if '100' in metadata and '4' not in metadata['100']:
-			write_error(header.identifier(), '100', SIF, '179', "Pole 100 neobsahuje žádné podpole '4'.")
+		#if '100' in metadata and '4' not in metadata['100']:
+		#	write_error(header.identifier(), '100', SIF, '179', "Pole 100 neobsahuje žádné podpole '4'.")
 		# 110-4
 		if '110' in metadata and '4' not in metadata['110']:
 			write_error(header.identifier(), '110', SIF, '180', "Pole 110 neobsahuje žádné podpole '4'.")
