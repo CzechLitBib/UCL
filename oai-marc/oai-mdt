@@ -1,17 +1,12 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
 #
-# OAI-PMH 2.0 MARCXML Record text collector.
+# OAI-PMH 2.0 MARCXML / Z3950 MDT
 #
 
 # INCLUDE -------------------
 
-from __future__ import print_function
+import subprocess,argparse,io,sys,os,re
 
-import subprocess,argparse,StringIO,urllib2,smtplib,sys,os,re
-
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime,date
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
@@ -74,7 +69,7 @@ def get_mdt(val,mdt,tag,ident,SIF):
 
 def MarcXML(xml):
 	handler = marcxml.XmlHandler()
-	marcxml.parse_xml(StringIO.StringIO(tostring(xml, encoding='utf-8')), handler)
+	marcxml.parse_xml(oi.StringIO(tostring(xml, encoding='utf-8').decode('utf-8')), handler)
 	return handler.records[0]
 
 def valid_date(s):
@@ -184,22 +179,6 @@ for record in records:
 
 		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) < 2350000: continue
 
-		# SKIP BOT ------------------
-
-		#BOT=False
-		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
-		#	if 'a' in F:
-		#		if re.match('BATCH', F['a']): BOT=True
-		#if BOT: continue
-
-		# SKIP NOT NEW ------------------
-		#OUTDATE = False
-		#for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT/KAT
-		#	if 'c' in F:
-		#		CAT_DATE = date(int(F['c'][:4]), int(F['c'][4:6]), int(F['c'][6:]))
-		#		if CAT_DATE >= date.today().replace(day=1): OUTDATE=True# last day of month
-		#		if CAT_DATE < date.today().replace(day=1,month=(date.today().month - 1)): OUTDATE=True# fist day of month 
-		#if OUTDATE: continue
 		# 1xx/6xx-653/700/710/711/730 ------------------
 
 		if 'SIF' in metadata:
@@ -269,4 +248,6 @@ print(MDF_CNT)
 print(MDF_ERR)
 
 # EXIT -------------------
+
+sys.exit(0)
 

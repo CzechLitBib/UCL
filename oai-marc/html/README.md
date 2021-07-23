@@ -13,7 +13,7 @@ server {
 	}
 
 	location / {
-		return 301 https://vyvoj.ucl.cas.cz;
+		return 301 https://xxx;
 	}
 }
 
