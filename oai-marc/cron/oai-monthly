@@ -15,7 +15,7 @@ mkdir -p "/var/www/html/nkp/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /d
 mkdir -p "/var/www/html/seven/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
 
 oai-mod \
-	--set 'UCLA' \
+	--set UCLA \
 	--from "$(date --date="$(date +'%Y-%m-01') -1 month" '+%Y-%m-%d 00:00:00')" \
 	--until "$(date '+%Y-%m-01 00:00:00')"
 
