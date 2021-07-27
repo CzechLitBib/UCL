@@ -37,14 +37,6 @@ server {
 
 	error_page 497 https://xxx;
 
-	location ~ \.php {
-		fastcgi_split_path_info ^(.+\.php)(/.+)$;
-		fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;
-		fastcgi_index	index.php;
-		fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		include		fastcgi_params;
-	}
-
 	# Clanky + API only
 	location ~ ^/(?!api|clanky) {
 		allow xxx;
@@ -56,6 +48,14 @@ server {
 		allow xxx;
 		deny all;
 		proxy_pass http://127.0.0.1:5000;
+	}
+
+	location ~ \.php {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;
+		fastcgi_index	index.php;
+		fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include		fastcgi_params;
 	}
 }
 </pre>
