@@ -36,21 +36,29 @@ server {
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 
 	error_page 497 https://xxx;
-	
+
 	# API
-	location /api {
-		allow xxx;
+	location ~ ^/api {
+		allow xxx/24;
 		deny all;
 		proxy_pass http://127.0.0.1:5000;
 	}
 
-
-	# Clanky only
-	location ~ ^/(?!clanky) {
-		allow xxx;
+	# PHP - local
+	location ~ ^/(?!clanky|cardio) {
+		allow xxx/24;
 		deny all;
+
+		location ~ \.php {
+			fastcgi_split_path_info ^(.+\.php)(/.+)$;
+			fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;
+			fastcgi_index	index.php;
+			fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+			include		fastcgi_params;
+		}
 	}
 
+	# PHP - clanky + cardio
 	location ~ \.php {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
 		fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;
@@ -58,6 +66,7 @@ server {
 		fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include		fastcgi_params;
 	}
+
 }
 </pre>
 SOURCE
