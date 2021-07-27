@@ -36,18 +36,19 @@ server {
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 
 	error_page 497 https://xxx;
-
-	# Clanky + API only
-	location ~ ^/(?!api|clanky) {
-		allow xxx;
-		deny all;
-	}
-
+	
 	# API
 	location /api {
 		allow xxx;
 		deny all;
 		proxy_pass http://127.0.0.1:5000;
+	}
+
+
+	# Clanky only
+	location ~ ^/(?!clanky) {
+		allow xxx;
+		deny all;
 	}
 
 	location ~ \.php {
