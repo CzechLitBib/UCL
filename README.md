@@ -5,7 +5,8 @@ Library support software.
 
 TODO
 <pre>
-marc + recenze -> mod.
+- webdav client download
+- marc + recenze -> mod
 </pre>
 
 FILE
