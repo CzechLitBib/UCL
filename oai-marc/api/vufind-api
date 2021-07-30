@@ -77,6 +77,14 @@ class API(Resource):
 		headers = {'Content-Type': 'text/html'}
 		return make_response(render_template('/help.html'), 200, headers)
 
+class GetDeletes(Resource):
+	def get(self):
+		headers = {'Content-Type': 'text/plain'}
+		try:
+			return make_response(render_template('/deletes.txt'), 200, headers)
+		except:
+			return '', 204
+				
 class GetRecord(Resource):
 	def get(self):
 		prefix = 'json'
@@ -137,6 +145,7 @@ class ListIdentifiers(Resource):
 
 api.add_resource(API, '/api/')
 api.add_resource(GetRecord, '/api/GetRecord')
+api.add_resource(GetDeletes, '/api/GetDeletes')
 api.add_resource(ListRecords, '/api/ListRecords')
 api.add_resource(ListIdentifiers, '/api/ListIdentifiers')
 

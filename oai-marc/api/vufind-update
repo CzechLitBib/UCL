@@ -14,6 +14,7 @@ from oaipmh.metadata import MetadataRegistry
 OAI_URL='https://aleph.lib.cas.cz/OAI'
 OAI_SET='UCLA'
 DB='/usr/local/bin/api/vufind.db'
+DELETES='/usr/local/bin/api/templates/deletes.txt'
 
 # DEF -------------------
 
@@ -79,10 +80,17 @@ except:
 
 BATCH=[]
 
+deletes = open(DELETES, 'w')
+
 for record in records:
 
 	header = record[0]
 	metadata = record[1]
+
+	# write / skip deleted records
+	if header.isDeleted():
+		deletes.write(re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '\n')
+		continue
 
 	# ident
 	if '001' in metadata:
@@ -94,9 +102,6 @@ for record in records:
 		timestamp = int(datetime.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f').timestamp())
 	else:
 		continue
-
-	# skip deleted records
-	if header.isDeleted(): continue
 
 	# LDR dup
 	metadata.remove_fields('LDR')# Leader duplicate (Aleph)
@@ -351,5 +356,6 @@ con.close()
 
 # EXIT -------------------
 
+deletes.close()
 sys.exit(0)
 
