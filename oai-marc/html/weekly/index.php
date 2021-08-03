@@ -34,7 +34,12 @@ if (!empty($_POST['date'])) {
 
 <?php
 
-$default = date("Y-m-d", strtotime("last Tuesday"));
+if (date('D') == 'Tue') {
+	$default = date("Y-m-d", strtotime("Tuesday"));
+} else {
+	$default = date("Y-m-d", strtotime("last Tuesday"));
+}
+
 if (!empty($_SESSION['weekly'])){ $default = $_SESSION['weekly']; }
 
 //echo "<input type='date' name='date' value='" . $default . "' max='" . date("Y-m-d", strtotime("last Tuesday")) . "' step='7'>\n";
