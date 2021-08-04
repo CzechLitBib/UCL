@@ -6,7 +6,6 @@ Library support software.
 TODO
 <pre>
 - improve "prev month"
-- webdav client download
 - marc + recenze -> mod
 </pre>
 

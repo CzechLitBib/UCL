@@ -7,7 +7,7 @@ INSTALL
 <pre>
 # EXTRA
 
-net-tools tcpdump git mc
+net-tools tcpdump cadaver git mc
 
 # POSTFIX
 
