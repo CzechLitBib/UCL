@@ -45,7 +45,8 @@ $tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }
 $no_seven = 0;
 $seven = 0;
 
-if (!empty($tags)) { 
+if (!empty($tags)) {
+	echo '<p><u>Poslední záznam</u>: 27.11.2020</p>';
 	echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
 	. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
 	. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";

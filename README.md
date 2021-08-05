@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- "clanky" file sec. check
 - improve "prev month"
 - marc + recenze -> mod
 </pre>
