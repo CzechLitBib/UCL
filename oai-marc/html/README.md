@@ -58,6 +58,11 @@ server {
 		}
 	}
 
+	# PHP - clanky data /archive
+	location ~ ^/clanky/(data|archive) {
+		deny all;
+	}
+
 	# PHP - clanky + cardio
 	location ~ \.php {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
