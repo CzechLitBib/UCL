@@ -61,15 +61,26 @@ if (!empty($_SESSION['weekly'])){
 		. date("Y-m-d", strtotime($_SESSION['weekly']) - 2*24*3600) . '.csv';
 
 		if (file_exists($file)) {
-			$csv = fopen($file, "r");
-			echo "<table>\n";
-			while (($data = fgetcsv($csv, 1000, ";")) !== FALSE) {
-				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
-					. $data[0] . "&local_base=AV" . "'><b>" . $data[0] . "</b></a></td><td align='right'>"
-					. "" . $data[1] . "</td><td>" . "[<a href='../error/#" . $data[2] . "'><b>" . $data[2] . "</b></a>"
-					. "]</td><td>" . $data[3] . "</td></tr>\n";
+			$csv = array();
+			$row = 0;
+			if (($handle = fopen($file, 'r')) !== FALSE) {
+				while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+					$num = count($data);
+					for ($c=0;  $c < $num; $c++) {
+						$csv[$row][] = $data[$c];
+					}
+					$row++;
+				}
+				fclose($handle);
 			}
-			fclose($csv);
+			echo "<table>\n";
+			array_multisort(array_column($csv,0), SORT_DESC, SORT_NUMERIC, $csv);
+			foreach($csv as $row) {
+				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
+					. $row[0] . "&local_base=AV" . "'><b>" . $row[0] . "</b></a></td><td align='right'>"
+					. "" . $row[1] . "</td><td>" . "[<a href='../error/#" . $row[2] . "'><b>" . $row[2] . "</b></a>"
+					. "]</td><td>" . $row[3] . "</td></tr>\n";
+			}
 			echo "</table>\n";
 		} else {
 			echo "<font color='red'>Žádná data.</font>\n";
