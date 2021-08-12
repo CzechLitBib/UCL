@@ -5,16 +5,13 @@ ag:xxx@xxx
 tp:xxx@xxx
 sku:xxx@xxx
 nús:xxx@xxx
-fap:xxx@xxx
 pha:xxx@xxx
 im:xxx@xxx
 js:xxx@xxx
 ls:xxx@xxx
 dan:xxx@xxx
 mf:xxx@xxx
-kb:xxx@xxx
 pav:xxx@xxx
 sra:xxx@xxx
-jhk:xxx@xxx
 lu:xxx@xxx
 pet:xxx@xxx

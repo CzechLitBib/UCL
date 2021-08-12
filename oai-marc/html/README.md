@@ -58,7 +58,7 @@ server {
 		}
 	}
 
-	# PHP - clanky data /archive
+	# PHP - clanky data/archive
 	location ~ ^/clanky/(data|archive) {
 		deny all;
 	}
