@@ -80,7 +80,9 @@ if ($valid) {
 <form method="post" action="." enctype="multipart/form-data">
 
 <div id="review-div">
-<table border="1" width="550">
+<table width="550">
+<tr><td width="175" align="right"><u><b>Základní údaje</b></u></td></tr>
+<tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="review-author" size="20" value="
 <?php if (!$valid and isset($_POST['author'])) { echo htmlspecialchars($_POST['author'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
@@ -93,15 +95,12 @@ if ($valid) {
 <tr><td align="right">Bibliografická citace:</td><td><input type="text" name="review-quote" size="30" value="
 <?php if (!$valid and isset($_POST['quote'])) { echo htmlspecialchars($_POST['quote'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Poznámka:</td><td><input type="text" name="review-note" size="30" value="
-<?php if (!$valid and isset($_POST['quote'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
-"></td></tr>
 </table>
 </div>
 
 <div id="bookpart-div">
-<table border="1" width="550">
-<tr><td align="right"><u><b>Text</b></u></td></tr>
+<table width="550">
+<tr><td width="175" align="right"><u><b>Text</b></u></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="part-author" size="20" value="
 <?php if (!$valid and isset($_POST['author'])) { echo htmlspecialchars($_POST['author'], ENT_QUOTES, 'UTF-8'); } ?>
@@ -127,14 +126,13 @@ if ($valid) {
 <tr><td align="right">Rok:</td><td><input type="text" name="part-source-year" size="4" value="
 <?php if (!$valid and isset($_POST['year'])) { echo htmlspecialchars($_POST['year'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Poznámka:</td><td><input type="text" name="part-note" size="30" value="
-<?php if (!$valid and isset($_POST['quote'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
-"></td></tr>
 </table>
 </div>
 
 <div id="book-div">
-<table border="1" width="550">
+<table width="550">
+<tr><td width="175" align="right"><u><b>Základní údaje</b></u></td></tr>
+<tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="book-author" size="20" value="
 <?php if (!$valid and isset($_POST['author'])) { echo htmlspecialchars($_POST['author'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
@@ -150,17 +148,20 @@ if ($valid) {
 <tr><td align="right">Rok:</td><td><input type="text" name="book-year" size="4" value="
 <?php if (!$valid and isset($_POST['year'])) { echo htmlspecialchars($_POST['year'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Poznámka:</td><td><input type="text" name="nook-note" size="30" value="
-<?php if (!$valid and isset($_POST['quote'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
-"></td></tr>
 </table>
 </div>
 
-<table border="1" width="550">
+<table width="550">
+<tr height="8px"></tr>
+<tr><td width="175" align="right"><u><b>Ostatní</b></u></td></td></tr>
+<tr height="8px"></tr>
+<tr><td align="right">Poznámka:</td><td><input type="text" name="nook-note" size="30" value="
+<?php if (!$valid and isset($_POST['quote'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
+"></td></tr>
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30" value="
 <?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/clanky/help.png" title='Pouze soubory typu PDF. Maximalní velikost 2MB.'></td></tr>
+<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/clanky/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
 <tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right"><img src="validation.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3" required></td></tr>

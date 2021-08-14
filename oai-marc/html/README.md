@@ -37,6 +37,8 @@ server {
 
 	error_page 497 https://xxx;
 
+	client_max_body_size 5M;
+
 	# API
 	location ~ ^/api {
 		allow xxx/24;
