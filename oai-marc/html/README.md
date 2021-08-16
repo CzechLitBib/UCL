@@ -47,7 +47,7 @@ server {
 	}
 
 	# PHP - local
-	location ~ ^/(?!clanky|cardio) {
+	location ~ ^/(?!form|cardio) {
 		allow xxx/24;
 		deny all;
 
@@ -60,12 +60,12 @@ server {
 		}
 	}
 
-	# PHP - clanky data/archive
-	location ~ ^/clanky/(data|archive) {
+	# PHP - form data/archive
+	location ~ ^/form/(data|archive) {
 		deny all;
 	}
 
-	# PHP - clanky + cardio
+	# PHP - fallback
 	location ~ \.php {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
 		fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;

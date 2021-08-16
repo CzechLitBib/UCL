@@ -77,7 +77,7 @@ if ($valid) {
 </head>
 <body bgcolor="lightgrey" onload="on_load()">
 <div align="center">
-<table><tr><td><img src="/clanky/sova.png"></td><td>Vstupní formulář.</td></tr></table>
+<table><tr><td><img src="/form/sova.png"></td><td>Vstupní formulář.</td></tr></table>
 
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
@@ -171,7 +171,7 @@ if ($valid) {
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30" value="
 <?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/clanky/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
+<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/form/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
 <tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right"><img src="validation.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3" required></td></tr>
