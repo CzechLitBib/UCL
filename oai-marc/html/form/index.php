@@ -1,17 +1,17 @@
 <?php
+//
+// TODO
+//
+// /data/'fn' ?
+// escape \'
+// db error
+// ACL (fom.db)
+//
+
 
 session_start();
 
 $id = uniqid();
-
-$common = ['note','link','public'];
-
-$type['article'] = ['article-author','article-name','article-source','article-quote'];
-$type['chapter'] = ['chapter-author','chapter-name','chapter-src-author','chapter-src-name',
-		'chapter-src-place','chapter-src-publisher','chapter-src-year'];
-$type['book'] = ['book-author','book-name','book-place','book-publisher','book-year'];
-
-$output='';
 
 // validation
 $valid=False;
@@ -20,28 +20,68 @@ if (isset($_POST['code']) and isset($_SESSION['secret'])) {
 }
 
 if ($valid) {
-	// CSV
-	$output .= $id . '|';
-	foreach($type[$_POST['type']] as $v) {
-		isset($_POST[$v]) ? $output .= $_POST[$v] . '|' : $output .= '|';
-	}
-	foreach($common as $v) {
-		if (isset($_POST[$v])) {
-			$v == 'public' ? $output .= $_POST[$v] : $output .= $_POST[$v] . '|';
-		} else {
-			$output .= '|';
+	$db = new SQLite3('form.db');
+
+	#if (!$db) {
+	#	echo "<p><font color='red'>DB error.</font></p>";
+	#} else {
+	if ($db) {
+		if ($_POST['type'] == 'article') {
+			$db->exec("INSERT INTO article (id,author,name,source,quote,note,link,public)"
+			. "VALUES ('"
+			. $id . "','"
+			. $_POST['article-author'] . "','"
+			. $_POST['article-name'] . "','"
+			. $_POST['article-source'] . "','"
+			. $_POST['article-quote'] . "','"
+			. $_POST['note'] . "','"
+			. $_POST['link'] . "','"
+			. $_POST['public']
+			. "');");
 		}
-	}
-	file_put_contents('data/' . $id . '.csv', $output . "\n");
-	// FILE
-	if (isset($_FILES['file'])) {
-		if ($_FILES['file']['error'] == 0) {
-			$finfo = new finfo(FILEINFO_MIME_TYPE);
-			$ftype = $finfo->file($_FILES['file']['tmp_name']);
-			if ($ftype == 'application/pdf') {
-				move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . preg_replace('/^\.+|\/|\.+$/', '_', $_FILES['file']['name']));
+		if ($_POST['type'] == 'chapter') {
+			$db->exec("INSERT INTO chapter (id,author,name,src_author,src_name,src_place,src_publisher,src_year,note,link,public)"
+			. "VALUES ('"
+			. $id . "','"
+			. $_POST['chapter-author'] . "','"
+			. $_POST['chapter-name'] . "','"
+			. $_POST['chapter-src-author'] . "','"
+			. $_POST['chapter-src-name'] . "','"
+			. $_POST['chapter-src-place'] . "','"
+			. $_POST['chapter-src-publisher'] . "','"
+			. $_POST['chapter-src-year'] . "','"
+			. $_POST['note'] . "','"
+			. $_POST['link'] . "','"
+			. $_POST['public']
+			. "');");
+		}
+		if ($_POST['type'] == 'book') {
+			$db->exec("INSERT INTO book (id,author,name,place,publisher,year,note,link,public)"
+			. "VALUES ('"
+			. $id . "','"
+			. $_POST['book-author'] . "','"
+			. $_POST['book-name'] . "','"
+			. $_POST['book-place'] . "','"
+			. $_POST['book-publisher'] . "','"
+			. $_POST['book-year'] . "','"
+			. $_POST['note'] . "','"
+			. $_POST['link'] . "','"
+			. $_POST['public']
+			. "');");
+		}
+		if (isset($_FILES['file'])) {
+			if ($_FILES['file']['error'] == 0) {
+				$finfo = new finfo(FILEINFO_MIME_TYPE);
+				$ftype = $finfo->file($_FILES['file']['tmp_name']);
+				if ($ftype == 'application/pdf') {
+					# escape lead/trail dot, slash and quote
+					$fn = preg_replace("/^\.+|\/|'|\.+$/", '_', $_FILES['file']['name']);
+					move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $fn);
+					$db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
+				}
 			}
 		}
+		$db->close();
 	}
 }
 
@@ -166,7 +206,7 @@ if ($valid) {
 <tr><td width="175" align="right"><u><b>Ostatní</b></u></td></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Poznámka:</td><td><input type="text" name="note" size="30" value="
-<?php if (!$valid and isset($_POST['quote'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
+<?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30" value="
 <?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>
