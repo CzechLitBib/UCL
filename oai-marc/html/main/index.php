@@ -5,7 +5,7 @@ session_start();
 
 $_SESSION['page'] = 'main';
 
-if(empty($_SESSION['auth'])) {
+if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
 }
@@ -35,7 +35,7 @@ if(empty($_SESSION['auth'])) {
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/clo">CLO</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/ucla">UCLA</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/error">Chybové kódy</a></td></tr>
-<tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/clanky">Články</a></td></tr>
+<tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/form">Formulář</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/aktualizace">Aktualizace</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="api"><a href="/api">API</a></td></tr>
 </table>

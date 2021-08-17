@@ -69,7 +69,7 @@ if (!empty($_SESSION['daily'])){
 			array_multisort(array_column($csv,0), SORT_DESC, SORT_NUMERIC, $csv);
 			foreach($csv as $row) {
 				echo "<tr><td><a target='_blank' href='" . "https://aleph22.lib.cas.cz/F/?func=direct&doc_number="
-					. $row[0] . "&local_base=AV" . "'><b>" . $row[0] . "</b></a></td><td align='right'>"
+					. $row[0] . "&local_base=AV&format=001" . "'><b>" . $row[0] . "</b></a></td><td align='right'>"
 					. "" . $row[1] . "</td><td>" . "[<a href='../error/#" . $row[2] . "'><b>" . $row[2] . "</b></a>"
 					. "]</td><td>" . $row[3] . "</td></tr>\n";
 			}
