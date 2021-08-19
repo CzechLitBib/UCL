@@ -70,7 +70,6 @@ if ($valid) {
 				if ($ftype == 'application/pdf') {
 					# escape dot, space, slash and quote
 					$fn = preg_replace("/^\.+| |\/|'|\.+$/", '_', $_FILES['file']['name']);
-					echo $fn;
 					move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . $fn);
 					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
 					if (!$query) { $error = 'Chyba zápisu do databáze.'; }
