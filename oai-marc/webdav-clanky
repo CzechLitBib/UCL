@@ -9,8 +9,8 @@ from email.mime.text import MIMEText
 
 # VAR -----------------------------------
 
-DATA='/var/www/html/clanky/data'
-ARCHIVE='/var/www/html/clanky/archive'
+DATA='/var/www/html/form/data'
+ARCHIVE='/var/www/html/form/archive'
 
 URL='https://xxx/index.php/apps/files/?dir=/UCL-DATA/CLANKY'
 CSV='/public.php/webdav/clanky.csv'
