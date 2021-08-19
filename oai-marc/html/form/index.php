@@ -1,83 +1,79 @@
 <?php
-//
-// TODO
-//
-// /data/'fn' ?
-// escape \'
-// db error
-// ACL (fom.db)
-//
-
 
 session_start();
 
 $id = uniqid();
 
-// validation
+$error = '';
+
 $valid=False;
 if (isset($_POST['code']) and isset($_SESSION['secret'])) {
 	if ($_SESSION['secret'] == $_POST['code'])  { $valid=True; }
 }
 
 if ($valid) {
-	$db = new SQLite3('form.db');
+	$db = new SQLite3('db/form.db');
 
-	#if (!$db) {
-	#	echo "<p><font color='red'>DB error.</font></p>";
-	#} else {
-	if ($db) {
+	if (!$db) {
+		$error = 'Chyba čtení databáze.';
+	} else {
 		if ($_POST['type'] == 'article') {
-			$db->exec("INSERT INTO article (id,author,name,source,quote,note,link,public)"
+			$query = $db->exec("INSERT INTO article (id,author,name,source,quote,note,link,public)"
 			. "VALUES ('"
 			. $id . "','"
-			. $_POST['article-author'] . "','"
-			. $_POST['article-name'] . "','"
-			. $_POST['article-source'] . "','"
-			. $_POST['article-quote'] . "','"
-			. $_POST['note'] . "','"
-			. $_POST['link'] . "','"
-			. $_POST['public']
+			. str_replace("'", '_', $_POST['article-author']) . "','"
+			. str_replace("'", '_', $_POST['article-name']) . "','"
+			. str_replace("'", '_', $_POST['article-source']) . "','"
+			. str_replace("'", '_', $_POST['article-quote']) . "','"
+			. str_replace("'", '_', $_POST['note']) . "','"
+			. str_replace("'", '_', $_POST['link']) . "','"
+			. str_replace("'", '_', $_POST['public'])
 			. "');");
+			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if ($_POST['type'] == 'chapter') {
-			$db->exec("INSERT INTO chapter (id,author,name,src_author,src_name,src_place,src_publisher,src_year,note,link,public)"
+			$query = $db->exec("INSERT INTO chapter (id,author,name,src_author,src_name,src_place,src_publisher,src_year,note,link,public)"
 			. "VALUES ('"
 			. $id . "','"
-			. $_POST['chapter-author'] . "','"
-			. $_POST['chapter-name'] . "','"
-			. $_POST['chapter-src-author'] . "','"
-			. $_POST['chapter-src-name'] . "','"
-			. $_POST['chapter-src-place'] . "','"
-			. $_POST['chapter-src-publisher'] . "','"
-			. $_POST['chapter-src-year'] . "','"
-			. $_POST['note'] . "','"
-			. $_POST['link'] . "','"
-			. $_POST['public']
+			. str_replace("'", '_', $_POST['chapter-author']) . "','"
+			. str_replace("'", '_', $_POST['chapter-name']) . "','"
+			. str_replace("'", '_', $_POST['chapter-src-author']) . "','"
+			. str_replace("'", '_', $_POST['chapter-src-name']) . "','"
+			. str_replace("'", '_', $_POST['chapter-src-place']) . "','"
+			. str_replace("'", '_', $_POST['chapter-src-publisher']) . "','"
+			. str_replace("'", '_', $_POST['chapter-src-year']) . "','"
+			. str_replace("'", '_', $_POST['note']) . "','"
+			. str_replace("'", '_', $_POST['link']) . "','"
+			. str_replace("'", '_', $_POST['public'])
 			. "');");
+			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if ($_POST['type'] == 'book') {
-			$db->exec("INSERT INTO book (id,author,name,place,publisher,year,note,link,public)"
+			$query = $db->exec("INSERT INTO book (id,author,name,place,publisher,year,note,link,public)"
 			. "VALUES ('"
 			. $id . "','"
-			. $_POST['book-author'] . "','"
-			. $_POST['book-name'] . "','"
-			. $_POST['book-place'] . "','"
-			. $_POST['book-publisher'] . "','"
-			. $_POST['book-year'] . "','"
-			. $_POST['note'] . "','"
-			. $_POST['link'] . "','"
-			. $_POST['public']
+			. str_replace("'", '_', $_POST['book-author']) . "','"
+			. str_replace("'", '_', $_POST['book-name']) . "','"
+			. str_replace("'", '_', $_POST['book-place']) . "','"
+			. str_replace("'", '_', $_POST['book-publisher']) . "','"
+			. str_replace("'", '_', $_POST['book-year']) . "','"
+			. str_replace("'", '_', $_POST['note']) . "','"
+			. str_replace("'", '_', $_POST['link']) . "','"
+			. str_replace("'", '_', $_POST['public'])
 			. "');");
+			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if (isset($_FILES['file'])) {
 			if ($_FILES['file']['error'] == 0) {
 				$finfo = new finfo(FILEINFO_MIME_TYPE);
 				$ftype = $finfo->file($_FILES['file']['tmp_name']);
 				if ($ftype == 'application/pdf') {
-					# escape lead/trail dot, slash and quote
-					$fn = preg_replace("/^\.+|\/|'|\.+$/", '_', $_FILES['file']['name']);
-					move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $fn);
-					$db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
+					# escape dot, space, slash and quote
+					$fn = preg_replace("/^\.+| |\/|'|\.+$/", '_', $_FILES['file']['name']);
+					echo $fn;
+					move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . $fn);
+					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
+					if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 				}
 			}
 		}
@@ -148,7 +144,7 @@ if ($valid) {
 </table>
 </div>
 
-<div id="chapter-div">
+<div id="chapter-div" style="display:none;">
 <table width="550">
 <tr><td width="175" align="right"><u><b>Text</b></u></td></tr>
 <tr height="8px"></tr>
@@ -179,7 +175,7 @@ if ($valid) {
 </table>
 </div>
 
-<div id="book-div">
+<div id="book-div" style="display:none;">
 <table width="550">
 <tr><td width="175" align="right"><u><b>Základní údaje</b></u></td></tr>
 <tr height="8px"></tr>
@@ -226,9 +222,11 @@ if ($valid) {
 <?php
 
 if (isset($_POST['code'])) {
-	if ($valid) {
+	if ($error) {
+		echo '<font color="red">' .$error . '</font>';
+	} elseif ($valid) {
 		echo '<font color="red">Uloženo.</font>';
-	} else  {
+	} else {
 		echo '<font color="red">Neplatný kód.</font>';
 	}
 }

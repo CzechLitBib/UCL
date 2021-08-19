@@ -60,8 +60,8 @@ server {
 		}
 	}
 
-	# PHP - form data/archive
-	location ~ ^/form/(data|archive) {
+	# PHP - form data + db
+	location ~ ^/form/(data|db) {
 		deny all;
 	}
 
