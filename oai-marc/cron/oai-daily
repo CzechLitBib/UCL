@@ -15,7 +15,7 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
 # CLANKY
 
-webdav-clanky
+#webdav-clanky
 
 # OAI
 
