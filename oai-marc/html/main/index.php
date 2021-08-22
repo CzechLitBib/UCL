@@ -36,6 +36,7 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/ucla">UCLA</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/error">Chybové kódy</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/form">Formulář</a></td></tr>
+<tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/form-data">Formulář - Data</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/aktualizace">Aktualizace</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="api"><a href="/api">API</a></td></tr>
 </table>

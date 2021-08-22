@@ -89,7 +89,7 @@ if (!$db) {
 
 		$data = $db->query("SELECT * FROM article ORDER BY id DESC LIMIT " . $per_page . " OFFSET " . $per_page * ($apage - 1) . ";)");
 
-		if (!$data) {
+		if ($count == 0) {
 			echo '<font color="red">Žádná data.</font>';
 		} else {
 
@@ -157,7 +157,7 @@ if (!$db) {
 
 		$data = $db->query("SELECT * FROM chapter ORDER BY id DESC LIMIT " . $per_page . " OFFSET " . $per_page * ($cpage - 1) . ";)");
 
-		if (!$data) {
+		if ($count == 0) {
 			echo '<font color="red">Žádná data.</font>';
 		} else {
 
@@ -225,7 +225,7 @@ if (!$db) {
 
 		$data = $db->query("SELECT * FROM book ORDER BY id DESC LIMIT " . $per_page . " OFFSET " . $per_page * ($bpage - 1) . ";)");
 
-		if (!$data) {
+		if (!$count == 0) {
 			echo '<font color="red">Žádná data.</font>';
 		} else {
 
