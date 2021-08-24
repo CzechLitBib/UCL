@@ -21,9 +21,7 @@ $per_page = 5;
 
 $db = new SQLite3('../form/db/form.db');
 
-if (!$db) {
-	$error = 'Chyba databáze.';
-}
+if (!$db) { $error = 'Chyba databáze.'; }
 
 ?>
 
