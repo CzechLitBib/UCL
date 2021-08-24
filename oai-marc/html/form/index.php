@@ -89,22 +89,30 @@ if ($valid) {
 		document.getElementById("article-div").style.display = "block";
 		document.getElementById("chapter-div").style.display = "none";
 		document.getElementById("book-div").style.display = "none";
+		document.getElementById("article-name").required = true;
+		document.getElementById("chapter-name").required = false;
+		document.getElementById("book-name").required = false;
 	}
 	function load_type() {
 		if (document.getElementById('article').checked) {
-			document.getElementById("article-div").style.display = "block";
-			document.getElementById("chapter-div").style.display = "none";
-			document.getElementById("book-div").style.display = "none";
+			on_load();
 		}
 		if (document.getElementById('chapter').checked) {
 			document.getElementById("article-div").style.display = "none";
 			document.getElementById("chapter-div").style.display = "block";
 			document.getElementById("book-div").style.display = "none";
+			document.getElementById("article-name").required = false;
+			document.getElementById("chapter-name").required = true;
+			document.getElementById("book-name").required = false;
+	
 		}
 		if (document.getElementById('book').checked) {
 			document.getElementById("article-div").style.display = "none";
 			document.getElementById("chapter-div").style.display = "none";
 			document.getElementById("book-div").style.display = "block";
+			document.getElementById("article-name").required = false;
+			document.getElementById("chapter-name").required = false;
+			document.getElementById("book-name").required = true;
 		}
 	}
 </script>
@@ -131,7 +139,7 @@ if ($valid) {
 <tr><td align="right">Autor:</td><td><input type="text" name="article-author" size="20" value="
 <?php if (!$valid and isset($_POST['article-author'])) { echo htmlspecialchars($_POST['article-author'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Název:</td><td><input type="text" name="article-name" size="20" value="
+<tr><td align="right">Název:</td><td><input type="text" id="article-name" name="article-name" size="20" value="
 <?php if (!$valid and isset($_POST['article-name'])) { echo htmlspecialchars($_POST['article-name'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
 <tr><td align="right">Zdrojový dokument:</td><td><input type="text" name="article-source" size="20" value="
@@ -150,7 +158,7 @@ if ($valid) {
 <tr><td align="right">Autor:</td><td><input type="text" name="chapter-author" size="20" value="
 <?php if (!$valid and isset($_POST['chapter-author'])) { echo htmlspecialchars($_POST['chapter-author'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Název:</td><td><input type="text" name="chapter-name" size="20" value="
+<tr><td align="right">Název:</td><td><input type="text" id="chapter-name" name="chapter-name" size="20" value="
 <?php if (!$valid and isset($_POST['chapter-name'])) { echo htmlspecialchars($_POST['chapter-name'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
 <tr height="8px"></tr>
@@ -181,7 +189,7 @@ if ($valid) {
 <tr><td align="right">Autor:</td><td><input type="text" name="book-author" size="20" value="
 <?php if (!$valid and isset($_POST['book-author'])) { echo htmlspecialchars($_POST['book-author'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
-<tr><td align="right">Název:</td><td><input type="text" name="book-name" size="20" value="
+<tr><td align="right">Název:</td><td><input type="text" id="book-name" name="book-name" size="20" value="
 <?php if (!$valid and isset($_POST['book-name'])) { echo htmlspecialchars($_POST['book-name'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
 <tr><td align="right">Místo:</td><td><input type="text" name="book-place" size="20" value="
