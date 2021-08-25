@@ -84,6 +84,11 @@ if ($valid) {
 
 <html>
 <head>
+<style>
+body {
+  font-family: Georgia, serif;
+}
+</style>
 <script>
 	function on_load() {
 		document.getElementById("article-div").style.display = "block";
@@ -120,7 +125,12 @@ if ($valid) {
 </head>
 <body bgcolor="lightgrey" onload="on_load()">
 <div align="center">
-<table><tr><td><img src="/form/sova.png"></td><td>Vstupní formulář.</td></tr></table>
+<table><tr><td align="center"><img width="142" src="/form/sova.png"></td><td>Návrhy podkladů pro zpracování v ČLB</td></tr>
+<tr><td colspan="2" width="750"><div align="justify"><font size="2">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
+Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat.
+Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
+V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="text-decoration:none; color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</div></td></tr>
+</table>
 
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
@@ -131,6 +141,21 @@ if ($valid) {
 <input type="radio" name="type" id="chapter" value="chapter" onclick="load_type()"><label>Kapitola v knize</label>
 <input type="radio" name="type" id="book" value="book" onclick="load_type()"><label>Kniha</label>
 </td></tr></table></p>
+
+<table width="550">
+<tr height="8px"></tr>
+<tr><td width="175" align="right"><u><b>Plný text</b></u></td></td></tr>
+<tr height="8px"></tr>
+<tr><td align="right">Poznámka:</td><td><input type="text" name="note" size="30" value="
+<?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
+"></td></tr>
+<tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30" value="
+<?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>
+"></td></tr>
+<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/form/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
+<tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
+<tr height="8px"></tr>
+</table>
 
 <div id="article-div">
 <table width="550">
@@ -206,18 +231,7 @@ if ($valid) {
 
 <table width="550">
 <tr height="8px"></tr>
-<tr><td width="175" align="right"><u><b>Ostatní</b></u></td></td></tr>
-<tr height="8px"></tr>
-<tr><td align="right">Poznámka:</td><td><input type="text" name="note" size="30" value="
-<?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
-"></td></tr>
-<tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30" value="
-<?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>
-"></td></tr>
-<tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/form/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
-<tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
-<tr height="8px"></tr>
-<tr><td align="right"><img src="validation.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3" required></td></tr>
+<tr><td width="175" align="right"><img src="validation.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3" required></td></tr>
 <tr height="8px"></tr>
 <tr><td></td><td align="left"><input type="submit" value="Odeslat"></td></tr>
 </table>
