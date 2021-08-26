@@ -7,7 +7,7 @@
 declare -x VUFIND_HOME="/usr/local/vufind"
 declare -x VUFIND_LOCAL_DIR="/usr/local/vufind/local"
 
-DIR="/root/vufind_updates/"
+DIR="/root/vufind_updates"
 
 FROM="$(date -d '1 hour ago' '+%Y-%m-%d %H:00:00')"
 UNTIL="$(date '+%Y-%m-%d %H:00:00')"
