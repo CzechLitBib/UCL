@@ -1,35 +1,23 @@
 #!/bin/bash
 #
-# Downloads update file from server and run solr update.
-# Data are generated one hout back.
+# Download data from API server and run Solr update.
 #
-                                                                                                                                                      
+
 declare -x VUFIND_HOME="/usr/local/vufind"
 declare -x VUFIND_LOCAL_DIR="/usr/local/vufind/local"
 
-DIR="/root/vufind_updates"
+FILE="vufind-$(date '+%Y-%m-%d-%H').mrc"
 
 FROM="$(date -d '1 hour ago' '+%Y-%m-%d %H:00:00')"
 UNTIL="$(date '+%Y-%m-%d %H:00:00')"
 
-NAME="vufind-$(date '+%Y-%m-%d-%H').mrc"
-
 URL="https://vyvoj.ucl.cas.cz/api/ListRecords?from=$FROM&until=$UNTIL"
 
-echo "$URL"
+wget -O "$FILE" --header='Accept:application/octet-stream' "$URL"
 
-wget -O "$DIR/$NAME" --header='Accept:application/octet-stream' "$URL"
+[ -s "$FILE" ] && /usr/local/vufind/import-marc.sh "$FILE"
 
-if [[ "$?" != 0 ]]; then
-	echo "ERROR downloading file $NAME"
-	exit 1
-else
-	echo "Successfuly downloaded file $NAME"
-fi
-
-[ -s "$DIR/$NAME" ] && /usr/local/vufind/import-marc.sh "$DIR/*.mrc"
-
-rm "$DIR/*"
+rm "$FILE" 2>/dev/null
 
 exit 0
 
