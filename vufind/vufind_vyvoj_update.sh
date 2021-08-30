@@ -1,10 +1,13 @@
 #!/bin/bash
 #
 # Download data from API server and run Solr update.
+# Remove deleted records.
 #
 
 declare -x VUFIND_HOME="/usr/local/vufind"
 declare -x VUFIND_LOCAL_DIR="/usr/local/vufind/local"
+
+# UPDATE
 
 FILE="/root/vufind-$(date '+%Y-%m-%d-%H').mrc"
 
@@ -12,8 +15,6 @@ FROM="$(date -d '1 hour ago' '+%Y-%m-%d %H:00:00')"
 UNTIL="$(date '+%Y-%m-%d %H:00:00')"
 
 URL="https://vyvoj.ucl.cas.cz/api/ListRecords?from=$FROM&until=$UNTIL"
-
-# UPDATE
 
 wget -O "$FILE" --header='Accept:application/octet-stream' "$URL"
 
@@ -23,20 +24,19 @@ rm "$FILE" 2>/dev/null
 
 # DELETE
 
-#FILE="/root/deletes.txt"
+FILE="/root/deletes.txt"
 
-#URL="https://vyvoj.ucl.cas.cz/api/GetDeletes"
+URL="https://vyvoj.ucl.cas.cz/api/GetDeletes"
 
-#wget -O "$FILE" "$URL"
+wget -O "$FILE" "$URL"
 
-#cd "$VUFIND_HOME/utils"
+cd "$VUFIND_HOME"
 
-#[ -s "$FILE" ] && php deletes.php "$FILE" flat
-#[ -s "$FILE" ] && php optimize.php
+[ -s "$FILE" ] && php public/index.php util deletes --verbose "$FILE" flat
 
-# rm "$FILE" 2>/dev/null
+rm "$FILE" 2>/dev/null
 
-#cd ~
+cd ~
 
 exit 0
 
