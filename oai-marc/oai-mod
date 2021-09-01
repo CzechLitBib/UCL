@@ -34,8 +34,8 @@ def valid_date(s):
 
 parser = argparse.ArgumentParser(description="OAI PMH 2.0 Loader.")
 parser.add_argument('--set', help='Records set.')
-parser.add_argument('--from', help='Records from. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
-parser.add_argument('--until', help='Records until. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
+parser.add_argument('--from', help='Records from UTC datetime. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
+parser.add_argument('--until', help='Records until UTC datetime. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 args = parser.parse_args()
 
 if not args.set:

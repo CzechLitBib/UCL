@@ -98,10 +98,8 @@ for record in records:
 	else:
 		continue
 
-	if '005' in metadata:
-		timestamp = int(datetime.strptime(metadata['005'].value(), '%Y%m%d%H%M%S.%f').timestamp())
-	else:
-		continue
+	# timestamp
+	timestamp = int(header.datestamp().timestamp())
 
 	# LDR dup
 	metadata.remove_fields('LDR')# Leader duplicate (Aleph)

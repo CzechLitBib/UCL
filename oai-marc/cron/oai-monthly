@@ -10,14 +10,14 @@
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
-mkdir -p "/var/www/html/kat/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
-mkdir -p "/var/www/html/nkp/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
-mkdir -p "/var/www/html/seven/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
+mkdir -p "/var/www/html/kat/data/$(date -u --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
+mkdir -p "/var/www/html/nkp/data/$(date -u --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
+mkdir -p "/var/www/html/seven/data/$(date -u --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
 
 oai-mod \
 	--set UCLA \
-	--from "$(date --date="$(date +'%Y-%m-01') -1 month" '+%Y-%m-%d 00:00:00')" \
-	--until "$(date '+%Y-%m-01 00:00:00')"
+	--from "$(date -u --date="$(date -u +'%Y-%m-01') -1 month" '+%Y-%m-%d 00:00:00')" \
+	--until "$(date -u '+%Y-%m-01 00:00:00')"
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 

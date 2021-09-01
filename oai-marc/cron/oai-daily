@@ -7,7 +7,7 @@
 
 DATA_PATH='/var/www/html/daily/data'
 
-CSVNAME="$(date --date='yesterday' '+%Y-%m-%d').csv"
+CSVNAME="$(date -u --date='yesterday' '+%Y-%m-%d').csv"
 
 # ------------------------
 
@@ -21,14 +21,14 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
 oai-marc \
 	--set UCLA \
-	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
-	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
+	--from "$(date -u --date='yesterday' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date -u --date='today' '+%Y-%m-%d 00:00:00')" \
 	--check \
 	--notify
 
-mkdir -p "$DATA_PATH/$(date --date='yesterday' '+%Y/%m')" 2> /dev/null
+mkdir -p "$DATA_PATH/$(date -u --date='yesterday' '+%Y/%m')" 2> /dev/null
 
-[ -s oai-marc.csv ] && mv -f oai-marc.csv "$DATA_PATH/$(date --date='yesterday' '+%Y/%m')/$CSVNAME" 2> /dev/null
+[ -s oai-marc.csv ] && mv -f oai-marc.csv "$DATA_PATH/$(date -u --date='yesterday' '+%Y/%m')/$CSVNAME" 2> /dev/null
 
 rm oai-marc.csv 2>/dev/null
 
