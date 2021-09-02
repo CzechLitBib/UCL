@@ -73,10 +73,10 @@ def notify():
 
 def run(records):
 
-	for record in records:
+	# tag list
+	tag_list=[]
 
-		# tag list
-		tag_list=[]
+	for record in records:
 
 		# ident
 		if '001' in record:
