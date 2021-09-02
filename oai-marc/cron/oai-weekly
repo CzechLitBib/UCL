@@ -10,7 +10,7 @@ TARGET='xxx'
 URL='xxx'
 
 DATA_PATH='/var/www/html/weekly/data'
-CSVNAME="$(date -u --date='8 days ago' '+%Y-%m-%d')_$(date -u --date='2 days ago' '+%Y-%m-%d').csv"
+CSVNAME="$(date --date='8 days ago' '+%Y-%m-%d')_$(date --date='2 days ago' '+%Y-%m-%d').csv"
 
 # ------------------------
 
@@ -20,8 +20,8 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
 oai-recenze \
 	--set UCLA \
-	--from "$(date -u --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
-	--until "$(date -u --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
+	--from "$(date --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
 	--check \
 	--notify
 
@@ -29,8 +29,8 @@ oai-recenze \
 
 oai-marc \
 	--set UCLA \
-	--from "$(date -u --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
-	--until "$(date -u --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
+	--from "$(date --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
 	--check
 
 mv -f oai-marc.csv "$DATA_PATH/$CSVNAME" 2> /dev/null
