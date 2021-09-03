@@ -1,23 +1,6 @@
 NGINX
 <pre>
 server {
-	listen 80;
-	listen [::]:80;
-
-	root /var/www/html;
-
-	server_name xxx;
-
-	location /.well-known/acme-challenge/ {
-		try_files $uri $uri/ =404;
-	}
-
-	location / {
-		return 301 https://xxx;
-	}
-}
-
-server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
 
