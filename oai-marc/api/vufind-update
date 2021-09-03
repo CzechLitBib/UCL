@@ -121,6 +121,12 @@ for record in records:
 		if X and 'x' in F: F.delete_subfield('x')# drop more than one
 		if 'x' in F: X = True# catch the first one
 
+	# Drop Z
+	Z=False
+	for F in metadata.get_fields('773'):
+		if Z and 'z' in F: F.delete_subfield('z')# drop more than one
+		if 'z' in F: Z = True# catch the first one
+
 	# MBK
 	MBK=False
 	if '044' in metadata:
