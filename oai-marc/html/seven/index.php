@@ -113,9 +113,9 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 		if (!empty($tags)) { 
 			echo "<u>Záznamy založené ve zvoleném datu.</u><br><br>";
 
-			echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
-			. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
+			echo "<table width='600' style='border-collapse: collapse;' border='1px'>"
+			. "<td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
+			. "<td colspan='5' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
 				$has_no_seven = 0;
@@ -132,18 +132,20 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					. '<td align="center"><a href="' . $dir . '/' . $tag . '.7.csv">CSV</a></td>'
 					. '<td align="right">' . $has_seven . '</td>'
 					. '<td align="center"><a href="' . $dir . '/' . $tag . '.7.stat.csv">STAT</a></td>'
+					. '<td align="center"><a href="data.php?tag='. $tag . '&seven=1&new=1">HTML</a></td>'
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
 					. '<td align="right">' . $has_no_seven . '</td>'
 					. '<td align="center"><a href="' . $dir . '/' . $tag . '.stat.csv">STAT</a></td>'
+					. '<td align="center"><a href="data.php?tag=' . $tag . '&seven=0&new=1">HTML</a></td>'
 					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
+					echo "<td></td><td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
 				}
 			}
 			echo '</table><br>';
@@ -168,9 +170,9 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 			if (!empty($new)) { echo '<br>'; }
 			echo "<u>Záznamy založené před zvoleným datem.</u><br><br>";
 
-			echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
-			. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
+			echo "<table width='600' style='border-collapse: collapse;' border='1px'>"
+			. "<td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
+			. "<td colspan='5' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
 				$has_no_seven = 0;
@@ -187,18 +189,20 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					. '<td align="center"><a href="' . $dir . '/' . $tag . '.old.7.csv">CSV</a></td>'
 					. '<td align="right">' . $has_seven . '</td>'
 					. '<td align="center"><a href="' . $dir . '/' . $tag . '.old.7.stat.csv">STAT</a></td>'
+					. '<td align="center"><a href="data.php?tag='. $tag . '&seven=1&new=0">HTML</a></td>'
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.old.csv">CSV</a></td>'
 					. '<td align="right">' . $has_no_seven . '</td>'
 					. '<td align="center"><a href="' . $dir . '/' . $tag . '.old.stat.csv">STAT</a></td>'
+					. '<td align="center"><a href="data.php?tag='. $tag . '&seven=0&new=0">HTML</a></td>'
 					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
+					echo "<td></td><td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
 				}
 			}
 			echo '</table><br>';
