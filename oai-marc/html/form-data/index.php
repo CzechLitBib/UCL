@@ -19,7 +19,8 @@ $cpage = 1; // chapter page
 
 $per_page = 5;
 
-$db = new SQLite3('../form/db/form.db');
+$db = new SQLite3('form.db');
+//$db = new SQLite3('../form/db/form.db');
 
 if (!$db) { $error = 'Chyba databáze.'; }
 
@@ -48,13 +49,6 @@ if (!$db) { $error = 'Chyba databáze.'; }
 			document.getElementById("article-div").style.display = "none";
 			document.getElementById("chapter-div").style.display = "none";
 			document.getElementById("book-div").style.display = "block";
-		}
-	}
-	function display(id) {
-		if (document.getElementById(id + '_data').style.display == "none") {
-			document.getElementById(id + '_data').style.display = "block";
-		} else {
-			document.getElementById(id + '_data').style.display = "none";
 		}
 	}
 </script>
@@ -104,7 +98,7 @@ if (!$db) { $error = 'Chyba databáze.'; }
 					. '<td>' . $row[1] . '</td>'
 					. '<td>' . $row[2] . '</td>'
 					. '<td width="30" align="center">'
-					. '<img onclick="display('. "'" . $row[0] . "'" . ')" src="text.png">'
+					. '<a href="download.php?id=' . $row[0] . '&type=article"><img src="text.png"></a>'
 					. '</td>'
 					. '<td width="30" align="center">'
 					. '<a target="_blank" href="../form/data/' . $row[0] . '_' . $file . '"><img src="pdf.png"></a>'
@@ -116,18 +110,11 @@ if (!$db) { $error = 'Chyba databáze.'; }
 					. '<td>' . $row[1] . '</td>'
 					. '<td>' . $row[2] . '</td>'
 					. '<td width="30" align="center">'
-					. '<img onclick="display('. "'" . $row[0] . "'" . ')" src="text.png">'
+					. '<a href="download.php?id=' . $row[0] . '&type=article"><img src="text.png"></a>'
 					. '</td>'
 					. '<td width="30"></td>'
 					. '</tr>';
 				}
-				// DATA
-				echo '<tr>'
-					. '<td></td>'
-					. '<td border="1" id="' . $row[0] . '_data" style="display:none;"></br>DETAILNI POPIS</br></br></td>'
-					. '<td></td>'
-					. '<td></td>'
-					. '</tr>';		
 				$index++;
 			}
 			echo '</table></br>';
@@ -173,7 +160,8 @@ if (!$db) { $error = 'Chyba databáze.'; }
 					. '<td width="25">' . $index . '.</td>'
 					. '<td>' . $row[2] . '</td>'
 					. '<td width="30" align="center">'
-					. '<img onclick="display('. "'" . $row[0] . "'" . ')" src="text.png">'
+					. '<a href="download.php?id=' . $row[0] . '&type=chapter"><img src="text.png"></a>'
+					. '<img onclick="get_txt('. "'" . $row[0] . "'" . ')" src="text.png">'
 					. '</td>'
 					. '<td width="30" align="center">'
 					. '<a target="_blank" href="../form/data/' . $row[0] . '_' . $file . '"><img src="pdf.png"></a>'
@@ -184,18 +172,11 @@ if (!$db) { $error = 'Chyba databáze.'; }
 					. '<td width="25">' . $index . '.</td>'
 					. '<td>' . $row[2] . '</td>'
 					. '<td width="30" align="center">'
-					. '<img onclick="display('. "'" . $row[0] . "'" . ')" src="text.png">'
+					. '<a href="download.php?id=' . $row[0] . '&type=chapter"><img src="text.png"></a>'
 					. '</td>'
 					. '<td width="30"></td>'
 					. '</tr>';
 				}
-				// DATA
-				echo '<tr>'
-					. '<td></td>'
-					. '<td border="1" id="' . $row[0] . '_data" style="display:none;"></br>DETAILNI POPIS</br></br></td>'
-					. '<td></td>'
-					. '<td></td>'
-					. '</tr>';		
 				$index++;
 			}
 			echo '</table>';
@@ -241,7 +222,7 @@ if (!$db) { $error = 'Chyba databáze.'; }
 					. '<td width="25">' . $index . '.</td>'
 					. '<td>' . $row[2] . '</td>'
 					. '<td width="30" align="center">'
-					. '<img onclick="display('. "'" . $row[0] . "'" . ')" src="text.png">'
+					. '<a href="download.php?id=' . $row[0] . '&type=book"><img src="text.png"></a>'
 					. '</td>'
 					. '<td width="30" align="center">'
 					. '<a target="_blank" href="../form/data/' . $row[0] . '_' . $file . '"><img src="pdf.png"></a>'
@@ -252,18 +233,12 @@ if (!$db) { $error = 'Chyba databáze.'; }
 					. '<td width="25">' . $index . '.</td>'
 					. '<td>' . $row[2] . '</td>'
 					. '<td width="30" align="center">'
-					. '<img onclick="display('. "'" . $row[0] . "'" . ')" src="text.png">'
+					. '<a href="download.php?id=' . $row[0] . '&type=book"><img src="text.png"></a>'
 					. '</td>'
 					. '<td width="30"></td>'
 					. '</tr>';
 				}
 				// DATA
-				echo '<tr>'
-					. '<td></td>'
-					. '<td border="1" id="' . $row[0] . '_data" style="display:none;"></br>DETAILNI POPIS</br></br></td>'
-					. '<td></td>'
-					. '<td></td>'
-					. '</tr>';		
 				$index++;
 			}
 			echo '</table>';
