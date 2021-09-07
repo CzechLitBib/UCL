@@ -1,0 +1,126 @@
+Před začátkem operací prosím hromadně nahradit řetězec "[= " za "[=", tj. odmazat mezeru, 
+některé operace by pak měly proběhnout automaticky.
+
+001 - OK
+003 - OK
+005 - OK
+008 - OK
+040 - OK
+041 - OK
+Převádí se v pořádku, ale v řadě případů se pole 041h vůbec nevytváří,
+byť v 245c se správně doplňuje informace o překladateli,
+např. zde:
+=001  RET-e78210f4114b9a2c3fdb364a6a242c92
+=041  0\$acze
+=245  10$a Stiskla ruce pod přehozem tmavým$cAnna Achmatová ; [Z ruš.] přeložil František Tichý
+
+můžete, prosím, doplnit kontrolu a podívat se na záznamy, které obsahují
+v poli 245c řetězec "přel*" či "Přel*", kterému (kdykoli) předchází středník
+a které zároveň neobsahují podpole 041h?
+
+Zdá se mi, že aktuálně to řeší pouze situaci výše, ale nikoli jiné pořadí hodnot
+
+Možná bych to zkusil algoritmizovat takto:
+1) Vzniká při vydělování segment_title po vydělení jména autora (řetězec po : na začátku)
+řetězec obsahující "přel"/"Přel"?
+2) Pokud ano, hledáme v tomtéž stringu řetězec "Z "/"z " či "Ze "/"ze ", který může být 
+před "přel." i za ním.
+3) Všechno, co je mezi variantami řetězce "z" a "přel" (pořadí obou může být libovolné) 
+s výjimkou mezery a [] dáváme do podpole 041h (a měníme indikátor na 1)
+4) Pokud v poli 041h vznikne prázdná hodnota nebo "?", dáváme kód "und"
+5) Zbylé hodnoty kdyžtak upravíme v převodní tabulce
+
+Případ jazyků se "ze" - do 041 se zatím informace nedostává:
+=001  RET-e78210f4114b9a2c3fdb364a6a22878f
+=041  0\$acze
+=245  10$a Ballada :$bRozjela se hvězda, dukát zlatý /$cAdolf Robida ; [Ze slovin.] přel. Ahasver
+
+100 - OK
+245
+
+1) Z pravidla o ... prosím prosím vypustit případy,
+kdy jim předchází " , např. zde:
+=001  RET-8a9fa23e092e55312d360e12a4270a38
+=TXT  \\$aNovák, Arne | Sordello [=Novák, Arne]: "... lesem jak zvonců vřesných. " [Sloupek] | (=Lidové noviny 38, 1930, č. 424, 23. 8., s. 2) | [K úmrtí Kuna Francka, autora knihy o filosofii a sociologii německého písemnictví.]|
+---
+
+2) Zároveň prosím tři tečky na konci pole 245b ponechávat (zatím se mažou)
+
+Tj. např. zde:
+=001  RET-e78210f4114b9a2c3fdb364a6a0e4486
+=100  1\$aAddison, Joseph,$d1672-1719$7jo2002112124$4aut
+=245  10$a (Nezabudky) :$bO život nynější pečujem tak, /$cJos. Addison ; <Sebral A. A. Řehák>
+=TXT  \\$aADDISON, JOSEPH|Jos. Addison: (Nezabudky). O život nynější pečujem tak,... <Sebral A. A. Řehák> [Úryvek ze spisu]|(= Česká Včela 7, 1840, s. 204.)||Ř
+
+by vznikalo:
+=245  10$a (Nezabudky) :$bO život nynější pečujem tak,... /$cJos. Addison ; <Sebral A. A. Řehák>
+---
+
+3) Pokud pak podpole 245b skončí na ..., prosím celý jeho obsah uzavřít do []
+
+Tj. např. zde:
+=001  RET-e78210f4114b9a2c3fdb364a6a8a6067
+=245  10$a † Henri Rousseau :$bTy na nás čekáš milý Rousseau /$cG. Apollinaire
+=TXT  \\$aAPOLLINAIRE, GUILLAUME|G. Apollinaire: † Henri Rousseau. Ty na nás čekáš milý Rousseau... [Epitaf]|(= ReD 2, 1928/1929, s. 98.)||Schr.
+
+by vzniklo:
+=245  10$a † Henri Rousseau :$b[Ty na nás čekáš milý Rousseau...] /$cG. Apollinaire
+
+
+4) Prosím před pole 245c vždy umístit lomítko, 
+tj. např. zde:
+=245  10$a Žárlivost$cClaude Anet
+vytvářet
+=245  10$a Žárlivost/$cClaude Anet
+
+Zatím to asi různě podmiňujeme, možná by to stačilo takto zjednodušit
+
+5) Zároveň prosím odmazat mezeru na počátku pole 245a,
+zdá se mi, že se vytváří vždy, pakliže se při tvorbě pole 245a či b narazí na ...
+např. zde:
+=245  10$a Žid David Kuh,$cʘ [=Barák, Josef]
+=245  10$a Živa 1899 přináší tyto referáty zajímavé ze stanoviska filosofického$cVil. Appelt
+=245  10$a Život :$bOh, stále vléci spony okovů /$cAhasver
+=245  10$a Žně :$bMohutná píseň /$cAlfa
+
+(Nebo možná na konci konverze natvrdo odmažte všechny mezery na začátku polí, ať to nemusíme
+řešit jednotlivě. Tato situace by neměla vůbec nastat.)
+
+6) Chybka vzniká, pakliže po odříznutí řetězce po dvojtečku na začátku a posledního údaje v []
+zbyde název, který je celý uzavřený v [] a zároveň končí na ..., pak se na konec pole 245c nyní chybně
+přidává  za ; ještě .] např. zde:
+
+=001  RET-4f62d39fea408c21231a6280258e2dd5
+=245  10$a[Budiž příjemným návěstím. /$cJosef Bačkora ; .]
+=TIZ  \\$a.]
+=TIT  \\$aJosef Bačkora: [Budiž příjemným návěstím...]
+=TXT  \\$aBačkora, Josef | Josef Bačkora: [Budiž příjemným návěstím...] [Zpráva] | (= Česká včela 7, 1840, s. 388.) | [V tisku je Svobodova čítanka [=Malý čtenář čili Čítanka pro malé dítky]. Stručné ocenění významu této učebnice pro učitele.] | Ř
+
+Můžete, prosím, upravit na:
+
+=001  RET-4f62d39fea408c21231a6280258e2dd5
+=245  10$a[Budiž příjemným návěstím...] /$cJosef Bačkora
+
+7) Je-li v poli 655 "Ref.", pak prosím, pole 245 vytvářet následovně:
+odříznout údaj v [] na konci a údaj po : na začátku pole segment_title;
+do 245a dát ze zbývající  části řetězce segment title údaj po první tečku,
+celý zbývající údaj (včetně obsahu 245a pak dát i do 787w, 
+tedy konkrétně zde:
+
+=001  RET-9c184e487ff4105643d5e6e4532b7e8c
+=245  10$aAlois Jirásek, Ballada z rokoka /$cne [=Novák, Arne] ;  Praha, J. Otto 1926
+=655  \4$aRef.
+=TIZ  \\$a Praha, J. Otto 1926
+=TIT  \\$ane [=Novák, Arne]: Alois Jirásek, Ballada z rokoka. Praha, J. Otto 1926
+=TXT  \\$aNovák, Arne | ne [=Novák, Arne]: Alois Jirásek, Ballada z rokoka. Praha, J. Otto 1926 [Ref.] | (=Lidové noviny 34, 1926, č. 652, 29. 12., s. 7) | | lm
+
+by vzniklo:
+=245  10$aAlois Jirásek, Ballada z rokoka /$cne [=Novák, Arne] 
+=655  \4$aRef.
+=787  08$wAlois Jirásek, Ballada z rokoka. Praha, J. Otto 1926
+
+
+520 - zhruba OK
+700 - zhruba OK
+773 - zhruba OK
+787 - zhruba OK
