@@ -91,6 +91,25 @@ if ($valid) {
 		font-family: Georgia, serif;
 		background-color: lightgrey;
 	}
+	.div-center {
+		text-align: center;
+		text-align:-moz-center;
+	}
+	.main-text {
+		text-align: justify;
+		font-size: 12px;
+	}
+	.sub-text {
+		font-size: 12px;
+	}
+	hr {
+		 border-top: 0px;
+		border-bottom: 1px solid black;
+		width: 500px;
+	}
+	table {
+		width: 550px;
+	}
 </style>
 <script>
 	function on_load() {
@@ -127,36 +146,36 @@ if ($valid) {
 
 </head>
 <body onload="on_load()">
-<div align="center">
-<table><tr><td align="center"><img width="142" alt="sova.png" src="/form/sova.png"></td><td><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
-<tr><td colspan="2" width="550"><div align="justify"><font size="2">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
+<div class="div-center">
+<table><tr><td><img width="142" alt="sova.png" src="/form/sova.png"></td><td><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
+<tr><td colspan="2"><div class="main-text">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
 Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat.
 Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
-V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</font></div></td></tr>
+V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</div></td></tr>
 </table>
 
-<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+<hr>
 
 <form method="post" action="." enctype="multipart/form-data">
 
-<p><table><tr><td>
+<table><tr><td>
 <input type="radio" name="type" id="article" value="article" onclick="load_type()" checked><label>Článek</label>
 <input type="radio" name="type" id="chapter" value="chapter" onclick="load_type()"><label>Kapitola v knize</label>
 <input type="radio" name="type" id="book" value="book" onclick="load_type()"><label>Kniha</label>
-</td></tr></table></p>
+</td></tr></table>
 
-<table width="550">
+<table>
 <tr height="8px"></tr>
 <tr><td width="175" align="right"><u><b>Plný text</b></u></td></td></tr>
 <tr height="8px"></tr>
-<tr><td colspan="3"><font size="2">Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení:</font></td></tr>
+<tr><td class="sub-text" colspan="3">Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení:</td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30" value="
 <?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
 <tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/form/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
 <tr height="8px"></tr>
-<tr><td colspan="3"><font size="2">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran:</font></td></tr>
+<tr><td class="sub-text" colspan="3">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran:</td></tr>
 <tr height="8px"></tr>
 <tr><td></td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
 <tr><td align="right">E-mail navrhovatele:</td><td><input type="text" name="email" size="30" value="
@@ -166,17 +185,17 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 <?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
 <tr height="8px"></tr>
-<tr><td colspan="3"><font size="2">K bibliografickému záznamu daného dokumentu je možno přidat i odkaz na plný text. Ten bude k záznamu připojen, pokud:
+<tr><td class="sub-text" colspan="3">K bibliografickému záznamu daného dokumentu je možno přidat i odkaz na plný text. Ten bude k záznamu připojen, pokud:
 <br><br>a) je daný dokument zpřístupněn prostřednictvím veřejně dostupného repozitáře s perzistentním odkazem (např. repozitáře výzkumných institucí a univerzit atp.).
-<br><br>b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektronické verzi, souhlasí se zveřejněním a následně tuto skutečnost potvrdí prostřednictvím kontaktního emailu.</font></td></tr>
+<br><br>b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektronické verzi, souhlasí se zveřejněním a následně tuto skutečnost potvrdí prostřednictvím kontaktního emailu.</td></tr>
 <tr height="8px"></tr>
 </table>
 
 <div id="article-div">
-<table width="550">
+<table>
 <tr><td width="175" align="right"><u><b>Údaje o dokumentu</b></u></td></tr>
 <tr height="8px"></tr>
-<tr><td colspan="3"><font size="2">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</font></td></tr>
+<tr><td class="sub-text" colspan="3">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="article-author" size="20" value="
 <?php if (!$valid and isset($_POST['article-author'])) { echo htmlspecialchars($_POST['article-author'], ENT_QUOTES, 'UTF-8'); } ?>
@@ -194,7 +213,7 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 </div>
 
 <div id="chapter-div" style="display:none;">
-<table width="550">
+<table>
 <tr><td width="175" align="right"><u><b>Text</b></u></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="chapter-author" size="20" value="
@@ -225,10 +244,10 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 </div>
 
 <div id="book-div" style="display:none;">
-<table width="550">
+<table>
 <tr><td width="175" align="right"><u><b>Údaje o dokumentu</b></u></td></tr>
 <tr height="8px"></tr>
-<tr><td colspan="3"><font size="2">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</font></td></tr>
+<tr><td class="sub-text" colspan="3">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="book-author" size="20" value="
 <?php if (!$valid and isset($_POST['book-author'])) { echo htmlspecialchars($_POST['book-author'], ENT_QUOTES, 'UTF-8'); } ?>
@@ -248,7 +267,7 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 </table>
 </div>
 
-<table width="550">
+<table>
 <tr height="8px"></tr>
 <tr><td width="175" align="right"><img src="validation.php"></td><td align="left"><input style="text-align:center;" type="text" name="code" size="3" required></td></tr>
 <tr height="8px"></tr>
@@ -257,7 +276,7 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 </form>
 
-<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+<hr>
 
 <?php
 
