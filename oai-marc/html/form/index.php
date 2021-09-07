@@ -82,12 +82,15 @@ if ($valid) {
 
 ?>
 
-<html>
+<!DOCTYPE html>
+<html lang="cs">
 <head>
+<title>UCL - Fromulář</title>
 <style>
-body {
-  font-family: Georgia, serif;
-}
+	body {
+		font-family: Georgia, serif;
+		background-color: lightgrey;
+	}
 </style>
 <script>
 	function on_load() {
@@ -123,13 +126,13 @@ body {
 </script>
 
 </head>
-<body bgcolor="lightgrey" onload="on_load()">
+<body onload="on_load()">
 <div align="center">
-<table><tr><td align="center"><img width="142" src="/form/sova.png"></td><td><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
+<table><tr><td align="center"><img width="142" alt="sova.png" src="/form/sova.png"></td><td><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
 <tr><td colspan="2" width="550"><div align="justify"><font size="2">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
 Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat.
 Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
-V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</div></td></tr>
+V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</font></div></td></tr>
 </table>
 
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
