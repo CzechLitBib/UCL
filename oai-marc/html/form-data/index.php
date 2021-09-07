@@ -87,34 +87,25 @@ if (!$db) { $error = 'Chyba databáze.'; }
 
 			$index = $per_page * ($apage - 1) + 1;
 			echo '<table width="600">';
-			echo '<tr>'
-				.'<td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b>Název</b></td><td></td><td></td><tr>';
+			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><tr>';
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
 				// LABEL
+				echo '<tr>'
+				. '<td width="25">' . $index . '.</td>'
+				. '<td align="center">' . $row[1] . '</td>'
+				. '<td align="center">' . $row[2] . '</td>'
+				. '<td width="30" align="center">'
+				. '<a href="download.php?id=' . $row[0] . '&type=article"><img src="text.png"></a>'
+				. '</td>';
 				if ($file) {
-					echo '<tr>'
-					. '<td width="25">' . $index . '.</td>'
-					. '<td>' . $row[1] . '</td>'
-					. '<td>' . $row[2] . '</td>'
-					. '<td width="30" align="center">'
-					. '<a href="download.php?id=' . $row[0] . '&type=article"><img src="text.png"></a>'
-					. '</td>'
-					. '<td width="30" align="center">'
+					echo '<td width="30" align="center">'
 					. '<a target="_blank" href="../form/data/' . $row[0] . '_' . $file . '"><img src="pdf.png"></a>'
-					. '</td>'
-					. '</tr>';
+					. '</td>';
 				} else {
-					echo '<tr>'
-					. '<td width="25">' . $index . '.</td>'
-					. '<td>' . $row[1] . '</td>'
-					. '<td>' . $row[2] . '</td>'
-					. '<td width="30" align="center">'
-					. '<a href="download.php?id=' . $row[0] . '&type=article"><img src="text.png"></a>'
-					. '</td>'
-					. '<td width="30"></td>'
-					. '</tr>';
+					echo '<td width="30"></td>';
 				}
+				echo '</tr>';
 				$index++;
 			}
 			echo '</table></br>';
@@ -150,33 +141,27 @@ if (!$db) { $error = 'Chyba databáze.'; }
 		} else {
 
 			$index = $per_page * ($cpage - 1) + 1;
-			echo '<table width="500">';
-			echo '<tr><td></td><td align="center"><b><u>Jméno</u></b></td><td></td><td></td><tr>';
+			echo '<table width="600">';
+			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><tr>';
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
 				// LABEL
+				echo '<tr>'
+				. '<td width="25">' . $index . '.</td>'
+				. '<td align="center">' . $row[1] . '</td>'
+				. '<td align="center">' . $row[2] . '</td>'
+				. '<td width="30" align="center">'
+				. '<a href="download.php?id=' . $row[0] . '&type=chapter"><img src="text.png"></a>'
+				. '<img onclick="get_txt('. "'" . $row[0] . "'" . ')" src="text.png">'
+				. '</td>';
 				if ($file) {
-					echo '<tr>'
-					. '<td width="25">' . $index . '.</td>'
-					. '<td>' . $row[2] . '</td>'
-					. '<td width="30" align="center">'
-					. '<a href="download.php?id=' . $row[0] . '&type=chapter"><img src="text.png"></a>'
-					. '<img onclick="get_txt('. "'" . $row[0] . "'" . ')" src="text.png">'
-					. '</td>'
-					. '<td width="30" align="center">'
+					echo '<td width="30" align="center">'
 					. '<a target="_blank" href="../form/data/' . $row[0] . '_' . $file . '"><img src="pdf.png"></a>'
-					. '</td>'
-					. '</tr>';
+					. '</td>';
 				} else {
-					echo '<tr>'
-					. '<td width="25">' . $index . '.</td>'
-					. '<td>' . $row[2] . '</td>'
-					. '<td width="30" align="center">'
-					. '<a href="download.php?id=' . $row[0] . '&type=chapter"><img src="text.png"></a>'
-					. '</td>'
-					. '<td width="30"></td>'
-					. '</tr>';
+					echo '<td width="30"></td>';
 				}
+				echo '</tr>';
 				$index++;
 			}
 			echo '</table>';
@@ -212,32 +197,26 @@ if (!$db) { $error = 'Chyba databáze.'; }
 		} else {
 
 			$index = $per_page * ($bpage - 1) + 1;
-			echo '<table width="500">';
-			echo '<tr><td></td><td align="center"><b><u>Jméno</u></b></td><td></td><td></td><tr>';
+			echo '<table width="600">';
+			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><tr>';
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
 				// LABEL
+				echo '<tr>'
+				. '<td width="25">' . $index . '.</td>'
+				. '<td align="center">' . $row[1] . '</td>'
+				. '<td align="center">' . $row[2] . '</td>'
+				. '<td width="30" align="center">'
+				. '<a href="download.php?id=' . $row[0] . '&type=book"><img src="text.png"></a>'
+				. '</td>';
 				if ($file) {
-					echo '<tr>'
-					. '<td width="25">' . $index . '.</td>'
-					. '<td>' . $row[2] . '</td>'
-					. '<td width="30" align="center">'
-					. '<a href="download.php?id=' . $row[0] . '&type=book"><img src="text.png"></a>'
-					. '</td>'
-					. '<td width="30" align="center">'
+					echo '<td width="30" align="center">'
 					. '<a target="_blank" href="../form/data/' . $row[0] . '_' . $file . '"><img src="pdf.png"></a>'
-					. '</td>'
-					. '</tr>';
+					. '</td>';
 				} else {
-					echo '<tr>'
-					. '<td width="25">' . $index . '.</td>'
-					. '<td>' . $row[2] . '</td>'
-					. '<td width="30" align="center">'
-					. '<a href="download.php?id=' . $row[0] . '&type=book"><img src="text.png"></a>'
-					. '</td>'
-					. '<td width="30"></td>'
-					. '</tr>';
+					echo '<td width="30"></td>';
 				}
+				echo '</tr>';
 				// DATA
 				$index++;
 			}

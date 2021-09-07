@@ -18,7 +18,7 @@ if ($valid) {
 		$error = 'Chyba čtení databáze.';
 	} else {
 		if ($_POST['type'] == 'article') {
-			$query = $db->exec("INSERT INTO article (id,author,name,source,quote,note,link,public)"
+			$query = $db->exec("INSERT INTO article (id,author,name,source,quote,note,link,email,public)"
 			. "VALUES ('"
 			. $id . "','"
 			. str_replace("'", '_', $_POST['article-author']) . "','"
@@ -32,7 +32,7 @@ if ($valid) {
 			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if ($_POST['type'] == 'chapter') {
-			$query = $db->exec("INSERT INTO chapter (id,author,name,src_author,src_name,src_place,src_publisher,src_year,note,link,public)"
+			$query = $db->exec("INSERT INTO chapter (id,author,name,src_author,src_name,src_place,src_publisher,src_year,note,link,email,public)"
 			. "VALUES ('"
 			. $id . "','"
 			. str_replace("'", '_', $_POST['chapter-author']) . "','"
@@ -49,7 +49,7 @@ if ($valid) {
 			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if ($_POST['type'] == 'book') {
-			$query = $db->exec("INSERT INTO book (id,author,name,place,publisher,year,note,link,public)"
+			$query = $db->exec("INSERT INTO book (id,author,name,place,publisher,year,note,link,email,public)"
 			. "VALUES ('"
 			. $id . "','"
 			. str_replace("'", '_', $_POST['book-author']) . "','"
@@ -125,11 +125,11 @@ body {
 </head>
 <body bgcolor="lightgrey" onload="on_load()">
 <div align="center">
-<table><tr><td align="center"><img width="142" src="/form/sova.png"></td><td>Návrhy podkladů pro zpracování v ČLB</td></tr>
-<tr><td colspan="2" width="750"><div align="justify"><font size="2">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
+<table><tr><td align="center"><img width="142" src="/form/sova.png"></td><td><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
+<tr><td colspan="2" width="550"><div align="justify"><font size="2">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
 Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat.
 Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
-V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="text-decoration:none; color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</div></td></tr>
+V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</div></td></tr>
 </table>
 
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
@@ -146,20 +146,34 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="t
 <tr height="8px"></tr>
 <tr><td width="175" align="right"><u><b>Plný text</b></u></td></td></tr>
 <tr height="8px"></tr>
-<tr><td align="right">Poznámka:</td><td><input type="text" name="note" size="30" value="
-<?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
-"></td></tr>
+<tr><td colspan="3"><font size="2">Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení:</font></td></tr>
+<tr height="8px"></tr>
 <tr><td align="right">Odkaz:</td><td><input type="text" name="link" size="30" value="
 <?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>
 "></td></tr>
 <tr><td align="right">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/form/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
-<tr><td align="right">Veřejný dokument</td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
+<tr height="8px"></tr>
+<tr><td colspan="3"><font size="2">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran:</font></td></tr>
+<tr height="8px"></tr>
+<tr><td></td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td></tr>
+<tr><td align="right">E-mail navrhovatele:</td><td><input type="text" name="email" size="30" value="
+<?php if (!$valid and isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>
+"></td></tr>
+<tr><td align="right">Poznámka:</td><td><input type="text" name="note" size="30" value="
+<?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>
+"></td></tr>
+<tr height="8px"></tr>
+<tr><td colspan="3"><font size="2">K bibliografickému záznamu daného dokumentu je možno přidat i odkaz na plný text. Ten bude k záznamu připojen, pokud:
+<br><br>a) je daný dokument zpřístupněn prostřednictvím veřejně dostupného repozitáře s perzistentním odkazem (např. repozitáře výzkumných institucí a univerzit atp.).
+<br><br>b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektronické verzi, souhlasí se zveřejněním a následně tuto skutečnost potvrdí prostřednictvím kontaktního emailu.</font></td></tr>
 <tr height="8px"></tr>
 </table>
 
 <div id="article-div">
 <table width="550">
-<tr><td width="175" align="right"><u><b>Základní údaje</b></u></td></tr>
+<tr><td width="175" align="right"><u><b>Údaje o dokumentu</b></u></td></tr>
+<tr height="8px"></tr>
+<tr><td colspan="3"><font size="2">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</font></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="article-author" size="20" value="
 <?php if (!$valid and isset($_POST['article-author'])) { echo htmlspecialchars($_POST['article-author'], ENT_QUOTES, 'UTF-8'); } ?>
@@ -209,7 +223,9 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="t
 
 <div id="book-div" style="display:none;">
 <table width="550">
-<tr><td width="175" align="right"><u><b>Základní údaje</b></u></td></tr>
+<tr><td width="175" align="right"><u><b>Údaje o dokumentu</b></u></td></tr>
+<tr height="8px"></tr>
+<tr><td colspan="3"><font size="2">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</font></td></tr>
 <tr height="8px"></tr>
 <tr><td align="right">Autor:</td><td><input type="text" name="book-author" size="20" value="
 <?php if (!$valid and isset($_POST['book-author'])) { echo htmlspecialchars($_POST['book-author'], ENT_QUOTES, 'UTF-8'); } ?>
