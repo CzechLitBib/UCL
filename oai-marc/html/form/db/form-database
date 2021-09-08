@@ -9,9 +9,9 @@ DB='form.db'
 
 con = sqlite3.connect(DB)
 cur = con.cursor()
-cur.execute("CREATE TABLE article (id TEXT, author TEXT, name TEXT, source TEXT, quote TEXT, note TEXT, link TEXT, email TEXT, public TEXT);")
-cur.execute("CREATE TABLE chapter (id TEXT, author TEXT, name TEXT, src_author TEXT, src_name TEXT, src_place TEXT, src_publisher TEXT, src_year TEXT, note TEXT, link TEXT, email TEXT, public TEXT);")
-cur.execute("CREATE TABLE book (id TEXT, author TEXT, name TEXT, place TEXT, publisher TEXT, year TEXT, note TEXT, link TEXT, email TEXT, public TEXT);")
+cur.execute("CREATE TABLE article (id TEXT, author TEXT, name TEXT, source TEXT, quote TEXT, note TEXT, link TEXT, email TEXT, public TEXT, done INTEGER);")
+cur.execute("CREATE TABLE chapter (id TEXT, author TEXT, name TEXT, src_author TEXT, src_name TEXT, src_place TEXT, src_publisher TEXT, src_year TEXT, note TEXT, link TEXT, email TEXT, public TEXT, done INTEGER);")
+cur.execute("CREATE TABLE book (id TEXT, author TEXT, name TEXT, place TEXT, publisher TEXT, year TEXT, note TEXT, link TEXT, email TEXT, public TEXT, done INTEGER);")
 cur.execute("CREATE TABLE file (id TEXT, name TEXT, data BLOB);")
 cur.execute("CREATE UNIQUE INDEX 'article_index' ON article (id);")
 cur.execute("CREATE UNIQUE INDEX 'chapter_index' ON chapter (id);")

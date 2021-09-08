@@ -86,8 +86,8 @@ if (!$db) { $error = 'Chyba databáze.'; }
 		} else {
 
 			$index = $per_page * ($apage - 1) + 1;
-			echo '<table width="600">';
-			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><tr>';
+			echo '<form><table width="600">';
+			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><td>DONE</td><tr>';
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
 				// LABEL
@@ -105,10 +105,15 @@ if (!$db) { $error = 'Chyba databáze.'; }
 				} else {
 					echo '<td width="30"></td>';
 				}
+				if (end($row)) {
+					echo '<td></td>';
+				} else {
+					echo '<td width="10"><input type="submit" onclick="hide()" name="' . $row[0] . '" value="Zpracováno"></td>';
+				}
 				echo '</tr>';
 				$index++;
 			}
-			echo '</table></br>';
+			echo '</table></form>';
 			if ($count > $per_page) {
 				if ($apage * $per_page > $per_page) { echo '<a href="?apage=' . ($apage - 1) . '"><img src="left.png"></a>'; }
 				if ($apage * $per_page < $count) { echo '<a href="?apage=' . ($apage + 1) . '"><img src="right.png"></a>'; }
@@ -152,7 +157,6 @@ if (!$db) { $error = 'Chyba databáze.'; }
 				. '<td align="center">' . $row[2] . '</td>'
 				. '<td width="30" align="center">'
 				. '<a href="download.php?id=' . $row[0] . '&type=chapter"><img src="text.png"></a>'
-				. '<img onclick="get_txt('. "'" . $row[0] . "'" . ')" src="text.png">'
 				. '</td>';
 				if ($file) {
 					echo '<td width="30" align="center">'

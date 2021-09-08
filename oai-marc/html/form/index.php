@@ -18,7 +18,7 @@ if ($valid) {
 		$error = 'Chyba čtení databáze.';
 	} else {
 		if ($_POST['type'] == 'article') {
-			$query = $db->exec("INSERT INTO article (id,author,name,source,quote,note,link,email,public)"
+			$query = $db->exec("INSERT INTO article (id,author,name,source,quote,note,link,email,public,done)"
 			. "VALUES ('"
 			. $id . "','"
 			. str_replace("'", '_', $_POST['article-author']) . "','"
@@ -27,12 +27,14 @@ if ($valid) {
 			. str_replace("'", '_', $_POST['article-quote']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
 			. str_replace("'", '_', $_POST['link']) . "','"
-			. str_replace("'", '_', $_POST['public'])
-			. "');");
+			. str_replace("'", '_', $_POST['email']) . "','"
+			. str_replace("'", '_', $_POST['public']) . "',"
+			. '0'
+			. ");");
 			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if ($_POST['type'] == 'chapter') {
-			$query = $db->exec("INSERT INTO chapter (id,author,name,src_author,src_name,src_place,src_publisher,src_year,note,link,email,public)"
+			$query = $db->exec("INSERT INTO chapter (id,author,name,src_author,src_name,src_place,src_publisher,src_year,note,link,email,public,done)"
 			. "VALUES ('"
 			. $id . "','"
 			. str_replace("'", '_', $_POST['chapter-author']) . "','"
@@ -44,12 +46,14 @@ if ($valid) {
 			. str_replace("'", '_', $_POST['chapter-src-year']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
 			. str_replace("'", '_', $_POST['link']) . "','"
-			. str_replace("'", '_', $_POST['public'])
-			. "');");
+			. str_replace("'", '_', $_POST['email']) . "','"
+			. str_replace("'", '_', $_POST['public']) . "',"
+			. '0'
+			. ");");
 			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if ($_POST['type'] == 'book') {
-			$query = $db->exec("INSERT INTO book (id,author,name,place,publisher,year,note,link,email,public)"
+			$query = $db->exec("INSERT INTO book (id,author,name,place,publisher,year,note,link,email,public,done)"
 			. "VALUES ('"
 			. $id . "','"
 			. str_replace("'", '_', $_POST['book-author']) . "','"
@@ -59,8 +63,10 @@ if ($valid) {
 			. str_replace("'", '_', $_POST['book-year']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
 			. str_replace("'", '_', $_POST['link']) . "','"
-			. str_replace("'", '_', $_POST['public'])
-			. "');");
+			. str_replace("'", '_', $_POST['email']) . "','"
+			. str_replace("'", '_', $_POST['public']) . "',"
+			. '0'
+			. ");");
 			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		}
 		if (isset($_FILES['file'])) {
@@ -103,6 +109,10 @@ if ($valid) {
 		margin: auto;
 		width: 550px;
 	}
+	.div-response {
+		text-align: center;
+		color: red;
+	}
 	.main-text {
 		text-align: justify;
 		font-size: 14px;
@@ -125,7 +135,7 @@ if ($valid) {
 	}
 	.logo	{
 		text-align: center;
-		width: 80px;
+		width: 180px;
 	}
 </style>
 <script>
@@ -262,11 +272,11 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 if (isset($_POST['code'])) {
 	if ($error) {
-		echo '<font color="red">' .$error . '</font>';
+		echo '<div class="div-response">' .$error . '<br></div>';
 	} elseif ($valid) {
-		echo '<font color="red">Uloženo.</font>';
+		echo '<div class="div-response">Uloženo.<br></div>';
 	} else {
-		echo '<font color="red">Neplatný kód.</font>';
+		echo '<div class="div-response">Neplatný kód.<br></div>';
 	}
 }
 
