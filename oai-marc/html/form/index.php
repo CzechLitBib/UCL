@@ -91,17 +91,6 @@ if ($valid) {
 		font-family: Georgia, serif;
 		background-color: lightgrey;
 	}
-	.div-center {
-		margin: auto;
-		width: 550px;
-	}
-	.main-text {
-		text-align: justify;
-		font-size: 12px;
-	}
-	.sub-text {
-		font-size: 12px;
-	}
 	hr {
 		border-top: 0px;
 		border-bottom: 1px solid black;
@@ -110,15 +99,33 @@ if ($valid) {
 	table {
 		width: 550px;
 	}
+	.div-center {
+		margin: auto;
+		width: 550px;
+	}
+	.main-text {
+		text-align: justify;
+		font-size: 14px;
+	}
+	.sub-text {
+		font-size: 14px;
+	}
 	.input {
 		text-align: right;
 		width: 175px;
 	}
 	.spacer {
-		line-height: 8px;
+		height: 18px;
 	}
 	.left {
 		text-align: left;
+	}
+	.center {
+		text-align: center;
+	}
+	.logo	{
+		text-align: center;
+		width: 80px;
 	}
 </style>
 <script>
@@ -126,9 +133,9 @@ if ($valid) {
 		document.getElementById("article-div").style.display = "block";
 		document.getElementById("chapter-div").style.display = "none";
 		document.getElementById("book-div").style.display = "none";
-		document.getElementById("article-name").required = true;
-		document.getElementById("chapter-name").required = false;
-		document.getElementById("book-name").required = false;
+	//	document.getElementById("article-name").required = true;
+	//	document.getElementById("chapter-name").required = false;
+	//	document.getElementById("book-name").required = false;
 	}
 	function load_type() {
 		if (document.getElementById('article').checked) {
@@ -138,18 +145,18 @@ if ($valid) {
 			document.getElementById("article-div").style.display = "none";
 			document.getElementById("chapter-div").style.display = "block";
 			document.getElementById("book-div").style.display = "none";
-			document.getElementById("article-name").required = false;
-			document.getElementById("chapter-name").required = true;
-			document.getElementById("book-name").required = false;
+		//	document.getElementById("article-name").required = false;
+		//	document.getElementById("chapter-name").required = true;
+		//	document.getElementById("book-name").required = false;
 	
 		}
 		if (document.getElementById('book').checked) {
 			document.getElementById("article-div").style.display = "none";
 			document.getElementById("chapter-div").style.display = "none";
 			document.getElementById("book-div").style.display = "block";
-			document.getElementById("article-name").required = false;
-			document.getElementById("chapter-name").required = false;
-			document.getElementById("book-name").required = true;
+		//	document.getElementById("article-name").required = false;
+		//	document.getElementById("chapter-name").required = false;
+		//	document.getElementById("book-name").required = true;
 		}
 	}
 </script>
@@ -157,18 +164,19 @@ if ($valid) {
 </head>
 <body onload="on_load()">
 <div class="div-center">
-<table><tr><td><img width="142" alt="sova.png" src="/form/sova.png"></td><td><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
+<table><tr><td class="logo"><img width="142" alt="sova.png" src="/form/sova.png"></td><td class="center"><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
 <tr><td colspan="2"><div class="main-text">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
 Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat.
 Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
 V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="color:black;" href="mailto:clb@ucl.cas.cz">clb@ucl.cas.cz</a> .</div></td></tr>
 </table>
 
+<br>
 <hr>
-
+<br>
 <form method="post" action="." enctype="multipart/form-data">
 
-<table><tr><td>
+<table><tr><td class="center">
 <input type="radio" name="type" id="article" value="article" onclick="load_type()" checked><label>Článek</label>
 <input type="radio" name="type" id="chapter" value="chapter" onclick="load_type()"><label>Kapitola v knize</label>
 <input type="radio" name="type" id="book" value="book" onclick="load_type()"><label>Kniha</label>
@@ -176,15 +184,17 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 <table>
 <tr class="spacer"><td></td><td></td><td></td></tr>
-<tr><td  class="input"><u><b>Plný text</b></u></td><td></td><td></td></tr>
+<tr><td class="left" colspan="2"><u><b>Plný text</b></u></td><td></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="sub-text" colspan="3">Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení:</td></tr>
+<tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="input">Odkaz:</td><td><input type="text" name="link" size="30" value="<?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>"></td><td></td></tr>
 <tr><td  class="input">Elektronická verze:</td><td><input style="background-color:#ffffff;width:332px;border-radius:5px;" type="file" name="file"></td><td><img src="/form/help.png" title='Pouze soubory typu PDF. Maximalní velikost 5MB.'></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="sub-text" colspan="3">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran:</td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td></td><td><input type="radio" name="public" value="ano"><label>Ano</label> <input type="radio" name="public" value="ne" checked><label>Ne</label></td><td></td></tr>
+<tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td  class="input">E-mail navrhovatele:</td><td><input type="text" name="email" size="30" value="<?php if (!$valid and isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"></td><td></td></tr>
 <tr><td  class="input">Poznámka:</td><td><input type="text" name="note" size="30" value="<?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?>"></td><td></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
@@ -196,7 +206,7 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 <div id="article-div">
 <table>
-<tr><td class="input"><u><b>Údaje o dokumentu</b></u></td><td></td><td></td></tr>
+<tr><td class="left" colspan="2"><u><b>Údaje o dokumentu</b></u></td><td></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="sub-text" colspan="3">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
@@ -209,12 +219,12 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 <div id="chapter-div" style="display:none;">
 <table>
-<tr><td class="input"><u><b>Text</b></u></td><td></td><td></td></tr>
+<tr><td class="left" colspan="2"><u><b>Text</b></u></td><td></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="input">Autor:</td><td><input type="text" name="chapter-author" size="20" value="<?php if (!$valid and isset($_POST['chapter-author'])) { echo htmlspecialchars($_POST['chapter-author'], ENT_QUOTES, 'UTF-8'); } ?>"></td><td></td></tr>
 <tr><td class="input">Název:</td><td><input type="text" id="chapter-name" name="chapter-name" size="20" value="<?php if (!$valid and isset($_POST['chapter-name'])) { echo htmlspecialchars($_POST['chapter-name'], ENT_QUOTES, 'UTF-8'); } ?>"></td><td></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
-<tr><td class="input"><u><b>Zdrojový dokument</b></u></td><td></td><td></td></tr>
+<tr><td class="left" colspan="2"><u><b>Zdrojový dokument</b></u></td><td></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="input">Autor:</td><td><input type="text" name="chapter-src-author" size="20" value="<?php if (!$valid and isset($_POST['chapter-src-author'])) { echo htmlspecialchars($_POST['chapter-src-author'], ENT_QUOTES, 'UTF-8'); } ?>"></td><td></td></tr>
 <tr><td class="input">Název:</td><td><input type="text" name="chapter-src-name" size="20" value="<?php if (!$valid and isset($_POST['chapter-src-name'])) { echo htmlspecialchars($_POST['chapter-src-name'], ENT_QUOTES, 'UTF-8'); } ?>"></td><td></td></tr>
@@ -226,7 +236,7 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 <div id="book-div" style="display:none;">
 <table>
-<tr><td class="input"><u><b>Údaje o dokumentu</b></u></td><td></td><td></td></tr>
+<tr><td class="left" colspan="2"><u><b>Údaje o dokumentu</b></u></td><td></td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="sub-text" colspan="3">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</td></tr>
 <tr class="spacer"><td></td><td></td><td></td></tr>
@@ -241,13 +251,12 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 <table>
 <tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td class="input"><img src="validation.php" alt="validation.png"></td><td class="left"><input style="text-align:center;" type="text" name="code" size="3" required></td><td></td></tr>
-<tr class="spacer"><td></td><td></td><td></td></tr>
 <tr><td></td><td class="left"><input type="submit" value="Odeslat"></td><td></td></tr>
 </table>
 
 </form>
 
-<hr>
+<hr><br>
 
 <?php
 
