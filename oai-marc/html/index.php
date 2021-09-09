@@ -34,8 +34,8 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 <div align="center">
 <table><tr><td><img src="sova.png"></td><td>UCL Vývoj</td></tr></table>
 <form action='.' method="post">
-<label>Login:</label><input size="4" id="name" type="text" name="name" required autofocus>
-<label>Heslo:</label><input size="4" type="password" name="pass" required>
+<label>Login:</label><input size="10" id="name" type="text" name="name" required autofocus>
+<label>Heslo:</label><input size="10" type="password" name="pass" required>
 <input type="submit" value="Odeslat">
 </form>
 

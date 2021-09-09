@@ -20,7 +20,6 @@ $cpage = 1; // chapter page
 $per_page = 5;
 
 $db = new SQLite3('form.db');
-//$db = new SQLite3('../form/db/form.db');
 
 if (!$db) { $error = 'Chyba databáze.'; }
 
@@ -50,6 +49,16 @@ if (!$db) { $error = 'Chyba databáze.'; }
 			document.getElementById("chapter-div").style.display = "none";
 			document.getElementById("book-div").style.display = "block";
 		}
+	}
+	function ajax(id,type) {
+		const xhttp = new XMLHttpRequest();
+		xhttp.onload = function() {
+			if (this.status == 200) {
+				document.getElementById(id).style.display = "none";
+			}
+		}
+		xhttp.open("GET", "done.php?id=" + id + "&type=" + type, true);
+		xhttp.send();
 	}
 </script>
 
@@ -86,12 +95,12 @@ if (!$db) { $error = 'Chyba databáze.'; }
 		} else {
 
 			$index = $per_page * ($apage - 1) + 1;
-			echo '<form><table width="600">';
-			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><td>DONE</td><tr>';
+			echo '<table width="600">';
+			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><td></td><tr>';
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
 				// LABEL
-				echo '<tr>'
+				echo '<tr height="32">'
 				. '<td width="25">' . $index . '.</td>'
 				. '<td align="center">' . $row[1] . '</td>'
 				. '<td align="center">' . $row[2] . '</td>'
@@ -105,15 +114,15 @@ if (!$db) { $error = 'Chyba databáze.'; }
 				} else {
 					echo '<td width="30"></td>';
 				}
-				if (end($row)) {
-					echo '<td></td>';
+				if (end($row)) {// Done.
+					echo '<td width="120"></td>';
 				} else {
-					echo '<td width="10"><input type="submit" onclick="hide()" name="' . $row[0] . '" value="Zpracováno"></td>';
+					echo '<td width="120"><input type="submit" onclick="ajax(' . "'" . $row[0] . "','article')" . '" id="' . $row[0] . '" value="Zpracováno"></td>';
 				}
 				echo '</tr>';
 				$index++;
 			}
-			echo '</table></form>';
+			echo '</table>';
 			if ($count > $per_page) {
 				if ($apage * $per_page > $per_page) { echo '<a href="?apage=' . ($apage - 1) . '"><img src="left.png"></a>'; }
 				if ($apage * $per_page < $count) { echo '<a href="?apage=' . ($apage + 1) . '"><img src="right.png"></a>'; }
