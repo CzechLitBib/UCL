@@ -263,7 +263,7 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 <table>
 <tr class="spacer"><td></td><td></td><td></td></tr>
-<tr><td class="input"><img src="validation.php" alt="validation.png"></td><td class="left"><input style="text-align:center;" type="text" name="code" size="3" required></td><td></td></tr>
+<tr><td class="input"><img src="validation.php" alt="validation.png"></td><td class="left"><input style="text-align:center;" type="text" name="code" size="10" required></td><td></td></tr>
 <tr><td></td><td class="left"><input type="submit" value="Odeslat"></td><td></td></tr>
 </table>
 

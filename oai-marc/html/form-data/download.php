@@ -26,15 +26,15 @@ if ($db) {
 			$buff='';
 			$row = $data->fetchArray(1);// ASSOC
 			if ($_GET['type'] == 'article') {
-				$buff.="ID;Autor;Jméno;Zdroj;Citace;Poznámka;Odkaz;Veřejný\n";
+				$buff.="ID;Autor;Jméno;Zdroj;Citace;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
 				$buff.= implode(';', $row);
 			}
 			if ($_GET['type'] == 'chapter') {
-				$buff.="ID;Autor kapitoly;Jméno kapitoly;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Veřejný\n";
+				$buff.="ID;Autor kapitoly;Jméno kapitoly;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
 				$buff.= implode(';', $row);
 			}
 			if ($_GET['type'] == 'book') {
-				$buff.="ID;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Veřejný\n";
+				$buff.="ID;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
 				$buff.= implode(';', $row);
 			}
 			echo $buff;
