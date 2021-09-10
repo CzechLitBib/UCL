@@ -1244,16 +1244,19 @@ for record in records:
 		#			write_error(header.identifier(), '245', SIF, '189', 'Chybí popis vedlejší role v 245c.')
 
 		#  << >> TAG count
-		#if int(header.indentifier()) >= 2600000:
+		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2600000:
 		#	if '700' in metadata:
 		#		if '245' in metadata and 'c' in metadata['245']:
-		#			F = len(metadata.get_fields('100','110','700','710','593'))
-		#			BARCKET = len(re.findall('<<[^<>]+>>', metadata['245']['c'])):
-		#			if F != BRACKET:
+		#			FC = len(metadata.get_fields('593'))
+		#			for F in metadata.get_fields('700','100'):
+		#				if '4' in F and F['4'] in ['aqt','ctb']: continue
+		#				FC+=1
+		#			BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
+		#			if FC != BRACKET:
 		#				write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
 
 		# TAG value
-		#if int(header.indentifier()) >= 2600000:
+		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2600000:
 		#	if '245' in metadata and 'c' in metadata['245']:
 		#		for T in re.findall('<<[^<>]+>>', metadata['245']['c']):
 		#			if (not T[2].isupper()) and T[2] != '[':
