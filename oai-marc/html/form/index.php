@@ -79,7 +79,11 @@ if ($valid) {
 					move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . $fn);
 					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
 					if (!$query) { $error = 'Chyba zápisu do databáze.'; }
+				} else {
+					$error = 'Chyba formátu souboru.';
 				}
+			} else {
+				$error = 'Chyba zápisu souboru.';
 			}
 		}
 		$db->close();
@@ -126,6 +130,7 @@ if ($valid) {
 	}
 	.input-data {
 		width: 100%;
+		line-height: 20px;
 	}
 	.spacer {
 		height: 18px;
@@ -139,6 +144,18 @@ if ($valid) {
 	.logo	{
 		text-align: center;
 		width: 180px;
+	}
+	.button {
+		font-size: 14px;
+		padding: 5px 24px;
+	}
+	.header {
+		text-align: center;
+		font-size: 16px;
+	}
+	.code {
+		text-align: center;
+		line-height: 20px;
 	}
 </style>
 <script>
@@ -177,7 +194,7 @@ if ($valid) {
 </head>
 <body onload="on_load()">
 <div class="div-center">
-<table><tr><td class="logo"><img width="142" alt="sova.png" src="/form/sova.png"></td><td class="center"><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
+<table><tr><td class="logo"><img width="142" alt="sova.png" src="/form/sova.png"></td><td class="header"><u>Návrhy podkladů pro zpracování v ČLB</u></td></tr>
 <tr><td colspan="2"><div class="main-text">Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp.
 Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat.
 Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
@@ -263,8 +280,8 @@ V případě jakýchkoli dotazů nás prosím kontaktujte na adrese <a style="c
 
 <table>
 <tr class="spacer"><td></td><td></td><td></td></tr>
-<tr><td class="input"><img src="validation.php" alt="validation.png"></td><td class="left"><input style="text-align:center;" type="text" name="code" size="10" required></td><td></td></tr>
-<tr><td></td><td class="left"><input type="submit" value="Odeslat"></td><td></td></tr>
+<tr><td class="input"><img src="validation.php" alt="validation.png"></td><td class="left"><input class="code" type="text" name="code" size="10" required></td><td></td></tr>
+<tr><td></td><td class="left"><input class="button" type="submit" value="Odeslat"></td><td></td></tr>
 </table>
 
 </form>

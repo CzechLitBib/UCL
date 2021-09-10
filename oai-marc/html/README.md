@@ -1,3 +1,9 @@
+PHP
+<pre>
+/etc/php/7.3/fpm/php.ini:
+upload_max_filesize = 5M
+systemctl php7.3-fpm restart
+</pre>
 NGINX
 <pre>
 server {

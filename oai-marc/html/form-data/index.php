@@ -124,6 +124,7 @@ if (!$db) { $error = 'Chyba databáze.'; }
 			}
 			echo '</table>';
 			if ($count > $per_page) {
+				echo '<br>';
 				if ($apage * $per_page > $per_page) { echo '<a href="?apage=' . ($apage - 1) . '"><img src="left.png"></a>'; }
 				if ($apage * $per_page < $count) { echo '<a href="?apage=' . ($apage + 1) . '"><img src="right.png"></a>'; }
 			}
@@ -156,11 +157,11 @@ if (!$db) { $error = 'Chyba databáze.'; }
 
 			$index = $per_page * ($cpage - 1) + 1;
 			echo '<table width="600">';
-			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><tr>';
+			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><td></td><tr>';
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
 				// LABEL
-				echo '<tr>'
+				echo '<tr height="32">'
 				. '<td width="25">' . $index . '.</td>'
 				. '<td align="center">' . $row[1] . '</td>'
 				. '<td align="center">' . $row[2] . '</td>'
@@ -174,11 +175,17 @@ if (!$db) { $error = 'Chyba databáze.'; }
 				} else {
 					echo '<td width="30"></td>';
 				}
+				if (end($row)) {// Done.
+					echo '<td width="120"></td>';
+				} else {
+					echo '<td width="120"><input type="submit" onclick="ajax(' . "'" . $row[0] . "','article')" . '" id="' . $row[0] . '" value="Zpracováno"></td>';
+				}
 				echo '</tr>';
 				$index++;
 			}
 			echo '</table>';
 			if ($count > $per_page) {
+				echo '<br>';
 				if ($cpage * $per_page > $per_page) { echo '<a href="?apage=' . ($cpage - 1) . '"><img src="left.png"></a>'; }
 				if ($cpage * $per_page < $count) { echo '<a href="?apage=' . ($cpage + 1) . '"><img src="right.png"></a>'; }
 			}
@@ -211,11 +218,11 @@ if (!$db) { $error = 'Chyba databáze.'; }
 
 			$index = $per_page * ($bpage - 1) + 1;
 			echo '<table width="600">';
-			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><tr>';
+			echo '<tr><td></td><td align="center"><b><u>Autor</u></b></td><td align="center"><b><u>Název</u></b></td><td></td><td></td><td></td><tr>';
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
 				// LABEL
-				echo '<tr>'
+				echo '<tr height="32">'
 				. '<td width="25">' . $index . '.</td>'
 				. '<td align="center">' . $row[1] . '</td>'
 				. '<td align="center">' . $row[2] . '</td>'
@@ -229,12 +236,18 @@ if (!$db) { $error = 'Chyba databáze.'; }
 				} else {
 					echo '<td width="30"></td>';
 				}
+				if (end($row)) {// Done.
+					echo '<td width="120"></td>';
+				} else {
+					echo '<td width="120"><input type="submit" onclick="ajax(' . "'" . $row[0] . "','article')" . '" id="' . $row[0] . '" value="Zpracováno"></td>';
+				}
 				echo '</tr>';
 				// DATA
 				$index++;
 			}
 			echo '</table>';
 			if ($count > $per_page) {
+				echo '<br>';
 				if ($bpage * $per_page > $per_page) { echo '<a href="?apage=' . ($bpage - 1) . '"><img src="left.png"></a>'; }
 				if ($bpage * $per_page < $count) { echo '<a href="?apage=' . ($bpage + 1) . '"><img src="right.png"></a>'; }
 			}
