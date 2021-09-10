@@ -8,6 +8,7 @@ $_SESSION['group'] = 'user';
 
 $nkp = ['xxx'];
 $admin = ['xxx'];
+$form = ['xxx'];
 
 $authorized = False;
 
@@ -48,6 +49,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		$_SESSION['auth'] = True;
 		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
 		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
+		if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'data'; }
 		if (!isset($_SESSION['page'])) { $_SESSION['page'] = 'main'; }
 		header('Location: ' . $_SESSION['page']);
 		exit();

@@ -4,7 +4,7 @@ session_start();
 
 $_SESSION['page'] = 'form-data';
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
+if(empty($_SESSION['auth']) or !in_array($_SESSION['group'], array('admin','data'))) {
 	header('Location: /');
 	exit();
 }
@@ -178,7 +178,7 @@ if (!$db) { $error = 'Chyba databáze.'; }
 				if (end($row)) {// Done.
 					echo '<td width="120"></td>';
 				} else {
-					echo '<td width="120"><input type="submit" onclick="ajax(' . "'" . $row[0] . "','article')" . '" id="' . $row[0] . '" value="Zpracováno"></td>';
+					echo '<td width="120"><input type="submit" onclick="ajax(' . "'" . $row[0] . "','chapter')" . '" id="' . $row[0] . '" value="Zpracováno"></td>';
 				}
 				echo '</tr>';
 				$index++;
@@ -239,7 +239,7 @@ if (!$db) { $error = 'Chyba databáze.'; }
 				if (end($row)) {// Done.
 					echo '<td width="120"></td>';
 				} else {
-					echo '<td width="120"><input type="submit" onclick="ajax(' . "'" . $row[0] . "','article')" . '" id="' . $row[0] . '" value="Zpracováno"></td>';
+					echo '<td width="120"><input type="submit" onclick="ajax(' . "'" . $row[0] . "','book')" . '" id="' . $row[0] . '" value="Zpracováno"></td>';
 				}
 				echo '</tr>';
 				// DATA
