@@ -4,7 +4,7 @@ session_start();
 
 $_SESSION['page'] = 'form-data';
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
+if(empty($_SESSION['auth']) or !in_array($_SESSION['group'], array('admin','data'))) {
 	header('Location: /');
 	exit();
 }
