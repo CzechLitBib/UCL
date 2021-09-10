@@ -1249,9 +1249,9 @@ for record in records:
 		#		if '245' in metadata and 'c' in metadata['245']:
 		#			BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
 		#			if BRACKET > 0:
-		#				FC = len(metadata.get_fields('593'))
-		#				for F in metadata.get_fields('700','100'):
-		#					if '4' in F and F['4'] in ['aqt','ctb']: continue
+		#				FC = len(metadata.get_fields('100','593'))
+		#				for F in metadata.get_fields('700'):
+		#					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
 		#					FC+=1
 		#				if FC != BRACKET:
 		#					write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
