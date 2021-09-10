@@ -1,12 +1,9 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
 #
 # JSON to MARC convertor.
 # 
 
 # INCLUDE -----------------
-
-from __future__ import print_function
 
 import sqlite3,json,sys,os,re
 
@@ -15,123 +12,123 @@ from pymarc.field import Field
 
 # VAR -----------------
 
-IN='tmp/retrobi_dump.json'
-#IN='demo.json'
+IN='retrobi_dump.json'
+OUT='retrobi.mrc'
 
-OUT='retrobi.bib'
-AUTLOG='log/aut.log'
-BROKEN='log/broken.log'
-#TRASH='trash.dat'
+PATCH='AUT_cmp_match.txt'
 DB='AUT.db'
 
+AUTLOG='aut.log'
+#BROKEN='broken.log'
+
 LANG_MAP={
-	'bul':u'bul',
-	'chi':u'čín',
-	'cze':u'češ',
-	'dan':u'dán',
-	'eng':[u'ang', u'angl', u'[angl'],
-	'fin':u'fin',
-	'fre':[u'fr', u'Fr', u'fra', u'fran', u'franc'],
-	'ger':[u'něm', u'[něm'],
-	'gre':[u'řeč', u'řec'],
-	'hrv':[u'chor',u'chrv'],
-	'hun':[u'maď', u'maďar', u'maďarš'],
-	'ita':[u'vlaš', u'it', u'ital'],
-	'jpn':u'jap',
-	'lat':u'lat',
-	'lot':u'lav',
-	'nor':u'nor',
-	'pol':u'pol',
-	'por':u'port',
-	'rum':u'rum',
-	'rus':[u'rus', u'ruš' , u'[ruš', u'rušt'],
-	'scr':u'chorv',
-	'tur':u'tur'	
+	'bul':'bul',
+	'chi':'čín',
+	'cze':'češ',
+	'dan':'dán',
+	'eng':['ang', 'angl', '[angl'],
+	'fin':'fin',
+	'fre':['fr', 'Fr', 'fra', 'fran', 'franc'],
+	'ger':['něm', '[něm'],
+	'gre':['řeč', 'řec'],
+	'hrv':['chor','chrv'],
+	'hun':['maď', 'maďar', 'maďarš'],
+	'ita':['vlaš', 'it', 'ital'],
+	'jpn':'jap',
+	'lat':'lat',
+	'lot':'lav',
+	'nor':'nor',
+	'pol':'pol',
+	'por':'port',
+	'rum':'rum',
+	'rus':['rus', 'ruš' , '[ruš', 'rušt'],
+	'scr':'chorv',
+	'tur':'tur'	
 }
 
 SLO_MAP=[
-	u'Orol tatránski',
-	u'Slovenské noviny',
-	u'Slovenskje pohladi na vedi, umeňja a literatúru',
-	u'Nitra',
-	u'Hronka'
+	'Orol tatránski',
+	'Slovenské noviny',
+	'Slovenskje pohladi na vedi, umeňja a literatúru',
+	'Nitra',
+	'Hronka'
 ]
 
 GER_MAP=[
-	u'Abhandlungen der königlichen böhmischen Gesellschaft der Wissenschaften',
-	u'Akademie',
-	u'Archiv für österreichische Geschichte',
-	u'Archiv für slavische Philologie',
-	u'Beiträge zur Heimatkunde des Aussig-Karbitzer Bezirkes',
-	u'Bild und Leben',
-	u'Bohemia',
-	u'Böhmen und Mähren',
-	u'Brünner Zeitung',
-	u'Camelien',
-	u'Constitutionelle Allgemeine Zeitung von Böhmen',
-	u'Constitutionelle Prager Zeitung',
-	u'Constitutionelles Blatt aus Böhmen',
-	u'Correspondenz',
-	u'Čechische revue',
-	u'Das literarische Echo',
-	u'Das Vaterland',
-	u'Der Ackermann aus Böhmen',
-	u'Der Bote von der Egger',
-	u'Der Freund des Volkes',
-	u'Der Wegweiser',
-	u'Deutsche Zeitung aus Böhmen',
-	u'Deutsches Archiv für Geschichte des Mittelalters',
-	u'Die Literatur',
-	u'Die Waage für Freiheit, Recht und Wahrheit', 
-	u'Erinnerungen an merkwürdige Gegenstände und Begebenheiten',
-	u'Fort mit den Zöpfen!',
-	u'Für Kalobiotik',
-	u'Germanoslavica',
-	u'Illustriertes Volksblatt für Böhmen',
-	u'Jahrbücher für Kultur und Geschichte der Slaven',
-	u'Kritische Blätter für Literatur und Kunst',
-	u'Kunst und Wissenschaft',
-	u'Länder',
-	u'Leben der slavischen Völker',
-	u'Libussa',
-	u'Mittheilungen des Vereines für Geschichte der Deutschen in Böhmen',
-	u'Monatschrift der Gesellschaft des vaterländischen Museums in Böhmen',
-	u'Neue Litteratur',
-	u'Neue Zeit',
-	u'Oesterreichisches Morgenblatt',
-	u'Olmützer Zeitschrift',
-	u'Ost und West',
-	u'Österreichischer Correspondent',
-	u'Panorama',
-	u'Panorama des Universums',
-	u'Pilsner Anzeiger',
-	u'Politik',
-	u'Politik',
-	u'Politisches Wochenblatt',
-	u'Prag',
-	u'Prager Abendblatt',
-	u'Prager Bahnhof',
-	u'Prager Presse',
-	u'Prager Rundschau',
-	u'Prager Tagblatt',
-	u'Prager Zeitung',
-	u'Slavische Centralblätter',
-	u'Slavische Rundschau',
-	u'Slowanka',
-	u'Sonntagsblätter für heimatliche Interessen',
-	u'Stadt und Land',
-	u'Sudetendeutsche Zeitschrift für Volkskunde',
-	u'Sudetendeutschen',
-	u'Tagesbote aus Böhmen',
-	u'Union',
-	u'Unterhaltungsblätter',
-	u'Volksblatt für Böhmen',
-	u'Witiko',
-	u'Wochenblätter für Freiheit und Gesetz',
-	u'Zeitschrift des Deutschen Vereins für die Geschichte Mährens und Schlesiens',
-	u'Zeitschrift für Geschichte und Kulturgeschichte Oesterreichisch-Schlesiens',
-	u'Zeitschrift für Slavische Philologie',
-	u'Zeitschrift für sudetendeutsche Geschichte'
+	'Abhandlungen der königlichen böhmischen Gesellschaft der Wissenschaften',
+	'Akademie',
+	'Archiv für österreichische Geschichte',
+	'Archiv für slavische Philologie',
+	'Beiträge zur Heimatkunde des Aussig-Karbitzer Bezirkes',
+	'Bild und Leben',
+	'Bohemia',
+	'Böhmen und Mähren',
+	'Brünner Zeitung',
+	'Camelien',
+	'Constitutionelle Allgemeine Zeitung von Böhmen',
+	'Constitutionelle Prager Zeitung',
+	'Constitutionelles Blatt aus Böhmen',
+	'Correspondenz',
+	'Čechische revue',
+	'Das literarische Echo',
+	'Das Vaterland',
+	'Der Ackermann aus Böhmen',
+	'Der Bote von der Egger',
+	'Der Freund des Volkes',
+	'Der Wegweiser',
+	'Deutsche Zeitung aus Böhmen',
+	'Deutsches Archiv für Geschichte des Mittelalters',
+	'Die Literatur',
+	'Die Waage für Freiheit, Recht und Wahrheit', 
+	'Erinnerungen an merkwürdige Gegenstände und Begebenheiten',
+	'Fort mit den Zöpfen!',
+	'Für Kalobiotik',
+	'Germanoslavica',
+	'Illustriertes Volksblatt für Böhmen',
+	'Jahrbücher für Kultur und Geschichte der Slaven',
+	'Kritische Blätter für Literatur und Kunst',
+	'Kunst und Wissenschaft',
+	'Länder',
+	'Leben der slavischen Völker',
+	'Libussa',
+	'Mittheilungen des Vereines für Geschichte der Deutschen in Böhmen',
+	'Monatschrift der Gesellschaft des vaterländischen Museums in Böhmen',
+	'Neue Litteratur',
+	'Neue Zeit',
+	'Oesterreichisches Morgenblatt',
+	'Olmützer Zeitschrift',
+	'Ost und West',
+	'Österreichischer Correspondent',
+	'Panorama',
+	'Panorama des Universums',
+	'Pilsner Anzeiger',
+	'Politik',
+	'Politik',
+	'Politisches Wochenblatt',
+	'Prag',
+	'Prager Abendblatt',
+	'Prager Bahnhof',
+	'Prager Presse',
+	'Prager Rundschau',
+	'Prager Tagblatt',
+	'Prager Zeitung',
+	'Slavische Centralblätter',
+	'Slavische Rundschau',
+	'Slowanka',
+	'Sonntagsblätter für heimatliche Interessen',
+	'Stadt und Land',
+	'Sudetendeutsche Zeitschrift für Volkskunde',
+	'Sudetendeutschen',
+	'Tagesbote aus Böhmen',
+	'Union',
+	'Unterhaltungsblätter',
+	'Volksblatt für Böhmen',
+	'Witiko',
+	'Wochenblätter für Freiheit und Gesetz',
+	'Zeitschrift des Deutschen Vereins für die Geschichte Mährens und Schlesiens',
+	'Zeitschrift für Geschichte und Kulturgeschichte Oesterreichisch-Schlesiens',
+	'Zeitschrift für Slavische Philologie',
+	'Zeitschrift für sudetendeutsche Geschichte'
 ]
 
 # DEF -----------------
@@ -152,17 +149,17 @@ def get_mdt(tag, name, ident, autlog, rec):
 	if not data:
 		autlog.write(tag + ': No AUT data. ' + rec + ' ' + ident + '\n')
 		return ret
-	elif name.rstrip(',') != data[0].rstrip(','):
-		autlog.write(
-			tag +
-			': AUT name do not match. ' +
-			str(rec) + ' | ' +
-			str(ident) +
-			' | ' + name.rstrip(',').encode('utf-8') +
-			' | ' + data[0].rstrip(',').encode('utf-8') +
-			'\n'
-		)
-		return ret
+	#elif name.rstrip(',') != data[0].rstrip(','):
+	#	autlog.write(
+	#		tag +
+	#		': AUT name do not match. ' +
+	#		str(rec) + ' | ' +
+	#		str(ident) +
+	#		' | ' + name.rstrip(',') +
+	#		' | ' + data[0].rstrip(',') +
+	#		'\n'
+	#	)
+	#	return ret
 	else:
 		for i in range(0,6):
 			if data[i]:
@@ -278,15 +275,17 @@ except:
 	sys.exit(1)
 
 autlog = open(AUTLOG, 'w')
-broken = open(BROKEN, 'w')
-#trash = open(TRASH, 'w')
+#broken = open(BROKEN, 'w')
 
-bib = open(OUT,'w')
-#writer = MARCWriter(open('retrobi.mrc','wb'))
+with open(PATCH, 'r') as f:
+	patch = f.read().splitlines()
+
+writer = MARCWriter(open(OUT,'wb'))
+#bib = open(OUT,'w')
 
 # MAIN -----------------
 
-with open(IN, 'rb') as f:
+with open(IN, 'r') as f:
 	for LINE in f:
 
 		# INIT -----------------
@@ -301,9 +300,9 @@ with open(IN, 'rb') as f:
 		record.add_ordered_field(Field(tag='040', indicators=['\\','\\'], subfields=['a', 'ABB060','b', 'cze']))
 		#record.add_ordered_field(Field(tag='041', indicators=['0','\\'], subfields=['a', 'cze']))
 		record.add_ordered_field(Field(tag='336', indicators=['\\','\\'], subfields=['a', 'text', 'b', 'txt', '2', 'rdacontent']))
-		record.add_ordered_field(Field(tag='337', indicators=['\\','\\'], subfields=['a', u'bez média', 'b', 'n', '2', 'rdamedia']))
-		record.add_ordered_field(Field(tag='338', indicators=['\\','\\'], subfields=['a', u'jiný', 'b', 'nz', '2', 'rdacarrier']))
-		record.add_ordered_field(Field(tag='500', indicators=['\\','\\'], subfields=['a', u'Strojově převedený záznam z RETROBI bez redakční kontroly.']))
+		record.add_ordered_field(Field(tag='337', indicators=['\\','\\'], subfields=['a', 'bez média', 'b', 'n', '2', 'rdamedia']))
+		record.add_ordered_field(Field(tag='338', indicators=['\\','\\'], subfields=['a', 'jiný', 'b', 'nz', '2', 'rdacarrier']))
+		record.add_ordered_field(Field(tag='500', indicators=['\\','\\'], subfields=['a', 'Strojově převedený záznam z RETROBI bez redakční kontroly.']))
 		record.add_ordered_field(Field(tag='910', indicators=['\\','\\'], subfields=['a', 'ABB060']))
 		record.add_ordered_field(Field(tag='964', indicators=['\\','\\'], subfields=['a', 'RETROBI']))
 		record.add_ordered_field(Field(tag='OWN', indicators=['\\','\\'], subfields=['a', 'UCLA']))
@@ -325,6 +324,11 @@ with open(IN, 'rb') as f:
 	
 		#print(json.dumps(jsn))
 		#print(json.dumps(jsn, indent=2))
+
+		# skip non broken for now 'AUT do not match only' 
+		IDENT =find('tree/nazvova_cast/autor/id', jsn)
+		if not IDENT: continue
+		if IDENT not in patch: continue
 
 		# 001
 		record.add_ordered_field(Field(tag='001', data='RET-' + find('_id',jsn)))
@@ -510,8 +514,8 @@ with open(IN, 'rb') as f:
 		# WRITE -----------------
 
 		# write MARC21 binary
-		#writer.write(record)
-		#continue
+		writer.write(record)
+		continue
 
 		# write Aleph
 
@@ -532,7 +536,7 @@ with open(IN, 'rb') as f:
 				if F.subfields:
 					for sub in F:
 						VAL.append(''.join(sub).strip())
-        				DATA = '$' + '$'.join(VAL)
+					DATA = '$' + '$'.join(VAL)
 				else: DATA = ''
 			except: DATA = F.value()
 
@@ -545,11 +549,11 @@ with open(IN, 'rb') as f:
 
 # EXIT -------------------
 
-#trash.close()
-broken.close()
+#broken.close()
 autlog.close()
-bib.close()
-#writer.close()
-
+writer.close()
+#bib.close()
 con.close()
+
+sys.exit(0)
 
