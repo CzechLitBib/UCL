@@ -1247,13 +1247,14 @@ for record in records:
 		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2600000:
 		#	if '700' in metadata:
 		#		if '245' in metadata and 'c' in metadata['245']:
-		#			FC = len(metadata.get_fields('593'))
-		#			for F in metadata.get_fields('700','100'):
-		#				if '4' in F and F['4'] in ['aqt','ctb']: continue
-		#				FC+=1
 		#			BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
-		#			if FC != BRACKET:
-		#				write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
+		#			if BRACKET > 0:
+		#				FC = len(metadata.get_fields('593'))
+		#				for F in metadata.get_fields('700','100'):
+		#					if '4' in F and F['4'] in ['aqt','ctb']: continue
+		#					FC+=1
+		#				if FC != BRACKET:
+		#					write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
 
 		# TAG value
 		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2600000:
