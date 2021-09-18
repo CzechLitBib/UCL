@@ -1248,6 +1248,8 @@ for record in records:
 		#	if '700' in metadata:
 		#		if '245' in metadata and 'c' in metadata['245']:
 		#			BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
+		#			for F in metadata.get_fields('505'):
+		#				if 't' in F: BRACKET += len(re.findall('<<[^<>]+>>', F['t']))
 		#			if BRACKET > 0:
 		#				FC = len(metadata.get_fields('100','593'))
 		#				for F in metadata.get_fields('700'):
@@ -1260,8 +1262,13 @@ for record in records:
 		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2600000:
 		#	if '245' in metadata and 'c' in metadata['245']:
 		#		for T in re.findall('<<[^<>]+>>', metadata['245']['c']):
-		#			if (not T[2].isupper()) and T[2] != '[':
-		#				write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
+		#			if '100' in metadata and 'a' in metadata['100']:
+		#				if T == '<<' + metadata['100']['a'] + '>>': continue
+		#			for F in metadata.get_fields('700'):
+		#				if 'a' in F and T == '<<' + F['a'] + '>>': break
+		#			else:
+		#				if (not T[2].isupper()) and T[2] != '[':
+		#					write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
 
 	COUNTER+=1
 
