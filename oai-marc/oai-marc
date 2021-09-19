@@ -1267,7 +1267,7 @@ for record in records:
 		#			for F in metadata.get_fields('700'):
 		#				if 'a' in F and T == '<<' + F['a'] + '>>': break
 		#			else:
-		#				if (not T[2].isupper()) and T[2] != '[':
+		#				if not ('[=' in T or T[2].isupper()):
 		#					write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
 
 	COUNTER+=1
