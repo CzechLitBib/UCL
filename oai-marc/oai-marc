@@ -1236,7 +1236,7 @@ for record in records:
 		#for F in metadata.get_fields('700'):
 		#	if '4' in F and 'aut' not in F.get_subfields('4'): ROLE=False
 		#for F in metadata.get_fields('506'):
-		#	if 'a' in F and F['a'] == '162: ROLE=True
+		#	if 'a' in F and F['a'] == '162': ROLE=True
 		#if '100' in metadata and 'ive' in metadata['100'].get_subfields('4'): ROLE=True
 		#if not ROLE and '100' in metadata:
 		#	if '245' in metadata and 'c' in metadata['245']:
@@ -1248,6 +1248,8 @@ for record in records:
 		#	R=False
 		#	for F in metadata.get_fields('655'):
 		#		if 'a' in F and 'rozhovory' in F['a']: R=True
+		#	for F in  metadata.get_fields('506'):
+		#		if '190' in F.get_subfields('a'): R=True
 		#	if not R and '700' in metadata:
 		#		if '245' in metadata and 'c' in metadata['245']:
 		#			BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
