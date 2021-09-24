@@ -3,6 +3,12 @@
 
 session_start();
 
+# logged in redirect
+if (!empty($_SESSION['auth'])) {
+	header('Location: main');
+	exit();
+}
+
 $_SESSION['auth'] = False;
 $_SESSION['group'] = 'user';
 
