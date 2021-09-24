@@ -2,12 +2,12 @@
 
 session_start();
 
-$_SESSION['page'] = 'kat';
-
 if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
 }
+
+$_SESSION['page'] = 'kat';
 
 if(!isset($_SESSION['kat_month'])) { $_SESSION['kat_month'] = Null; }
 if(!isset($_SESSION['kat_year'])) { $_SESSION['kat_year'] = Null; }

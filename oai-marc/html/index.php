@@ -4,8 +4,8 @@
 session_start();
 
 # logged in redirect
-if (!empty($_SESSION['auth'])) {
-	header('Location: main');
+if (!empty($_SESSION['auth']) and isset($_SESSION['page'])) {
+	header('Location: ' . $_SESSION['page']);
 	exit();
 }
 
@@ -21,7 +21,7 @@ $authorized = False;
 if (isset($_POST['name']) and isset($_POST['pass'])) {
 	
 	$ldap_dn = 'xxx';
-	$ldap_conn = ldap_connect('ldap://xxx');
+	$ldap_conn = ldap_connect('xxx');
 
 	ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 	ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
@@ -53,10 +53,18 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		echo '<font color="red">Přihlášení selhalo.</font>';
 	} else {
 		$_SESSION['auth'] = True;
-		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
-		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
-		if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'data'; }
-		if (!isset($_SESSION['page'])) { $_SESSION['page'] = 'main'; }
+		if (in_array($_POST['name'], $admin)) {
+			$_SESSION['group'] =  'admin';
+			$_SESSION['page'] = 'main';
+		}
+		if (in_array($_POST['name'], $nkp)) {
+			$_SESSION['group'] =  'nkp';
+			$_SESSION['page'] = 'nkp';
+		}
+		if (in_array($_POST['name'], $form)) {
+			$_SESSION['group'] =  'data';
+			$_SESSION['page'] = 'form-data';
+		}
 		header('Location: ' . $_SESSION['page']);
 		exit();
 	}	

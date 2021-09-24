@@ -3,12 +3,12 @@
 
 session_start();
 
-$_SESSION['page'] = 'main';
-
 if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
 }
+
+$_SESSION['page'] = 'main';
 
 ?>
 

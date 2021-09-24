@@ -2,12 +2,12 @@
 
 session_start();
 
-$_SESSION['page'] = 'nkp';
-
 if(empty($_SESSION['auth']) or ($_SESSION['group'] !== 'nkp' and $_SESSION['group'] !== 'admin')) {
 	header('Location: /');
 	exit();
 }
+
+$_SESSION['page'] = 'nkp';
 
 if(!isset($_SESSION['nkp_month'])) { $_SESSION['nkp_month'] = Null; }
 if(!isset($_SESSION['nkp_year'])) { $_SESSION['nkp_year'] = Null; }

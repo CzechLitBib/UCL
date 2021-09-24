@@ -2,12 +2,12 @@
 
 session_start();
 
-$_SESSION['page'] = 'form-data';
-
 if(empty($_SESSION['auth']) or !in_array($_SESSION['group'], array('admin','data'))) {
 	header('Location: /');
 	exit();
 }
+
+$_SESSION['page'] = 'form-data';
 
 if(!isset($_SESSION['form-data'])) { $_SESSION['form-data'] = Null; }
 
