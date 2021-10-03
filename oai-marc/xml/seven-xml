@@ -14,7 +14,7 @@ XML='ucla.xml'
 DATA='/var/www/html/ucla/data'
 #DATA='/var/www/html/clo/data'
 
-taglist = []
+TAGLIST = []
 
 # INIT -------------------
 
@@ -35,7 +35,7 @@ def validate(record):
 	if '001' in record:
 		ident = record['001'].value()
 	else:
-		continue
+		return
 
 	for tag, value, seven in [(f.tag, get_value(f), f['7']) for f in record.fields]:
 		if tag != '653' and re.match('(1..|6..|700|710|711|730)', tag):
@@ -57,7 +57,7 @@ def validate(record):
 
 # MAIN -------------------
 
-marcxml.map_xml(validate, IN)
+marcxml.map_xml(validate, XML)
 
 #for rec in reader:
 #	validate(rec)
