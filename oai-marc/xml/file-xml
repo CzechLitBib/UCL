@@ -12,11 +12,24 @@ from pymarc.record import Record
 # VAR
 # ------------------------------------------------------
 
-#DATA='vu.mrc'
+DATA='ucla.xml'
+
 #aleph = open('505.aleph', 'w')
 #xml = XMLWriter(open('PNP_CLO.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
-#file = open('file.csv', 'w')
+#link = open('link.csv', 'r')
+#wayback = open('wayback.csv', 'r')
+#aleph = open('wayback.mrc', 'w')
+
+# WAYBACK -------
+
+#WAY={}
+#for line in wayback:
+#	data = line.split('##')
+#	if data[0] not in WAY:
+#		WAY[data[0]]={}
+#	WAY[data[0]]['ORIG']=data[1].strip()
+#	WAY[data[0]]['ARCH']=data[2].strip()
 
 # 964 ---------
 
@@ -25,27 +38,24 @@ from pymarc.record import Record
 
 # KOHA to API ---------
 
-#reader = MARCReader(file('CLO.mrc'))
-#for record in reader:
-#	
-#	# fix LDR dup
-#	record.remove_fields('LDR')
-#
-#	# fix 964
-#	if '964' in record:
-#		record.remove_fields('964')
-#		record.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields= ['a', 'CLO']))
-#
-#	#drop
-#	DROPLIST=[]
-#	for F in record:
-#		if F.tag not in ('001','046','100','368','370','372','400','678'):
-#			if F.tag not in DROPLIST: DROPLIST.append(F.tag)
-#
-#	for TAG in DROPLIST: record.remove_fields(TAG)
-#
-#	#write
-#	xml.write(record)
+#COUNTER=0
+
+#with open(DATA, 'rb') as f:
+
+#	reader = MARCReader(f)
+
+#	for record in reader:
+#		COUNTER+=1
+		#if '100' in record:
+			# and 'a' in record['100']:
+			#if'Píša' in record['100']['a'] or 'Antonín Matěj' in record['100']['a']:
+			#	print(record['001'].value())
+	#	if '100' in record and 'jk01093206' in record['100'].value():
+	#		print(record['001'].value())
+
+#	reader.close()
+
+#print(COUNTER)
 
 # ------------------------------------------------------
 # DEF
@@ -76,7 +86,7 @@ def validate(record):
 	#for F in [f for f in metadata.get_fields('912') if f.indicator1 + f.indicator2 == '  ']: F.tag = '911'
 
 	# UCLEC drop 506 fields
-	#metadata.remove_fields('506')
+	#etadata.remove_fields('506')
 
 	# UCLA:  webarchiv
 #	for F in metadata.get_fields('856'):
@@ -123,7 +133,36 @@ def validate(record):
 # GENERIC
 # ------------------------------------------------------
 
-	IDENT = metadata['001'].value()
+	#IDENT = metadata['001'].value()
+
+	#if '700' in metadata and '245' in metadata:
+	#	f.write(IDENT + ';' + metadata['245'].value() + '\n')
+
+	#if '700' in metadata:
+	#	if '245' in metadata and 'c' in metadata['245']:
+	#		BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
+	#		for F in metadata.get_fields('505'):
+	#			if 't' in F: BRACKET += len(re.findall('<<[^<>]+>>', F['t']))
+	#		if BRACKET > 0:
+	#			FC = len(metadata.get_fields('100','593'))
+	#			for F in metadata.get_fields('700'):
+	#				if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+	#				FC+=1
+	#			print(FC)
+	#			print(BRACKET)
+	#			if FC != BRACKET:
+	#				print("Boo!")
+
+	#if '245' in metadata and 'c' in metadata['245']:
+	#	for T in re.findall('<<[^<>]+>>', metadata['245']['c']):
+	#		if '100' in metadata and 'a' in metadata['100']:
+	#			if T == '<<' + metadata['100']['a'] + '>>': continue
+	#		for F in metadata.get_fields('700'):
+	#			if 'a' in F and T == '<<' + F['a'] + '>>': break
+	#		else:
+	#			if (not T[2].isupper()) and T[2] != '[':
+	#				print("Foo")
+
 
 # ------------------------------------------------------
 # Webarchiv
@@ -133,21 +172,20 @@ def validate(record):
 
 	# drop idnes.cz, ihned.cz, webarchiv.cz, email.seznam.cz
 
-#	IDENT = metadata['001'].value()
+	#IDENT = metadata['001'].value()
 	
-#	INT=False
-#	for F in metadata.get_fields('964'):
-#		if F.value() == 'INT': INT=True
-#	if INT:
-#		ARCH=False
-#		for F in metadata.get_fields('856'):
-#			if F['y'] in ['WebArchiv', 'Webarchiv']: ARCH=True
-#		if not ARCH:
-#			for F in metadata.get_fields('856'):
-#				if F['y']  == 'online':
-#					link.write(str(IDENT) + '##' + F['u'].encode('utf-8') + '\n')
-#
-#	return
+	#INT=False
+	#for F in metadata.get_fields('964'):
+	#	if F.value() == 'INT': INT=True
+	#if INT:
+	#	ARCH=False
+	#	for F in metadata.get_fields('856'):
+	#		if F['y'] in ['WebArchiv', 'Webarchiv']: ARCH=True
+	#	if not ARCH:
+	#		for F in metadata.get_fields('856'):
+	#			if F['y']  == 'online':
+	#				link.write(str(IDENT) + '##' + F['u'] + '\n')
+	#return
 
 # GET LINK
 
@@ -161,25 +199,16 @@ def validate(record):
 #	BASE=LINK.split('##')[1].replace('http://', '').replace('https://', '').strip()
 #	URL='https://wayback.webarchiv.cz/wayback/*/' + BASE
 
-	#try:
-	#	req = session.get(URL)
-	#except Exception as e:
-	#	print(e.args)
-	#	sys.exit(1)
-
 #	req = session.get(URL, verify=False)
 
 #	if req and req.status_code == 200:
 #		try:
 #			p = lxml.html.HTMLParser()
-#			t = lxml.html.parse(StringIO.StringIO(req.text), p)
+#			t = lxml.html.parse(io.StringIO(req.text), p)
+
 #			url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
-
-#			wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href').encode('utf-8') + '\n')
-#		except:
-#			pass
-
-#	continue	
+#			wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href') + '\n')
+#		except: pass
 
 	# WRITE ALEPH
 
@@ -188,16 +217,15 @@ def validate(record):
 #	if IDENT in WAY:
 #		print(IDENT)
 #		for F in metadata.get_fields('856'):
-		
 #			SUB=''
-#			for i in range(0, len(F.subfields)/2):
+#			for i in range(0, int(len(F.subfields)/2)):
 #				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
 
 #			if F['u'] == 'https://' + WAY[IDENT]['ORIG'] or F['u'] == 'http://' + WAY[IDENT]['ORIG']:
-#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
-#				aleph.write(str(IDENT + ' 85642 L $$u') + WAY[IDENT]['ARCH'].encode('utf-8') + '$$yWebarchiv$$4N\n')
+#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB + '\n')
+#				aleph.write(str(IDENT + ' 85642 L $$u') + WAY[IDENT]['ARCH'] + '$$yWebarchiv$$4N\n')
 #			else:
-#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB.encode('utf-8') + '\n')
+#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB + '\n')
 #	return
 
 # ------------------------------------------------------
@@ -209,7 +237,14 @@ def validate(record):
 #record.leader = '     nam a22     4i 4500'
 #field = Field(tag = '001', data='002524717')
 #record.add_ordered_field(field)
-#field = Field(tag = '015', indicators = [' ',' '], subfields = ['a', 'cnb000000000'])
+
+#field = Field(tag = '700', indicators = [' ',' '], subfields = ['a', 'Xoo','4','ctb'])
+#record.add_ordered_field(field)
+#field = Field(tag = '100', indicators = [' ',' '], subfields = ['a', 'Xoo'])
+#record.add_ordered_field(field)
+#field = Field(tag = '245', indicators = [' ',' '], subfields = ['c', '<<boo>>df f  <<Foo>>'])
+#record.add_ordered_field(field)
+#field = Field(tag = '505', indicators = [' ',' '], subfields = ['a', '<<Boo>>df f  <<[foo>>'])
 #record.add_ordered_field(field)
 
 #validate(record)
@@ -219,7 +254,10 @@ def validate(record):
 #aleph.close()
 #xml.close()
 #writer.close()
-#file.close()
+
+#link.close()
+#wayback.close()
+#aleph.close()
 
 # EXIT -------------------
 
