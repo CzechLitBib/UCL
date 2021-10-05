@@ -16,6 +16,8 @@ from lxml.etree import tostring
 
 # VAR -------------------
 
+# IDENT: 'oai:aleph22.lib.cas.cz:KNA01-IDENT'
+
 URL='https://aleph.lib.cas.cz/OAI'
 CSV='oai-marc.csv'
 

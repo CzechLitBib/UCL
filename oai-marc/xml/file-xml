@@ -17,45 +17,11 @@ DATA='ucla.xml'
 #aleph = open('505.aleph', 'w')
 #xml = XMLWriter(open('PNP_CLO.xml', 'w'))
 #writer = MARCWriter(open('ucla.mrc', 'wb'))
-#link = open('link.csv', 'r')
-#wayback = open('wayback.csv', 'r')
-#aleph = open('wayback.mrc', 'w')
-
-# WAYBACK -------
-
-#WAY={}
-#for line in wayback:
-#	data = line.split('##')
-#	if data[0] not in WAY:
-#		WAY[data[0]]={}
-#	WAY[data[0]]['ORIG']=data[1].strip()
-#	WAY[data[0]]['ARCH']=data[2].strip()
 
 # 964 ---------
 
 #DATADIR='/var/www/html/964'
 #BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
-
-# KOHA to API ---------
-
-#COUNTER=0
-
-#with open(DATA, 'rb') as f:
-
-#	reader = MARCReader(f)
-
-#	for record in reader:
-#		COUNTER+=1
-		#if '100' in record:
-			# and 'a' in record['100']:
-			#if'Píša' in record['100']['a'] or 'Antonín Matěj' in record['100']['a']:
-			#	print(record['001'].value())
-	#	if '100' in record and 'jk01093206' in record['100'].value():
-	#		print(record['001'].value())
-
-#	reader.close()
-
-#print(COUNTER)
 
 # ------------------------------------------------------
 # DEF
@@ -162,71 +128,6 @@ def validate(record):
 	#		else:
 	#			if (not T[2].isupper()) and T[2] != '[':
 	#				print("Foo")
-
-
-# ------------------------------------------------------
-# Webarchiv
-# ------------------------------------------------------
-
-	# GET DATA
-
-	# drop idnes.cz, ihned.cz, webarchiv.cz, email.seznam.cz
-
-	#IDENT = metadata['001'].value()
-	
-	#INT=False
-	#for F in metadata.get_fields('964'):
-	#	if F.value() == 'INT': INT=True
-	#if INT:
-	#	ARCH=False
-	#	for F in metadata.get_fields('856'):
-	#		if F['y'] in ['WebArchiv', 'Webarchiv']: ARCH=True
-	#	if not ARCH:
-	#		for F in metadata.get_fields('856'):
-	#			if F['y']  == 'online':
-	#				link.write(str(IDENT) + '##' + F['u'] + '\n')
-	#return
-
-# GET LINK
-
-#session = requests.Session()
-
-#session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
-
-#for LINK in link:
-
-#	ID=LINK.split('##')[0].strip()
-#	BASE=LINK.split('##')[1].replace('http://', '').replace('https://', '').strip()
-#	URL='https://wayback.webarchiv.cz/wayback/*/' + BASE
-
-#	req = session.get(URL, verify=False)
-
-#	if req and req.status_code == 200:
-#		try:
-#			p = lxml.html.HTMLParser()
-#			t = lxml.html.parse(io.StringIO(req.text), p)
-
-#			url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
-#			wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href') + '\n')
-#		except: pass
-
-	# WRITE ALEPH
-
-#	IDENT = metadata['001'].value()
-
-#	if IDENT in WAY:
-#		print(IDENT)
-#		for F in metadata.get_fields('856'):
-#			SUB=''
-#			for i in range(0, int(len(F.subfields)/2)):
-#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-
-#			if F['u'] == 'https://' + WAY[IDENT]['ORIG'] or F['u'] == 'http://' + WAY[IDENT]['ORIG']:
-#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB + '\n')
-#				aleph.write(str(IDENT + ' 85642 L $$u') + WAY[IDENT]['ARCH'] + '$$yWebarchiv$$4N\n')
-#			else:
-#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB + '\n')
-#	return
 
 # ------------------------------------------------------
 # MAIN

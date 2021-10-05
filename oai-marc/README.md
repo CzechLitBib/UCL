@@ -102,7 +102,6 @@ FILE
          oai-mdt - Z39.50 yaz-client wrapper.
          oai-mod - Modular OAI-PMH loader.
      oai-recenze - Subset match notify.
-   webdav-clanky - WebDAV uploader.
 
             mod/
             five - Send dumped 245/246/5xx text for correction. 
