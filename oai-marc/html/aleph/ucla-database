@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+#
+# Create UCLA Record DB 
+#
+
+import sqlite3
+
+DB='ucla.db'
+
+con = sqlite3.connect(DB)
+cur = con.cursor()
+cur.execute("CREATE TABLE records (
+     id     INTEGER PRIMARY KEY,
+     leader TEXT NOT NULL,
+     c000   TEXT,
+     c001   TEXT,
+     c002   TEXT,
+     c003   TEXT,
+     c004   TEXT,
+     c005   TEXT,
+     c006   TEXT,
+     c007   TEXT,
+     c008   TEXT,
+     c009   TEXT
+   );"
+)
+
+cur.execute("CREATE TABLE fields (
+     id          INTEGER PRIMARY KEY,
+     record_id   INTEGER REFERENCES marc_records (id),
+     tag CHAR(3) NOT NULL,
+     indicator_1 CHAR NOT NULL DEFAULT '',
+     indicator_2 CHAR NOT NULL DEFAULT ''
+   );"
+)
+
+cur.execute(
+"CREATE TABLE subfields (
+     id       INTEGER PRIMARY KEY,
+     field_id INTEGER REFERENCES marc_fields (id),
+     code     CHAR NOT NULL,
+     data     TEXT NOT NULL
+   );"
+)
+
+# CREATE INDEXES
+#cur.execute("CREATE UNIQUE INDEX 'ident_index' ON record (ident);")
+#cur.execute("CREATE INDEX 'timestamp_index' ON record (timestamp);")
+
+con.commit()
+con.close()
+
