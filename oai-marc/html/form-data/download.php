@@ -15,7 +15,7 @@ if (!isset($_GET['id'])) {
 }
 
 header("Content-type: application/octet-stream; charset=UTF-8");
-header("Content-disposition: attachment;filename=" . $_GET['id'] . ".csv");
+header("Content-disposition: attachment;filename=" . $_GET['id'] . ".txt");
 
 $db = new SQLite3('form.db');
 
@@ -26,16 +26,16 @@ if ($db) {
 			$buff='';
 			$row = $data->fetchArray(1);// ASSOC
 			if ($_GET['type'] == 'article') {
-				$buff.="ID\tAutor\tJméno\tZdroj\tCitace\tPoznámka\tOdkaz\tEmail\tVeřejný\tZpracováno\n";
-				$buff.=implode("\t", $row);
+				$buff.="ID;Autor;Jméno;Zdroj;Citace;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
+				$buff.=implode(";", $row);
 			}
 			if ($_GET['type'] == 'chapter') {
-				$buff.="ID\tAutor kapitoly\tJméno kapitoly\tAutor\tJméno\tMísto\tNakladatel\tRok\tPoznámka\tOdkaz\tEmail\tVeřejný\tZpracováno\n";
-				$buff.=implode("\t", $row);
+				$buff.="ID;Autor kapitoly;Jméno kapitoly;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
+				$buff.=implode(";", $row);
 			}
 			if ($_GET['type'] == 'book') {
-				$buff.="ID\tAutor\tJméno\tMísto\tNakladatel\tRok\tPoznámka\tOdkaz\tEmail\tVeřejný\tZpracováno\n";
-				$buff.=implode("\t", $row);
+				$buff.="ID;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
+				$buff.=implode(";", $row);
 			}
 			echo $buff;
 		}

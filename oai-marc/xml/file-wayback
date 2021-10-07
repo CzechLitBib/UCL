@@ -1,116 +1,85 @@
 #!/usr/bin/python3
-#
-# XML / MARC parsing
-#
 
-import io,requests,lxml.html,time,sys,os,re
+import io,requests,lxml.html,sys
 
-from pymarc import marcxml,Field,MARCWriter,MARCReader,XMLWriter
-from pymarc.record import Record
-
-# ------------------------------------------------------
-# VAR
-# ------------------------------------------------------
+from pymarc import marcxml
 
 DATA='ucla.xml'
-
-LINK = open('link.csv', 'r')
-WAYBACK = open('wayback.csv', 'r')
-ALEPH = open('wayback.mrc', 'w')
-
-# WAYBACK -------
-
-#WAY={}
-#for line in wayback:
-#	data = line.split('##')
-#	if data[0] not in WAY:
-#		WAY[data[0]]={}
-#	WAY[data[0]]['ORIG']=data[1].strip()
-#	WAY[data[0]]['ARCH']=data[2].strip()
+LINK='link.csv'
+WAYBACK='wayback.csv'
+ALEPH='wayback.aleph'
 
 # ------------------------------------------------------
-# DEF
+# GET BROKEN LINK
 # ------------------------------------------------------
 
-def validate(record):
+def get_link(record):
 
-	metadata = record
+	IDENT = record['001'].value()
+	INT=False
 
-	# GET DATA
+	for F in record.get_fields('964'):
+		if F.value() == 'INT':
+			INT=True
+	if INT:
+		if len(record.get_fields('856')) == 1:
+			if 'y' in record['856'] and record['856']['y'] == 'online':
+				if 'u' in record['856']:
+					link.write(str(IDENT) + '##' + record['856']['u'] + '\n')
 
-	# drop idnes.cz, ihned.cz, webarchiv.cz, email.seznam.cz
-
-	#IDENT = metadata['001'].value()
-	
-	#INT=False
-	#for F in metadata.get_fields('964'):
-	#	if F.value() == 'INT': INT=True
-	#if INT:
-	#	ARCH=False
-	#	for F in metadata.get_fields('856'):
-	#		if F['y'] in ['WebArchiv', 'Webarchiv']: ARCH=True
-	#	if not ARCH:
-	#		for F in metadata.get_fields('856'):
-	#			if F['y']  == 'online':
-	#				link.write(str(IDENT) + '##' + F['u'] + '\n')
-	#return
-
-# GET LINK
-
-#session = requests.Session()
-
-#session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
-
-#for LINK in link:
-
-#	ID=LINK.split('##')[0].strip()
-#	BASE=LINK.split('##')[1].replace('http://', '').replace('https://', '').strip()
-#	URL='https://wayback.webarchiv.cz/wayback/*/' + BASE
-
-#	req = session.get(URL, verify=False)
-
-#	if req and req.status_code == 200:
-#		try:
-#			p = lxml.html.HTMLParser()
-#			t = lxml.html.parse(io.StringIO(req.text), p)
-
-#			url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
-#			wayback.write(str(ID) + '##' + BASE + '##' + url[1].get('href') + '\n')
-#		except: pass
-
-	# WRITE ALEPH
-
-#	IDENT = metadata['001'].value()
-
-#	if IDENT in WAY:
-#		print(IDENT)
-#		for F in metadata.get_fields('856'):
-#			SUB=''
-#			for i in range(0, int(len(F.subfields)/2)):
-#				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2+1]
-
-#			if F['u'] == 'https://' + WAY[IDENT]['ORIG'] or F['u'] == 'http://' + WAY[IDENT]['ORIG']:
-#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB + '\n')
-#				aleph.write(str(IDENT + ' 85642 L $$u') + WAY[IDENT]['ARCH'] + '$$yWebarchiv$$4N\n')
-#			else:
-#				aleph.write(str(IDENT + ' 856' + F.indicator1 + F.indicator2 + ' L ') + SUB + '\n')
-#	return
+with open(LINK, 'w') as link:
+	marcxml.map_xml(get_link, DATA)
 
 # ------------------------------------------------------
-# MAIN
+# SCRAP WAYBACK LINK
 # ------------------------------------------------------
 
-#marcxml.map_xml(validate, DATA)
+with open(LINK, 'r') as link, open(WAYBACK, 'w') as wayback:
 
-#aleph.close()
-#xml.close()
-#writer.close()
+	session = requests.Session()
+	session.headers.update({'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0'})
 
-#link.close()
-#wayback.close()
-#aleph.close()
+	for LINK in link:
 
-# EXIT -------------------
+		SYSNO=LINK.split('##')[0].strip()
+		BASE=LINK.split('##')[1].replace('http://', '').replace('https://', '').strip()
+		URL='https://wayback.webarchiv.cz/wayback/*/' + BASE
 
-sys.exit(0)
+		req = session.get(URL)
+
+		if req and req.status_code == 200:
+			try:
+				p = lxml.html.HTMLParser()
+				t = lxml.html.parse(io.StringIO(req.text), p)
+				url = t.xpath(".//div[@id='wbMeta']//p[@class='wbThis']//a")
+				wayback.write(SYSNO + '##' + BASE + '##' + url[1].get('href') + '\n')
+			except: pass
+
+# ------------------------------------------------------
+# WRITE ALEPH
+# ------------------------------------------------------
+
+WAY={}
+with open(WAYBACK, 'r') as wayback:
+	for line in wayback:
+		data = line.split('##')
+		if data[0] not in WAYBACK:
+			WAY[data[0]]={}
+
+		WAY[data[0]]['SRC']=data[1].strip()
+		WAY[data[0]]['WAYBACK']=data[2].strip()
+
+def write_aleph(record):
+
+	SYSNO = record['001'].value()
+
+	if SYSNO in WAY:
+		SUB=''
+		for i in range(0, int(len(record['856'].subfields)/2)):
+			SUB+='$$' + record['856'].subfields[i*2] + record['856'].subfields[i*2+1]
+		aleph.write(SYSNO + ' 856' + record['856'].indicator1 + record['856'].indicator2 + ' L ' + SUB + '\n')
+		aleph.write(SYSNO + ' 85642 L $$u' + WAY[SYSNO]['WAYBACK'] + '$$yWebarchiv$$4N\n')
+
+with open(ALEPH, 'w') as aleph:
+	marcxml.map_xml(write_aleph, DATA)
 
