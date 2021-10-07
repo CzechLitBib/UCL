@@ -26,25 +26,16 @@ if ($db) {
 			$buff='';
 			$row = $data->fetchArray(1);// ASSOC
 			if ($_GET['type'] == 'article') {
-				$buff.=chr(0xEF) . chr(0xBB) . chr(0xBF);
-				//$buff.="sep=\t\n";
 				$buff.="ID\tAutor\tJméno\tZdroj\tCitace\tPoznámka\tOdkaz\tEmail\tVeřejný\tZpracováno\n";
 				$buff.=implode("\t", $row);
-				//$buff =iconv('UTF-8','UTF-16LE', $buff);
 			}
 			if ($_GET['type'] == 'chapter') {
-				$buff.=chr(0xEF) . chr(0xBB) . chr(0xBF);
-				//$buff.="sep=\t\n";
 				$buff.="ID\tAutor kapitoly\tJméno kapitoly\tAutor\tJméno\tMísto\tNakladatel\tRok\tPoznámka\tOdkaz\tEmail\tVeřejný\tZpracováno\n";
 				$buff.=implode("\t", $row);
-				//$buff =iconv('UTF-8','UTF-16LE', $buff);
 			}
 			if ($_GET['type'] == 'book') {
-				$buff.=chr(0xEF) . chr(0xBB) . chr(0xBF);
-				//$buff.="sep=\t\n";
 				$buff.="ID\tAutor\tJméno\tMísto\tNakladatel\tRok\tPoznámka\tOdkaz\tEmail\tVeřejný\tZpracováno\n";
 				$buff.=implode("\t", $row);
-				//$buff =iconv('UTF-8','UTF-16BE', $buff);
 			}
 			echo $buff;
 		}
