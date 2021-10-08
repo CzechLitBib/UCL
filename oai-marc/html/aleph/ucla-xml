@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+#
+# Update UCLA database from MARCXML
+#
+
+import sqlite3
+
+from pymarc import marcxml
+
+DATA='ucla.xml'
+DB='ucla.db'
+
+RID=0# Record ID
+FID=0# Field ID
+SID=0# Subfield ID
+
+def exec_sql(record):
+
+	global RID,FID,SID
+
+	# Remove LDR dup
+	record.remove_fields('LDR')
+
+	# RECORD + CONTROL FIELD
+
+	BATCH=[RID]
+	BATCH.append(record.leader)
+
+	for CF in ['000', '001', '002', '003', '004', '005', '006', '007', '008', '009', 'FMT']:
+		if CF in record:
+			BATCH.append(record[CF].value())
+		else:
+			BATCH.append('')
+
+	cur.execute("""INSERT INTO records (id, leader, c000, c001, c002, c003, c004, c005, c006, c007, c008, c009, FMT)
+		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",tuple(BATCH))
+
+	# DATA FIELD + SUBFIELD
+
+	for F in record:
+		if not F.is_control_field():
+			print(F.tag)
+			cur.execute("""INSERT INTO fields (id, record_id, tag, indicator_1, indicator_2)
+				VALUES (?,?,?,?,?)""", (FID, RID, F.tag, F.indicator1, F.indicator2))
+			print(F.subfields)
+			for SUB in iter(F.subfields):
+				print(SUB)
+				print(next(SUB))
+				cur.execute("""INSERT INTO subfields (id, field_id, code, data)
+					VALUES (?,?,?,?,?)""", (SID, FID, SUB, next(SUB).value()))
+				# update subfield ID
+				SID+=1
+			# update record ID
+			FID+=1
+	# update record ID
+	RID+=1
+
+# INIT
+
+con = sqlite3.connect(DB)
+cur = con.cursor()
+
+# EXECUTE
+
+marcxml.map_xml(exec_sql, DATA)
+
+# WRITE SQL
+
+con.commit()
+con.close()
+

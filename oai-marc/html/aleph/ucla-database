@@ -9,7 +9,7 @@ DB='ucla.db'
 
 con = sqlite3.connect(DB)
 cur = con.cursor()
-cur.execute("CREATE TABLE records (
+cur.execute("""CREATE TABLE records (
      id     INTEGER PRIMARY KEY,
      leader TEXT NOT NULL,
      c000   TEXT,
@@ -21,26 +21,26 @@ cur.execute("CREATE TABLE records (
      c006   TEXT,
      c007   TEXT,
      c008   TEXT,
-     c009   TEXT
-   );"
+     c009   TEXT,
+     FMT    TEXT
+   );"""
 )
 
-cur.execute("CREATE TABLE fields (
+cur.execute("""CREATE TABLE fields (
      id          INTEGER PRIMARY KEY,
      record_id   INTEGER REFERENCES marc_records (id),
      tag CHAR(3) NOT NULL,
      indicator_1 CHAR NOT NULL DEFAULT '',
      indicator_2 CHAR NOT NULL DEFAULT ''
-   );"
+   );"""
 )
 
-cur.execute(
-"CREATE TABLE subfields (
+cur.execute("""CREATE TABLE subfields (
      id       INTEGER PRIMARY KEY,
      field_id INTEGER REFERENCES marc_fields (id),
      code     CHAR NOT NULL,
      data     TEXT NOT NULL
-   );"
+   );"""
 )
 
 # CREATE INDEXES
