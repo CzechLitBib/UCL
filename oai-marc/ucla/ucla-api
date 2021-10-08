@@ -1,0 +1,56 @@
+#!/usr/bin/python3
+#
+# DEVEL REST API
+#
+
+import sqlite3,json,re
+
+from datetime import datetime
+from flask import Flask,make_response,g,render_template,request,abort
+from flask_restful import Resource,Api
+
+# VAR -------------------------
+
+DB='ucla.db'
+
+# INIT -------------------------
+
+app = Flask(__name__)
+api = Api(app)
+
+# DATABASE -------------------------
+
+def get_db():
+	db = getattr(g, '_database', None)
+	if db is None:
+		db = g._database = sqlite3.connect(DB)
+	db.row_factory = sqlite3.Row
+	return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+	db = getattr(g, '_database', None)
+	if db is not None:
+		db.close()
+
+def query_db(query, args=(), one=False):
+	cur = get_db().execute(query, args)
+	rv = cur.fetchall()
+	cur.close()
+	return (rv[0] if rv else None) if one else rv
+
+# ROUTING -------------------------
+
+class API(Resource):
+	def get(self):
+		headers = {'Content-Type': 'text/html'}
+		return make_response(render_template('/aleph.html'), 200, headers)
+
+api.add_resource(API, '/aleph/')
+
+# MAIN -------------------------
+
+if __name__ == '__main__':
+	app.config['TEMPLATES_AUTO_RELOAD'] = True
+	app.run(debug=True,port=5001)
+

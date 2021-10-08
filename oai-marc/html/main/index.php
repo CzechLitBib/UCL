@@ -38,7 +38,8 @@ $_SESSION['page'] = 'main';
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/form">Formulář</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/form-data">Formulář - Data</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/aktualizace">Aktualizace</a></td></tr>
-<tr><td id="icon"><img src="/link.png"/></td><td id="api"><a href="/api">API</a></td></tr>
+<tr><td id="icon"><img src="/link.png"/></td><td id="api"><a href="/api/">API</a></td></tr>
+<tr><td id="icon"><img src="/link.png"/></td><td id="aleph"><a href="/aleph/">Aleph</a></td></tr>
 </table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 </div>

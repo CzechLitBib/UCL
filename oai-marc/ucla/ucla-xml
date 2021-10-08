@@ -51,12 +51,6 @@ def exec_sql(record):
 	# update RID
 	RID+=1
 
-	# DEBUG break:
-	#if RID == 100:
-	#	con.commit()
-	#	con.close()
-	#	sys.exit(1)
-
 # INIT
 con = sqlite3.connect(DB)
 cur = con.cursor()

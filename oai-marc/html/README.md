@@ -35,6 +35,13 @@ server {
 		proxy_pass http://127.0.0.1:5000;
 	}
 
+	# Aleph
+	location ~ ^/aleph {
+		allow 147.231.80.0/24;
+		deny all;
+		proxy_pass http://127.0.0.1:5001;
+	}
+
 	# PHP - local
 	location ~ ^/(?!form|cardio) {
 		allow xxx/24;
