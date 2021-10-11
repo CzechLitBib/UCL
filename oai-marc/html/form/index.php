@@ -6,6 +6,10 @@ $id = uniqid();
 
 $error = '';
 
+$from= 'xxx';
+$target = 'xxx';
+$server = 'xxx';
+
 $valid=False;
 if (isset($_POST['code']) and isset($_SESSION['secret'])) {
 	if ($_SESSION['secret'] == $_POST['code'])  { $valid=True; }
@@ -82,11 +86,34 @@ if ($valid) {
 				} else {
 					$error = 'Chyba formátu souboru.';
 				}
-			} else {
-				$error = 'Chyba zápisu souboru.';
 			}
+			#} else {
+			#	$error = 'Chyba zápisu souboru.';
+			#}
 		}
 		$db->close();
+	}
+	# notify
+	if (!$error) {
+
+		$headers="MIME-Version: 1.0\r\n";
+		$headers.="From: UCL Vyvoj <".$from.">\r\n";
+		$headers.="Reply-To: ".$from."\r\n";
+		$headers.="Content-type: text/html; charset=utf-8\r\n";
+
+		$subject="=?utf-8?B?".base64_encode("Formulář - Nová data")."?=";
+
+		$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>Prostřednictvím formuláře ';
+		
+		if ($_POST['type'] == 'article') { $text.='byl zaslán nový článek.'; }
+		if ($_POST['type'] == 'chapter') { $text.='byla zaslána nová kapitola v knize.'; }
+		if ($_POST['type'] == 'book') { $text.='byla zaslána nová kniha.'; }
+
+		$text.='<br><br><a target="_blank" href="https://vyvoj.ucl.cas.cz/form-data/">https://vyvoj.ucl.cas.cz/form-data/<a>
+			<br><br>--------------------------------<br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
+			</body></html>';
+
+		mail($target, $subject, $text, $headers, '-f '.$from);
 	}
 }
 
