@@ -1246,40 +1246,34 @@ for record in records:
 		#			write_error(header.identifier(), '245', SIF, '189', 'Chybí popis vedlejší role v 245c.')
 
 		#  << >> TAG count
-		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2600000:
-		#	R=False
-		#	for F in metadata.get_fields('655'):
-		#		if 'a' in F and 'rozhovory' in F['a']: R=True
-		#	for F in  metadata.get_fields('506'):
-		#		if '190' in F.get_subfields('a'): R=True
-		#	if not R and '700' in metadata:
-		#		if '245' in metadata and 'c' in metadata['245']:
-		#			BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
-		#			for F in metadata.get_fields('505'):
-		#				if 't' in F: BRACKET += len(re.findall('<<[^<>]+>>', F['t']))
-		#			if BRACKET > 0:
-		#				FC = len(metadata.get_fields('100','593'))
-		#				for F in metadata.get_fields('700'):
-		#					if metadata.leader[7] == 'm':
-		#						if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
-		#					FC+=1
-		#				if FC != BRACKET:
-		#					write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
+		R=False
+		for F in  metadata.get_fields('506'):
+			if '190' in F.get_subfields('a') or '193' in F.get_subfields('a'): R=True
+		if not R and '700' in metadata:
+			if '245' in metadata and 'c' in metadata['245']:
+				BRACKET = len(re.findall('<<[^<>]?>>', metadata['245']['c']))
+				for F in metadata.get_fields('505'):
+					if 't' in F: BRACKET += len(re.findall('<<[^<>]?>>', F['t']))
+				if BRACKET > 0:
+					FC = len(metadata.get_fields('100','593'))
+					for F in metadata.get_fields('700'):
+						if metadata.leader[7] == 'm':
+							if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+						FC+=1
+					if FC != BRACKET:
+						write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
 
 		# TAG value
-		#if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2600000:
-		#	R=False
-		#	for F in metadata.get_fields('655'):
-		#		if 'a' in F and 'rozhovory' in F['a']: R=True
-		#	if not R and '245' in metadata and 'c' in metadata['245']:
-		#		for T in re.findall('<<[^<>]+>>', metadata['245']['c']):
-		#			if '100' in metadata and 'a' in metadata['100']:
-		#				if T == '<<' + metadata['100']['a'] + '>>': continue
-		#			for F in metadata.get_fields('700'):
-		#				if 'a' in F and T == '<<' + F['a'] + '>>': break
-		#			else:
-		#				if not ('[=' in T or T[2].isupper()):
-		#					write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
+		R=False
+		if not R and '245' in metadata and 'c' in metadata['245']:
+			for T in re.findall('<<[^<>]?>>', metadata['245']['c']):
+				if '100' in metadata and 'a' in metadata['100']:
+					if T == '<<' + metadata['100']['a'] + '>>': continue
+				for F in metadata.get_fields('700'):
+					if 'a' in F and T == '<<' + F['a'] + '>>': break
+				else:
+					if not ('[=' in T or T[2].isupper()):
+						write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
 
 	COUNTER+=1
 
