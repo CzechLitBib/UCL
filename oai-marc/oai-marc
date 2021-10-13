@@ -1251,9 +1251,9 @@ for record in records:
 			if '190' in F.get_subfields('a') or '193' in F.get_subfields('a'): R=True
 		if not R and '700' in metadata:
 			if '245' in metadata and 'c' in metadata['245']:
-				BRACKET = len(re.findall('<<[^<>]?>>', metadata['245']['c']))
+				BRACKET = len(re.findall('<<[^<>]*>>', metadata['245']['c']))
 				for F in metadata.get_fields('505'):
-					if 't' in F: BRACKET += len(re.findall('<<[^<>]?>>', F['t']))
+					if 'r' in F: BRACKET += len(re.findall('<<[^<>]*>>', F['r']))
 				if BRACKET > 0:
 					FC = len(metadata.get_fields('100','593'))
 					for F in metadata.get_fields('700'):
@@ -1266,13 +1266,13 @@ for record in records:
 		# TAG value
 		R=False
 		if not R and '245' in metadata and 'c' in metadata['245']:
-			for T in re.findall('<<[^<>]?>>', metadata['245']['c']):
+			for T in re.findall('<<[^<>]*>>', metadata['245']['c']):
 				if '100' in metadata and 'a' in metadata['100']:
 					if T == '<<' + metadata['100']['a'] + '>>': continue
 				for F in metadata.get_fields('700'):
 					if 'a' in F and T == '<<' + F['a'] + '>>': break
 				else:
-					if not ('[=' in T or T[2].isupper()):
+					if not (T == '<<>>' or '[=' in T or T[2].isupper()):
 						write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
 
 	COUNTER+=1
