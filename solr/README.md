@@ -1,6 +1,11 @@
-#
+
+DESCRIPTION
+
+Solr / MARCSolr.
+
+INSTALL
+<pre>
 # SOLR
-#
 
 apt-get install openjdk-11-jre-headless
 
@@ -27,9 +32,7 @@ cp solr /etc/init.d/
 
 systemctl enable solr
 
-#
 # SOLRMARC
-#
 
 wget 'https://github.com/solrmarc/solrmarc/releases/download/3.4/simple_install_package_3.4.zip'
 
@@ -47,4 +50,14 @@ sub_7739 = 7739
 cp import /opt/solrmarc
 
 . /opt/solrmarc/import ucla.xml
+</pre>
+FILE
+<pre>
+          import - Import MARC.xml.
+index.properties - MARC to Solr index.
+            solr - Solr init file.
+</pre>
 
+SOURCE
+
+https://github.com/KyomaHooin/UCL

@@ -12,17 +12,14 @@ TODO
 
 FILE
 <pre>
-     2894/ -
     aleph/ - Generate records for Aleph.
-   archiv/ - 
+graveyard/ - Inactive project.
 json-marc/ - Custom JSON to MARCXML convertor.
-     koha/ - Koha instance.
- korektor/ - Spellcheck with <a href="https://lindat.mff.cuni.cz/services/korektor/">LINDAT Korektor</a> REST API.
-kramerius/ - 
- locative/ - Get word's locative with <a href="https://lindat.mff.cuni.cz/services/morphodita/">LINDAT MorphoDiTa</a> REST API.
+     koha/ - Koha server.
+kramerius/ - Kramerius UID harvester.
  oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
-    sifon/ - 
-  slovnik/ -
+     solr/ - Solr server.
+   vufind/ - Vufind server.
 </pre>
 SOURCE
 
