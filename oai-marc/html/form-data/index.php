@@ -124,9 +124,11 @@ if (!$db) { $error = 'Chyba databáze.'; }
 			}
 			echo '</table>';
 			if ($count > $per_page) {
-				echo '<br>';
-				if ($apage * $per_page > $per_page) { echo '<a href="?apage=' . ($apage - 1) . '"><img src="left.png"></a>'; }
-				if ($apage * $per_page < $count) { echo '<a href="?apage=' . ($apage + 1) . '"><img src="right.png"></a>'; }
+				echo '<br><table><tr width="60">';
+				if ($apage * $per_page > $per_page) { echo '<td width="20"><a href="?apage=' . ($apage - 1) . '"><img src="left.png"></a></td>'; } else { echo '<td width="20"></td>'; }
+				echo '<td width="20"></td>';
+				if ($apage * $per_page < $count) { echo '<td width="20"><a href="?apage=' . ($apage + 1) . '"><img src="right.png"></a></td>'; } else { echo '<td width="20"></td>'; }
+				echo '</tr></table>';
 			}
 		}
 	}
@@ -185,9 +187,11 @@ if (!$db) { $error = 'Chyba databáze.'; }
 			}
 			echo '</table>';
 			if ($count > $per_page) {
-				echo '<br>';
-				if ($cpage * $per_page > $per_page) { echo '<a href="?apage=' . ($cpage - 1) . '"><img src="left.png"></a>'; }
-				if ($cpage * $per_page < $count) { echo '<a href="?apage=' . ($cpage + 1) . '"><img src="right.png"></a>'; }
+				echo '<br><table><tr width="60">';
+				if ($cpage * $per_page > $per_page) { echo '<td width="20"><a href="?apage=' . ($cpage - 1) . '"><img src="left.png"></a></td>'; } else { echo '<td width="20"></td>'; }
+				echo '<td width="20"></td>';
+				if ($cpage * $per_page < $count) { echo '<td width="20"><a href="?apage=' . ($cpage + 1) . '"><img src="right.png"></a></td>'; } else { echo '<td width="20"></td>'; }
+				echo '</tr></table>';
 			}
 		}
 	}
@@ -247,9 +251,11 @@ if (!$db) { $error = 'Chyba databáze.'; }
 			}
 			echo '</table>';
 			if ($count > $per_page) {
-				echo '<br>';
-				if ($bpage * $per_page > $per_page) { echo '<a href="?apage=' . ($bpage - 1) . '"><img src="left.png"></a>'; }
-				if ($bpage * $per_page < $count) { echo '<a href="?apage=' . ($bpage + 1) . '"><img src="right.png"></a>'; }
+				echo '<br><table><tr width="60">';
+				if ($bpage * $per_page > $per_page) { echo '<td width="20"><a href="?apage=' . ($bpage - 1) . '"><img src="left.png"></a></td>'; } else { echo '<td width="20"></td>'; }
+				echo '<td width="20"></td>';
+				if ($bpage * $per_page < $count) { echo '<td width="20"><a href="?apage=' . ($bpage + 1) . '"><img src="right.png"></a></td>'; } else { echo '<td width="20"></td>'; }
+				echo '</tr></table>';
 			}
 		}
 	}
