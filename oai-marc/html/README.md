@@ -28,18 +28,18 @@ server {
 
 	client_max_body_size 5M;
 
-	# API
+	# Vufind API
 	location ~ ^/api {
 		allow xxx/24;
 		deny all;
 		proxy_pass http://127.0.0.1:5000;
 	}
 
-	# Aleph
-	location ~ ^/aleph {
+	# Solr
+	location ~ ^/solr {
 		allow 147.231.80.0/24;
 		deny all;
-		proxy_pass http://127.0.0.1:5001;
+		proxy_pass http://127.0.0.1:8983;
 	}
 
 	# PHP - local

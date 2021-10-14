@@ -1,0 +1,6 @@
+apt-get install openjdk-11-jre-headless
+
+https://dlcdn.apache.org/lucene/solr/8.10.0/solr-8.10.0.tgz
+
+./solr start -force
+ 
