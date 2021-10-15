@@ -36,11 +36,11 @@ server {
 	}
 
 	# Solr
-	location ~ ^/solr {
-		allow 147.231.80.0/24;
-		deny all;
-		proxy_pass http://127.0.0.1:8983;
-	}
+	#location ~ ^/solr {
+	#	allow 147.231.80.0/24;
+	#	deny all;
+	#	proxy_pass http://127.0.0.1:8983;
+	#}
 
 	# PHP - local
 	location ~ ^/(?!form|cardio) {
