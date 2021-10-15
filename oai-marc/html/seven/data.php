@@ -2,12 +2,12 @@
 
 session_start();
 
-$_SESSION['page'] = 'seven';
-
 if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
 }
+
+$_SESSION['page'] = 'seven';
 
 if(!isset($_SESSION['seven_month'])) { $_SESSION['seven_month'] = Null; }
 if(!isset($_SESSION['seven_year'])) { $_SESSION['seven_year'] = Null; }

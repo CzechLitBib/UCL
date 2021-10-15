@@ -1,16 +1,3 @@
-<?php
-
-session_start();
-
-$_SESSION['page'] = 'error';
-
-#if(empty($_SESSION['auth'])) {
-#	header('Location: /');
-#	exit();
-#}
-
-?>
-
 <html>
 <head><meta charset="utf-8"></head>
 <body bgcolor="lightgrey">
