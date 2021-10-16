@@ -53,9 +53,12 @@ cp import /opt/solrmarc
 </pre>
 FILE
 <pre>
-          import - Import MARC.xml.
-index.properties - MARC to Solr index.
-            solr - Solr init file.
+       import.py - Import MARCXML file.
+  solr-schema.py - Solr schema tool.
+            solr - Solr INIT file.
+
+index.properties - SolrMARC index.
+log4j.properties - SolrMARC Logging.
 </pre>
 
 SOURCE
