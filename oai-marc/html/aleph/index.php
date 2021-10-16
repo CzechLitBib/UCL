@@ -23,20 +23,42 @@ if(!isset($_SESSION['aleph'])) { $_SESSION['aleph'] = Null; }
 <html><head><title>Aleph Solr</title><meta charset="utf-8"></head>
 <body bgcolor="lightgrey">
 <div align="center">
-<table><tr><td><img src="/sova.png"/></td><td>Aleph Solr Query</td></tr></table>
+<table><tr><td><img src="/sova.png"/></td><td>Aleph Solr</td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method="post" action="." enctype="multipart/form-data">
-<b>Podmínka/dotaz:</b>
+<table width="500"><tr><td width="100"><b>Podmínka:</b></td><td><input type="text" name="query" size="40" value=""></td><td><img src="/form/help.png" title=""></td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
-<table width="550">
-<tr><td width="150"><b>Pole</b></td><td width="350"><b>Podpole</b></td></tr>
-<tr><td><input type="checkbox" name="field" id="100" value="100"><label>100</label></td></tr>
-<input type="checkbox" name="field" id="600" value="600"><label>600</label>
-<input type="checkbox" name="field" id="700" value="700"><label>700</label>
-<input type="checkbox" name="field" id="773" value="700"><label>773</label>
-<input type="checkbox" name="subfield" id="773" value="700t"><label>t</label>
-<input type="checkbox" name="subfield" id="773" value="7009"><label>9</label>
-<input type="checkbox" name="field" id="964" value="964"><label>964</label>
+
+<?php
+
+$field = [
+	'Návěští' => array('LDR','FMT','001','003','005','008','015','020','022','035','040','041','044','072','080'),
+	'Hlavní záhlaví' => array('100','110','111','130'),
+	'Údaje o názvu a autorské odpovědnosti' => array('245','246','250','260','264')
+];
+
+foreach($field as $name=>$tags) {
+	echo '<table width="500">';
+	echo '<tr><td colspan="5"><b>' . $name . '</b></td></tr><tr>';
+	echo '<tr><td></td></tr>';
+	$cnt=0;
+	foreach($tags as $t) {
+		echo '<td width="100"><input type="checkbox" name="tag_'
+			. $t . '" id="100" value="tag_'
+			. $t . '"><label>'
+			. $t . '</label></td>';
+		$cnt++;
+		if ($cnt == 5) {
+			echo '</tr><tr>';
+			$cnt = 0;
+		}
+	}
+	echo '</tr></table>';
+	echo '<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>';
+}
+
+?>
+
 </table>
 </form>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
