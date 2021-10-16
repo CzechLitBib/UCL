@@ -17,13 +17,6 @@ if(!isset($_SESSION['aleph'])) { $_SESSION['aleph'] = Null; }
 //	exit();
 //}
 
-//
-// http://localhost:8983/solr/core/select?csv.mv.separator=%23&csv.separator=%3B&fl=id%2Ctag_100&indent=true&q.op=OR&q=tag_100%3A*&rows=10&wt=csv'
-//
-
-//leader_8 = 000[7]
-//year_008 = 008[7-10]
-
 ?>
 
 <!DOCTYPE html>
