@@ -26,7 +26,9 @@ WARNING: Using _default configset with data driven schema functionality. NOT REC
 
 ./opt/solr-8.10.0/bin/solr create -c core
 
-Schema > Add Field > ..
+cp solr-schema.py /opt
+
+. /opt/solr-schema.py
 
 cp solr /etc/init.d/
 
@@ -38,14 +40,14 @@ wget 'https://github.com/solrmarc/solrmarc/releases/download/3.4/simple_install_
 
 /opt/solrmarc/https:/index.properties:
 
-leader_8 = 000[7]
-year_008 = 008[7-10]
-tag_100 = 100
-tag_600 = 600
-tag_700 = 700
-tag_964 = 964
-sub_773t = 773t
-sub_7739 = 7739
+LDR-8 = 000[7]
+008-710 = 008[7-10]
+100 = 100
+600 = 600
+700 = 700
+964 = 964
+773-t = 773t
+773-9 = 7739
 
 cp import /opt/solrmarc
 
@@ -53,7 +55,7 @@ cp import /opt/solrmarc
 </pre>
 FILE
 <pre>
-       import.py - Import MARCXML file.
+          import - Import MARCXML file.
   solr-schema.py - Solr schema tool.
             solr - Solr INIT file.
 

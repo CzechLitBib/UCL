@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 #
-# Solr Schema update
+# Solr API v2 schema tool
 #
 
-import requests, json, sys
+import requests,json
 
 URL='http://localhost:8983/solr/core/schema'
 
