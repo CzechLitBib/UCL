@@ -153,8 +153,8 @@ echo '<tr>
 <td><input type="checkbox" name="008-16" value="1"><label>008 1-6</label></td>
 <td><input type="checkbox" name="008-7" value="1"><label>008 7</label></td>
 <td><input type="checkbox" name="008-815" value="1"><label>008 8-15</label></td>
-<td><input type="checkbox" name="008-16" value="1"><label>008 16-18</label></td>
-<td><input type="checkbox" name="008-16" value="1"><label>008 36-38</label></td>
+<td><input type="checkbox" name="008-1618" value="1"><label>008 16-18</label></td>
+<td><input type="checkbox" name="008-3638" value="1"><label>008 36-38</label></td>
 </tr>';
 echo '</table>';
 

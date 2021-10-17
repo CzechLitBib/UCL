@@ -13,10 +13,12 @@ parser = argparse.ArgumentParser(description='Solr V2 API tool.')
 required = parser.add_argument_group('API')
 required.add_argument('--add', help='Add fields.', action='store_true')
 required.add_argument('--delete', help='Delete fields.', dest='field')
+required.add_argument('--delete-copy', help='Delete copy fields.', dest='cfield')
 required.add_argument('--list', help='List fields.', action='store_true')
+required.add_argument('--schema', help='List schema.', action='store_true')
 args = parser.parse_args()
 
-if not (args.add or args.field or args.list):
+if not (args.add or args.field or args.cfield or args.list or args.schema):
 	parser.error('Argument is required.')
 
 # MAIN
@@ -49,6 +51,20 @@ if args.field:# Delete Fields
 	else:
 		print(resp.text)
 
+if args.cfield:# Delete Copy Fields
+	cfield = {'delete-copy-field':{'source':'','dest':''}}
+
+	cfield['delete-copy-field']['source'] = args.cfield
+	cfield['delete-copy-field']['dest'] = args.cfield + '_str'
+
+	resp = session.post(URL, data=json.dumps(cfield))
+
+	if resp and resp.status_code == 200:
+		print("ok")
+	else:
+		print(resp.text)
+
+
 if args.list:# List Fields
 	resp = session.get(URL + '/fields')
 
@@ -56,6 +72,15 @@ if args.list:# List Fields
 		data = json.loads(resp.text)
 		for F in data['fields']:
 			print(F['name'])
+	else:
+		print(resp.text)
+
+if args.schema:# List Schema
+	resp = session.get(URL)
+
+	if resp and resp.status_code == 200:
+		data = json.loads(resp.text)
+		print(data)
 	else:
 		print(resp.text)
 
