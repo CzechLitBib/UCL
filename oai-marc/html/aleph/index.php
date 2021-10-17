@@ -83,7 +83,7 @@ if (!empty($_POST)) {
 <table><tr><td><img src="/sova.png"/></td><td>Aleph Solr</td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method="post" action="." enctype="multipart/form-data">
-<table width="500"><tr><td width="100"><b>Podmínka:</b></td><td><input type="text" name="query" size="40" value="*:*"></td><td><img src="/form/help.png" title="Příklad:
+<table width="500"><tr><td width="100"><b>Podmínka:</b></td><td><input type="text" name="query" size="40" value=""></td><td><img src="/form/help.png" title="Příklad:
 
 008-815:[1995 TO *] AND LDR-8:b
 "></td></tr></table>
@@ -146,7 +146,7 @@ echo '</table>';
 echo '<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>';
 
 echo '<table width="500">';
-echo '<tr><td colspan="5"><b>Ostatni</b></td></tr><tr>';
+echo '<tr><td colspan="5"><b>Ostatní</b></td></tr><tr>';
 echo '<tr><td></td></tr>';
 echo '<tr><td><input type="checkbox" name="LDR-8" value="1"><label>LDR 8</label></td></tr>';
 echo '<tr>
@@ -161,13 +161,11 @@ echo '</table>';
 echo '<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>';
 
 echo '<table width="500">';
-echo '<tr><td colspan="5"><b>Vystup</b></td></tr><tr>';
+echo '<tr><td colspan="5"><b>Výstup</b></td></tr><tr>';
 echo '<tr><td></td></tr>';
-echo '<tr>
-<td><input type="text" name="rows" size="5" value="10"><label>Pocet radku</label></td>
-<td><input type="text" name="csv-separator" size="5" value=";"><label>CSV oddelovac</label></td>
-<td><input type="text" name="csv-mv-separator" size="5" value="#"><label>CSV oddelovac opakovatelnych hodnot</label></td>
-</tr>';
+echo '<tr><td><input type="text" name="rows" size="1" value="10"><label> Počet řádků.</label></td></tr>';
+echo '<tr><td><input type="text" name="csv-separator" size="1" value=";"><label> CSV oddělovač.</label></td></tr>';
+echo '<tr><td><input type="text" name="csv-mv-separator" size="1" value="#"><label> CSV oddělovač opakovatelných hodnot.</label></td></tr>';
 echo '</table>';
 
 ?>
