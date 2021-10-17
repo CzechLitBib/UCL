@@ -148,13 +148,16 @@ echo '<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"
 echo '<table width="500">';
 echo '<tr><td colspan="5"><b>Ostatní</b></td></tr><tr>';
 echo '<tr><td></td></tr>';
-echo '<tr><td><input type="checkbox" name="LDR-8" value="1"><label>LDR 8</label></td></tr>';
 echo '<tr>
-<td><input type="checkbox" name="008-16" value="1"><label>008 1-6</label></td>
-<td><input type="checkbox" name="008-7" value="1"><label>008 7</label></td>
-<td><input type="checkbox" name="008-815" value="1"><label>008 8-15</label></td>
-<td><input type="checkbox" name="008-1618" value="1"><label>008 16-18</label></td>
-<td><input type="checkbox" name="008-3638" value="1"><label>008 36-38</label></td>
+<td><input type="checkbox" name="LDR-8" value="1"><label>LDR-8</label></td>
+<td><input type="checkbox" name="008-16" value="1"><label>008-16</label></td>
+<td><input type="checkbox" name="008-7" value="1"><label>008-7</label></td>
+<td><input type="checkbox" name="008-810" value="1"><label>008-810</label></td>
+<td><input type="checkbox" name="008-815" value="1"><label>008-815</label></td>
+</tr>';
+echo '<tr>
+<td><input type="checkbox" name="008-1618" value="1"><label>008-1618</label></td>
+<td><input type="checkbox" name="008-3638" value="1"><label>008-3638</label></td>
 </tr>';
 echo '</table>';
 

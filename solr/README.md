@@ -56,6 +56,7 @@ cp import /opt/solrmarc
 FILE
 <pre>
           import - Import MARCXML file.
+        index.py - Gen solrmarc mapping.
   solr-schema.py - Solr schema tool.
             solr - Solr INIT file.
 
