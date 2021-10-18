@@ -52,27 +52,27 @@ if (!empty($_POST)) {
 
 	$request=$url . '?' . implode('&', $params);
 
-	print($request);
-	exit();	
+	//print($request);
+	//exit();	
 
-	//header('Content-type: application/octet-stream; charset=UTF-8');
-	//header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d-%H%M%S', time()) . '.csv');
+	header('Content-type: application/octet-stream; charset=UTF-8');
+	header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d-%H%M%S', time()) . '.csv');
 
-	//$opts = array('http'=>array('method'=>'GET'));
+	$opts = array('http'=>array('method'=>'GET'));
 
-	//$context = stream_context_create($opts);
+	$context = stream_context_create($opts);
 
-	//$fp = fopen($request, 'r', false, $context);
+	$fp = fopen($request, 'r', false, $context);
 
-	//if ($fp) { 
-	//	while(!feof($fp)) {
-	//		$buffer = fread($fp, 2048);
-	//		print $buffer;
-	//	}
-	//}
+	if ($fp) { 
+		while(!feof($fp)) {
+			$buffer = fread($fp, 2048);
+			print $buffer;
+		}
+	}
 
-	//fclose($fp);
-	//exit();
+	fclose($fp);
+	exit();
 }
 
 ?>
@@ -84,9 +84,15 @@ if (!empty($_POST)) {
 <table><tr><td><img src="/sova.png"/></td><td>Aleph Solr</td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method="post" action="." enctype="multipart/form-data">
-<table width="500"><tr><td width="100"><b>Podmínka:</b></td><td><input type="text" name="query" size="40" value=""></td><td><img src="/form/help.png" title="Příklad:
+<table width="500"><tr><td width="100"><b>Podmínka:</b></td><td><input type="text" name="query" size="40" value=""></td><td><img src="/form/help.png" title="Prefix:
 
-008-815:[1995 TO *] AND LDR-8:b
+Pole            tag_
+Podpole     sub_
+Ostatní       spec_
+
+Příklad:
+
+spec_008-815:[1995 TO *] AND spec_LDR-8:b
 "></td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
