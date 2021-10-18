@@ -32,9 +32,6 @@ if (!empty($_POST)) {
 
 	$q_op='q.op=AND';
 
-	$q='q=' . urlencode('*:*');
-	if (!empty($_POST['query'])) { $q='q=' . urlencode($_POST['query']); }
-
 	$fl='fl=id';
 	$select=array();
 	$default=array('query','rows','csv-separator','csv-mv-separator');
@@ -42,6 +39,17 @@ if (!empty($_POST)) {
 		if (!in_array($key, $default)) { array_push($select, $key) ; }
 	}
 	if (!empty($select)) { $fl=$fl . urlencode(',' . implode(',', $select)); }
+
+	$q='q=';
+	if (!empty($_POST['query'])) { $q='q=' . urlencode($_POST['query']); }
+	if (!empty($select)) {
+		foreach($select as $s) {
+			if (strpos($q, $s) == false) {
+				$q.=urlencode(' ' . $s . ':*');
+			}
+		}
+	}
+	if(empty($_POST['query']) and empty($select)) { $q='q=' . urlencode('*:*'); }
 
 	$rows='rows=10';
 	if (!empty($_POST['rows'])) {
@@ -92,7 +100,7 @@ Ostatní       spec_
 
 Příklad:
 
-spec_008-815:[1995 TO *] AND spec_LDR-8:b
+spec_008-815:[1995 TO *] spec_LDR-8:b
 "></td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
