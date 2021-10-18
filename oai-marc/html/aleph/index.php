@@ -56,7 +56,7 @@ if (!empty($_POST)) {
 	//exit();	
 
 	header('Content-type: application/octet-stream; charset=UTF-8');
-	header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d-%H%M%S', time()) . '.csv');
+	header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d%H%M%S', time()) . '.csv');
 
 	$opts = array('http'=>array('method'=>'GET'));
 
