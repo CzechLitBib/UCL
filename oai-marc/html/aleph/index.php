@@ -30,7 +30,8 @@ if (!empty($_POST)) {
 	$csv_mv_separator='csv.mv.separator=' . urlencode('#');
 	if (!empty($_POST['csv-mv-separator'])) { $csv_mv_separator='csv.mv.separator=' . urlencode($_POST['csv-mv-separator']); }
 
-	$q_op='q.op=AND';
+	$q_op='q.op=';
+	$q_op.=$_POST['op'] ? 'OR' : 'AND';
 
 	$fl='fl=id';
 	$select=array();
@@ -101,7 +102,12 @@ Ostatní       spec_
 Příklad:
 
 spec_008-815:[1995 TO *] spec_LDR-8:b
-"></td></tr></table>
+"></td></tr>
+</table>
+<table><tr><td colspan="2">
+<input type="radio" name="op" value="1" checked><label>OR</label>
+<input type="radio" name="op" value="0"><label>AND</label>
+</td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
 <?php
