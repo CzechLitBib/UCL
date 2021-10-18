@@ -5,21 +5,24 @@
 
 import argparse,requests,json,sys
 
-URL='http://localhost:8983/solr/core/schema'
+SCHEMA='http://localhost:8983/solr/core/schema'
+UPDATE='http://localhost:8983/solr/core/update'
 
 # ARGS
 
 parser = argparse.ArgumentParser(description='Solr V2 API tool.')
 required = parser.add_argument_group('API')
-required.add_argument('--add', help='Add fields.', action='store_true')
-required.add_argument('--delete', help='Delete fields.', dest='field')
-required.add_argument('--delete-copy', help='Delete copy fields.', dest='cfield')
-required.add_argument('--list', help='List fields.', action='store_true')
-required.add_argument('--schema', help='List schema.', action='store_true')
+required.add_argument('--add', help='Add fields.', metavar='FIELD')
+required.add_argument('--delete', help='Delete fields.', metavar='FIELD')
+required.add_argument('--delete-copy', help='Delete copy fields.', metavar='FIELD')
+required.add_argument('--delete-all', help='Delete copy fields.', action='store_true')
+required.add_argument('--list', help='List. [fields] [schema]', metavar='TARGET')
 args = parser.parse_args()
 
-if not (args.add or args.field or args.cfield or args.list or args.schema):
+if not (args.add or args.delete or args.delete_copy or args.delete_all or args.list):
 	parser.error('Argument is required.')
+if args.list and args.list not in ('fields', 'schema'):
+	parser.error('Invalid list argument.')
 
 # MAIN
 
@@ -29,58 +32,65 @@ session.headers.update({'Content-type':'application/json'})
 if args.add:# Add Fields
 	field = {'add-field':{'name':'', 'type':''}}# indexed / stored / uninvertible (default true)
 
-	field['add-field']['name'] = '245'
-	field['add-field']['type'] = 'strings'# string | strings (mv)
+	field['add-field']['name'] = args.add
+	field['add-field']['type'] = 'strings'# string
 
-	resp = session.post(URL, data=json.dumps(field))
+	resp = session.post(SCHEMA, data=json.dumps(field))
 
 	if resp and resp.status_code == 200:
 		print("ok")
 	else:
 		print(resp.text)
 
-if args.field:# Delete Fields
+if args.delete:# Delete Fields
 	field = {'delete-field':{'name':''}}
 
-	field['delete-field']['name'] = args.field
+	field['delete-field']['name'] = args.delete
 
-	resp = session.post(URL, data=json.dumps(field))
-
-	if resp and resp.status_code == 200:
-		print("ok")
-	else:
-		print(resp.text)
-
-if args.cfield:# Delete Copy Fields
-	cfield = {'delete-copy-field':{'source':'','dest':''}}
-
-	cfield['delete-copy-field']['source'] = args.cfield
-	cfield['delete-copy-field']['dest'] = args.cfield + '_str'
-
-	resp = session.post(URL, data=json.dumps(cfield))
+	resp = session.post(SCHEMA, data=json.dumps(field))
 
 	if resp and resp.status_code == 200:
 		print("ok")
 	else:
 		print(resp.text)
 
+if args.delete_copy:# Delete Copy Fields
+	field = {'delete-copy-field':{'source':'','dest':''}}
+
+	field['delete-copy-field']['source'] = args.delete_copy
+	field['delete-copy-field']['dest'] = args.delete_copy + '_str'
+
+	resp = session.post(SCHEMA, data=json.dumps(field))
+
+	if resp and resp.status_code == 200:
+		print("ok")
+	else:
+		print(resp.text)
+
+if args.delete_all:# Delete All
+	query ={'delete':{'query':'*:*'}}
+
+	resp = session.post(UPDATE, data=json.dumps(query))
+
+	if resp and resp.status_code == 200:
+		print("ok")
+	else:
+		print(resp.text)
 
 if args.list:# List Fields
-	resp = session.get(URL + '/fields')
-
-	if resp and resp.status_code == 200:
-		data = json.loads(resp.text)
-		for F in data['fields']:
-			print(F['name'])
+	if args.list == 'fields':
+		resp = session.get(SCHEMA + '/fields')
 	else:
-		print(resp.text)
-
-if args.schema:# List Schema
-	resp = session.get(URL)
-
+		resp = session.get(SCHEMA)
+	
 	if resp and resp.status_code == 200:
 		data = json.loads(resp.text)
-		print(data)
+		if args.list == 'fields':
+			for F in data['fields']:
+				print(F['name'])
+		else:
+			print(data)
+			
 	else:
 		print(resp.text)
 

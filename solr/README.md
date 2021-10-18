@@ -38,30 +38,25 @@ systemctl enable solr
 
 wget 'https://github.com/solrmarc/solrmarc/releases/download/3.4/simple_install_package_3.4.zip'
 
-/opt/solrmarc/https:/index.properties:
-
-LDR-8 = 000[7]
-008-710 = 008[7-10]
-100 = 100
-600 = 600
-700 = 700
-964 = 964
-773-t = 773t
-773-9 = 7739
-
 cp import /opt/solrmarc
 
 . /opt/solrmarc/import ucla.xml
 </pre>
 FILE
 <pre>
-          import - Import MARCXML file.
-        index.py - Gen solrmarc mapping.
-  solr-schema.py - Solr schema tool.
-            solr - Solr INIT file.
+       field_all.txt - All fields.
+    field_string.txt - Non-repeatable fields.
+    subfield_add.txt - All subfields.
+subfield_strings.txt - Repeatable subfields.
 
-index.properties - SolrMARC index.
-log4j.properties - SolrMARC Logging.
+              import - Import MARCXML file.
+            index.py - Gen solrmarc mapping.
+           schema.sh - Wrap solr-schema.py.
+      solr-schema.py - Solr schema tool.
+                solr - Solr INIT file.
+
+    index.properties - SolrMARC index.
+    log4j.properties - SolrMARC Logging.
 </pre>
 
 SOURCE
