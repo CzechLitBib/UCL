@@ -53,6 +53,7 @@ if (!empty($_POST)) {
 	$request=$url . '?' . implode('&', $params);
 
 	print($request);
+	exit();	
 
 	//header('Content-type: application/octet-stream; charset=UTF-8');
 	//header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d-%H%M%S', time()) . '.csv');
@@ -71,7 +72,7 @@ if (!empty($_POST)) {
 	//}
 
 	//fclose($fp);
-	exit();
+	//exit();
 }
 
 ?>
@@ -92,7 +93,7 @@ if (!empty($_POST)) {
 <?php
 
 $field = [
-	'Pole' => array('LDR','FMT','001','003','005','008','015','020','022','035','040','041','044','072','080','100','110','111','130',
+	'Pole' => array('LDR','001','003','005','008','015','020','022','035','040','041','044','072','080','100','110','111','130',
 	'245','246','250','260','264','300','336','337','338','490','500','505','506','520','599','600','610','611','630','648','650',
 	'651','653','655','700','710','711','730','773','787','830','856','910','928','961','964','LKR','OWN','CAT','SYS','SIF','STA',
 	'ZAZ','ZAR')
@@ -104,7 +105,7 @@ foreach($field as $name=>$tags) {
 	echo '<tr><td></td></tr><tr>';
 	$cnt=0;
 	foreach($tags as $t) {
-		echo '<td width="100"><input type="checkbox" name="' . $t . '" value="1"><label>' . $t . '</label></td>';
+		echo '<td width="100"><input type="checkbox" name="' . 'tag_' . $t . '" value="1"><label>' . $t . '</label></td>';
 		$cnt++;
 		if ($cnt == 5) {
 			echo '</tr><tr>';
@@ -131,7 +132,7 @@ foreach($subfield as $field=>$subs) {
 	$cnt=0;
 	foreach($subs as $s) {
 		echo '<td width="100"><input type="checkbox" name="'
-			. $field .'-' . $s . '" value="1"><label>'
+			. 'sub_' . $field .'-' . $s . '" value="1"><label>'
 			. $field .'-' . $s . '</label></td>';
 		$cnt++;
 		if ($cnt == 5) {
@@ -149,15 +150,15 @@ echo '<table width="500">';
 echo '<tr><td colspan="5"><b>Ostatní</b></td></tr><tr>';
 echo '<tr><td></td></tr>';
 echo '<tr>
-<td><input type="checkbox" name="LDR-8" value="1"><label>LDR-8</label></td>
-<td><input type="checkbox" name="008-16" value="1"><label>008-16</label></td>
-<td><input type="checkbox" name="008-7" value="1"><label>008-7</label></td>
-<td><input type="checkbox" name="008-810" value="1"><label>008-810</label></td>
-<td><input type="checkbox" name="008-815" value="1"><label>008-815</label></td>
+<td><input type="checkbox" name="spec_LDR-8" value="1"><label>LDR-8</label></td>
+<td><input type="checkbox" name="spec_008-16" value="1"><label>008-16</label></td>
+<td><input type="checkbox" name="spec_008-7" value="1"><label>008-7</label></td>
+<td><input type="checkbox" name="spec_008-810" value="1"><label>008-810</label></td>
+<td><input type="checkbox" name="spec_008-815" value="1"><label>008-815</label></td>
 </tr>';
 echo '<tr>
-<td><input type="checkbox" name="008-1618" value="1"><label>008-1618</label></td>
-<td><input type="checkbox" name="008-3638" value="1"><label>008-3638</label></td>
+<td><input type="checkbox" name="spec_008-1618" value="1"><label>008-1618</label></td>
+<td><input type="checkbox" name="spec_008-3638" value="1"><label>008-3638</label></td>
 </tr>';
 echo '</table>';
 

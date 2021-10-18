@@ -42,21 +42,28 @@ cp import /opt/solrmarc
 
 . /opt/solrmarc/import ucla.xml
 </pre>
+BUG
+<pre>
+FMT - Invalid control field.
+072 - Non-repeatable.
+520 - Non-repeatable.
+</pre>
 FILE
 <pre>
-       field_all.txt - All fields.
-    field_string.txt - Non-repeatable fields.
-    subfield_add.txt - All subfields.
-subfield_strings.txt - Repeatable subfields.
+      field_all.txt - All fields.
+   field_string.txt - Non-repeatable fields.
+   subfield_all.txt - All subfields.
+subfield_string.txt - Non-repeatable subfields.
+    special_all.txt - Special fields.
 
-              import - Import MARCXML file.
-            index.py - Gen solrmarc mapping.
-           schema.sh - Wrap solr-schema.py.
-      solr-schema.py - Solr schema tool.
-                solr - Solr INIT file.
+             import - Import MARCXML file.
+           index.py - Gen solrmarc mapping.
+          schema.sh - Wrap solr-schema.py.
+     solr-schema.py - Solr schema tool.
+               solr - Solr INIT file.
 
-    index.properties - SolrMARC index.
-    log4j.properties - SolrMARC Logging.
+   index.properties - SolrMARC index.
+   log4j.properties - SolrMARC Logging.
 </pre>
 
 SOURCE

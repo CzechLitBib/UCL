@@ -7,40 +7,47 @@ import argparse,requests,json,sys
 
 SCHEMA='http://localhost:8983/solr/core/schema'
 UPDATE='http://localhost:8983/solr/core/update'
+RELOAD='http://localhost:8983/solr/admin/cores?action=RELOAD&core=core'
 
 # ARGS
 
 parser = argparse.ArgumentParser(description='Solr V2 API tool.')
 required = parser.add_argument_group('API')
 required.add_argument('--add', help='Add fields.', metavar='FIELD')
+required.add_argument('--type', help='Field type. [string] [strings]')
 required.add_argument('--delete', help='Delete fields.', metavar='FIELD')
 required.add_argument('--delete-copy', help='Delete copy fields.', metavar='FIELD')
-required.add_argument('--delete-all', help='Delete copy fields.', action='store_true')
+required.add_argument('--delete-all', help='Delete all data.', action='store_true')
+required.add_argument('--reload', help='Reload core.', action='store_true')
 required.add_argument('--list', help='List. [fields] [schema]', metavar='TARGET')
 args = parser.parse_args()
 
-if not (args.add or args.delete or args.delete_copy or args.delete_all or args.list):
+if not (args.add or args.delete or args.delete_copy or args.delete_all or args.reload or args.list):
 	parser.error('Argument is required.')
 if args.list and args.list not in ('fields', 'schema'):
 	parser.error('Invalid list argument.')
+if args.type and args.type not in ('string', 'strings'):
+	parser.error('Invalid type argument.')
+if args.add and not args.type:
+	parser.error('Type argument required.')
 
 # MAIN
 
 session = requests.Session()
 session.headers.update({'Content-type':'application/json'})
 
-if args.add:# Add Fields
+if args.add and args.type:# Add Fields
 	field = {'add-field':{'name':'', 'type':''}}# indexed / stored / uninvertible (default true)
 
 	field['add-field']['name'] = args.add
-	field['add-field']['type'] = 'strings'# string
+	field['add-field']['type'] = args.type
 
 	resp = session.post(SCHEMA, data=json.dumps(field))
 
 	if resp and resp.status_code == 200:
-		print("ok")
+		print('.', end='')
 	else:
-		print(resp.text)
+		print('!', end='')
 
 if args.delete:# Delete Fields
 	field = {'delete-field':{'name':''}}
@@ -50,9 +57,9 @@ if args.delete:# Delete Fields
 	resp = session.post(SCHEMA, data=json.dumps(field))
 
 	if resp and resp.status_code == 200:
-		print("ok")
+		print('.', end='')
 	else:
-		print(resp.text)
+		print('!', end='')
 
 if args.delete_copy:# Delete Copy Fields
 	field = {'delete-copy-field':{'source':'','dest':''}}
@@ -63,9 +70,9 @@ if args.delete_copy:# Delete Copy Fields
 	resp = session.post(SCHEMA, data=json.dumps(field))
 
 	if resp and resp.status_code == 200:
-		print("ok")
+		print('.', end='')
 	else:
-		print(resp.text)
+		print('!', end='')
 
 if args.delete_all:# Delete All
 	query ={'delete':{'query':'*:*'}}
@@ -73,7 +80,7 @@ if args.delete_all:# Delete All
 	resp = session.post(UPDATE, data=json.dumps(query))
 
 	if resp and resp.status_code == 200:
-		print("ok")
+		print('ok')
 	else:
 		print(resp.text)
 
@@ -91,6 +98,13 @@ if args.list:# List Fields
 		else:
 			print(data)
 			
+	else:
+		print(resp.text)
+
+if args.reload:# Reload Core
+	resp = session.get(RELOAD)
+	if resp and resp.status_code == 200:
+		print('ok')
 	else:
 		print(resp.text)
 
