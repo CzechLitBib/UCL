@@ -74,14 +74,13 @@ if (!empty($_POST)) {
 
 	$fp = fopen($request, 'r', false, $context);
 
-	if ($fp) { 
+	if ($fp != false) { 
 		while(!feof($fp)) {
 			$buffer = fread($fp, 2048);
 			print $buffer;
 		}
 	}
-
-	fclose($fp);
+	if ($fp != false) { fclose($fp); }
 	exit();
 }
 
