@@ -35,7 +35,7 @@ if (!empty($_POST)) {
 
 	$fl='fl=id';
 	$select=array();
-	$default=array('query','rows','csv-separator','csv-mv-separator');
+	$default=array('query','op','rows','csv-separator','csv-mv-separator');
 	foreach($_POST as $key=>$val) {
 		if (!in_array($key, $default)) { array_push($select, $key) ; }
 	}
@@ -43,14 +43,15 @@ if (!empty($_POST)) {
 
 	$q='q=';
 	if (!empty($_POST['query'])) { $q='q=' . urlencode($_POST['query']); }
-	if (!empty($select)) {
-		foreach($select as $s) {
-			if (strpos($q, $s) == false) {
-				$q.=urlencode(' ' . $s . ':*');
-			}
-		}
-	}
-	if(empty($_POST['query']) and empty($select)) { $q='q=' . urlencode('*:*'); }
+	//if (!empty($select)) {
+	//	foreach($select as $s) {
+	//		if (strpos($q, $s) == false) {
+	//			$q.=urlencode(' ' . $s . ':*');
+	//		}
+	//	}
+	//}
+	//if(empty($_POST['query']) and empty($select)) { $q='q=' . urlencode('*:*'); }
+	if(empty($_POST['query'])) { $q='q=' . urlencode('*:*'); }
 
 	$rows='rows=10';
 	if (!empty($_POST['rows'])) {
