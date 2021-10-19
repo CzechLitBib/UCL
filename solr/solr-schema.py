@@ -7,7 +7,8 @@ import argparse,requests,json,sys
 
 SCHEMA='http://localhost:8983/solr/core/schema'
 UPDATE='http://localhost:8983/solr/core/update'
-RELOAD='http://localhost:8983/solr/admin/cores?action=RELOAD&core=core'
+RELOAD='http://localhost:8983/solr/admin/cores?action=RELOAD&core='
+STATUS='http://localhost:8983/solr/admin/cores?action=STATUS&core='
 
 # ARGS
 
@@ -18,11 +19,12 @@ required.add_argument('--type', help='Field type. [string] [strings]')
 required.add_argument('--delete', help='Delete fields.', metavar='FIELD')
 required.add_argument('--delete-copy', help='Delete copy fields.', metavar='FIELD')
 required.add_argument('--delete-all', help='Delete all data.', action='store_true')
-required.add_argument('--reload', help='Reload core.', action='store_true')
 required.add_argument('--list', help='List. [fields] [schema]', metavar='TARGET')
+required.add_argument('--reload', help='Reload core.', metavar='CORE')
+required.add_argument('--status', help='Core satus.', metavar='CORE')
 args = parser.parse_args()
 
-if not (args.add or args.delete or args.delete_copy or args.delete_all or args.reload or args.list):
+if not any(vars(args).values()):
 	parser.error('Argument is required.')
 if args.list and args.list not in ('fields', 'schema'):
 	parser.error('Invalid list argument.')
@@ -102,9 +104,20 @@ if args.list:# List Fields
 		print(resp.text)
 
 if args.reload:# Reload Core
-	resp = session.get(RELOAD)
+	resp = session.get(RELOAD + args.reload)
 	if resp and resp.status_code == 200:
 		print('ok')
+	else:
+		print(resp.text)
+
+if args.status:# Core Status
+	resp = session.get(STATUS + args.status)
+	if resp and resp.status_code == 200:
+		curr = json.loads(resp.text)['status']['core']['index']['current']
+		if curr:
+			print('ok')
+		else:
+			print('pending')
 	else:
 		print(resp.text)
 
