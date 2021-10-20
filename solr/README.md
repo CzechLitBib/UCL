@@ -9,6 +9,7 @@ TODO
 -field_ + subfield_ + local_ prefix
 -defailt selection (OR) rule
 -dynamic rules [+]
+-JSON, XML
 </pre>
 INSTALL
 <pre>
