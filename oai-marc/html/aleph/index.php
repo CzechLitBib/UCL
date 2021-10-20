@@ -2,12 +2,12 @@
 
 session_start();
 
+$_SESSION['page'] = 'aleph';
+
 if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	header('Location: /');
 	exit();
 }
-
-$_SESSION['page'] = 'aleph';
 
 if(!isset($_SESSION['aleph'])) { $_SESSION['aleph'] = Null; }
 
@@ -23,19 +23,18 @@ if (!empty($_POST)) {
 
 	$url='http://localhost:8983/solr/core/select';
 
-	$wt='wt=csv';
+	$wt='wt=' . $_POST['wt'];
 
 	$csv_separator='csv.separator=' . urlencode(';');
 	if (!empty($_POST['csv-separator'])) { $csv_separator='csv.separator=' . urlencode($_POST['csv-separator']); }
 	$csv_mv_separator='csv.mv.separator=' . urlencode('#');
 	if (!empty($_POST['csv-mv-separator'])) { $csv_mv_separator='csv.mv.separator=' . urlencode($_POST['csv-mv-separator']); }
 
-	$q_op='q.op=';
-	$q_op.=$_POST['op'] ? 'OR' : 'AND';
+	$q_op='q.op=' . $_POST['op'];
 
 	$fl='fl=id';
 	$select=array();
-	$default=array('query','op','rows','csv-separator','csv-mv-separator');
+	$default=array('query','op','rows','csv-separator','csv-mv-separator','wt');
 	foreach($_POST as $key=>$val) {
 		if (!in_array($key, $default)) { array_push($select, $key) ; }
 	}
@@ -66,7 +65,7 @@ if (!empty($_POST)) {
 	//exit();	
 
 	header('Content-type: application/octet-stream; charset=UTF-8');
-	header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d%H%M%S', time()) . '.csv');
+	header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
 
 	$opts = array('http'=>array('method'=>'GET'));
 
@@ -104,9 +103,9 @@ Příklad:
 spec_008-815:[1995 TO *] spec_LDR-8:b
 "></td></tr>
 </table>
-<table><tr><td colspan="2">
-<input type="radio" name="op" value="1" checked><label>OR</label>
-<input type="radio" name="op" value="0"><label>AND</label>
+<table><tr><td>
+<input type="radio" name="op" value="OR" checked><label>OR</label>
+<input type="radio" name="op" value="AND"><label>AND</label>
 </td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
@@ -190,9 +189,16 @@ echo '<tr><td></td></tr>';
 echo '<tr><td><input type="text" name="rows" size="1" value="10"><label> Počet řádků.</label></td></tr>';
 echo '<tr><td><input type="text" name="csv-separator" size="1" value=";"><label> CSV oddělovač.</label></td></tr>';
 echo '<tr><td><input type="text" name="csv-mv-separator" size="1" value="#"><label> CSV oddělovač opakovatelných hodnot.</label></td></tr>';
+echo '<tr><td></td></tr>';
 echo '</table>';
 
 ?>
+
+<table><tr><td>
+<input type="radio" name="wt" value="csv" checked><label>CSV</label>
+<input type="radio" name="wt" value="json"><label>JSON</label>
+<input type="radio" name="wt" value="xml"><label>XML</label>
+</td></tr></table>
 
 <p></p>
 <table width="500"><tr><td align="middle"><input style="font-size: 14px; padding: 5px 24px;" type="submit" value="Odeslat"></td><td></tr></table>
