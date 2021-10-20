@@ -3,6 +3,13 @@ DESCRIPTION
 
 Solr / MARCSolr.
 
+TODO
+<pre>
+-muti-core
+-field_ + subfield_ + local_ prefix
+-defailt selection (OR) rule
+-dynamic rules [+]
+</pre>
 INSTALL
 <pre>
 # SOLR
