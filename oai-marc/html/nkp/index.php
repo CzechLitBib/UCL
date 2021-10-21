@@ -2,12 +2,18 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or ($_SESSION['group'] !== 'nkp' and $_SESSION['group'] !== 'admin')) {
+$_SESSION['page'] = 'nkp';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
 
-$_SESSION['page'] = 'nkp';
+if(!in_array($_SESSION['group'], array('admin','nkp'))) {
+        $_SESSION['error'] = True;
+        header('Location: /main');
+        exit();
+}
 
 if(!isset($_SESSION['nkp_month'])) { $_SESSION['nkp_month'] = Null; }
 if(!isset($_SESSION['nkp_year'])) { $_SESSION['nkp_year'] = Null; }
@@ -223,6 +229,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 ?>
 
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+<table width='500'><tr><td width="450" align="right"><a href="/main"><img src="/back.png"></a></td></tr></table>
 </div>
 </body>
 </html>

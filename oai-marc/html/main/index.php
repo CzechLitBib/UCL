@@ -3,12 +3,12 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
+$_SESSION['page'] = 'main';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
-
-$_SESSION['page'] = 'main';
 
 ?>
 
@@ -42,6 +42,15 @@ $_SESSION['page'] = 'main';
 <tr><td id="icon"><img src="/link.png"/></td><td id="aleph"><a href="/aleph">Aleph</a></td></tr>
 </table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+<?php
+
+if(!empty($_SESSION['error'])) {
+	echo '<font color="red">Nedostatečné oprávnění.</font>';
+	$_SESSION['error'] = False;
+}
+
+?>
+
 </div>
 </body>
 </html>

@@ -2,12 +2,18 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
+$_SESSION['page'] = 'aktualizace';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
 
-$_SESSION['page'] = 'aktualizace';
+if($_SESSION['group'] !== 'admin') {
+        $_SESSION['error'] = True;
+        header('Location: /main');
+        exit();
+}
 
 ?>
 

@@ -2,12 +2,18 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or !in_array($_SESSION['group'], array('admin','data'))) {
+$_SESSION['page'] = 'form-data';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
 
-$_SESSION['page'] = 'form-data';
+if(!in_array($_SESSION['group'], array('admin','form'))) {
+        $_SESSION['error'] = True;
+        header('Location: /main');
+        exit();
+}
 
 if(!isset($_SESSION['form-data'])) { $_SESSION['form-data'] = Null; }
 
@@ -264,6 +270,7 @@ if (!$db) { $error = 'Chyba databáze.'; }
 </div>
 
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
+<table width='500'><tr><td width="450" align="right"><a href="/main"><img src="/back.png"></a></td></tr></table>
 </div>
 </body>
 </html>

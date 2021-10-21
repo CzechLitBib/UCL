@@ -12,9 +12,12 @@ if (!empty($_SESSION['auth']) and isset($_SESSION['page'])) {
 $_SESSION['auth'] = False;
 $_SESSION['group'] = 'user';
 
-$nkp = ['xxx'];
-$admin = ['xxx'];
-$form = ['xxx'];
+$admin = [];
+$nkp   = [];
+$form  = [];
+$solr  = [];
+
+if (!isset($_SESSION['error'])) { $_SESSION['error'] = False; }
 
 $authorized = False;
 
@@ -53,18 +56,14 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		echo '<font color="red">Přihlášení selhalo.</font>';
 	} else {
 		$_SESSION['auth'] = True;
-		if (in_array($_POST['name'], $admin)) {
-			$_SESSION['group'] =  'admin';
-			$_SESSION['page'] = 'main';
-		}
-		if (in_array($_POST['name'], $nkp)) {
-			$_SESSION['group'] =  'nkp';
-			$_SESSION['page'] = 'nkp';
-		}
-		if (in_array($_POST['name'], $form)) {
-			$_SESSION['group'] =  'data';
-			$_SESSION['page'] = 'form-data';
-		}
+
+		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
+		if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'form'; }
+		if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
+		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
+
+		if(empty($_SESSION['page'])) { $_SESSION['page'] = 'main'; }// default page
+
 		header('Location: ' . $_SESSION['page']);
 		exit();
 	}	

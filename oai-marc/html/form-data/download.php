@@ -2,12 +2,18 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or !in_array($_SESSION['group'], array('admin','data'))) {
+$_SESSION['page'] = 'form-data';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
 
-$_SESSION['page'] = 'form-data';
+if(!in_array($_SESSION['group'], array('admin','form'))) {
+        $_SESSION['error'] = True;
+        header('Location: /main');
+        exit();
+}
 
 if (!isset($_GET['id'])) {
 	header('HTTP/1.0 400 Bad Request', true, 400);

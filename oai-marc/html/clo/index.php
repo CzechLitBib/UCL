@@ -2,12 +2,18 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
+$_SESSION['page'] = 'clo';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
 
-$_SESSION['page'] = 'clo';
+if($_SESSION['group'] !== 'admin') {
+        $_SESSION['error'] = True;
+        header('Location: /main');
+        exit();
+}
 
 ?>
 

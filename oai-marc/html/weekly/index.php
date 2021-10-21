@@ -2,12 +2,18 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
+$_SESSION['page'] = 'weekly';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
 
-$_SESSION['page'] = 'weekly';
+if($_SESSION['group'] !== 'admin') {
+        $_SESSION['error'] = True;
+        header('Location: /main');
+        exit();
+}
 
 if(!isset($_SESSION['weekly'])) { $_SESSION['weekly'] = Null; }
 
