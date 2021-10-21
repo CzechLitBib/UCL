@@ -7,6 +7,7 @@ TODO
 <pre>
 -muti-core
 -field_ + subfield_ + local_ prefix
+-$$ separator
 </pre>
 INSTALL
 <pre>
