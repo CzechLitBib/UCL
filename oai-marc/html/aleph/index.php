@@ -51,12 +51,7 @@ if (!empty($_POST)) {
 	}
 	if (!empty($query)) {
 		$q.=urlencode(implode(' ' . $q_op  . ' ', $query));
-	}#elseif (!empty($select)) {// default select OR
-	#	foreach($select as $s) {
-	#		$q.=urlencode(' ' . $s . ':*');
-	#	}
-	#}
-	if (empty($query) and empty($select)) { $q.=urlencode('*:*'); }// defualt ALL
+	} else { $q.=urlencode('*:*'); }
 	
 	$rows='rows=10';
 	if (!empty($_POST['rows'])) {
@@ -67,7 +62,6 @@ if (!empty($_POST)) {
 
 	$request=$url . '?' . implode('&', $params);
 
-	//print_r($_POST);
 	//print($request);
 	//exit();	
 
