@@ -9,16 +9,6 @@ if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
 	exit();
 }
 
-if(!isset($_SESSION['aleph'])) { $_SESSION['aleph'] = Null; }
-
-// session store + redirect
-#if (!empty($_POST['data'])) {
-#	$_SESSION['daily'] = $_POST['date'];
-#	header("Location: " . $_SERVER['REQUEST_URI']);
-#	exit();
-#}
-//session re-evaluation...
-
 if (!empty($_POST)) {
 
 	$url='http://localhost:8983/solr/core/select';
@@ -34,24 +24,34 @@ if (!empty($_POST)) {
 
 	$fl='fl=id';
 	$select=array();
-	$default=array('query','op','rows','csv-separator','csv-mv-separator','wt');
+	$default=array('op','rows','csv-separator','csv-mv-separator','wt');
 	foreach($_POST as $key=>$val) {
-		if (!in_array($key, $default)) { array_push($select, $key) ; }
+		if (!in_array($key, $default)) {
+			if (strpos($key, 'query') === false) {
+				array_push($select, $key) ;
+			}
+		}	
 	}
 	if (!empty($select)) { $fl=$fl . urlencode(',' . implode(',', $select)); }
 
 	$q='q=';
-	if (!empty($_POST['query'])) { $q='q=' . urlencode($_POST['query']); }
-	//if (!empty($select)) {
-	//	foreach($select as $s) {
-	//		if (strpos($q, $s) == false) {
-	//			$q.=urlencode(' ' . $s . ':*');
-	//		}
-	//	}
-	//}
-	//if(empty($_POST['query']) and empty($select)) { $q='q=' . urlencode('*:*'); }
-	if(empty($_POST['query'])) { $q='q=' . urlencode('*:*'); }
-
+	$query=array();
+	foreach($_POST as $key=>$val) {
+		if (strpos($key, 'query') !== false) {
+			if (!empty($val)) {
+				array_push($query, $val);
+			}
+		}
+	}
+	if (!empty($query)) {
+		$q.=urlencode(implode(' ', $query));
+	}elseif (!empty($select)) {// default select OR
+		foreach($select as $s) {
+			$q.=urlencode(' ' . $s . ':*');
+		}
+	}
+	if (empty($query) and empty($select)) { $q.=urlencode('*:*'); }// defualt ALL
+	
 	$rows='rows=10';
 	if (!empty($_POST['rows'])) {
 		if (intval($_POST['rows']) > 0) { $rows='rows=' . strval(intval($_POST['rows'])); }
@@ -61,6 +61,7 @@ if (!empty($_POST)) {
 
 	$request=$url . '?' . implode('&', $params);
 
+	//print_r($_POST);
 	//print($request);
 	//exit();	
 
@@ -86,22 +87,42 @@ if (!empty($_POST)) {
 ?>
 
 <!DOCTYPE html>
-<html><head><title>Aleph Solr</title><meta charset="utf-8"></head>
+<html><head><title>Aleph Solr</title><meta charset="utf-8">
+<script>
+	function add_query() {
+		var table = document.getElementById('query');
+		var lastRowIndex = table.rows.length-1;
+		var row = table.insertRow(lastRowIndex+1);
+	
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+
+		cell2.style.width="35";
+		cell2.align="center";
+
+		var input = document.createElement("input");
+                input.type = 'text';
+                input.name = 'query' + lastRowIndex;
+		input.value = '';
+		input.style.width= '100%';
+
+		cell1.appendChild(input);
+		cell2.appendChild(button);
+}
+
+</script>
+</head>
 <body bgcolor="lightgrey">
 <div align="center">
 <table><tr><td><img src="/sova.png"/></td><td>Aleph Solr</td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method="post" action="." enctype="multipart/form-data">
-<table width="500"><tr><td width="100"><b>Podmínka:</b></td><td><input type="text" name="query" size="40" value=""></td><td><img src="/form/help.png" title="Prefix:
-
-Pole            tag_
-Podpole     sub_
-Ostatní       spec_
-
-Příklad:
-
-spec_008-815:[1995 TO *] spec_LDR-8:b
-"></td></tr>
+<table id="query" width="500">
+<tr><td width=""><b>Podmínka</b></td></tr>
+<tr>
+<td><input type="text" name="query0" style="width:100%;" value=""></td>
+<td width="35" align="center"><input type="button" onclick="add_query()" value="+"></td>
+</tr>
 </table>
 <table><tr><td>
 <input type="radio" name="op" value="OR" checked><label>OR</label>
