@@ -5,11 +5,9 @@ field_005
 field_008
 field_040
 field_044
-field_110
 field_111
 field_130
 field_245
-field_910
 field_990
 field_994
 field_OWN

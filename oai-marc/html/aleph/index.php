@@ -19,7 +19,7 @@ $error=False;
 
 if (!empty($_POST)) {
 
-	$url='http://localhost:8983/solr/core/select';
+	$url='http://localhost:8983/solr/' . $_POST['index'] . '/select';
 
 	$wt='wt=' . $_POST['wt'];
 
@@ -32,7 +32,7 @@ if (!empty($_POST)) {
 
 	$fl='fl=id';
 	$select=array();
-	$default=array('op','rows','csv-separator','csv-mv-separator','wt');
+	$default=array('index','op','rows','csv-separator','csv-mv-separator','wt');
 	foreach($_POST as $key=>$val) {
 		if (!in_array($key, $default)) {
 			if (strpos($key, 'query') === false) {
@@ -117,6 +117,13 @@ if (!empty($_POST)) {
 <table><tr><td><img src="/sova.png"/></td><td>Aleph Solr</td></tr></table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 <form method="post" action="." enctype="multipart/form-data">
+
+<table><tr><td>
+<input type="radio" name="index" value="core" checked><label>UCLA</label>
+<input type="radio" name="index" value="clo"><label>UCLO</label>
+<input type="radio" name="index" value="uclec"><label>UCLEC</label>
+</td></tr></table>
+
 <table id="query" width="500">
 <tr><td width=""><b>Podmínka</b></td></tr>
 <tr>
@@ -150,7 +157,7 @@ foreach($field as $name=>$tags) {
 	echo '<tr><td></td></tr><tr>';
 	$cnt=0;
 	foreach($tags as $t) {
-		echo '<td width="100"><input type="checkbox" name="' . 'tag_' . $t . '" value="1"><label>' . $t . '</label></td>';
+		echo '<td width="100"><input type="checkbox" name="' . 'field_' . $t . '" value="1"><label>' . $t . '</label></td>';
 		$cnt++;
 		if ($cnt == 5) {
 			echo '</tr><tr>';
@@ -177,7 +184,7 @@ foreach($subfield as $field=>$subs) {
 	$cnt=0;
 	foreach($subs as $s) {
 		echo '<td width="100"><input type="checkbox" name="'
-			. 'sub_' . $field .'-' . $s . '" value="1"><label>'
+			. 'subfield_' . $field .'-' . $s . '" value="1"><label>'
 			. $field .'-' . $s . '</label></td>';
 		$cnt++;
 		if ($cnt == 5) {
@@ -195,15 +202,15 @@ echo '<table width="500">';
 echo '<tr><td colspan="5"><b>Ostatní</b></td></tr><tr>';
 echo '<tr><td></td></tr>';
 echo '<tr>
-<td><input type="checkbox" name="spec_LDR-8" value="1"><label>LDR-8</label></td>
-<td><input type="checkbox" name="spec_008-16" value="1"><label>008-16</label></td>
-<td><input type="checkbox" name="spec_008-7" value="1"><label>008-7</label></td>
-<td><input type="checkbox" name="spec_008-811" value="1"><label>008-811</label></td>
-<td><input type="checkbox" name="spec_008-815" value="1"><label>008-815</label></td>
+<td><input type="checkbox" name="local_LDR-8" value="1"><label>LDR-8</label></td>
+<td><input type="checkbox" name="local_008-16" value="1"><label>008-16</label></td>
+<td><input type="checkbox" name="local_008-7" value="1"><label>008-7</label></td>
+<td><input type="checkbox" name="local_008-811" value="1"><label>008-811</label></td>
+<td><input type="checkbox" name="local_008-815" value="1"><label>008-815</label></td>
 </tr>';
 echo '<tr>
-<td><input type="checkbox" name="spec_008-1618" value="1"><label>008-1618</label></td>
-<td><input type="checkbox" name="spec_008-3638" value="1"><label>008-3638</label></td>
+<td><input type="checkbox" name="local_008-1618" value="1"><label>008-1618</label></td>
+<td><input type="checkbox" name="local_008-3638" value="1"><label>008-3638</label></td>
 </tr>';
 echo '</table>';
 
