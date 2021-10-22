@@ -11,7 +11,7 @@ if(empty($_SESSION['auth'])) {
 
 if(!in_array($_SESSION['group'], array('admin','form','nkp','solr'))) {
 	$_SESSION['error'] = True;
-	header('Location: /main');
+	header('Location: /main/');
 	exit();
 }
 

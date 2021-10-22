@@ -2,12 +2,19 @@
 
 session_start();
 
-if(empty($_SESSION['auth']) or $_SESSION['group'] !== 'admin') {
+$_SESSION['page'] = 'seven';
+
+if(empty($_SESSION['auth'])) {
 	header('Location: /');
 	exit();
 }
 
-$_SESSION['page'] = 'seven';
+if($_SESSION['group'] !== 'admin') {
+	$_SESSION['error'] = True;
+	header('Location: /main/');
+	exit();
+}
+
 
 if(!isset($_SESSION['seven_month'])) { $_SESSION['seven_month'] = Null; }
 if(!isset($_SESSION['seven_year'])) { $_SESSION['seven_year'] = Null; }

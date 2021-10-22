@@ -11,7 +11,7 @@ if(empty($_SESSION['auth'])) {
 
 if($_SESSION['group'] !== 'admin') {
         $_SESSION['error'] = True;
-        header('Location: /main');
+        header('Location: /main/');
         exit();
 }
 
