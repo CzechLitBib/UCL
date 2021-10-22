@@ -60,6 +60,8 @@ SIF - Non-repeatable (CLO).
 260 - Non-repeatable (CLO).
 520 - Non-repeatable.
 910 - Non-repeatable (CLO).
+001232606 - 506 "control field". (CLO)
+LDR - Index out of bounds 2x. (CLO)
 </pre>
 FILE
 <pre>
