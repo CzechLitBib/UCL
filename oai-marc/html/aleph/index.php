@@ -74,8 +74,7 @@ if (!empty($_POST)) {
 	if ($fp != false) {
 	
 		header('Content-type: application/octet-stream; charset=UTF-8');
-		header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
-	
+		header('Content-disposition: attachment;filename=' . $_POST['index'] . '-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
 		while(!feof($fp)) {
 			$buffer = fread($fp, 2048);
 			print $buffer;
@@ -119,7 +118,7 @@ if (!empty($_POST)) {
 <form method="post" action="." enctype="multipart/form-data">
 
 <table><tr><td>
-<input type="radio" name="index" value="core" checked><label>UCLA</label>
+<input type="radio" name="index" value="ucla" checked><label>UCLA</label>
 <input type="radio" name="index" value="clo"><label>UCLO</label>
 <input type="radio" name="index" value="uclec"><label>UCLEC</label>
 </td></tr></table>
