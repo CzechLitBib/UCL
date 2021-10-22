@@ -78,10 +78,10 @@ if args.delete_all:# Delete All
 		print(resp.text)
 
 if args.list:# List Fields
-	if args.list == 'fields':
-		resp = session.get(SOLR + args.list + '/schema/fields')
+	if args.list[1] == 'fields':
+		resp = session.get(SOLR + args.list[0] + '/schema/fields')
 	else:
-		resp = session.get(SOLR + args.list + '/schema')
+		resp = session.get(SOLR + args.list[0] + '/schema')
 	
 	if resp and resp.status_code == 200:
 		data = json.loads(resp.text)
