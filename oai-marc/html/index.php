@@ -62,7 +62,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
 		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
 
-		if(empty($_SESSION['page'])) { $_SESSION['page'] = 'main'; }// default page
+		if(empty($_SESSION['page'])) { $_SESSION['page'] = '/main/'; }// default page
 
 		header('Location: ' . $_SESSION['page']);
 		exit();
