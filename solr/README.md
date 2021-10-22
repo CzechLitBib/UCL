@@ -42,19 +42,26 @@ cp import /opt/solrmarc
 
 . /opt/solrmarc/import ucla.xml
 </pre>
-BUG
+SOLRMARC - BUG
 <pre>
-FMT - Invalid control field.
-SIF - Non-repeatable (CLO).
-041 - Non-repeatable (CLO).
-072 - Non-repeatable.
-100 - Non-repeatable (CLO).
-110 - Non-repeatable (CLO).
-260 - Non-repeatable (CLO).
-520 - Non-repeatable.
-910 - Non-repeatable (CLO).
+      FMT - Invalid control field.
+      SIF - Non-repeatable (CLO).
+      041 - Non-repeatable (CLO).
+      072 - Non-repeatable.
+      100 - Non-repeatable (CLO).
+      110 - Non-repeatable (CLO).
+      260 - Non-repeatable (CLO).
+      520 - Non-repeatable.
+      910 - Non-repeatable (CLO).
 001232606 - 506 "control field". (CLO)
-LDR - Index out of bounds 2x. (CLO)
+      LDR - Index out of bounds 2x. (CLO)
+002190246 - LDR '2 2  nas a 2     4i'
+</pre>
+SOLR - BUG
+<pre>
+CLO ID:
+d168cff7-4010-4d35-a182-e0847cc7ba3d
+e40ff700-b24f-4721-993b-25802f9285bb
 </pre>
 FILE
 <pre>
