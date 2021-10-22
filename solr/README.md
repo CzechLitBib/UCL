@@ -3,13 +3,6 @@ DESCRIPTION
 
 Solr / MARCSolr.
 
-TODO
-<pre>
--muti-core
--field_ + subfield_ + local_ prefix
--$$ separator
--Query error handling.
-</pre>
 INSTALL
 <pre>
 # SOLR
