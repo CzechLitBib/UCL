@@ -52,7 +52,11 @@ cp import /opt/solrmarc
 BUG
 <pre>
 FMT - Invalid control field.
+SIF - Non-repeatable (CLO).
+041 - Non-repeatable (CLO).
 072 - Non-repeatable.
+100 - Non-repeatable (CLO).
+260 - Non-repeatable (CLO).
 520 - Non-repeatable.
 </pre>
 FILE

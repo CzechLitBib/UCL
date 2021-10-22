@@ -47,7 +47,7 @@ if args.delete:# Delete Fields
 
 	field['delete-field']['name'] = args.delete[1]
 
-	resp = session.post(SOLR + argg.delete[0] + '/schema', data=json.dumps(field))
+	resp = session.post(SOLR + args.delete[0] + '/schema', data=json.dumps(field))
 
 	if resp and resp.status_code == 200:
 		print('.', end='')
@@ -70,7 +70,7 @@ if args.delete_copy:# Delete Copy Fields
 if args.delete_all:# Delete All
 	query ={'delete':{'query':'*:*'}}
 
-	resp = session.post(SOLR + args.delete_all[0] + '/update', data=json.dumps(query))
+	resp = session.post(SOLR + args.delete_all + '/update', data=json.dumps(query))
 
 	if resp and resp.status_code == 200:
 		print('ok')
@@ -79,9 +79,9 @@ if args.delete_all:# Delete All
 
 if args.list:# List Fields
 	if args.list == 'fields':
-		resp = session.get(SOLR + args.list[0] + '/schema/fields')
+		resp = session.get(SOLR + args.list + '/schema/fields')
 	else:
-		resp = session.get(SOLR + args.list[0] + '/schema')
+		resp = session.get(SOLR + args.list + '/schema')
 	
 	if resp and resp.status_code == 200:
 		data = json.loads(resp.text)

@@ -30,7 +30,7 @@ with open('field_all.txt') as f:
 			else:
 				print(F + '=' + re.sub('.*_', '', F))
 		else:
-			print(F + '=' + re.sub('.*_', '', F) + ", join('$$')")
+			print(F + '=' + re.sub('.*_', '', F) + ", join($$)")
 
 # SUBFIELD
 REPEAT=[
@@ -46,7 +46,7 @@ REPEAT=[
 with open('subfield_all.txt') as f:
 	for S in  f.read().splitlines():
 		if S in REPEAT:
-			print(S + '=' + re.sub('.*_(.*)(.)$', '\\1\\2\\2', S.replace('-','')) + ", join('$$')")
+			print(S + '=' + re.sub('.*_(.*)(.)$', '\\1\\2\\2', S.replace('-','')) + ", join($$)")
 		else:
 			print(S + '=' + re.sub('.*_', '', S).replace('-',''))
 

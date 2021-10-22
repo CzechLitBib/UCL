@@ -3,12 +3,12 @@
 # Indexing / Import
 #
 
-URL='http://localhost:8983/solr/core/update' 
+URL='http://localhost:8983/solr' 
 SOLRJ='/opt/solr-8.10.0/dist/solrj-lib'
 
-if [ -n "$1" ]; then
-	java -jar solrmarc_core_3.4.jar IndexDriver -config index.properties -solrj "$SOLRJ" -u "$URL" "$1" > import.log 2>&1
+if [ -n "$1" ] && [ -n "$2" ]; then
+	java -jar solrmarc_core_3.4.jar IndexDriver -config index.properties -solrj "$SOLRJ" -u "$URL/$1/update" "$2" > import.log 2>&1
 else
-	echo 'Usage: import [file]'
+	echo 'Usage: import [core] [file]'
 fi
 
