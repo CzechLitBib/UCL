@@ -15,6 +15,8 @@ if(!in_array($_SESSION['group'], array('admin','form','nkp','solr'))) {
 	exit();
 }
 
+$error=False;
+
 if (!empty($_POST)) {
 
 	$url='http://localhost:8983/solr/core/select';
@@ -65,23 +67,22 @@ if (!empty($_POST)) {
 	//print($request);
 	//exit();	
 
-	header('Content-type: application/octet-stream; charset=UTF-8');
-	header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
-
-	$opts = array('http'=>array('method'=>'GET'));
-
-	$context = stream_context_create($opts);
+	$context = stream_context_create(array('http'=>array('method'=>'GET')));
 
 	$fp = fopen($request, 'r', false, $context);
 
-	if ($fp != false) { 
+	if ($fp != false) {
+	
+		header('Content-type: application/octet-stream; charset=UTF-8');
+		header('Content-disposition: attachment;filename=' . 'solr-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
+	
 		while(!feof($fp)) {
 			$buffer = fread($fp, 2048);
 			print $buffer;
 		}
-	}
-	if ($fp != false) { fclose($fp); }
-	exit();
+		fclose($fp);
+		exit();
+	} else { $error=True; }
 }
 
 ?>
@@ -108,8 +109,7 @@ if (!empty($_POST)) {
 
 		cell1.appendChild(input);
 		cell2.appendChild(button);
-}
-
+	}
 </script>
 </head>
 <body bgcolor="lightgrey">
@@ -124,6 +124,11 @@ if (!empty($_POST)) {
 <td width="35" align="center"><input type="button" onclick="add_query()" value="+"></td>
 </tr>
 </table>
+
+<?php
+if($error) { echo '<p><font color="red">Invalid request.</font></p>'; }
+?>
+
 <table><tr><td>
 <input type="radio" name="op" value="OR" checked><label>OR</label>
 <input type="radio" name="op" value="AND"><label>AND</label>
