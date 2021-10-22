@@ -1,7 +1,0 @@
-spec_LDR-8
-spec_008-16
-spec_008-7
-spec_008-811
-spec_008-815
-spec_008-1618
-spec_008-3638

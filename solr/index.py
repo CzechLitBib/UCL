@@ -1,117 +1,62 @@
 #!/usr/bin/python3
+#
+# Get marcsolr mapping
+#
+# BUG: 072,520 -  Non repeat.
+#          FMT - Invalid control field.
+#
+
+import re
+
+# ID
+
+print('id=001, first')
 
 # FIELD
 
-print('LDR=000')
-print('FMT=FMT')
-print('001=001')
-print('003=003')
-print('005=005')
-print('008=008')
-print('015=015')
-print('020=020')
-print('022=022')
-print('035=035')
-print('040=040')
-print('041=041')
-print('044=044')
-print('072=072')
-print('080=080')
-print('100=100')
-print('110=110')
-print('111=111')
-print('130=130')
-print('245=245')
-print('246=246')
-print('250=250')
-print('260=260')
-print('264=264')
-print('300=300')
-print('336=336')
-print('337=337')
-print('338=338')
-print('490=490')
-print('500=500')
-print('505=505')
-print('506=506')
-print('520=520')
-print('599=599')
-print('600=600')
-print('610=610')
-print('611=611')
-print('630=630')
-print('648=648')
-print('650=650')
-print('651=651')
-print('653=653')
-print('655=655')
-print('700=700')
-print('710=710')
-print('711=711')
-print('730=730')
-print('773=773')
-print('787=787')
-print('830=830')
-print('856=856')
-print('910=910')
-print('928=928')
-print('961=961')
-print('964=964')
-print('LKR=LKR')
-print('OWN=OWN')
-print('CAT=CAT')
-print('SYS=SYS')
-print('SIF=SIF')
-print('STA=STA')
-print('ZAZ=ZAZ')
-print('ZAR=ZAR')
+CTRL=[
+	'field_LDR',
+	'field_001',
+	'field_003',
+	'field_005',
+	'field_008'
+]
 
+with open('field_all.txt') as f:
+	for F in  f.read().splitlines():
+		if F in CTRL:
+			if F == 'field_LDR':
+				print(F + '=000')
+			else:
+				print(F + '=' + re.sub('.*_', '', F))
+		else:
+			print(F + '=' + re.sub('.*_', '', F) + ", join('$$')")
 
 # SUBFIELD
-print()
-print('245-a=245a')
-print('245-b=245b')
-print('245-c=245c')
-print('245-n=245nn')
-print('245-p=245pp')
-print()
-print('505-t=505t')
-print('505-r=505r')
-print('505-g=505g')
-print()
-print('773-a=773a')
-print('773-t=773t')
-print('773-n=773n')
-print('773-b=773b')
-print('773-d=773d')
-print('773-h=773h')
-print('773-k=773k')
-print('773-g=773g')
-print('773-q=773qq')
-print('773-z=773zz')
-print('773-y=773y')
-print('773-9=77399')
-print()
-print('787-i=787i')
-print('787-a=787a')
-print('787-t=787t')
-print('787-n=787n')
-print('787-b=787b')
-print('787-d=787d')
-print('787-h=787h')
-print('787-k=787kk')
-print('787-g=787g')
-print('787-z=787zz')
-print('787-y=787y')
-print('787-9=7879')
+REPEAT=[
+	'subfield_245-n',
+	'subfield_245-p',
+	'subfield_773-q',
+	'subfield_773-z',
+	'subfield_773-9',
+	'subfield_787-k',
+	'subfield_787-z'
+]
 
-# SPEC
+with open('subfield_all.txt') as f:
+	for S in  f.read().splitlines():
+		if S in REPEAT:
+			print(S + '=' + re.sub('.*_(.*)(.)$', '\\1\\2\\2', S.replace('-','')) + ", join('$$')")
+		else:
+			print(S + '=' + re.sub('.*_', '', S).replace('-',''))
 
-print()
-print('LDR-8=000[7]')
-print('008-16=008[0-5]')
-print('008-7=008[6]')
-print('008-811=008[7-10]')
-print('008-815=008[7-14]')
-print('008-1618=008[15-17]')
-print('008-3638=008[35-37]')
+# LOCAL
+
+print('local_LDR-8=000[7]')
+print('local_008-16=008[0-5]')
+print('local_008-7=008[6]')
+print('local_008-811=008[7-10]')
+print('local_008-815=008[7-14]')
+print('local_008-1618=008[15-17]')
+print('local_008-3638=008[35-37]')
+
