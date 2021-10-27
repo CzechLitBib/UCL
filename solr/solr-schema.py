@@ -19,7 +19,7 @@ required.add_argument('--delete-copy', help='Delete copy field from core.', narg
 required.add_argument('--delete-all', help='Delete all core data.', metavar='CORE')
 required.add_argument('--list', help='List core [fields|schema].', nargs=2, metavar=('CORE','TARGET'))
 required.add_argument('--reload', help='Reload core.', metavar='CORE')
-required.add_argument('--status', help='Core satus.', metavar='CORE')
+required.add_argument('--status', help='Core status.', metavar='CORE')
 args = parser.parse_args()
 
 if not any(vars(args).values()): parser.error('Argument is required.')
