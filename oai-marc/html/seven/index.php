@@ -121,7 +121,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 			echo "<u>Záznamy založené ve zvoleném datu.</u><br><br>";
 
 			echo "<table width='600' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
+			. "<tr><td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
 			. "<td colspan='5' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
@@ -143,7 +143,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td></td><td align="right">0</td><td></td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
@@ -152,17 +152,17 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					. '<td align="center"><a href="data.php?tag=' . $tag . '&seven=0&new=1">HTML</a></td>'
 					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
+					echo "<td></td><td align='right'>0</td><td></td><td></td><td align='right'>0%</td></tr>";
 				}
 			}
 			echo '</table><br>';
 		
 			echo '<table width="250">';
 			echo '<tr><td align="right">Podpole 7</td><td align="right">'. $seven . '</td>'
-			. '<td align="right">' . round($seven/($seven + $no_seven)*100) . "%</td></tr>\n";
+			. '<td align="right">' . round($seven/($seven + $no_seven)*100) . "%</td></tr>";
 			echo '<tr><td align="right">Bez Podpole 7</td><td align="right">'. $no_seven . '</td>'
-			. '<td align="right">' . round($no_seven/($seven + $no_seven)*100) . "%</td></tr>\n";
-			echo '<tr><td align="right">Celkem</td><td align="right">'. ($seven + $no_seven) . "</td></tr>\n";
+			. '<td align="right">' . round($no_seven/($seven + $no_seven)*100) . "%</td></tr>";
+			echo '<tr><td align="right">Celkem</td><td align="right">'. ($seven + $no_seven) . "</td></tr>";
 			echo '</table>';
 		}
 
@@ -178,7 +178,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 			echo "<u>Záznamy založené před zvoleným datem.</u><br><br>";
 
 			echo "<table width='600' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
+			. "<tr><td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
 			. "<td colspan='5' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
@@ -200,7 +200,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td></td><td align="right">0</td><td></td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.old.csv">CSV</a></td>'
@@ -209,21 +209,21 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					. '<td align="center"><a href="data.php?tag='. $tag . '&seven=0&new=0">HTML</a></td>'
 					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
+					echo "<td></td><td align='right'>0</td><td></td><td></td><td align='right'>0%</td></tr>";
 				}
 			}
 			echo '</table><br>';
 	
 			echo '<table width="250">';
 			echo '<tr><td align="right">Podpole 7</td><td align="right">'. $seven . '</td>'
-			. '<td align="right">' . round($seven/($seven + $no_seven)*100) . "%</td></tr>\n";
+			. '<td align="right">' . round($seven/($seven + $no_seven)*100) . "%</td></tr>";
 			echo '<tr><td align="right">Bez Podpole 7</td><td align="right">'. $no_seven . '</td>'
-			. '<td align="right">' . round($no_seven/($seven + $no_seven)*100) . "%</td></tr>\n";
-			echo '<tr><td align="right">Celkem</td><td align="right">'. ($seven + $no_seven) . "</td></tr>\n";
+			. '<td align="right">' . round($no_seven/($seven + $no_seven)*100) . "%</td></tr>";
+			echo '<tr><td align="right">Celkem</td><td align="right">'. ($seven + $no_seven) . "</td></tr>";
 			echo '</table>';
 		}
 
-		if (empty($new) and empty($old)) { echo "<font color='red'>Žádná data.</font>\n"; }
+		if (empty($new) and empty($old)) { echo "<font color='red'>Žádná data.</font>"; }
 	}
 }
 

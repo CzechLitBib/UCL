@@ -120,7 +120,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 			echo "<u>Záznamy založené ve zvoleném datu.</u><br><br>";
 
 			echo "<table width='600' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
+			. "<tr><td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
 			. "<td colspan='5' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
@@ -142,7 +142,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
@@ -177,8 +177,8 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 			echo "<u>Záznamy založené před zvoleným datem.</u><br><br>";
 
 			echo "<table width='600' style='border-collapse: collapse;' border='1px'>"
-			. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
-			. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
+			. "<tr><td></td><td colspan='5' align='center'><b>Podpole 7</b></td>"
+			. "<td colspan='5' align='center'><b>Bez podpole 7</b></td></tr>";
 			foreach ($tags as $tag)	{
 				$has_seven = 0;
 				$has_no_seven = 0;
@@ -199,7 +199,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.old.csv">CSV</a></td>'
