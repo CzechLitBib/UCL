@@ -119,7 +119,6 @@ if (!empty($_POST)) {
 
 <table><tr><td>
 <input type="radio" name="index" value="ucla" checked><label>UCLA</label>
-<input type="radio" name="index" value="clo"><label>UCLO</label>
 <input type="radio" name="index" value="uclec"><label>UCLEC</label>
 </td></tr></table>
 
@@ -146,8 +145,8 @@ if($error) { echo '<p><font color="red">Invalid request.</font></p>'; }
 $field = [
 	'Pole' => array('LDR','001','003','005','008','015','020','022','035','040','041','044','072','080','100','110','111','130',
 	'245','246','250','260','264','300','336','337','338','490','500','505','506','520','599','600','610','611','630','648','650',
-	'651','653','655','700','710','711','730','773','787','830','856','910','928','961','964','LKR','OWN','CAT','SYS','SIF','STA',
-	'ZAZ','ZAR')
+	'651','653','655','700','710','711','730','773','787','830','856','910','928','961','964','990','LKR','OWN','CAT','SYS','SIF',
+	'STA','ZAZ','ZAR')
 ];
 
 foreach($field as $name=>$tags) {
@@ -170,7 +169,7 @@ foreach($field as $name=>$tags) {
 $subfield = [
 	'245' => array('a','b','c','n','p'),
 	'505' => array('t','r','g'),
-	'773' => array('a','t','n','b','d','h','k','g','q','z','y','9'),
+	'773' => array('a','t','x','n','b','d','h','k','g','q','z','y','9'),
 	'787' => array('i','a','t','n','b','d','h','k','g','z','y','9')
 ];
 

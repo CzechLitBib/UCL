@@ -8,6 +8,7 @@ subfield_505-r
 subfield_505-g
 subfield_773-a
 subfield_773-t
+subfield_773-x
 subfield_773-n
 subfield_773-b
 subfield_773-d
