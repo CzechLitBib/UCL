@@ -142,7 +142,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td align="right"></td><td></td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
@@ -151,7 +151,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 					. '<td align="center"><a href="data.php?tag='. $tag . '&seven=0&new=1">HTML</a></td>'
 					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td align='right'>0</td><td></td><td></td><td align='right'>0%</td></tr>\n";
+					echo "<td></td><td align='right'></td><td></td><td></td><td align='right'>0%</td></tr>\n";
 				}
 			}
 			echo '</table><br>';
@@ -199,7 +199,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 					. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 				} else {
 					echo '<tr><td align="center"><b>'
-					. $tag . '</b></td><td></td><td align="right">0</td><td></td><td></td><td align="right">0%</td>';
+					. $tag . '</b></td><td></td><td align="right"></td><td></td><td></td><td align="right">0%</td>';
 				}
 				if (!empty($has_no_seven)) {
 					echo '<td align="center"><a href="' . $dir . '/' . $tag . '.old.csv">CSV</a></td>'
@@ -208,7 +208,7 @@ if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
 					. '<td align="center"><a href="data.php?tag='. $tag . '&seven=0&new=0">HTML</a></td>'
 					. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 				} else {
-					echo "<td></td><td align='right'>0</td><td></td><td></td><td align='right'>0%</td></tr>\n";
+					echo "<td></td><td align='right'></td><td></td><td></td><td align='right'>0%</td></tr>\n";
 				}
 			}
 			echo '</table><br>';
