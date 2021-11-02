@@ -19,6 +19,7 @@ from lxml.etree import tostring
 # IDENT: 'oai:aleph22.lib.cas.cz:KNA01-IDENT'
 
 URL='https://aleph.lib.cas.cz/OAI'
+ERROR_PAGE='https://vyvoj.ucl.cas.cz/error/#'
 CSV='oai-marc.csv'
 
 COUNTRY_CODE='/usr/local/bin/code/country.txt'
@@ -75,8 +76,11 @@ def notify():
 			html_body=''
 			for aleph in ERROR[sif]:
 				for error in ERROR[sif][aleph]:
-					html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-						aleph + '&local_base=AV">' + aleph + '</a> ' + ' [' + error[0] + '] ' + error[1] + '<br>')
+					html_body+=(
+						'<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+						aleph + '&local_base=AV&format=001">' + aleph + '</a> ' + ' [<a target="_blank" href="' +
+						ERROR_PAGE + error[0] + '">' + error[0] + '</a>] ' + error[1] + '<br>'
+					)
 			msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
 			msg['Subject'] = 'Kontrolní zpráva'
 			msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
