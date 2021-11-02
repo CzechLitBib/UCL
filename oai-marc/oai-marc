@@ -301,7 +301,7 @@ for record in records:
 				if F['4'] != 'N':
 					write_error(header.identifier(), '856', SIF, '012', 'Chybná hodnota v podpoli 856-4.')
 			if 'y' in F:
-				if F['y'] not in ('online', 'Webarchiv', 'Obsah knihy', 'DOI'):
+				if F['y'] not in ('online', 'Webarchiv', 'Obsah knihy', 'DOI', 'digitalizovaný dokument', 'Digitální archiv časopisů'):
 					write_error(header.identifier(), '856', SIF, '013', 'Chybná hodnota v podpoli 856y.')
 
 		# TEST SUBFIELD ------------------
