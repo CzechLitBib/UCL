@@ -1184,10 +1184,17 @@ for record in records:
 		# 110-4
 		if '110' in metadata and '4' not in metadata['110']:
 			write_error(header.identifier(), '110', SIF, '180', "Pole 110 neobsahuje žádné podpole '4'.")
-		# 773 semi-colon
+		# 773g semi-colon
 		for F in metadata.get_fields('773'):
 			if 'g' in F and ';' in F['g']:
-				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) or len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('9')):
+				PASS=False
+				G = len(re.findall(';', F['g']))
+				Q = len(F.get_subfields('q'))
+				N = len(F.get_subfields('9'))
+				if 't' in F and 'online' in F['t']:
+					if G + 1 != N: PASS=True
+				elif G + 1 != Q or G + 1 != N: PASS=True
+				if PASS:	
 					write_error(header.identifier(), '773', SIF, '181', 'Neplatný počet středníků v podpoli 773g.')
 		# 773q 773-9 match 
 		for F in metadata.get_fields('773'):
