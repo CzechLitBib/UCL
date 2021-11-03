@@ -119,6 +119,7 @@ if (!empty($_POST)) {
 
 <table><tr><td>
 <input type="radio" name="index" value="ucla" checked><label>UCLA</label>
+<input type="radio" name="index" value="uclo"><label>UCLO</label>
 <input type="radio" name="index" value="uclec"><label>UCLEC</label>
 </td></tr></table>
 
@@ -131,7 +132,7 @@ if (!empty($_POST)) {
 </table>
 
 <?php
-if($error) { echo '<p><font color="red">Invalid request.</font></p>'; }
+if($error) { echo '<p><font color="red">Neplatný dotaz.</font></p>'; }
 ?>
 
 <table><tr><td>
