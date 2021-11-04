@@ -54,7 +54,7 @@ $seven = 0;
 if (!empty($tags)) {
 	echo '<p><u>Poslední záznam</u>: 27.11.2020</p>';
 	echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
-	. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
+	. "<tr><td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
 	. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
 	foreach ($tags as $tag)	{
 
@@ -77,7 +77,7 @@ if (!empty($tags)) {
 			. '<td align="right">' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
 		} else {
 			echo '<tr><td align="center"><b>'
-			. $tag . '</b></td><td></td><td align="right">0</td><td></td><td align="right">0%</td>';
+			. $tag . '</b></td><td></td><td></td><td></td><td align="right">0%</td>';
 		}
 		if (!empty($has_no_seven)) {
 			echo '<td align="center"><a href="' . $dir . '/' . $tag . '.csv">CSV</a></td>'
@@ -85,7 +85,7 @@ if (!empty($tags)) {
 			. '<td align="center"><a href="' . $dir . '/' . $tag . '.stat.csv">STAT</a></td>'
 			. '<td align="right">' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
 		} else {
-			echo "<td></td><td align='right'>0</td><td></td><td align='right'>0%</td></tr>\n";
+			echo "<td></td><td></td><td></td><td align='right'>0%</td></tr>\n";
 		}
 	}
 	echo '</table><br>';
