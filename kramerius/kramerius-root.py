@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 #
-# kramerius5.nkp.cz
-# digitalniknihovna.cz/mzk
-# kramerius.lib.cas.cz
-#
 # https://registr.digitalniknihovna.cz/
 #
 # 0009-0468 Česká literatura
@@ -32,34 +28,15 @@
 
 import requests,json,time,sys
 
-#print(json.dumps(resp, indent=4))
+ROOT={}
 
-KRAMERIUS,ISSN,ROOT=[],[],{}
+with open('root.txt', 'r') as f: ROOTS = json.loads(f.read())
 
-with open('issn.txt', 'r') as f: ISSN = f.read().splitlines()
-with open('kramerius.txt', 'r') as f: KRAMERIUS = f.read().splitlines()
-
-# PRE-SEARCH
-for I in ISSN:
-#for I in ['0009-0468']:
-	if '#' in I: continue# TODO: split milti-issn
-	for K in KRAMERIUS:
-		session = requests.Session()
-		try:
-			req = session.get(K + 'api/v5.0/search?q=issn:' + I + '&wt=json')
-			if req.status_code == 200:
-				resp = json.loads(req.text)
-				if resp['response']['numFound'] > 0:
-					for doc in resp['response']['docs']:
-						if doc['dostupnost'] == 'public':
-							if I not in ROOT: ROOT[I]={}
-							if K not in ROOT[I]: ROOT[I][K]=[]
-							if doc['root_pid'] not in ROOT[I][K]:
-								ROOT[I][K].append(doc['root_pid'])
-		except:
-			pass# SSL error.
-
-with open('root.txt', 'w') as f: f.write(json.dumps(ROOT))
+for ISSN in ROOTS:
+	print(ISSN)
+	#for URL in ROOTS[ISSN]:
+	#	for ROOT in ROOTS[ISSN][URL]:
+	#		print(ISSN + ' -> ' + URL + ' -> ' + ROOT)
 
 sys.exit(1)
 
