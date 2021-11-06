@@ -2,6 +2,8 @@
 #
 # https://registr.digitalniknihovna.cz/
 #
+# Seach ISSN root over digital registry.
+#
 
 import requests,json
 
@@ -14,14 +16,14 @@ for K in KRAMERIUS:
 	print(K + '.. ')
 	session = requests.Session()
 	for I in ISSN:
-		if '#' in I: continue# TODO: split milti-issn
+		if '#' in I: continue# TODO: split multi-issn
 		try:
-			req = session.get(K + 'api/v5.0/search?q=issn:' + I + '&wt=json')
+			req = session.get(K + 'api/v5.0/search?q=issn:' + I + '&wt=json')# Solr
 			if req.status_code == 200:
 				resp = json.loads(req.text)
 				if resp['response']['numFound'] > 0:
 					for doc in resp['response']['docs']:
-						if doc['dostupnost'] == 'public':
+						if doc['dostupnost'] == 'public':# Public
 							if I not in ROOT: ROOT[I]={}
 							if K not in ROOT[I]: ROOT[I][K]=[]
 							if doc['root_pid'] not in ROOT[I][K]:
