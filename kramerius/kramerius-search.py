@@ -33,5 +33,5 @@ for K in KRAMERIUS:
 	session.close()
 	print('Done.')
 
-with open('root.txt', 'w') as f: f.write(json.dumps(ROOT))
+with open('root.json', 'w') as f: f.write(json.dumps(ROOT))
 
