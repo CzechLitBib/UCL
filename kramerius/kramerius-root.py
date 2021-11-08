@@ -2,7 +2,8 @@
 #
 # Download complete UUID structure.
 #
-# [ {issn: 'url'} ],
+# TODO: skip DUP root
+#
 # [ {
 #     'volume_year' : volume_year,
 #     'volume_number' : volume_number,
@@ -35,7 +36,7 @@ for I in ROOT:
 	for K in ROOT[I]:
 		if K not in MAP[I]: MAP[I][K]={}# update MAP
 		for R in ROOT[I][K]:
-	
+			DATA=[]
 			FILE = str(uuid.uuid4()) + '.json'
 			MAP[I][K][R]=FILE# update MAP
 			
@@ -57,7 +58,6 @@ for I in ROOT:
 							'volume_pid':volume_pid,
 							'issue':[]
 					})
-					#print('volume: ' + volume_year)
 					req = session.get(K + 'api/v5.0/item/' + volume_pid + '/children')
 					if req.status_code == 200:
 						# ISSUE
@@ -70,7 +70,6 @@ for I in ROOT:
 								'issue_pid':issue_pid,
 								'page':{}
 							})
-							#print('   issue: ' + issue_date)
 							req = session.get(K + 'api/v5.0/item/' + issue_pid + '/children')
 							if req.status_code == 200:
 								# PAGE
@@ -78,7 +77,6 @@ for I in ROOT:
 									page_name = page['title']
 									page_pid = page['pid']
 									DATA[VOLUME_INDEX]['issue'][ISSUE_INDEX]['page'][page_name] = page_pid
-									#print('         page: ' + page_name)
 							# update indexes
 							ISSUE_INDEX+=1
 					# update /reset indexes
