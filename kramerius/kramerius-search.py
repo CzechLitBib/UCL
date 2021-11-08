@@ -2,6 +2,8 @@
 #
 # https://registr.digitalniknihovna.cz/
 #
+# TODO: Fix SSL error.
+#
 # Seach ISSN root over digital registry.
 #
 

@@ -3,6 +3,7 @@
 # Download complete UUID structure.
 #
 # TODO: skip DUP root
+# TODO: fix struct
 #
 # [ {
 #     'volume_year' : volume_year,
