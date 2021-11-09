@@ -25,18 +25,60 @@
 # ]
 #
 
-import requests,json,uuid
+import requests,json,uuid,sys
 
 ROOT={}
 MAP={}
 
 with open('root.json', 'r') as f: ROOT = json.loads(f.read())
 
+# ANALYZE STRUCT
+for I in ROOT:
+	for K in ROOT[I]:
+		session = requests.Session()
+		for R in ROOT[I][K]:
+			req = session.get(K + 'api/v5.0/item/' + R + '/children')
+			if req.status_code == 200:
+				print(I + ' -> ' + K + ' -> ' + R)
+				PASS=True
+				# HAS VOLUME
+				raw = json.loads(req.text, strict=False)
+				data = json.loads(req.text, strict=False)[:1]
+				if data:
+					if data[0]['model'] == 'periodicalvolume':
+						if not 'details' in data[0]:
+							print("No detail.")
+							PASS=False
+						else:
+							if not 'year' in data[0]['details']:
+								print("No volume year.")
+								PASS=False
+							#if not 'volumeNumber' in data[0]['details']:
+							#	print("No volume number.")
+							#	PASS=False
+					else:
+						print(data[0])
+						print("Not volume: " + data[0]['model'])
+					if not 'pid' in data[0] or 'volume_pid' in data[0]:
+						print("No volume PID.")
+						PASS=False
+					if not PASS:
+						print(data[0])
+						input("Press Enter to continue...")
+				else:
+					print("No data.")
+sys.exit(1)
+
+# HARVEST
 for I in ROOT:
 	if I not in MAP: MAP[I]={}# update MAP
 	for K in ROOT[I]:
 		if K not in MAP[I]: MAP[I][K]={}# update MAP
+
+		session = requests.Session()
+
 		for R in ROOT[I][K]:
+		
 			DATA=[]
 			FILE = str(uuid.uuid4()) + '.json'
 			MAP[I][K][R]=FILE# update MAP
@@ -44,9 +86,8 @@ for I in ROOT:
 			VOLUME_INDEX=0
 			ISSUE_INDEX=0
 
-			session = requests.Session()
-
 			req = session.get(K + 'api/v5.0/item/' + R + '/children')
+		
 			if req.status_code == 200:
 				# VOLUUME
 				for volume in json.loads(req.text, strict=False):
@@ -83,9 +124,10 @@ for I in ROOT:
 					# update /reset indexes
 					VOLUME_INDEX+=1
 					ISSUE_INDEX=0
-					#time.sleep(1)
-
+			# write ISSN
 			with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
+		# close session
+		session.close()
 
 with open('map.json', 'w') as f: f.write(json.dumps(MAP))
 
