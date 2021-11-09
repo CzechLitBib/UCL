@@ -2,9 +2,6 @@
 #
 # Download complete UUID structure.
 #
-# TODO: skip DUP root
-# TODO: fix struct
-#
 # [ {
 #     'volume_year' : volume_year,
 #     'volume_number' : volume_number,
@@ -32,44 +29,6 @@ MAP={}
 
 with open('root.json', 'r') as f: ROOT = json.loads(f.read())
 
-# ANALYZE STRUCT
-for I in ROOT:
-	for K in ROOT[I]:
-		session = requests.Session()
-		for R in ROOT[I][K]:
-			req = session.get(K + 'api/v5.0/item/' + R + '/children')
-			if req.status_code == 200:
-				print(I + ' -> ' + K + ' -> ' + R)
-				PASS=True
-				# HAS VOLUME
-				raw = json.loads(req.text, strict=False)
-				data = json.loads(req.text, strict=False)[:1]
-				if data:
-					if data[0]['model'] == 'periodicalvolume':
-						if not 'details' in data[0]:
-							print("No detail.")
-							PASS=False
-						else:
-							if not 'year' in data[0]['details']:
-								print("No volume year.")
-								PASS=False
-							#if not 'volumeNumber' in data[0]['details']:
-							#	print("No volume number.")
-							#	PASS=False
-					else:
-						print(data[0])
-						print("Not volume: " + data[0]['model'])
-					if not 'pid' in data[0] or 'volume_pid' in data[0]:
-						print("No volume PID.")
-						PASS=False
-					if not PASS:
-						print(data[0])
-						input("Press Enter to continue...")
-				else:
-					print("No data.")
-sys.exit(1)
-
-# HARVEST
 for I in ROOT:
 	if I not in MAP: MAP[I]={}# update MAP
 	for K in ROOT[I]:
@@ -89,10 +48,12 @@ for I in ROOT:
 			req = session.get(K + 'api/v5.0/item/' + R + '/children')
 		
 			if req.status_code == 200:
-				# VOLUUME
+				# VOLUME
 				for volume in json.loads(req.text, strict=False):
+					if volume['model'] != 'periodicalvolume': continue#  skip no volume
 					volume_year = volume['details']['year']
-					volume_number = volume['details']['volumeNumber']
+					volume_number=''
+					if 'volumeNumber' in volume['details']: volume_number = volume['details']['volumeNumber']
 					volume_pid = volume['pid']
 					DATA.append({
 							'volume_year':volume_year,
@@ -104,7 +65,7 @@ for I in ROOT:
 					if req.status_code == 200:
 						# ISSUE
 						for issue in json.loads(req.text, strict=False):
-							if issue['model'] != 'periodicalitem': continue# skip index listing page
+							if issue['model'] != 'periodicalitem': continue# skip no issue
 							issue_date = issue['details']['date']
 							issue_pid = issue['pid']
 							DATA[VOLUME_INDEX]['issue'].append({
@@ -114,8 +75,9 @@ for I in ROOT:
 							})
 							req = session.get(K + 'api/v5.0/item/' + issue_pid + '/children')
 							if req.status_code == 200:
-								# PAGE
+								# PAGE / ARTICLE
 								for page in json.loads(req.text, strict=False):
+									if page['model'] not in ['page', 'artice']: continue# skip no p/a
 									page_name = page['title']
 									page_pid = page['pid']
 									DATA[VOLUME_INDEX]['issue'][ISSUE_INDEX]['page'][page_name] = page_pid
