@@ -2,7 +2,7 @@
 #
 # https://registr.digitalniknihovna.cz/
 #
-# Seach ISSN root over digital registry.
+# Search ISSN root over digital registry.
 #
 
 import requests,json

@@ -3,12 +3,11 @@
 # Kramerius UUID to Aleph 856 linker
 #
 
-import json,sys,re
+import json,re
 
-IN='ucla.csv'
-OUT='ucla.aleph'
-
+IN='in.json'
 MAP='map.json'
+OUT='ucla.aleph'
 
 def parse_Q(sysno,issn,q):
 
@@ -54,24 +53,27 @@ def parse_G(sysno,issn,g):
 
 with open(MAP, 'r') as f: MAP = json.loads(f.read())
 
-aleph = open(OUT,'w')
-
-TOTAL=0
-MATCH=0
+aleph = open(OUT, 'w')
 
 with open(IN,'r') as f:
-	for line in f:
-		data = line.split('$')
-		if line[5] in MAP:# issn
-			buff=''
-			# prase Q
-			if re.match('q\d+:(\d+|\d+\/\d+)<\d+', data[3]):
-				buff = parse_Q(data[0], data[5], data[3])
-			# prase G
-			elif re.match('^g[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), \D+, s\. (\d+|\d+-\d+|\d+\/\d+)$', data[4]):
-			#elif re.match('^g[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), \d+\. \d+\., s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
-				buff = parse_G(data[0], data[5], data[3])
+	for rec in json.loads(f)['response']['docs']:
+
+	 	ID = rec['id'] 
+		ISSN = rec['subfield_773-x'][0] 
+		G = rec['subfield_773-g'][0] 
+		Q = rec['subfield_773-q'][0] 
+		DATA=''
+
+		if ISSN in MAP:
+			if re.match('\d+:(\d+|\d+\/\d+)<\d+', Q):
+				DATA = parse_Q( ID, ISSN, Q)
+			elif re.match('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), \D+, s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
+				DATA = parse_Q( ID, ISSN, G)
 			
-			if buff: aleph.write(buff + '\n')
+			if DATA:
+				aleph.write(DATA + '\n')
+		
+			#elif re.match('^g[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), \d+\. \d+\., s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
+
 aleph.close()
 

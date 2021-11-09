@@ -22,7 +22,7 @@
 # ]
 #
 
-import requests,json,uuid,sys
+import requests,json,uuid
 
 ROOT={}
 MAP={}
@@ -95,7 +95,7 @@ for I in ROOT:
 					VOLUME_INDEX+=1
 					ISSUE_INDEX=0
 			# write ISSN
-			with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
+			if DATA: with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
 			print(FILE + 'Done.')
 		# close session
 		session.close()
