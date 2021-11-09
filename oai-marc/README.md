@@ -58,13 +58,6 @@ use_locks	0
 
 https://xxx/public.php/webdav/ /home/xxx davfs rw,user 0 0
 
-# NGINX
-
-apt-get install nginx php7.3 php7.3-fpm php7.3-cli php7-gd php7-ldap php7-json php7.3-sqlite3
-
-mkdir -p /var/www/html/.well-known/acme-challenge
-chown -R www-data:www-data /var/www/html/.well-known
-
 # MARC
 
 field.patch
@@ -74,16 +67,6 @@ field.patch
 apt-get install python3-lxml python3-six
 
 pyoai.patch
-
-# API
-
-apt-get install python3-flask python3-flask-restful
-
-cp api /usr/locail/bin
-ln -s /usr/local/bin/api/vufind-update /usr/local/bin/vufind-update
-cp /usr/local/bin/api/vufind-api.service /etc/systemd/system/
-
-systemctl enable vufind-api.service
 
 # CRON
 
@@ -120,9 +103,7 @@ FILE
      recenze.txt - Data file oai-recenze.
          kat.txt - Aleph editor SIF.
 
-            api/ - Flask REST API.
            cron/ - Cron scheduling.
-           html/ - PHP7 Website.
             xml/ - XML file parsing.
 </pre>
 SOURCE

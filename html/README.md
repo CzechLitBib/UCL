@@ -1,3 +1,14 @@
+DESCRIPTION
+
+PHP7 frontend.
+
+INSTALL
+<pre>
+apt-get install nginx php7.3 php7.3-fpm php7.3-cli php7-gd php7-ldap php7-json php7.3-sqlite3
+
+mkdir -p /var/www/html/.well-known/acme-challenge
+chown -R www-data:www-data /var/www/html/.well-known
+</pre>
 PHP
 <pre>
 /etc/php/7.3/fpm/php.ini:

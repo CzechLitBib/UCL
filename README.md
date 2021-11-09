@@ -12,12 +12,13 @@ TODO
 
 FILE
 <pre>
-    aleph/ - Generate records for Aleph.
-graveyard/ - Inactive project.
+      api/ - Vufind REST API.
+graveyard/ - Inactive.
+     html/ - PHP7 frontend.
 json-marc/ - Custom JSON to MARCXML convertor.
      koha/ - Koha server.
-kramerius/ - Kramerius UID harvester.
- oai-marc/ - OAI-PMH 2.0 MARCXML record tools.
+kramerius/ - Kramerius toolkit..
+ oai-marc/ - OAI-PMH 2.0 MARCXML toolkit.
      solr/ - Solr server.
    vufind/ - Vufind server.
 </pre>
