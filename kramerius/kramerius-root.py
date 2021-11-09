@@ -77,7 +77,7 @@ for I in ROOT:
 							if req.status_code == 200:
 								# PAGE / ARTICLE
 								for page in json.loads(req.text, strict=False):
-									if page['model'] not in ['page', 'artice']: continue# skip no p/a
+									if page['model'] not in ['page', 'article']: continue# skip no p/a
 									page_name = page['title']
 									page_pid = page['pid']
 									DATA[VOLUME_INDEX]['issue'][ISSUE_INDEX]['page'][page_name] = page_pid
