@@ -44,9 +44,11 @@ for I in ROOT:
 			
 			VOLUME_INDEX=0
 			ISSUE_INDEX=0
-
-			req = session.get(K + 'api/v5.0/item/' + R + '/children')
 		
+			try: req = session.get(K + 'api/v5.0/item/' + R + '/children')
+			except:
+				print('Connection error.')
+				continue
 			if req.status_code == 200:
 				# VOLUME
 				for volume in json.loads(req.text, strict=False):
@@ -61,7 +63,10 @@ for I in ROOT:
 							'volume_pid':volume_pid,
 							'issue':[]
 					})
-					req = session.get(K + 'api/v5.0/item/' + volume_pid + '/children')
+					try: req = session.get(K + 'api/v5.0/item/' + volume_pid + '/children')
+					except:
+						print('Connection error.')
+						continue
 					if req.status_code == 200:
 						# ISSUE
 						for issue in json.loads(req.text, strict=False):
@@ -73,7 +78,10 @@ for I in ROOT:
 								'issue_pid':issue_pid,
 								'page':{}
 							})
-							req = session.get(K + 'api/v5.0/item/' + issue_pid + '/children')
+							try: req = session.get(K + 'api/v5.0/item/' + issue_pid + '/children')
+							except:
+								print('Connection error.')
+								continue
 							if req.status_code == 200:
 								# PAGE / ARTICLE
 								for page in json.loads(req.text, strict=False):
@@ -88,6 +96,7 @@ for I in ROOT:
 					ISSUE_INDEX=0
 			# write ISSN
 			with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
+			print(FILE + 'Done.')
 		# close session
 		session.close()
 
