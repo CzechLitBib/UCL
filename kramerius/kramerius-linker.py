@@ -9,14 +9,10 @@ IN='in.json'
 MAP='map.json'
 OUT='ucla.aleph'
 
-def parse_Q(sysno,issn,q):
+ALL=0
+MATCH=0
 
-	# REGEXP MAP BY ISSN
-	year = re.sub('^g[Rr]oč\. \d+, (\d+), .*$', '\\1', g).strip()
-	page = re.sub('q\d+:(\d+|\d+\/\d+)<(\d+)', '\\2', q).strip()
-
-	# ....
-	# ....
+def linker(ID,ISSN,Y,R,C,S):
 
 	# COMPARATOR BY MAP
 
@@ -25,55 +21,49 @@ def parse_Q(sysno,issn,q):
 			for issue in range(0, len(db[volume]['issue'])):
 				for page in db[volume]['issue'][issue]['page']:
 					if page == S:
-						url = MAP[issn].. + db[volume]['issue'][issue]['page'][page]
+						url = MAP[issn] + db[volume]['issue'] + [issue]['page'][page]
 						return sysno + ' 85641 L $$u' + url + u'$$yKramerius' + '$$4N'
 	return ''
 
-def parse_G(sysno,issn,g):
 
-	# REGEXP MAP BY ISSN
-	year = re.sub('^g[Rr]oč\. \d+, (\d+), .*$', '\\1', g).strip()
-	page = re.sub('^.*, s\. (\d+|\d+-\d+|\d+\/\d+)$', '\\1', g).split('-')[0].split('/')[0].strip()
-
-	# ....
-	# ....
-
-	# COMPARATOR BY MAP
-
-	for volume in range(0, len (db)):
-		if Y == db[volume]['volume_year'] and int(Y) < 2011:
-			for issue in range(0, len(db[volume]['issue'])):
-				for page in db[volume]['issue'][issue]['page']:
-					if page == S:
-						url = MAP[issn] + db[volume]['issue'][issue]['page'][page]
-						 return sysno + ' 85641 L $$u' + URL + u'$$yKramerius' + '$$4N'
-	return ''
-
-# MAIN
 
 with open(MAP, 'r') as f: MAP = json.loads(f.read())
+with open(IN,'r') as f: data = json.loads(f.read())
 
-aleph = open(OUT, 'w')
+#aleph = open(OUT, 'w')
 
-with open(IN,'r') as f:
-	for rec in json.loads(f)['response']['docs']:
+for rec in data['response']['docs']:
+	
+	ID,G,Q = rec['id'],'',''
 
-	 	ID = rec['id'] 
-		ISSN = rec['subfield_773-x'][0] 
-		G = rec['subfield_773-g'][0] 
-		Q = rec['subfield_773-q'][0] 
-		DATA=''
+	ISSN = rec['subfield_773-x'][0] 
 
-		if ISSN in MAP:
-			if re.match('\d+:(\d+|\d+\/\d+)<\d+', Q):
-				DATA = parse_Q( ID, ISSN, Q)
-			elif re.match('^[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), \D+, s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
-				DATA = parse_Q( ID, ISSN, G)
-			
-			if DATA:
-				aleph.write(DATA + '\n')
+	if ISSN not in MAP: continue
+	
+	if 'subfield_773-g' in rec: G = rec['subfield_773-g'][0] 
+	if 'subfield_773-q' in rec: Q = rec['subfield_773-q'][0] 
+
+	Y,R,C,S = '','','',''# year, volume, issue, page
+
+	if Q and re.match('^\d+:(\d+|\d+\/\d+)<\d+$', Q):
+		R = re.sub('(\d+):(\d+|\d+\/\d+)<(\d+)', '\\1',Q)
+		C = re.sub('(\d+):(\d+|\d+\/\d+)<(\d+)', '\\2',Q)
+		S = re.sub('(\d+):(\d+|\d+\/\d+)<(\d+)', '\\3',Q)
+	elif Q and re.match('^\d+:(\d+|\d+\/\d+)$', Q):
+		R = re.sub('(\d+):(\d+|\d+\/\d+)', '\\1',Q)
+		C = re.sub('(\d+):(\d+|\d+\/\d+)', '\\2',Q)
+	if G and not re.match('^Roč\. \d+, \d+, č\. (\d+|\d+\/\d+), \d+\. \d+\., s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
+		Y = re.sub('^Roč\. \d+, (\d+),.*', '\\1', G)
+
+	if Y and R and C and S:
 		
-			#elif re.match('^g[Rr]oč\. \d+, \d+, č\. (\d+|\d+\/\d+), \d+\. \d+\., s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
+		#MATCH+=1
+	elif Y and R and C:
+		#MATCH+=1
+	#ALL+=1
 
-aleph.close()
+#print(MATCH)
+#print(ALL)
+
+#aleph.close()
 
