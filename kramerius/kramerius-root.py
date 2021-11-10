@@ -10,6 +10,7 @@
 #                  {
 #                    'issue_date' : issue_date
 #                    'issue_pid' : issue_pid
+#                    'issue_number' : issue_number
 #	             'page' : {
 #                                page_name : page_pid
 #                                ......
@@ -73,9 +74,11 @@ for I in ROOT:
 							if issue['model'] != 'periodicalitem': continue# skip no issue
 							issue_date = issue['details']['date']
 							issue_pid = issue['pid']
+							issue_number = issue['details']['partNumber']
 							DATA[VOLUME_INDEX]['issue'].append({
 								'issue_date':issue_date,
 								'issue_pid':issue_pid,
+								'issue_number':issue_number,
 								'page':{}
 							})
 							try: req = session.get(K + 'api/v5.0/item/' + issue_pid + '/children')
@@ -95,7 +98,8 @@ for I in ROOT:
 					VOLUME_INDEX+=1
 					ISSUE_INDEX=0
 			# write ISSN
-			if DATA: with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
+			if DATA:
+				with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
 			print(FILE + 'Done.')
 		# close session
 		session.close()

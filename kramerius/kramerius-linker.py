@@ -2,30 +2,52 @@
 #
 # Kramerius UUID to Aleph 856 linker
 #
+# [ {
+#     'volume_year' : volume_year,
+#     'volume_number' : volume_number,
+#     'volume_pid' : volume_pid,
+#     'issue' : [
+#                  {
+#                    'issue_date' : issue_date
+#                    'issue_pid' : issue_pid
+#                    'issue_number' : issue_number
+#                    'page' : {
+#                                page_name : page_pid
+#                                ......
+#                             }
+#                  }
+#                  ......
+#               ]
+#   }
+#   ......
+# ]
 
-import json,re
+
+import json,re,sys
 
 IN='in.json'
 MAP='map.json'
-OUT='ucla.aleph'
 
 ALL=0
 MATCH=0
 
-#def linker(ID,ISSN,Y,R,C,S):
-#	for volume in range(0, len (db)):
-#		if year == MAP[issn][volume]['volume_year'] and int(Y) < 2011:
-#			for issue in range(0, len(db[volume]['issue'])):
-#				for page in db[volume]['issue'][issue]['page']:
-#					if page == S:
-#						url = MAP[issn] + db[volume]['issue'] + [issue]['page'][page]
-#						return sysno + ' 85641 L $$u' + url + u'$$yKramerius' + '$$4N'
-#	return ''
+def link(ID,ISSN,Y,R,C,S):
+	for KRAMERIUS in MAP[ISSN]:
+		for ROOT in MAP[ISSN][KRAMERIUS]:
+			with open('issn/' + MAP[ISSN][KRAMERIUS][ROOT], 'r') as f: DATA = json.loads(f.read())
+			for volume in DATA:
+				if Y == volume['volume_year']:
+					for issue in volume['issue']:
+						for page in issue['page']:
+							if S == page:
+								URL = (KRAMERIUS.replace('search','view') +
+									issue['issue_pid'] + '?page=' +
+									issue['page'][page]
+								)
+								return ID + ' 85641 L $$u' + URL + '$$yKramerius' + '$$4N'
 
 with open(MAP, 'r') as f: MAP = json.loads(f.read())
 with open(IN,'r') as f: data = json.loads(f.read())
-
-#aleph = open(OUT, 'w')
 
 for rec in data['response']['docs']:
 	
@@ -34,7 +56,7 @@ for rec in data['response']['docs']:
 	ISSN = rec['subfield_773-x'][0] 
 
 	if ISSN not in MAP: continue
-	
+
 	if 'subfield_773-g' in rec: G = rec['subfield_773-g'][0] 
 	if 'subfield_773-q' in rec: Q = rec['subfield_773-q'][0] 
 
@@ -51,13 +73,17 @@ for rec in data['response']['docs']:
 		Y = re.sub('^Roč\. \d+, (\d+),.*', '\\1', G)
 
 	if Y and R and C and S:
-		MATCH+=1
+		LINK = link(ID, ISSN, Y, R, C, S)
+		if LINK:
+			print(LINK)
+			MATCH+=1
 	elif Y and R and C:
-		MATCH+=1
+		LINK = link(ID, ISSN, Y, R, C, '')
+		if LINK:
+			print(LINK)
+			MATCH+=1
 	ALL+=1
 
 print(MATCH)
 print(ALL)
-
-#aleph.close()
 
