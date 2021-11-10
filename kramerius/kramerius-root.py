@@ -31,18 +31,16 @@ MAP={}
 with open('root.json', 'r') as f: ROOT = json.loads(f.read())
 
 for I in ROOT:
-	if I not in MAP: MAP[I]={}# update MAP
 	for K in ROOT[I]:
-		if K not in MAP[I]: MAP[I][K]={}# update MAP
-
+	
 		session = requests.Session()
-
+		print(I + ' Downloading from .. ' + K)
 		for R in ROOT[I][K]:
-		
+	
+			print('Root: ' + R)
+
 			DATA=[]
-			FILE = str(uuid.uuid4()) + '.json'
-			MAP[I][K][R]=FILE# update MAP
-			
+		
 			VOLUME_INDEX=0
 			ISSUE_INDEX=0
 		
@@ -99,8 +97,16 @@ for I in ROOT:
 					ISSUE_INDEX=0
 			# write ISSN
 			if DATA:
+				if I not in MAP: MAP[I]={}
+				if K not in MAP[I]: MAP[I][K]={}
+
+				FILE = str(uuid.uuid4()) + '.json'
+
+				MAP[I][K][R]=FILE# update MAP
+
 				with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
-			print(FILE + 'Done.')
+
+			print(FILE + ' Done.')
 		# close session
 		session.close()
 
