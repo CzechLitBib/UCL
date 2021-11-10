@@ -72,7 +72,8 @@ for I in ROOT:
 							if issue['model'] != 'periodicalitem': continue# skip no issue
 							issue_date = issue['details']['date']
 							issue_pid = issue['pid']
-							issue_number = issue['details']['partNumber']
+							issue_number = ''
+							if 'partNumber' in issue['details']: issue_number = issue['details']['partNumber']
 							DATA[VOLUME_INDEX]['issue'].append({
 								'issue_date':issue_date,
 								'issue_pid':issue_pid,
@@ -106,7 +107,7 @@ for I in ROOT:
 
 				with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
 
-			print(FILE + ' Done.')
+			print(R + ' Done.')
 		# close session
 		session.close()
 
