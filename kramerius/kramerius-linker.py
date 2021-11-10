@@ -38,19 +38,26 @@ def link(ID,ISSN,Y,R,C,S):
 			for volume in DATA:
 				if Y == volume['volume_year']:
 					for issue in volume['issue']:
-						for page in issue['page']:
-							if S == page:
-								URL = (KRAMERIUS.replace('search','view') +
-									issue['issue_pid'] + '?page=' +
-									issue['page'][page]
-								)
-								return ID + ' 85641 L $$u' + URL + '$$yKramerius' + '$$4N'
+						if C = issue['issue_number']:
+							for page in issue['page']:
+								if S == page:
+									URL = (KRAMERIUS.replace('search','view') +
+										issue['issue_pid'] + '?page=' +
+										issue['page'][page]
+									)
+									return ID + ' 85641 L $$u' + URL + '$$yKramerius' + '$$4N'
+							# issue fall-back
+							URL = KRAMERIUS.replace('search','view') + issue['issue_pid']
+							return ID + ' 85641 L $$u' + URL + '$$yKramerius' + '$$4N'
+					# volume fall-back
+					URL = KRAMERIUS.replace('search','view') + volume['volume_pid']
+					return ID + ' 85641 L $$u' + URL + '$$yKramerius' + '$$4N'
 
 with open(MAP, 'r') as f: MAP = json.loads(f.read())
 with open(IN,'r') as f: data = json.loads(f.read())
 
 for rec in data['response']['docs']:
-	
+
 	ID,G,Q = rec['id'],'',''
 
 	ISSN = rec['subfield_773-x'][0] 

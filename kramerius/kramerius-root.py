@@ -34,10 +34,8 @@ for I in ROOT:
 	for K in ROOT[I]:
 	
 		session = requests.Session()
-		print(I + ' Downloading from .. ' + K)
+
 		for R in ROOT[I][K]:
-	
-			print('Root: ' + R)
 
 			DATA=[]
 		
@@ -103,11 +101,9 @@ for I in ROOT:
 
 				FILE = str(uuid.uuid4()) + '.json'
 
-				MAP[I][K][R]=FILE# update MAP
+				MAP[I][K][R]=FILE
 
 				with open('issn/' + FILE, 'w') as f: f.write(json.dumps(DATA))
-
-			print(R + ' Done.')
 		# close session
 		session.close()
 
