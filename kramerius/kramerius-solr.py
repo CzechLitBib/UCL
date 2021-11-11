@@ -10,6 +10,7 @@ import requests,json,re,sys
 IN='in.json'
 ROOT='root.json'
 BASE='kramerius.json'
+DK='https://www.digitalniknihovna.cz/'
 
 MATCH=0
 ALL=0
@@ -19,13 +20,13 @@ def solr(G, ID, ISSN, Y, R, C, S=None):
 	for KRAMERIUS in MAP[ISSN]:
 		session = requests.Session()
 		for ROOT in MAP[ISSN][KRAMERIUS]:
-			query = (# PAGE
+			query = (
 				'root_pid:' + ROOT.replace('-','\-').replace(':','\:') +
 				' AND rok:' + Y +
 				' AND (title:' + S + ' OR dc.title:' + S + ')' +
 				' AND document_type:page'
 			)
-			try: req = session.get(KRAMERIUS + 'api/v5.0/search?q=' + query + '&fl=PID,title,rok,datum_str,parent_pid,details,pid_path,document_type&rows=10000&wt=json')
+			try: req = session.get(KRAMERIUS + 'api/v5.0/search?q=' + query + '&fl=PID,parent_pid&rows=10000&wt=json')
 			except:
 				continue
 			if req.status_code == 200:
@@ -39,21 +40,48 @@ def solr(G, ID, ISSN, Y, R, C, S=None):
 					if 'partNumber' in resp['details']:
 						if C == resp['details']['partNumber']:
 							if 'view' in PREFIX[KRAMERIUS]:
-								URL.append(PREFIX[KRAMERIUS] + resp['pid'] + '?page=' + PAGE_PID)
-							else:
+								URL.append(
+									PREFIX[KRAMERIUS] +
+									resp['pid'] +
+									'?page=' + PAGE_PID
+								)
+							elif 'i.jsp' in PREFIX[KRAMERIUS]:
 								URL.append(PREFIX[KRAMERIUS] + PAGE_PID)
+							else:
+								URL.append(
+									DK + PREFIX[KRAMERIUS] +
+									'/view/' +
+									resp['pid'] +
+									'?page=' + PAGE_PID
+								)
 							break
 					else:
-						try: req = session.get(KRAMERIUS + 'api/v5.0/search?q=PID:' + PAGE['parent_pid'][0] + '&fl=PID,details&wt=json')
+						try: req = session.get(
+							KRAMERIUS +
+							'api/v5.0/search?q=PID:' +
+							PAGE['parent_pid'][0] +
+							'&fl=PID,details&wt=json'
+						)
 						except:
 							continue
 						if req.status_code == 200:
 							resp = json.loads(req.text)
 							if re.match('^.*##' + C + '$', resp['response']['docs']['details'][0]):
 								if 'view' in PREFIX[KRAMERIUS]:
-									URL.append(PREFIX[KRAMERIUS] + resp['response']['docs']['PID'] + '?page=' + PAGE_PID)
-								else:
+									URL.append(
+										PREFIX[KRAMERIUS] +
+										resp['response']['docs']['PID'] +
+										'?page=' + PAGE_PID
+									)
+								elif 'i.jsp' in PREFIX[KRAMERIUS]:
 									URL.append(PREFIX[KRAMERIUS] + PAGE_PID)
+								else:
+									URL.append(
+										DK + PREFIX[KRAMERIUS] +
+										'/view/' +
+										resp['response']['docs']['PID'] +
+										'?page=' + PAGE_PID
+									)
 								break
 		session.close()
 		return URL
