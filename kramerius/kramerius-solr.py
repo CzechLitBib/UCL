@@ -9,61 +9,58 @@ import requests,json,re,sys
 
 IN='in.json'
 ROOT='root.json'
+BASE='kramerius.json'
 
 MATCH=0
 ALL=0
 
 def solr(G, ID, ISSN, Y, R, C, S=None):
+	URL=[]
 	for KRAMERIUS in MAP[ISSN]:
+		session = requests.Session()
 		for ROOT in MAP[ISSN][KRAMERIUS]:
-			session = requests.Session()
 			query = (# PAGE
 				'root_pid:' + ROOT.replace('-','\-').replace(':','\:') +
 				' AND rok:' + Y +
-				' AND title:' + S +
+				' AND (title:' + S + ' OR dc.title:' + S + ')' +
 				' AND document_type:page'
 			)
 			try: req = session.get(KRAMERIUS + 'api/v5.0/search?q=' + query + '&fl=PID,title,rok,datum_str,parent_pid,details,pid_path,document_type&rows=10000&wt=json')
 			except:
-				print('Connection error.')
 				continue
 			if req.status_code == 200:
 				resp = json.loads(req.text)
-				print(G)
-				print(Y + ' ' + R + ' ' + C + ' ' + S)
 				for PAGE in resp['response']['docs']:
 					PAGE_PID = PAGE['PID']
-					#query = 'PID:' + PAGE['parent_pid'][0].replace('-','\-').replace(':','\:')
-					#try: req = session.get(KRAMERIUS + 'api/v5.0/search?q=' + query + '&fl=PID,title,details&rows=1&wt=json')
-					#except:
-					#	print('Connection error.')
-					#	continue
-					#resp = json.loads(req.text)
-					#if re.match('^.*##' + C + '$' , resp['response']['docs'][0]['details'][0]):
-					#	URL = (
-					#		KRAMERIUS.replace('search', 'view') +
-					#		resp['response']['docs'][0]['PID'] + '?page=' +
-					#		PAGE_PID
-					#	)
-					#	return URL
-					
-					try: req = session.get(KRAMERIUS + 'api/v5.0/search/item/' + PAGE['parent_pid'])
+					try: req = session.get(KRAMERIUS + 'api/v5.0/item/' + PAGE['parent_pid'][0])
 					except:
-						print('Connection error.')
 						continue
 					resp = json.loads(req.text)
-					if C = resp['details'][partNumber]):
-						URL = (
-							KRAMERIUS.replace('search', 'view') +
-							resp['response']['pid'] + '?page=' +
-							PAGE_PID
-						)
-						return URL
+					if 'partNumber' in resp['details']:
+						if C == resp['details']['partNumber']:
+							if 'view' in PREFIX[KRAMERIUS]:
+								URL.append(PREFIX[KRAMERIUS] + resp['pid'] + '?page=' + PAGE_PID)
+							else:
+								URL.append(PREFIX[KRAMERIUS] + PAGE_PID)
+							break
+					else:
+						try: req = session.get(KRAMERIUS + 'api/v5.0/search?q=PID:' + PAGE['parent_pid'][0] + '&fl=PID,details&wt=json')
+						except:
+							continue
+						if req.status_code == 200:
+							resp = json.loads(req.text)
+							if re.match('^.*##' + C + '$', resp['response']['docs']['details'][0]):
+								if 'view' in PREFIX[KRAMERIUS]:
+									URL.append(PREFIX[KRAMERIUS] + resp['response']['docs']['PID'] + '?page=' + PAGE_PID)
+								else:
+									URL.append(PREFIX[KRAMERIUS] + PAGE_PID)
+								break
 		session.close()
-		sys.exit(1)
+		return URL
 
 with open(IN,'r') as f: DATA = json.loads(f.read())
 with open(ROOT, 'r') as f: MAP = json.loads(f.read())
+with open(BASE, 'r') as f: PREFIX = json.loads(f.read())
 
 for rec in DATA['response']['docs']:
 
@@ -92,11 +89,17 @@ for rec in DATA['response']['docs']:
 	if Y and R and C and S:
 		LINK = solr(G, ID, ISSN, Y, R, C, S)
 		if LINK:
-			MATCH+=1
+			for L in LINK:
+				print(ID + ' 85641 L $$u' + L + '$$yKramerius$$4N')
+				MATCH+=1
 	elif Y and R and C:
 		LINK = solr(G, ID, ISSN, Y, R, C)
 		if LINK:
-			MATCH+=1
+			for L in LINK:
+				print(ID + ' 85641 L $$u' + L + '$$yKramerius$$4N')
+				MATCH+=1
+
+	if MATCH == 10: sys.exit(1)
 	ALL+=1
 
 print(MATCH)

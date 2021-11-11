@@ -10,7 +10,7 @@ import requests,json
 KRAMERIUS,ISSN,ROOT=[],[],{}
 
 with open('issn.txt', 'r') as f: ISSN = f.read().splitlines()
-with open('kramerius.txt', 'r') as f: KRAMERIUS = f.read().splitlines()
+with open('kramerius.json', 'r') as f: KRAMERIUS = json.loads(f.read())
 
 for K in KRAMERIUS:
 	session = requests.Session()
