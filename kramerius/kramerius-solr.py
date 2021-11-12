@@ -47,7 +47,7 @@ for K in KRAMERIUS:
 			FN = str(uuid.uuid4())
 			try:
 				with open('issn/' + FN + '.json', 'w') as f:
-					f.write(json.dumps(req.text))
+					f.write(req.text)
 					print(I + '|' + K + '|' + R + '|periodicalitem|' + FN + '.json')
 			except:
 				sys.stderr.write('JSON error: ' + I + ' -> ' + K + ' -> ' + R + '\n')
@@ -60,11 +60,10 @@ for K in KRAMERIUS:
 			FN = str(uuid.uuid4())
 			try:
 				with open('issn/' + FN + '.json', 'w') as f:
-					f.write(json.dumps(req.text))
+					f.write(req.text)
 					print(I + '|' + K +'|' + R + '|page|' + FN + '.json')
 			except:
 				sys.stderr.write('JSON error: ' + I + ' -> ' + K + ' -> ' + R + '\n')
 				continue
-			sys.exit(1)
 	session.close()
 
