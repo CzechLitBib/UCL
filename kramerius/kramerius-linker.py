@@ -8,12 +8,12 @@
 import requests,json,sys,re
 
 IN='in.json'
-ROOT='solr.txt'
 BASE='kramerius.json'
+
+DB='sorl.txt'
 DK='https://www.digitalniknihovna.cz/'
 
-MATCH=0
-ALL=0
+# DEF
 
 def solr(G, ID, ISSN, Y, R, C, S=None):
 	URL=[]
@@ -86,9 +86,23 @@ def solr(G, ID, ISSN, Y, R, C, S=None):
 		session.close()
 		return URL
 
+# MAIN
+
 with open(IN,'r') as f: DATA = json.loads(f.read())
-with open(ROOT, 'r') as f: MAP = f.read().readlines()
+with open(DB, 'r') as f: SOLR = f.read().readlines()
 with open(BASE, 'r') as f: PREFIX = json.loads(f.read())
+
+# MAP to JSON
+
+MAP={}
+for line in SOLR:
+	i,k,r,t,f = line.split('|')
+
+print(MAP)
+sys.exit(1)	
+
+MATCH=0
+ALL=0
 
 for rec in DATA['response']['docs']:
 
@@ -127,7 +141,7 @@ for rec in DATA['response']['docs']:
 				print(ID + ' 85641 L $$u' + L + '$$yKramerius$$4N')
 				MATCH+=1
 
-	#if MATCH == 10: sys.exit(1)
+	if MATCH == 10: sys.exit(1)
 	ALL+=1
 
 print(MATCH)
