@@ -5,11 +5,9 @@
 
 import sqlite3,json,sys,re
 
+KRAMERIUS='kramerius.json'
 ISSN='issn.txt'
 DB='solr.txt'
-
-PAGE='db/solr-page.db'
-ITEM='db/solr-item.db'
 
 # DEF
 
@@ -67,25 +65,9 @@ def item_db_write(issn, k, fn):
 
 # INIT
 
-con = sqlite3.connect(PAGE)
-cur = con.cursor()
-cur.execute("CREATE TABLE page (issn TEXT, kramerius TEXT, pid TEXT, parent TEXT, year TEXT, title TEXT, dc TEXT);")
-cur.execute("CREATE INDEX 'pid_index' ON page (pid);")
-cur.execute("CREATE INDEX 'parent_index' ON page (parent);")
-cur.execute("CREATE INDEX 'issn_index' ON page (issn);")
-con.commit()
-con.close()
-
-con = sqlite3.connect(ITEM)
-cur = con.cursor()
-cur.execute("CREATE TABLE item (issn TEXT, kramerius TEXT, pid TEXT, title TEXT, dc TEXT, detail TEXT);")
-cur.execute("CREATE INDEX 'pid_index' ON item (pid);")
-cur.execute("CREATE INDEX 'issn_index' ON item (issn);")
-con.commit()
-con.close()
-
 with open(DB, 'r') as f: SOLR = f.read().splitlines()
 with open(ISSN,'r') as f: ISSN = f.read().splitlines()
+with open(KRAMERIUS,'r') as f: KRAM = json.loads(f.read())
 
 MAP={}
 for line in SOLR:
@@ -95,7 +77,29 @@ for line in SOLR:
 	if r not in MAP[i][k]: MAP[i][k][r]={}
 	MAP[i][k][r][t]=f
 
-# MAIN
+for issn in ISSN:
+	# multi-issn
+	if '#' in issn: issn = issn.split('#')[0]
+	# skip
+	if issn not in MAP: continue
+
+	for k in MAP[issn]:
+		con = sqlite3.connect(PAGE)
+		cur = con.cursor()
+		cur.execute("CREATE TABLE page (issn TEXT, kramerius TEXT, pid TEXT, parent TEXT, year TEXT, title TEXT, dc TEXT);")
+		cur.execute("CREATE INDEX 'pid_index' ON page (pid);")
+		cur.execute("CREATE INDEX 'parent_index' ON page (parent);")
+		cur.execute("CREATE INDEX 'issn_index' ON page (issn);")
+		con.commit()
+		con.close()
+
+		con = sqlite3.connect(ITEM)
+		cur = con.cursor()
+		cur.execute("CREATE TABLE item (issn TEXT, kramerius TEXT, pid TEXT, title TEXT, dc TEXT, detail TEXT);")
+		cur.execute("CREATE INDEX 'pid_index' ON item (pid);")
+		cur.execute("CREATE INDEX 'issn_index' ON item (issn);")
+		con.commit()
+		con.close()
 
 for issn in ISSN:
 	# multi-issn
