@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# Kramerius Solr ISSN download.
+# Kramerius Solr ISSN querier.
 #
 
 import requests,json,uuid,sys
