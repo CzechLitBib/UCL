@@ -58,8 +58,6 @@
 0862-6634|https://kramerius.mzk.cz/search/|uuid:d15c20d0-276a-11e4-8413-5ef3fc9ae867|page|10d45387-c94b-4665-b741-3f9ca668f7b3.json
 0862-6634|https://kramerius.mzk.cz/search/|uuid:da5be7f5-03f0-4f10-94e6-e7efdf001499|periodicalitem|acbb7943-4aa1-4340-8005-76dcfa67a768.json
 0862-6634|https://kramerius.mzk.cz/search/|uuid:da5be7f5-03f0-4f10-94e6-e7efdf001499|page|7c5e6cbd-09dc-44cc-a1c1-48e0e511a176.json
-0862-9587|https://kramerius.mzk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|periodicalitem|6e5b8bc2-5cc5-44f5-b92e-d21b530f5251.json
-0862-9587|https://kramerius.mzk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|page|4f3020fc-3d54-4b5f-b4b6-9410e74cd230.json
 1210-9940|https://kramerius.mzk.cz/search/|uuid:1da10bd0-b279-11e7-9047-5ef3fc9bb22f|periodicalitem|0c71cd50-9330-4e5c-a43b-fed037692b6e.json
 1210-9940|https://kramerius.mzk.cz/search/|uuid:1da10bd0-b279-11e7-9047-5ef3fc9bb22f|page|0dc92441-a953-4f7d-869e-128677cd077f.json
 0011-2321|https://kramerius.mzk.cz/search/|uuid:244ee7d0-6319-11e3-ae59-005056827e52|periodicalitem|57a7d942-cae9-4902-8053-6b3025ac026b.json
@@ -150,8 +148,6 @@
 0323-1542|https://kramerius.mzk.cz/search/|uuid:bd812b50-e62e-11e3-97c9-001018b5eb5c|page|6beb5100-0534-4630-bb81-6a5a642288e8.json
 0862-6111|https://kramerius.mzk.cz/search/|uuid:9da3b368-45b9-11e1-a671-005056a60003|periodicalitem|6a82c64c-7a17-4f58-bb55-eaf2b7daad20.json
 0862-6111|https://kramerius.mzk.cz/search/|uuid:9da3b368-45b9-11e1-a671-005056a60003|page|a623afff-d608-49b1-b14c-d4a40bfceb91.json
-0862-9587|https://kramerius.mzk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|periodicalitem|62f725ef-dd49-4f50-a11b-9369ec994f07.json
-0862-9587|https://kramerius.mzk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|page|326444ae-2efd-48e4-923f-ab2a317d4e40.json
 1801-0202|https://kramerius.mzk.cz/search/|uuid:2635efac-9924-4418-affb-4ae636f77d9e|periodicalitem|c96c3e75-ac2a-44b2-be4c-bf167161464c.json
 1801-0202|https://kramerius.mzk.cz/search/|uuid:2635efac-9924-4418-affb-4ae636f77d9e|page|4592cdf9-7dbf-4490-8f08-1277782903ff.json
 1211-4332|https://kramerius.mzk.cz/search/|uuid:f09891c0-280e-11e2-9f39-005056827e51|periodicalitem|9ac87fa8-5a45-4991-8b74-8348a0a149b3.json
@@ -214,10 +210,6 @@
 1805-7527|https://kramerius.mzk.cz/search/|uuid:3e5052a0-67f5-11e8-943b-5ef3fc9ae867|page|fc302a59-5a91-4572-8d4f-5aecff198f1b.json
 1210-5023|https://kramerius.mzk.cz/search/|uuid:fb4f4120-55ab-11e2-8888-005056827e51|periodicalitem|be35fe37-aaea-4354-9188-a6ae78acbc56.json
 1210-5023|https://kramerius.mzk.cz/search/|uuid:fb4f4120-55ab-11e2-8888-005056827e51|page|4698c947-a93d-4f1c-a88a-cb38e40a9745.json
-0862-5921|https://kramerius.mzk.cz/search/|uuid:74c35ab0-2a8b-11e7-b650-5ef3fc9ae867|periodicalitem|e5a34ed9-c96e-45b5-af94-4cd306618896.json
-0862-5921|https://kramerius.mzk.cz/search/|uuid:74c35ab0-2a8b-11e7-b650-5ef3fc9ae867|page|174efbf9-1d33-4788-8d30-9fa72e07fe6c.json
-0862-5921|https://kramerius.mzk.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|periodicalitem|79fff3e5-a75d-4250-b62f-c48ff1a4a296.json
-0862-5921|https://kramerius.mzk.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|page|ca7c1931-3f3c-4e39-8fb2-6415f365c1e6.json
 1210-6798|https://kramerius.mzk.cz/search/|uuid:5f77b740-6af1-11e2-9a2f-005056827e51|periodicalitem|59083afc-70a8-4cf4-a8b5-4686e2acca27.json
 1210-6798|https://kramerius.mzk.cz/search/|uuid:5f77b740-6af1-11e2-9a2f-005056827e51|page|f1a5c4b5-4782-4e05-a9d2-25f148bca713.json
 0486-4433|https://kramerius.mzk.cz/search/|uuid:d380a920-e729-11e8-a5a4-005056827e52|periodicalitem|2bde44b2-562f-425b-811f-cbb0229750d2.json
@@ -896,8 +888,6 @@
 1803-6635|https://www.ndk.cz/search/|uuid:877294c0-109e-11e7-968f-005056827e51|page|5cdee720-fc4f-4f51-b082-d2cfe48af365.json
 0862-6634|https://www.ndk.cz/search/|uuid:d15c20d0-276a-11e4-8413-5ef3fc9ae867|periodicalitem|079fff84-4b3e-4bc7-86fd-063212435443.json
 0862-6634|https://www.ndk.cz/search/|uuid:d15c20d0-276a-11e4-8413-5ef3fc9ae867|page|6bad7008-8883-4116-a6ca-f0cbbb9a7ef8.json
-0862-9587|https://www.ndk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|periodicalitem|8e6aca99-8b6a-4c67-87d8-cf5d082e3760.json
-0862-9587|https://www.ndk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|page|fb954d9a-f14b-4a68-88af-5b24b1ce9f0f.json
 1210-9940|https://www.ndk.cz/search/|uuid:1da10bd0-b279-11e7-9047-5ef3fc9bb22f|periodicalitem|bf5f3210-08cc-481e-aeb8-98a00400e630.json
 1210-9940|https://www.ndk.cz/search/|uuid:1da10bd0-b279-11e7-9047-5ef3fc9bb22f|page|73c55eb5-9cc9-4e4d-8a2c-ad783bbedbfc.json
 0011-2321|https://www.ndk.cz/search/|uuid:244ee7d0-6319-11e3-ae59-005056827e52|periodicalitem|1ca18e28-868e-4a15-be2a-bbb7bd5ea605.json
@@ -968,8 +958,6 @@
 0862-6111|https://www.ndk.cz/search/|uuid:ae770ca8-435d-11dd-b505-00145e5790ea|page|b0b72e43-f0bb-4758-91a8-4b5cbce7e264.json
 0045-6187|https://www.ndk.cz/search/|uuid:ae81940d-435d-11dd-b505-00145e5790ea|periodicalitem|4a92426a-3616-4c34-bf73-198b9563bb24.json
 0045-6187|https://www.ndk.cz/search/|uuid:ae81940d-435d-11dd-b505-00145e5790ea|page|34080f14-7afa-46d7-9d49-225fda70f7ed.json
-0862-9587|https://www.ndk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|periodicalitem|7e5eaf25-9073-4f53-b2db-bec680a8eed4.json
-0862-9587|https://www.ndk.cz/search/|uuid:b56c15a0-acbf-11e7-91d5-005056825209|page|81bb4b13-7813-42e6-b1d7-ba56e6d7ac0a.json
 1211-4332|https://www.ndk.cz/search/|uuid:f09891c0-280e-11e2-9f39-005056827e51|periodicalitem|76dbcec8-2895-4222-9464-e65f7d53b3b1.json
 1211-4332|https://www.ndk.cz/search/|uuid:f09891c0-280e-11e2-9f39-005056827e51|page|0ff35df1-48de-4e1f-95ce-bd7234b94455.json
 0862-6715|https://www.ndk.cz/search/|uuid:e7e80d10-2fef-11e2-bd17-005056827e51|periodicalitem|806ba81d-2369-40c2-83c5-1145534d915d.json
@@ -1030,10 +1018,6 @@
 0015-1068|https://www.ndk.cz/search/|uuid:4980187f-e02a-40d0-87e8-06bc483ccdb8|page|8d68de2e-72d2-4e52-9887-3dba837f1eb5.json
 0015-1068|https://www.ndk.cz/search/|uuid:d402ec33-489f-417b-929b-6c3a4782baa2|periodicalitem|4034ba55-cd06-4b30-bae1-849b0410729a.json
 0015-1068|https://www.ndk.cz/search/|uuid:d402ec33-489f-417b-929b-6c3a4782baa2|page|e357ade2-1998-4a11-aff0-eed18957093b.json
-0862-5921|https://www.ndk.cz/search/|uuid:74c35ab0-2a8b-11e7-b650-5ef3fc9ae867|periodicalitem|89af4933-7beb-4781-b792-40cf60b3b5c2.json
-0862-5921|https://www.ndk.cz/search/|uuid:74c35ab0-2a8b-11e7-b650-5ef3fc9ae867|page|ea6ada37-46ce-4a59-9470-2814301d4724.json
-0862-5921|https://www.ndk.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|periodicalitem|68057566-aeb9-4f63-8a83-f731f5d97a78.json
-0862-5921|https://www.ndk.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|page|d3f06cc3-3dc2-49d0-9437-49e5dc58a6ac.json
 1210-6798|https://www.ndk.cz/search/|uuid:5f77b740-6af1-11e2-9a2f-005056827e51|periodicalitem|5a3cc6e9-2efc-4efa-b2c5-5a8071f2b756.json
 1210-6798|https://www.ndk.cz/search/|uuid:5f77b740-6af1-11e2-9a2f-005056827e51|page|17846fc0-04c9-4b05-a660-17d8e6e53af0.json
 0486-4433|https://www.ndk.cz/search/|uuid:d380a920-e729-11e8-a5a4-005056827e52|periodicalitem|31275ea0-c001-47d5-8ae0-79f77acf4aee.json
@@ -1420,10 +1404,6 @@
 0862-5913|http://kramerius.fsv.cuni.cz/search/|uuid:9a573ef5-5df5-4d06-aea0-f3f64b65419e|page|29741280-b5d6-4598-bf15-8e96bc450259.json
 1804-5782|http://kramerius.fsv.cuni.cz/search/|uuid:1fcb8db0-f983-11df-87e2-000d606f5dc6|periodicalitem|257b6abd-0307-40a0-8360-0ad8d00b517a.json
 1804-5782|http://kramerius.fsv.cuni.cz/search/|uuid:1fcb8db0-f983-11df-87e2-000d606f5dc6|page|7e407dc6-8c43-4dc4-ba2a-1311882ed45f.json
-0862-5921|http://kramerius.fsv.cuni.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|periodicalitem|cc542e5d-ac0e-40da-8dde-cc891ce1afeb.json
-0862-5921|http://kramerius.fsv.cuni.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|page|45630c4e-d00f-42c3-b402-08451aabf334.json
-0862-5921|http://kramerius.fsv.cuni.cz/search/|uuid:ba187c4d-998c-4279-8c99-8c513c8ef784|periodicalitem|a5b7af85-2450-4684-913c-256c3c37d183.json
-0862-5921|http://kramerius.fsv.cuni.cz/search/|uuid:ba187c4d-998c-4279-8c99-8c513c8ef784|page|929b81f1-ab9d-4fd9-b878-8fa23d7bbd95.json
 0862-898X|http://kramerius.fsv.cuni.cz/search/|uuid:ee626d70-7c51-11e3-9be6-005056827e52|periodicalitem|96e27415-8b7f-4a4e-80af-8d47df811ef7.json
 0862-898X|http://kramerius.fsv.cuni.cz/search/|uuid:ee626d70-7c51-11e3-9be6-005056827e52|page|2df97cd9-955d-4cbc-8f47-c2aa224054ed.json
 0469-0737|http://kramerius.fsv.cuni.cz/search/|uuid:d63ec53a-5084-4c12-be33-39eaf475b969|periodicalitem|ce513a01-8eb0-4975-a76f-9e35630a2ab2.json
@@ -1644,8 +1624,6 @@
 0015-1068|https://cdk.lib.cas.cz/search/|uuid:ae78e18b-435d-11dd-b505-00145e5790ea|page|d43ff59d-2fc6-4fe0-8aaa-30efcfe28f5b.json
 0015-1068|https://cdk.lib.cas.cz/search/|uuid:4980187f-e02a-40d0-87e8-06bc483ccdb8|periodicalitem|e583a1ab-179f-482d-9b3c-6a498f54abac.json
 0015-1068|https://cdk.lib.cas.cz/search/|uuid:4980187f-e02a-40d0-87e8-06bc483ccdb8|page|6f778104-70c4-4cd9-847c-1d3c20270fa9.json
-0862-5921|https://cdk.lib.cas.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|periodicalitem|67a0436b-491e-417b-8fe2-6d2f2c48f258.json
-0862-5921|https://cdk.lib.cas.cz/search/|uuid:bdc06f50-6ec9-11dd-85fc-000d606f5dc6|page|58e7ad21-8a6f-4ccd-8543-447632e4ba4e.json
 1210-6798|https://cdk.lib.cas.cz/search/|uuid:5f77b740-6af1-11e2-9a2f-005056827e51|periodicalitem|1c73fdb4-6c36-41d4-a06b-f71e2ec3fac1.json
 1210-6798|https://cdk.lib.cas.cz/search/|uuid:5f77b740-6af1-11e2-9a2f-005056827e51|page|89745cb5-5dab-4593-a94f-40ad3c12d8bb.json
 1210-5376|https://cdk.lib.cas.cz/search/|uuid:bf37d4c0-19ad-11e2-aff6-005056827e51|periodicalitem|39614d7d-7f31-4a28-811b-c5c66870e958.json

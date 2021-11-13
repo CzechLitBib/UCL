@@ -87,12 +87,10 @@ for line in SOLR:
 	MAP[i][k][r][t]=f
 
 for issn in ISSN:
-	# multi-issn
-	if '#' in issn: issn = issn.split('#')[0]
-	# skip
+
 	if issn not in MAP: continue
 
-	try:# skip dup
+	try:
 		con = sqlite3.connect('db/' + issn + '-page.db')
 		cur = con.cursor()
 		cur.execute("CREATE TABLE page (kid INTEGER, pid TEXT, parent TEXT, year TEXT, title TEXT, dc TEXT);")
@@ -110,9 +108,7 @@ for issn in ISSN:
 	except: pass
 
 for issn in ISSN:
-	# multi-issn
-	if '#' in issn: issn = issn.split('#')[0]
-	# skip
+	
 	if issn not in MAP: continue
 
 	for k in MAP[issn]:

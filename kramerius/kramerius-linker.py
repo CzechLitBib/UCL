@@ -3,67 +3,86 @@
 # Kramerius Solr ISSD linker.
 #
 
-import sqlite3,json,sys
+import sqlite3,json,re,sys
 
 IN='in.json'
 ISSN='issn.txt'
 KRAMERIUS='kramerius.json'
 
-PAGE='db/solr-page.db'
-ITEM='db/solr-item.db'
-
-BASE='https://www.digitalniknihovna.cz/'
-
 # DEF
 
-def page_db(db, issn, ID, Y, R, C, S):
-	cur = db.execute("SELECT * FROM page WHERE issn = ? AND rok = ? AND title = ?;", (issn,Y , S))
+def query(db_page, db_item, ID, Y, R, C, S):
+	ret=[]
+	# kid, pid, parent, year, title, dc
+	cur = db_page.execute("SELECT * FROM page WHERE year = ? AND title = ?;", (Y , S))
 	res = cur.fetchall()
 	cur.close()
 	
-	if res:
-		print(res)
-
+	for page in res:
+		# kid, pid, title, dc, detail
+		cur = db_item.execute("SELECT * FROM item WHERE pid = ? AND kid = ?;", (page[2],page[0]))# parent + kid
+		res = cur.fetchall()
+		cur.close()
+		for item in res:
+			if C == re.sub('^.*#', '',item[4]):
+				client = KRAM[item[0]]['client']
+				if 'i.jsp' in client:
+					ret.append(client + page[1])
+				else:
+					ret.append(client + item[1] + '?page=' + page[1])
+	return ret
+					
 # MAIN
 
-with open(IN,'r') as f: DATA = json.loads(f.read())
 with open(ISSN,'r') as f: I = f.read().splitlines()
 with open(KRAMERIUS, 'r') as f: KRAM = json.loads(f.read())
 
-db_page = sqlite3.connect(PAGE)
-db_item = sqlite3.connect(ITEM)
+for i in I:
 
-for rec in DATA['response']['docs']:
+	TOTAL=0
+	MATCH=0
 
-	issn = rec['subfield_773-x']
+	sys.stderr.write("Linking.. " + i + '\n')
 
-	if issn not in I: continue# invalid issn
+	try:
+		with open('db/' + i + '-page.db','r') as f: pass
+		with open('db/' + i + '-item.db','r') as f: pass
+		db_page = sqlite3.connect('db/' + i + '-page.db')
+		db_item = sqlite3.connect('db/' + i + '-item.db')
+	except:
+		sys.stderr.write("Incomplete DB. " + i + '\n')
+		continue
+	with open('in/' + i + '.json', 'r') as f: DATA = json.loads(f.read())
+	for rec in DATA:
 
-	ID,G,Q = '','',''
+		TOTAL+=1
 
-	ID = rec['id']
-	if 'subfield_773-g' in rec: G = rec['subfield_773-g'][0] 
-	if 'subfield_773-q' in rec: Q = rec['subfield_773-q'][0] 
+		ID,G,Q = '','',''
 
-	Y,R,C,S = '','','',''# year, volume, issue, page
+		ID = rec['id']
+		if 'subfield_773-g' in rec: G = rec['subfield_773-g'][0] 
+		if 'subfield_773-q' in rec: Q = rec['subfield_773-q'][0] 
 
-	if Q and re.match('^\d+:(\d+|\d+\/\d+)<\d+$', Q):
-		R = re.sub('(\d+):(\d+|\d+\/\d+)<(\d+)', '\\1',Q)
-		C = re.sub('(\d+):(\d+|\d+\/\d+)<(\d+)', '\\2',Q)
-		S = re.sub('(\d+):(\d+|\d+\/\d+)<(\d+)', '\\3',Q)
-	elif Q and re.match('^\d+:(\d+|\d+\/\d+)$', Q):
-		R = re.sub('(\d+):(\d+|\d+\/\d+)', '\\1',Q)
-		C = re.sub('(\d+):(\d+|\d+\/\d+)', '\\2',Q)
-			
-	if G and re.match('^Roč\. \d+, \d+, č\. (\d+|\d+\/\d+), \d+\. \d+\., s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
-		Y = re.sub('^Roč\. \d+, (\d+),.*', '\\1', G)
+		Y,R,C,S = '','','',''# year, volume, issue, page
 
-	if Y and R and C and S:
-		ALEPH = query_page(db_page, issn, ID, Y, R, C, S)
-		if ALEPH: print(ID + ' 85641 L $$u' + ALEPH + '$$yKramerius$$4N')
+		#if Q and re.match('^\d+:(\d+|\d+\/\d+)<\d+$', Q):
+		if Q and re.match('^[\[]?\d+[\]]?:[\[]?(\d+|\d+\/\d+)[\]]?<[\[]?([A-Z]?\d+|[A-Z]|[ivxIVX]+)[\]]?$', Q):# R:C<S
+			R = re.sub('^[\[]?(\d+)[\]]?:[\[]?(\d+|\d+\/\d+)[\]]?<[\[]?([A-Z]?\d+|[A-Z]|[ivxIVX]+)[\]]?$', '\\1', Q)
+			C = re.sub('^[\[]?\d+[\]]?:[\[]?(\d+|\d+\/\d+)[\]]?<[\[]?([A-Z]?\d+|[A-Z]|[ivxIVX]+)[\]]?$', '\\1', Q)
+			S = re.sub('^[\[]?\d+[\]]?:[\[]?(\d+|\d+\/\d+)[\]]?<[\[]?([A-Z]?\d+|[A-Z]|[ivxIVX]+)[\]]?$', '\\2', Q)
+	
+		#if G and re.match('^Roč\. \d+, \d+, č\. (\d+|\d+\/\d+), \d+\. \d+\., s\. (\d+|\d+-\d+|\d+\/\d+)$', G):
+		if G and re.match('^(Roč\.|roč\|R|R\.) \d+, (\d{4}|\d{4}\/\d{4}), .*$', G):
+			Y = re.sub('^(Roč\.|roč\|R|R\.) \d+, (\d{4}|\d{4}\/\d{4}), .*', '\\2', G).split('/')[0]
 
-	sys.exit(1)
-
-db_page.close()
-db_item.close()
+		if Y and R and C and S:
+			LINK = query(db_page,db_item, ID, Y, R, C, S)
+			if LINK:
+				for L in LINK:
+					print(ID + ' 85641 L $$u' + L + '$$yKramerius$$4N')
+					MATCH+=1
+	db_page.close()
+	db_item.close()
+	sys.stderr.write('TOTAL: ' + str(TOTAL) + '\n') 
+	sys.stderr.write('MATCH: ' + str(MATCH) + '\n')
 
