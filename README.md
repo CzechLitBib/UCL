@@ -5,7 +5,11 @@ Library support software.
 
 TODO
 <pre>
--Kramerius: details:"***", "Příl."
+-Kramerius:
+
+-link + | G(Roc...) | Name 
+-solr.txt + Name
+details:"***", "Příl."
 - Web Framework
 - improve "prev month"
 - marc + recenze -> mod
