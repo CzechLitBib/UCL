@@ -5,11 +5,7 @@ Library support software.
 
 TODO
 <pre>
--Kramerius:
-
--link + | G(Roc...) | Name 
--solr.txt + Name
-details:"***", "Příl."
+-Kramerius: details:"***", "Příl." + per.issn module
 - Web Framework
 - improve "prev month"
 - marc + recenze -> mod
