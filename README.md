@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+-Kramerius: details:"***", "Příl."
 - Web Framework
 - improve "prev month"
 - marc + recenze -> mod
