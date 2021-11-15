@@ -14,7 +14,7 @@ KRAMERIUS='kramerius.json'
 def query(db_page, db_item, ID, Y, R, C, S):
 	ret=[]
 	# kid, pid, parent, year, title, dc
-	cur = db_page.execute("SELECT * FROM page WHERE year = ? AND title = ?;", (Y , S))
+	cur = db_page.execute("SELECT * FROM page WHERE year = ? AND dc = ?;", (Y , S))
 	res = cur.fetchall()
 	cur.close()
 	
@@ -24,12 +24,20 @@ def query(db_page, db_item, ID, Y, R, C, S):
 		res = cur.fetchall()
 		cur.close()
 		for item in res:
-			if C == re.sub('^.*#', '',item[4]):
-				client = KRAM[item[0]]['client']
-				if 'i.jsp' in client:
-					ret.append(client + page[1])
-				else:
-					ret.append(client + item[1] + '?page=' + page[1])
+			if re.match('.*##\d+(\*+)?$', item[4]):
+				if C == re.sub('^.*##(\d+)(\*+)?$', '\\1',item[4]):
+					client = KRAM[item[0]]['client']
+					if 'i.jsp' in client:
+						ret.append(client + page[1])
+					else:
+						ret.append(client + item[1] + '?page=' + page[1])
+			elif re.match('.*##\d+ ?- ?\d+(\*+)?$', item[4]):
+				if C in range(int(re.sub('^.*##(\d+) ?- ?\d+(\*+)?$', '\\1',item[4])),int(re.sub('^.*##\d+ ?- ?(\d+)(\*+)?$', '\\1',item[4])) + 1):
+					client = KRAM[item[0]]['client']
+					if 'i.jsp' in client:
+						ret.append(client + page[1])
+					else:
+						ret.append(client + item[1] + '?page=' + page[1])
 	return ret
 					
 # MAIN
@@ -80,7 +88,7 @@ for i in I:
 			if LINK:
 				for L in LINK:
 					print(ID + ' 85641 L $$u' + L + '$$yKramerius$$4N')
-					MATCH+=1
+				MATCH+=1
 	db_page.close()
 	db_item.close()
 	sys.stderr.write('TOTAL: ' + str(TOTAL) + '\n') 
