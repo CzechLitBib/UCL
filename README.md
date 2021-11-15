@@ -7,6 +7,7 @@ TODO
 <pre>
 -Kramerius:
 
+-kram.json -> orig "client" URL (K7)
 -link + | G(Roc...) | Name 
 -solr.txt + Name
 details:"***", "Příl."
