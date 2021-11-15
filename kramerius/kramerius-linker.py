@@ -7,6 +7,7 @@ import sqlite3,json,re,sys
 
 IN='in.json'
 ISSN='issn.txt'
+NAME='named.json'
 KRAMERIUS='kramerius.json'
 
 # DEF
@@ -43,6 +44,7 @@ def query(db_page, db_item, ID, Y, R, C, S):
 # MAIN
 
 with open(ISSN,'r') as f: I = f.read().splitlines()
+with open(NAME, 'r') as f: NAME = json.loads(f.read())
 with open(KRAMERIUS, 'r') as f: KRAM = json.loads(f.read())
 
 for i in I:
@@ -50,7 +52,7 @@ for i in I:
 	TOTAL=0
 	MATCH=0
 
-	sys.stderr.write("Linking.. " + i + '\n')
+	sys.stderr.write("Link " + i + ' ' + NAME[i] + '\n')
 
 	try:
 		with open('db/' + i + '-page.db','r') as f: pass
@@ -87,7 +89,7 @@ for i in I:
 			LINK = query(db_page,db_item, ID, Y, R, C, S)
 			if LINK:
 				for L in LINK:
-					print(ID + ' 85641 L $$u' + L + '$$yKramerius$$4N')
+					print(ID + ' 85641 L $$u' + L + '$$yKramerius$$4N' + '|' + G + '|' + Q + '|' + NAME[i])
 				MATCH+=1
 	db_page.close()
 	db_item.close()
