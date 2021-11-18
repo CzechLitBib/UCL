@@ -1275,7 +1275,6 @@ for record in records:
 						write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
 
 		# TAG value
-		R=False
 		if not R and '245' in metadata and 'c' in metadata['245']:
 			for T in re.findall('<<[^<>]*>>', metadata['245']['c']):
 				if '100' in metadata and 'a' in metadata['100']:
