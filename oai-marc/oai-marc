@@ -1259,7 +1259,7 @@ for record in records:
 		#  << >> TAG count
 		R=False
 		for F in  metadata.get_fields('506'):
-			if '190' in F.get_subfields('a') or '193' in F.get_subfields('a'): R=True
+			if '190' in F.get_subfields('a') or '191' in F.get_subfields('a'): R=True
 		if not R and '700' in metadata:
 			if '245' in metadata and 'c' in metadata['245']:
 				BRACKET = len(re.findall('<<[^<>]*>>', metadata['245']['c']))
