@@ -149,6 +149,28 @@ for record in records:
 				LHT = True
 		if LHT:
 			F.subfields = SUB
+	
+	# *245c A B [= pair => 593a A_B
+	# 593 exist(Aleph) -> skip
+	#if(rule 190) => A B pairs to 593b = 100 or 700 ' '.sub(-74)
+	#if(rule 190) = >593c 100-7/700-7
+
+	#if '245' in metadata and 'c' in metadata['245']:
+	#	LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
+	#	if LHT:
+	#		metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])
+	#	
+	#	if not '593' in metadata:
+	#		R=Flase
+	#		for F in metadata.get_fields('506'):
+	#			if '190' in F.get_subfields('a') or '191' in F.get_subfields('a'): R=True
+	#		if not R and '700' in metadata:
+	#			for LH in LHT:
+	#			SUB = re.findall('<<([^>[]+)', LH)
+	#			if SUB:
+	#				metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '],
+	#					subfields=['a', SUB[0].strip()]
+	#				))
 
 	if '245' in metadata and 'c' in metadata['245']:
 		LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
