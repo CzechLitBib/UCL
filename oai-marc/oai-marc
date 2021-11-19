@@ -147,7 +147,7 @@ if args.get == 'ident':
 # INIT -------------------
 
 try:
-    csv = open(CSV, 'w')
+	csv = open(CSV, 'w')
 except:
 	print('CSV: Read only FS exiting..')
 	exit(1)
@@ -785,14 +785,14 @@ for record in records:
 			if len(metadata.get_fields(TAG)) > 1:
 				write_error(header.identifier(), TAG, SIF, '125', 'Neplatné opakování pole ' + TAG + '.')
 		if '110' in metadata:
-			if metadata['110'].indicator1 + metadata['110'].indicator2  == '0 ':
+			if metadata['110'].indicator1 + metadata['110'].indicator2 == '0 ':
 				if 'c' in metadata['110']:
 					if not re.match('^\[.*$', metadata['110']['c']):
 						write_error(header.identifier(), '110', SIF, '126', "Chybný znak v podpoli 110c.")
 				else:
 					write_error(header.identifier(), '110', SIF, '127', "Chybí podpole 110c.")
 		for F in metadata.get_fields('710'):
-			if F.indicator1 + F.indicator2  == '0 ':
+			if F.indicator1 + F.indicator2 == '0 ':
 				if 'c' in F:
 					if not re.match('^\[.*$', F['c']):
 						write_error(header.identifier(), '710', SIF, '128', "Chybný znak v podpoli 710c.")
@@ -1045,7 +1045,7 @@ for record in records:
 						if re.match('^(text|napsal).*', metadata['245']['c']): DOT=True
 						if metadata['100'].indicator1 == '0':
 							if metadata['100']['a'] == re.sub('^([^,]+).*', '\\1',metadata['245']['c']): DOT=True
-						for F in  metadata.get_fields('506'):
+						for F in metadata.get_fields('506'):
 							if '162' in F.get_subfields('a'): DOT=True
 						if not DOT:
 							if metadata['245']['c'][:1].islower():
@@ -1055,7 +1055,7 @@ for record in records:
 			if metadata['245'].indicator1 == '1':
 				if'c' not in metadata['245']:
 					SKIP=False
-					for F in  metadata.get_fields('506'):
+					for F in metadata.get_fields('506'):
 						if '163' in F.get_subfields('a'): SKIP=True
 					if not SKIP:
 						write_error(header.identifier(), '245', SIF, '163', 'Chybná hodnota 1. indikátoru pole 245, chybí podpole "c".')
@@ -1178,7 +1178,7 @@ for record in records:
 
 		# 3RD BATCH ------------------
 
-                # 100-4
+		# 100-4
 		#if '100' in metadata and '4' not in metadata['100']:
 		#	write_error(header.identifier(), '100', SIF, '179', "Pole 100 neobsahuje žádné podpole '4'.")
 		# 110-4
@@ -1206,7 +1206,7 @@ for record in records:
 			if 'y' in F:
 				if '(' in F['y'] or ')' in F['y']:
 					write_error(header.identifier(), '856', SIF, '183', "Podpole 856y obsahuje závorky.")
-                # 856z brace
+		# 856z brace
 		for F in metadata.get_fields('856'):
 			if 'z' in F:
 				if '(' not in F['z'] or ')' not in F['z']:
@@ -1256,9 +1256,9 @@ for record in records:
 		#		if ';' not in metadata['245']['c']:
 		#			write_error(header.identifier(), '245', SIF, '189', 'Chybí popis vedlejší role v 245c.')
 
-		#  << >> TAG count
+		# << >> TAG count
 		R=False
-		for F in  metadata.get_fields('506'):
+		for F in metadata.get_fields('506'):
 			if '190' in F.get_subfields('a') or '191' in F.get_subfields('a'): R=True
 		if not R and '700' in metadata:
 			if '245' in metadata and 'c' in metadata['245']:
@@ -1290,11 +1290,11 @@ for record in records:
 # EXIT -------------------
 
 if args.get != 'record':
-    print('TOTAL ' + str(COUNTER))
+	print('TOTAL ' + str(COUNTER))
 if args.check:
-    print('MATCH ' + str(MATCH))
+	print('MATCH ' + str(MATCH))
 if args.notify:
-    notify()
+	notify()
 
 csv.close()
 
