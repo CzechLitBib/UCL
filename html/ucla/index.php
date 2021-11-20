@@ -54,7 +54,7 @@ $seven = 0;
 if (!empty($tags)) {
 	echo '<p><u>Poslední záznam</u>: 01.10.2021</p>';
 	echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
-	. "<td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
+	. "<tr><td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
 	. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
 	foreach ($tags as $tag)	{
 
