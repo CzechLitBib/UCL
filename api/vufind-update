@@ -139,7 +139,7 @@ for record in records:
 	if MBK:
 		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
-	# 953 remove << >>
+	# 100/600/700 remove << >>
 	for F in metadata.get_fields('100', '600', '700'):
 		LHT = False
 		SUB = F.subfields
@@ -150,27 +150,28 @@ for record in records:
 		if LHT:
 			F.subfields = SUB
 	
-	# *245c A B [= pair => 593a A_B
-	# 593 exist(Aleph) -> skip
-	#if(rule 190) => A B pairs to 593b = 100 or 700 ' '.sub(-74)
-	#if(rule 190) = >593c 100-7/700-7
+	# 593
+	#if '593' not in metadata:
+	#	if '700' in metadata and '245' in metadata and 'c' in metadata['245']:
+	#		for F in metadata.get_fields('506'):
+	#			if '190' in F.get_subfields('a') or '191' in F.get_subfields('a'): break
+	#		else:
+	#			AUT = metadata.get_fields('100','700')
+	#			LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
+	#			if len(LHT) <= len(AUT):		
+	#				for LH in LHT:
+	#					A,B,C='XXX','',''
+	#					if '<<>>' not in LH: A=re.sub('<<([^<]*)>>', '\\1', LH)
+	#					B=' '.join(AUT.get_fields('a', 'b', 'c', 'd', 'g', 'x', 'q', 'j')[0::2])
+	#					if '7' in AUT: C=AUT['7']
+	#					metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a', A, 'b', B, 'c', C]))
+	#					AUT=AUT[1:]# pop
 
+	# 245c remove <<>>
 	#if '245' in metadata and 'c' in metadata['245']:
 	#	LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
 	#	if LHT:
 	#		metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])
-	#	
-	#	if not '593' in metadata:
-	#		R=Flase
-	#		for F in metadata.get_fields('506'):
-	#			if '190' in F.get_subfields('a') or '191' in F.get_subfields('a'): R=True
-	#		if not R and '700' in metadata:
-	#			for LH in LHT:
-	#			SUB = re.findall('<<([^>[]+)', LH)
-	#			if SUB:
-	#				metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '],
-	#					subfields=['a', SUB[0].strip()]
-	#				))
 
 	if '245' in metadata and 'c' in metadata['245']:
 		LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
