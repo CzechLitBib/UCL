@@ -158,15 +158,17 @@ for record in records:
 	#		else:
 	#			AUT = metadata.get_fields('100','700')
 	#			LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
+	#			for F in metadata.get_fields('505'):
+	#				if 'r' in F: LHT+=re.findall('<<[^<]*>>', F['r'])
 	#			if len(LHT) > 0 and len(LHT) <= len(AUT):
 	#				for LH in LHT:
-	#					A,B,C,SUB='xxx','','',[]
-	#					if '<<>>' not in LH: A=re.sub('<<([^<]*)>>', '\\1', LH)
-	#					SUB+=['a', A]
-	#					B=' '.join(AUT[0].get_subfields('b', 'c', 'd', 'g', 'x', 'q', 'j')[0::2])
+	#					O,B,C,SUB='Nepodepsáno.','','',[]
+	#					if '<<>>' not in LH: O=re.sub('<<([^<]*)>>', '\\1', LH)#O
+	#					SUB+=['o', O]
+	#					if 'a' in AUT[0]: SUB+=['a', AUT[0]['a']]#A
+	#					B=' '.join(AUT[0].get_subfields('b', 'c', 'd', 'g', 'x', 'q', 'j')[0::2])#B
 	#					if B: SUB+=['b', B]
-	#					if '7' in AUT[0]: C=AUT[0]['7']
-	#					if C: SUB+=['c', C]
+	#					if '7' in AUT[0]: SUB+=['c', AUT[0]['7']]#C
 	#					metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=SUB))
 	#					AUT=AUT[1:]
 	# 245c remove <<>>
