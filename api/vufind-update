@@ -158,15 +158,17 @@ for record in records:
 	#		else:
 	#			AUT = metadata.get_fields('100','700')
 	#			LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
-	#			if len(LHT) <= len(AUT):		
+	#			if len(LHT) > 0 and len(LHT) <= len(AUT):
 	#				for LH in LHT:
-	#					A,B,C='XXX','',''
+	#					A,B,C,SUB='xxx','','',[]
 	#					if '<<>>' not in LH: A=re.sub('<<([^<]*)>>', '\\1', LH)
-	#					B=' '.join(AUT.get_fields('a', 'b', 'c', 'd', 'g', 'x', 'q', 'j')[0::2])
-	#					if '7' in AUT: C=AUT['7']
-	#					metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=['a', A, 'b', B, 'c', C]))
-	#					AUT=AUT[1:]# pop
-
+	#					SUB+=['a', A]
+	#					B=' '.join(AUT[0].get_subfields('b', 'c', 'd', 'g', 'x', 'q', 'j')[0::2])
+	#					if B: SUB+=['b', B]
+	#					if '7' in AUT[0]: C=AUT[0]['7']
+	#					if C: SUB+=['c', C]
+	#					metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=SUB))
+	#					AUT=AUT[1:]
 	# 245c remove <<>>
 	#if '245' in metadata and 'c' in metadata['245']:
 	#	LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
