@@ -139,8 +139,8 @@ for record in records:
 	if MBK:
 		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
-	# 100/600/700 remove << >>
-	for F in metadata.get_fields('100', '600', '700'):
+	# 100/505/600/700 remove << >>
+	for F in metadata.get_fields('100', '505', '600', '700'):
 		LHT = False
 		SUB = F.subfields
 		for i in range(0, len(SUB)):
