@@ -19,6 +19,10 @@ xxx:xxxxxxxxxx
 
 su xxx
 
+/opt/solr-8.10.0/bin/solr.in.sh:
+
+SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"
+
 ./opt/solr-8.10.0/bin/solr start
 
 WARNING: Using _default configset with data driven schema functionality. NOT RECOMMENDED for production use.
