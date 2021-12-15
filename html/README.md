@@ -42,6 +42,7 @@ server {
 	# Vufind API
 	location ~ ^/api {
 		allow xxx/24;
+		allow 127.0.0.1;
 		deny all;
 		proxy_pass http://127.0.0.1:5000;
 	}
@@ -49,6 +50,7 @@ server {
 	# Solr
 	#location ~ ^/solr {
 	#	allow 147.231.80.0/24;
+	#	allow 127.0.0.1;
 	#	deny all;
 	#	proxy_pass http://127.0.0.1:8983;
 	#}
@@ -56,6 +58,7 @@ server {
 	# PHP - local
 	location ~ ^/(?!form|cardio) {
 		allow xxx/24;
+		allow 127.0.0.1;
 		deny all;
 
 		location ~ \.php {
@@ -69,6 +72,8 @@ server {
 
 	# PHP - form data + db
 	location ~ ^/form/(data|db) {
+		allow xxx/24;
+		allow 127.0.0.1;
 		deny all;
 	}
 
