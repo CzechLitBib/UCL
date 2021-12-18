@@ -13,17 +13,17 @@ from pymarc import marcxml
 
 XML='ucla.xml'
 
-IN='input/651_wm.txt'
+IN='input/651_wm-UTF8.txt'
 OUT='651_wm.aleph'
-OUTSTAT='651_stat.txt'
+OUTSTAT='651_wm_stat.txt'
 
 # DEF -----------
 
 def get_value(field):
 	ret = []
 	for sub in field:
-		if sub[0] != '4':
-		#if sub[0] != '4' and sub[0] != 'w':
+		#if sub[0] != '4':
+		if sub[0] != '4' and sub[0] != 'w':
 			ret.append(sub[1].strip())
 	return ' '.join(ret)
 
@@ -41,11 +41,18 @@ with open(IN, 'r') as src:
 		field = raw.split('|')
 		if '150' not in field[0] and '151' not in field[0]:
 			continue
+		# 150/151
+		DATA.append(field[0].strip())
+		# SUB
 		for R in field[1:]:
 			DATA.append(R[0])
 			DATA.append(R[1:].strip())
 		#MAP[orig.replace('OPRAVA UCL','').strip()] = DATA
 		MAP[orig] = DATA
+
+print(MAP)
+
+sys.exit(1)
 
 # PARSE / WRITE ----------
 
@@ -72,12 +79,13 @@ def validate(record):
 						STAT[VAL]=1
 					else:
 						STAT[VAL]+=1
-					# Aleph
-					SUB=''
-					for i in range(0, len(MAP[VAL])/2):
-						SUB+='$$' +  MAP[VAL][i*2] +  MAP[VAL][i*2+1]
-					SUB+='$$2czenas'
-					aleph.write(str(IDENT + ' 651 7 L ') + SUB + '\n')
+					if MAP[VAL][0] == '151':
+						# Aleph
+						SUB=''
+						for i in range(0, len(MAP[VAL][1:])/2):
+							SUB+='$$' +  MAP[VAL][1:][i*2] +  MAP[VAL][1:][i*2+1]
+						SUB+='$$2czenas'
+						aleph.write(str(IDENT + ' 651 7 L ') + SUB + '\n')
 				else:
 					# default
 					SUB=''
