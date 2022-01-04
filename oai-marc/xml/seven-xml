@@ -64,7 +64,7 @@ marcxml.map_xml(validate, XML)
 #
 #reader.close()
 
-for TAG in sorted(taglist):
+for TAG in sorted(TAGLIST):
 
 	# NO SEVEN
 
