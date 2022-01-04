@@ -52,7 +52,7 @@ $no_seven = 0;
 $seven = 0;
 
 if (!empty($tags)) {
-	echo '<p><u>Poslední záznam</u>: 01.10.2021</p>';
+	echo '<p><u>Poslední záznam</u>: 03.01.2022</p>';
 	echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
 	. "<tr><td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
 	. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";
