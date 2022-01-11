@@ -22,6 +22,7 @@ su xxx
 /opt/solr-8.10.0/bin/solr.in.sh:
 
 SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"
+SOLR_ULIMIT_CHECKS=false
 
 ./opt/solr-8.10.0/bin/solr start
 
