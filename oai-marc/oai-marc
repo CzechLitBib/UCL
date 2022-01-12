@@ -721,7 +721,7 @@ for record in records:
 						if DATA == metadata['773']['9']: NINE=True
 						if '-' in metadata['773']['9']:
 							if DATA == re.sub('^(.*)-.*','\\1', metadata['773']['9']): NINE=True
-							if DATA == metadata['773']['9'].replace('-','').replace('/',''): NINE=True
+						if DATA == metadata['773']['9'].replace('-','').replace('/',''): NINE=True
 						if not NINE:
 							write_error(header.identifier(), '008', SIF, '109', 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
