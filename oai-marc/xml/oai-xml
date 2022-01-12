@@ -75,20 +75,11 @@ def validate(record):
 		IDENT = metadata['001'].value()
 
 	# VALIDATION ------------------
+	#
+	# SKIP: 002 016 029 093 101 130 142 144 159 160 179 189
+	#
 
 	if True:
-		
-		# SKIP OLD ------------------
-
-		#if int(IDENT) < 2350000: continue
-
-		# SKIP BOT ------------------
-
-		#BOT=False
-		#for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
-		#	if 'a' in F:
-		#		if 'BATCH' in F['a']: BOT=True
-		#if BOT: continue
 
 		# TEST TAG ------------------
 
@@ -140,7 +131,7 @@ def validate(record):
 				if F['4'] != 'N':
 					write_error(IDENT, '856', SIF, '012', 'Chybná hodnota v podpoli 856-4.')
 			if 'y' in F:
-				if F['y'] not in ('online', 'Webarchiv', 'Obsah knihy'):
+				if F['y'] not in ('online', 'Webarchiv', 'Obsah knihy', 'DOI', 'digitalizovaný dokument', 'Digitální archiv časopisů'):
 					write_error(IDENT, '856', SIF, '013', 'Chybná hodnota v podpoli 856y.')
 
 		# TEST SUBFIELD ------------------
@@ -346,6 +337,7 @@ def validate(record):
 					write_error(IDENT, '610', SIF, '066', 'Chybný kód podpole v poli 610.')
 		for F in metadata.get_fields('611'):
 			for SUB in F.subfields[0::2]:
+				if SUB == 'e' and F['e'] == 'Czech National Exposition': continue
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
 					write_error(IDENT, '611', SIF, '067', 'Chybný kód podpole v poli 611.')
 		for F in metadata.get_fields('630'):
@@ -555,7 +547,7 @@ def validate(record):
 						if DATA == metadata['773']['9']: NINE=True
 						if '-' in metadata['773']['9']:
 							if DATA == re.sub('^(.*)-.*','\\1', metadata['773']['9']): NINE=True
-							if DATA == metadata['773']['9'].replace('-','').replace('/',''): NINE=True
+						if DATA == metadata['773']['9'].replace('-','').replace('/',''): NINE=True
 						if not NINE:
 							write_error(IDENT, '008', SIF, '109', 'Nesoulad mezi daty v poli 008 a 773-9.')
 		if '008' in metadata:
@@ -620,14 +612,14 @@ def validate(record):
 			if len(metadata.get_fields(TAG)) > 1:
 				write_error(IDENT, TAG, SIF, '125', 'Neplatné opakování pole ' + TAG + '.')
 		if '110' in metadata:
-			if metadata['110'].indicator1 + metadata['110'].indicator2  == '0 ':
+			if metadata['110'].indicator1 + metadata['110'].indicator2 == '0 ':
 				if 'c' in metadata['110']:
 					if not re.match('^\[.*$', metadata['110']['c']):
 						write_error(IDENT, '110', SIF, '126', "Chybný znak v podpoli 110c.")
 				else:
 					write_error(IDENT, '110', SIF, '127', "Chybí podpole 110c.")
 		for F in metadata.get_fields('710'):
-			if F.indicator1 + F.indicator2  == '0 ':
+			if F.indicator1 + F.indicator2 == '0 ':
 				if 'c' in F:
 					if not re.match('^\[.*$', F['c']):
 						write_error(IDENT, '710', SIF, '128', "Chybný znak v podpoli 710c.")
@@ -880,7 +872,7 @@ def validate(record):
 						if re.match('^(text|napsal).*', metadata['245']['c']): DOT=True
 						if metadata['100'].indicator1 == '0':
 							if metadata['100']['a'] == re.sub('^([^,]+).*', '\\1',metadata['245']['c']): DOT=True
-						for F in  metadata.get_fields('506'):
+						for F in metadata.get_fields('506'):
 							if '162' in F.get_subfields('a'): DOT=True
 						if not DOT:
 							if metadata['245']['c'][:1].islower():
@@ -890,7 +882,7 @@ def validate(record):
 			if metadata['245'].indicator1 == '1':
 				if'c' not in metadata['245']:
 					SKIP=False
-					for F in  metadata.get_fields('506'):
+					for F in metadata.get_fields('506'):
 						if '163' in F.get_subfields('a'): SKIP=True
 					if not SKIP:
 						write_error(IDENT, '245', SIF, '163', 'Chybná hodnota 1. indikátoru pole 245, chybí podpole "c".')
@@ -1013,16 +1005,23 @@ def validate(record):
 
 		# 3RD BATCH ------------------
 
-                # 100-4
+		# 100-4
 		#if '100' in metadata and '4' not in metadata['100']:
 		#	write_error(IDENT, '100', SIF, '179', "Pole 100 neobsahuje žádné podpole '4'.")
 		# 110-4
 		if '110' in metadata and '4' not in metadata['110']:
 			write_error(IDENT, '110', SIF, '180', "Pole 110 neobsahuje žádné podpole '4'.")
-		# 773 semi-colon
+		# 773g semi-colon
 		for F in metadata.get_fields('773'):
 			if 'g' in F and ';' in F['g']:
-				if len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('q')) or len(re.findall(';', F['g'])) + 1 != len(F.get_subfields('9')):
+				PASS=False
+				G = len(re.findall(';', F['g']))
+				Q = len(F.get_subfields('q'))
+				N = len(F.get_subfields('9'))
+				if 't' in F and 'online' in F['t']:
+					if G + 1 != N: PASS=True
+				elif G + 1 != Q or G + 1 != N: PASS=True
+				if PASS:	
 					write_error(IDENT, '773', SIF, '181', 'Neplatný počet středníků v podpoli 773g.')
 		# 773q 773-9 match 
 		for F in metadata.get_fields('773'):
@@ -1034,7 +1033,7 @@ def validate(record):
 			if 'y' in F:
 				if '(' in F['y'] or ')' in F['y']:
 					write_error(IDENT, '856', SIF, '183', "Podpole 856y obsahuje závorky.")
-                # 856z brace
+		# 856z brace
 		for F in metadata.get_fields('856'):
 			if 'z' in F:
 				if '(' not in F['z'] or ')' not in F['z']:
@@ -1042,12 +1041,12 @@ def validate(record):
 		# 500
 		for F in metadata.get_fields('500'):
 			if 'a' in F:
-				if not re.match('.*[.!?]$', F['a']):
+				if not re.match('.*([.!?]|\.")$', F['a']):
 					write_error(IDENT, '500', SIF, '185', "Podpole 500a nekončí tečkou.")
 		# 520
 		for F in metadata.get_fields('520')[-1:]:#the last one
 			if 'a' in F:
-				if not re.match('.*[.!?]$', F['a']):
+				if not re.match('.*([.!?]|\.")$', F['a']):
 					write_error(IDENT, '520', SIF, '186', "Podpole 520a nekončí tečkou.")
 		# 700c I
 		if metadata.leader[7] != 'm':
@@ -1084,42 +1083,35 @@ def validate(record):
 		#		if ';' not in metadata['245']['c']:
 		#			write_error(IDENT, '245', SIF, '189', 'Chybí popis vedlejší role v 245c.')
 
-		#  << >> TAG count
-		if int(IDENT) >= 2600000:
-			R=False
-			for F in metadata.get_fields('655'):
-				if 'a' in F and 'rozhovory' in F['a']: R=True
-			for F in  metadata.get_fields('506'):
-				if '190' in F.get_subfields('a'): R=True
-			if not R and '700' in metadata:
-				if '245' in metadata and 'c' in metadata['245']:
-					BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
-					for F in metadata.get_fields('505'):
-						if 't' in F: BRACKET += len(re.findall('<<[^<>]+>>', F['t']))
-					if BRACKET > 0:
-						FC = len(metadata.get_fields('100','593'))
-						for F in metadata.get_fields('700'):
-							if metadata.leader[7] == 'm':
-								if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
-							FC+=1
-						if FC != BRACKET:
-							write_error(IDENT, '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
+		# << >> TAG count
+		R=False
+		for F in metadata.get_fields('506'):
+			if '190' in F.get_subfields('a') or '191' in F.get_subfields('a'): R=True
+		if not R and '700' in metadata:
+			if '245' in metadata and 'c' in metadata['245']:
+				BRACKET = len(re.findall('<<[^<>]*>>', metadata['245']['c']))
+				for F in metadata.get_fields('505'):
+					if 'r' in F: BRACKET += len(re.findall('<<[^<>]*>>', F['r']))
+				if BRACKET > 0:
+					FC = len(metadata.get_fields('100','593'))
+					for F in metadata.get_fields('700'):
+						if metadata.leader[7] == 'm':
+							if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+						FC+=1
+					if FC != BRACKET:
+						write_error(IDENT, '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
 
 		# TAG value
-		if int(IDENT) >= 2600000:
-			R=False
-			for F in metadata.get_fields('655'):
-				if 'a' in F and 'rozhovory' in F['a']: R=True
-			if not R and '245' in metadata and 'c' in metadata['245']:
-				for T in re.findall('<<[^<>]+>>', metadata['245']['c']):
-					if '100' in metadata and 'a' in metadata['100']:
-						if T == '<<' + metadata['100']['a'] + '>>': continue
-					for F in metadata.get_fields('700'):
-						if 'a' in F and T == '<<' + F['a'] + '>>': break
-					else:
-						if not ('[=' in T or T[2].isupper()):
-							write_error(IDENT, '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
-
+		if not R and '245' in metadata and 'c' in metadata['245']:
+			for T in re.findall('<<[^<>]*>>', metadata['245']['c']):
+				if '100' in metadata and 'a' in metadata['100']:
+					if T == '<<' + metadata['100']['a'] + '>>': continue
+				for F in metadata.get_fields('700'):
+					if 'a' in F and T == '<<' + F['a'] + '>>': break
+				else:
+					if not (T == '<<>>' or '[=' in T or T[2].isupper()):
+						write_error(IDENT, '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
+	
 # EXIT -------------------
 
 marcxml.map_xml(validate, DATA)
