@@ -511,6 +511,7 @@ for record in records:
 					write_error(header.identifier(), '610', SIF, '066', 'Chybný kód podpole v poli 610.')
 		for F in metadata.get_fields('611'):
 			for SUB in F.subfields[0::2]:
+				if SUB == 'e' and F['e'] == 'Czech National Exposition': continue
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
 					write_error(header.identifier(), '611', SIF, '067', 'Chybný kód podpole v poli 611.')
 		for F in metadata.get_fields('630'):
