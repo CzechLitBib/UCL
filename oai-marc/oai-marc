@@ -1214,12 +1214,12 @@ for record in records:
 		# 500
 		for F in metadata.get_fields('500'):
 			if 'a' in F:
-				if not re.match('.*[.!?]$', F['a']):
+				if not re.match('.*([.!?]|\.")$', F['a']):
 					write_error(header.identifier(), '500', SIF, '185', "Podpole 500a nekončí tečkou.")
 		# 520
 		for F in metadata.get_fields('520')[-1:]:#the last one
 			if 'a' in F:
-				if not re.match('.*[.!?]$', F['a']):
+				if not re.match('.*([.!?]|\.")$', F['a']):
 					write_error(header.identifier(), '520', SIF, '186', "Podpole 520a nekončí tečkou.")
 		# 700c I
 		if metadata.leader[7] != 'm':
