@@ -144,9 +144,10 @@ def validate(record):
 			for F in metadata.get_fields(TAG):
 				if len(F.get_subfields('a')) != 1:
 					write_error(IDENT, TAG, SIF, '015', 'Chybné opakování podpole ' + TAG + 'a.')
-		#for F in metadata.get_fields('022'):
-		#	if len(F.get_subfields('a')) == 0:
-		#		write_error(IDENT, '022', SIF, '016', 'Chybí podpole 022a.')
+		if metadata.leader[7] == 's':
+			for F in metadata.get_fields('022'):
+				if len(F.get_subfields('a')) == 0:
+					write_error(IDENT, '022', SIF, '016', 'Chybí podpole 022a.')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
 				write_error(IDENT, '072', SIF, '017', 'Chybné opakování podpole 072x.')

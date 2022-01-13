@@ -49,7 +49,7 @@ server {
 
 	# Solr
 	#location ~ ^/solr {
-	#	allow 147.231.80.0/24;
+	#	allow xxx/24;
 	#	allow 127.0.0.1;
 	#	deny all;
 	#	proxy_pass http://127.0.0.1:8983;
