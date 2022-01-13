@@ -107,6 +107,9 @@ for record in records:
 	# Drop SYS
 	metadata.remove_fields('SYS')# Invalid control field (Aleph)
 
+	# Drop 022
+	if metadata.leader[7] != 's': metadata.remove_fields('022')
+
 	# Webarchiv
 	for F in metadata.get_fields('856'):
 		if 'y' in F:
