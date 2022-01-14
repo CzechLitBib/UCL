@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 #
-# Update database from OAI-PMH 2.0
+# XML to MRC for Vufind
 #
 
 import sys,re
 
 from pymarc import MARCWriter,Field,marcxml
+
+DATA='ucla.xml'
 
 # DEF -------------------
 
@@ -34,9 +36,7 @@ def word_to_lower(s):
 		buff += char 
 	return buff
 
-# MAIN -------------------
-
-def covert(record);
+def convert(record):
 
 	metadata = record
 
@@ -44,7 +44,7 @@ def covert(record);
 	if '001' in metadata:
 		ident = metadata['001'].value()
 	else:
-		continue
+		return
 
 	# LDR dup
 	metadata.remove_fields('LDR')# Leader duplicate (Aleph)
@@ -319,7 +319,15 @@ def covert(record);
 		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
 	# WRITE
-	# .....
+	writer.write(metadata)
+
+# MAIN -------------------
+
+writer = MARCWriter(open('vufind.mrc', 'wb'))
+
+marcxml.map_xml(convert, DATA)
+
+writer.close()
 
 # EXIT -------------------
 
