@@ -49,11 +49,12 @@ server {
 	}
 
 	location ~\.php$ {
+		#fastcgi_param VUFIND_ENV development;
 		#fastcgi_param APPLICATION_ENV development;
 		fastcgi_param SCRIPT_FILENAME /usr/local/vufind/public/index.php;
 		fastcgi_param VUFIND_LOCAL_DIR /usr/local/vufind/local/;
 		fastcgi_param VUFIND_HOME /usr/local/vufind/;
-		#fastcgi_param VUFIND_LOCAL_MODULES uclview;
+		fastcgi_param VUFIND_LOCAL_MODULES SolrMarcUCL;
 		include fastcgi_params;
 
 		fastcgi_pass unix:/var/run/php/php-fpm.sock;
@@ -84,6 +85,7 @@ mkdir /usr/local/vufind/local/cache/cli
 export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 export VUFIND_HOME="/usr/local/vufind"
 export VUFIND_LOCAL_DIR="$VUFIND_HOME/local"
+export VUFIND_LOCAL_MODULES="SolrMarcUCL"
 
 source /etc/profile.d/vufind.sh
 
