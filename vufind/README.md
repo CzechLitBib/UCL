@@ -2,6 +2,10 @@ DESCRIPTION
 
 Vufind server howto.
 
+TODO
+<pre>
+bbg,rej - author-classification.ini translation.
+</pre>
 INSTALL
 <pre>
 # EXTRA
