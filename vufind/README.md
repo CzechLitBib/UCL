@@ -139,12 +139,19 @@ TUNE
 /usr/local/vufind/public/robots.txt:
 User-agent: *
 Disallow: /
+
+touch /var/log/vufind.log
+chown www-data:www-data /var/log/vufind.log
 </pre>
 MODULE
 <pre>
 export VUFIND_LOCAL_MODULES=SolrMarcUCL
 
-php local/index.php generate extendclass VuFind\\RecordDriver\\SolrMarc SolrMarcUCL
+php public/index.php generate extendclass VuFind\\RecordDriver\\SolrMarc SolrMarcUCL
+</pre>
+THEME
+<pre>
+php public/index.php generate theme ThemeUCL
 </pre>
 LANGUAGES
 <pre>
