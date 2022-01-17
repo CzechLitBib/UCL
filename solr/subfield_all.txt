@@ -1,3 +1,6 @@
+subfield_100-4
+subfield_110-4
+subfield_111-4
 subfield_245-a
 subfield_245-b
 subfield_245-c
@@ -6,6 +9,9 @@ subfield_245-p
 subfield_505-t
 subfield_505-r
 subfield_505-g
+subfield_700-4
+subfield_710-4
+subfield_711-4
 subfield_773-a
 subfield_773-t
 subfield_773-x

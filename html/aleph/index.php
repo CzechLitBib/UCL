@@ -168,8 +168,14 @@ foreach($field as $name=>$tags) {
 }
 
 $subfield = [
+	'100' => array('4'),
+	'110' => array('4'),
+	'111' => array('4'),
 	'245' => array('a','b','c','n','p'),
 	'505' => array('t','r','g'),
+	'700' => array('4'),
+	'710' => array('4'),
+	'711' => array('4'),
 	'773' => array('a','t','x','n','b','d','h','k','g','q','z','y','9'),
 	'787' => array('i','a','t','n','b','d','h','k','g','z','y','9')
 ];
@@ -178,9 +184,10 @@ echo '<table width="500">';
 echo '<tr><td colspan="5"><b>Podpole</b></td></tr><tr>';
 echo '<tr><td></td></tr>';
 
+echo '<tr>';
+
+$cnt=0;
 foreach($subfield as $field=>$subs) {
-	echo '<tr>';
-	$cnt=0;
 	foreach($subs as $s) {
 		echo '<td width="100"><input type="checkbox" name="'
 			. 'subfield_' . $field .'-' . $s . '" value="1"><label>'
@@ -191,8 +198,9 @@ foreach($subfield as $field=>$subs) {
 			$cnt = 0;
 		}
 	}
-	echo '</tr><tr><td></td></tr>';
 }
+
+echo '</tr><tr><td></td></tr>';
 echo '</table>';
 
 echo '<p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>';
