@@ -1,4 +1,9 @@
+DESCRIPTION
 
+Vufind server howto.
+
+INSTALL
+<pre>
 # EXTRA
 
 mc vim net-tools lynx
@@ -123,11 +128,15 @@ http://xxx/Install/done
 
 /usr/local/vufind/local/config/vufind/NoILS.ini:
 mode = ils-none
-
-# MOD
-
+</pre>
+MOD
+<pre>
 /etc/crontab:
 
 15 *	* * *	root	/root/oai-update.sh >> /var/log/oai-update.log 2>&1 &
 30 6	* * *	root	find /tmp/vufind_sessions/* -mtime +5 -exec rm {} \; > /dev/null &
 
+/usr/local/vufind/public/robots.txt:
+User-agent: *
+Disallow: /
+</pre>

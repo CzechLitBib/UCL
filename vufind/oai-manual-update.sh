@@ -11,8 +11,8 @@ declare -x VUFIND_LOCAL_DIR="/usr/local/vufind/local"
 
 FILE="/root/vufind-manual.mrc"
 
-FROM="$(date -u --date '1 hour ago' '+%Y-%m-%d %H:00:00')"
-UNTIL="$(date -u '+%Y-%m-%d %H:00:00')"
+FROM="2022-01-02 00:00:00"
+UNTIL="2022-01-17 14:00:00"
 
 URL="https://vyvoj.ucl.cas.cz/api/ListRecords?from=$FROM&until=$UNTIL"
 
