@@ -70,20 +70,20 @@ Failed to enable unit: Unit /run/systemd/generator.late/koha-common.service is t
 
 # KOHA LDAP
 
-<useldapserver>1</useldapserver>
-<ldapserver>
-        <hostname>ldap://xxx</hostname>
-        <base>xxx</base>
-        <auth_by_bind>1</auth_by_bind>
-        <anonymous_bind>0</anonymous_bind>
-        <principal_name>xxx</rincipal_name>
-        <replicate>0</replicate>
-        <update>0</update>
-        <update_password>0</update_password>
-        <mapping>
-                <userid is="uid"></userid>
-        </mapping>
-</ldapserver>
+&lt;useldapserver&gt;1&lt;/useldapserver&gt;
+&lt;ldapserver&gt;
+	&lt;hostname&gt;ldap://xxx&lt;/hostname&gt;
+	&lt;base&gt;xxx&lt;/base&gt;
+	&lt;auth_by_bind&gt;1&lt;/auth_by_bind&gt;
+	&lt;anonymous_bind&gt;0&lt;/anonymous_bind&gt;
+	&lt;principal_name&gt;xxx&lt;/rincipal_name&gt;
+	&lt;replicate&gt;0&lt;/replicate&gt;
+	&lt;update&gt;0&lt;/update&gt;
+	&lt;update_password&gt;0&lt;/update_password&gt;
+	&lt;mapping&gt;
+		&lt;userid is="uid"&gt;&lt;/userid&gt;
+	&lt;/mapping&gt;
+&lt;/ldapserver&gt;
 
 # API
 
