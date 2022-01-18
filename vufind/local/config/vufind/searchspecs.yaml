@@ -1,0 +1,76 @@
+ArticleResource:
+  DismaxFields:
+    - article_resource_txt_mv
+  DismaxHandler: edismax
+
+Placestr:
+  DismaxFields:
+    - publication_place_txt_mv
+  DismaxHandler: edismax
+
+Yearstr:
+  DismaxFields:
+    - date_txt_mv
+  DismaxHandler: edismax
+
+LinkedResource:
+  DismaxFields:
+    - related_document_txt_mv
+  DismaxHandler: edismax
+  
+Subject:
+  DismaxFields:
+    - topic_unstemmed^150
+    - topic_search_str_mv^100
+    - geographic^50
+    - era
+  DismaxHandler: edismax
+
+PublishPlaceStr:
+  DismaxFields:
+    - publication_place_txt_mv
+  DismaxHandler: edismax
+
+AuthorTopic:
+  DismaxFields:
+    - topic_person_txt_mv
+  DismaxHandler: edismax
+
+retrobitxt:
+  DismaxFields:
+    - retrobitxt_txt_mv
+  DismaxHandler: edismax
+
+recordcreation:
+  DismaxFields:
+    - record_creation_str_mv
+  DismaxHandler: edismax
+
+recordchange:
+  DismaxFields:
+    - record_change_str_mv
+  DismaxHandler: edismax
+
+recordprocessor:
+  DismaxFields:
+    - processor_txt_mv
+  DismaxHandler: edismax
+
+authorbirthyear:
+  DismaxFields:
+    - author_birth_year_str_mv
+  DismaxHandler: edismax
+
+linkedpersonbirthyear:
+  DismaxFields:
+    - linked_person_birth_year_str_mv
+  DismaxHandler: edismax
+
+
+# Fields for exact matches originating from alphabetic browse                                                                                                                          
+ 
+SourceBrowse:
+  QueryFields:
+    source_browse: 
+      - [onephrase, ~]
+                                                                                                                                                                                     
