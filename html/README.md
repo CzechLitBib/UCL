@@ -46,6 +46,9 @@ server {
 		deny all;
 		proxy_pass http://127.0.0.1:5000;
 	}
+	location ~ ^/static {
+		root /usr/local/bin/api/;
+	}
 
 	# Solr
 	#location ~ ^/solr {
