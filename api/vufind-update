@@ -3,7 +3,7 @@
 # Update database from OAI-PMH 2.0
 #
 
-import argparse,sqlite3,sys,io,re
+import argparse,rrdtool,sqlite3,sys,io,re
 
 from pymarc import marcxml,Field
 from datetime import datetime,timedelta
@@ -14,6 +14,8 @@ from oaipmh.metadata import MetadataRegistry
 OAI_URL='https://aleph.lib.cas.cz/OAI'
 OAI_SET='UCLA'
 DB='/usr/local/bin/api/vufind.db'
+RRD='/usr/local/bin/api/vufind.rrd'
+PLOT='/usr/local/bin/api/templates/static/'
 DELETES='/usr/local/bin/api/templates/deletes.txt'
 
 # DEF -------------------
@@ -379,6 +381,25 @@ for record in records:
 	marc = metadata.as_marc()
 
 	BATCH.append((ident, timestamp, json, xml, marc))
+
+# UPDATE RRD
+if BATCH:
+	rrdtool.update(RRD, 'N:' + str(len(BATCH)))
+else:
+	rrdtool.update(RRD, 'N:U')
+
+# UPDATE PLOT
+for interval in ['1d','1w','1m']:			
+	rrdtool.graph(PLOT + 'oai_plot_' + interval +'.png',
+		'--title', 'Aleph OAI-PMH Flow',
+		'--start', 'now-' + interval,# substraction
+		'--end','now',
+		'--width','600',
+		'--height','150',
+		'--no-legend',
+		'DEF:AlephLast=' + RRD + ':Aleph:LAST',
+		'AREA:AlephLast#FFFFFF:Aleph'
+	)
 
 # WRITE SQL
 con = sqlite3.connect(DB)
