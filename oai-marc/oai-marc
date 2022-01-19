@@ -199,8 +199,7 @@ if args.get == 'record':
 		print(header.identifier())
 	if record:
 		print(record)
-
-	records=[[header,record]]
+		records=[[header,record]]
 
 for record in records:
 
