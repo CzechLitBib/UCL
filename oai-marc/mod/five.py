@@ -74,10 +74,11 @@ def run(DATA):
 		for F in record.get_fields('CAT','KAT')[:1]:# first CAT/KAT
 			if 'c' in F:
 				CAT_DATE = datetime.strptime(F['c'], '%Y%m%d')
+				FIRST = datetime.strptime(datetime.today().replace(day=1).strftime('%Y%m%d'),'%Y%m%d')# zero pad
 				# 1st day this month
-				if CAT_DATE >= datetime.today().replace(day=1): OUTDATE=True
+				if CAT_DATE >= FIRST: OUTDATE=True
 				# 1st day prev. month 
-				if CAT_DATE < (datetime.today().replace(day=1) - timedelta(days=1)).replace(day=1): OUTDATE=True 
+				if CAT_DATE < (FIRST - timedelta(days=1)).replace(day=1): OUTDATE=True 
 		if OUTDATE: continue
 
 		# ident
