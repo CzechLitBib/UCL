@@ -389,7 +389,7 @@ else:
 	rrdtool.update(RRD, 'N:U')
 
 # UPDATE PLOT
-for interval in ['1d','1w','1m']:			
+for interval in ['2w','2M','2y']:			
 	rrdtool.graph(PLOT + 'oai_plot_' + interval +'.png',
 		'--title', 'Aleph OAI-PMH Flow',
 		'--start', 'now-' + interval,# substraction
