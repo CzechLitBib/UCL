@@ -389,17 +389,16 @@ else:
 	rrdtool.update(RRD, 'N:U')
 
 # UPDATE PLOT
-for interval in ['2w','2M','2y']:			
-	rrdtool.graph(PLOT + 'oai_plot_' + interval +'.png',
-		'--title', 'Aleph OAI-PMH Flow',
-		'--start', 'now-' + interval,# substraction
-		'--end','now',
-		'--width','600',
-		'--height','150',
-		'--no-legend',
-		'DEF:AlephLast=' + RRD + ':Aleph:LAST',
-		'AREA:AlephLast#FFFFFF:Aleph'
-	)
+rrdtool.graph(PLOT + 'oai_plot.png',
+	'--title', 'Aleph OAI-PMH Flow',
+	'--start', 'now-2w',
+	'--end','now',
+	'--width','600',
+	'--height','150',
+	'--no-legend',
+	'DEF:last=' + RRD + ':aleph:LAST',
+	'AREA:last#000000:aleph'
+)
 
 # WRITE SQL
 con = sqlite3.connect(DB)
