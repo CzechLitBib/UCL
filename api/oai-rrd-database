@@ -6,6 +6,8 @@ DATABASE='vufind.rrd'
 
 rrdtool.create(DATABASE,
 	'--step', '3600', '--start', 'now',
-	'DS:aleph:GAUGE:7200:0:U',	# Data Source hearbeat/min/max
+	'DS:record:GAUGE:7200:0:U',	# Data Source hearbeat/min/max
+	'DS:delete:GAUGE:7200:0:U',	# Data Source hearbeat/min/max
 	'RRA:LAST:0.5:1:336',		# "Roud Robin Archive"
 )
+

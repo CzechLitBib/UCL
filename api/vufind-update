@@ -80,7 +80,7 @@ except:
 
 # MAIN -------------------
 
-BATCH=[]
+BATCH,DEL=[],[]
 
 deletes = open(DELETES, 'w')
 
@@ -92,6 +92,7 @@ for record in records:
 	# write / skip deleted records
 	if header.isDeleted():
 		deletes.write(re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '\n')
+		DEL.append(header.identifier())
 		continue
 
 	# ident
@@ -383,21 +384,24 @@ for record in records:
 	BATCH.append((ident, timestamp, json, xml, marc))
 
 # UPDATE RRD
-if BATCH:
-	rrdtool.update(RRD, 'N:' + str(len(BATCH)))
-else:
-	rrdtool.update(RRD, 'N:U')
+DS1,DS2='U','U'
+if BATCH: DS1 = str(len(BATCH))
+if DEL: DS2 = str(len(DEL))
+rrdtool.update(RRD, 'N:' + DS1 + ':' + DS2)
 
 # UPDATE PLOT
 rrdtool.graph(PLOT + 'oai_plot.png',
-	'--title', 'Aleph OAI-PMH Flow',
+	'--title', 'Aleph OAI-PMH Records',
 	'--start', 'now-2w',
 	'--end','now',
 	'--width','600',
 	'--height','150',
 	'--no-legend',
-	'DEF:last=' + RRD + ':aleph:LAST',
-	'AREA:last#000000:aleph'
+	'DEF:record=' + RRD + ':record:LAST',
+	'DEF:delete=' + RRD + ':delete:LAST',
+	'CDEF:negative=delete,-1,*',
+	'AREA:record#000000',
+	'AREA:negative#ff0000'
 )
 
 # WRITE SQL
