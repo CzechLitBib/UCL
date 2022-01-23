@@ -137,8 +137,8 @@ TUNE
 <pre>
 /etc/crontab:
 '''
-15 *	* * *	root	/root/oai-update.sh >> /var/log/oai-update.log 2>&1 &
-00 5	* * *	root	/root/vufind_monitor.py > /dev/null 2>&1 &
+15 *	* * *	root	/root/vufind-update.sh >> /var/log/vufind-update.log 2>&1 &
+00 5	* * *	root	/root/vufind-monitor.py > /dev/null 2>&1 &
 30 6	* * *	root	find /tmp/vufind_sessions/&ast; -mtime +5 -exec rm {} \; > /dev/null &
 
 /usr/local/vufind/public/robots.txt:
