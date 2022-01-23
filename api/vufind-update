@@ -399,9 +399,17 @@ rrdtool.graph(PLOT + 'oai_plot.png',
 	'--no-legend',
 	'DEF:record=' + RRD + ':record:LAST',
 	'DEF:delete=' + RRD + ':delete:LAST',
+	'VDEF:last=record,LAST',
+	'VDEF:avg=record,AVERAGE',
+	'VDEF:max=record,MAXIMUM',
 	'CDEF:negative=delete,-1,*',
 	'AREA:record#000000',
-	'AREA:negative#ff0000'
+	'AREA:negative#ff0000',
+	'COMMENT:\s',
+	'TEXTALIGN:center',
+	'GPRINT:last:Poslední\: %.0lf',
+	'GPRINT:avg:Průměr\: %.0lf',
+	'GPRINT:max:Maximum\: %.0lf'
 )
 
 # WRITE SQL
