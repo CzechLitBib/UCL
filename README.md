@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- RRD - Last./Avg./Max. legend
 - Kramerius: details:"***", "Příl." + per.issn module
 - Web Framework
 - improve "prev month"
