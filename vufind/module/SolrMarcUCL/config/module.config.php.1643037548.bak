@@ -1,0 +1,7 @@
+<?php
+namespace SolrMarcUCL\Module\Configuration;
+
+$config = [
+];
+
+return $config;
