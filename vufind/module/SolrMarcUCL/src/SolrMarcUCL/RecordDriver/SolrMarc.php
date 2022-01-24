@@ -7,7 +7,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
   public function getMisto(bool $onlyOneResult = false) {
         $result = '';
-        $result2 = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : '';
+        $result2 = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : [];
         $result3 = isset($this->fields['article_issn_str']) ? $this->fields['article_issn_str'] : '';
         $result4 = isset($this->fields['article_resource_related_str_mv']) ? $this->fields['article_resource_related_str_mv'] : '';
         $placeIS = true;
