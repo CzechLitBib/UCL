@@ -150,8 +150,7 @@ chown www-data:www-data /var/log/vufind.log
 </pre>
 MODULE
 <pre>
-export VUFIND_LOCAL_MODULES=SolrMarcUCL
-
+php install.php
 php public/index.php generate extendclass VuFind\\RecordDriver\\SolrMarc SolrMarcUCL
 </pre>
 THEME
