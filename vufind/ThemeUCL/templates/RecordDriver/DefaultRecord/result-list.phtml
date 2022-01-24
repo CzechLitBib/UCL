@@ -138,7 +138,7 @@
                         echo "<strong>In: </strong>" . $bookChapterInfo;
                 }
 	} else {
-		if (!empty($publishedIn = $this->record($this->driver)->getPublishedIn())) {
+		if (!empty($publishedIn = $this->record($this->driver)->renderTemplate('format-in.phtml'))) {
 	        	echo "<strong>In: </strong>" . $publishedIn;
 		}
         }
