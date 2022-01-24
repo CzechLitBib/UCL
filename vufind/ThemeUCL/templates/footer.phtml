@@ -1,0 +1,42 @@
+<footer class="hidden-print">
+  <div class="footer-container">
+    <div class="footer-column">
+      <a href="https://www.ucl.cas.cz"><img src="https://vufind.ucl.cas.cz/themes/bootprint3/images/ucl-clb-logo.png" ></a>
+      <div><b><?=$this->transEsc('Institute of Czech Literature, Czech Academy of Sciences')?></b></div>
+      <div><?=$this->transEsc('Address')?>: Na Florenci 3/1420, 110 00 Praha 1</div>
+      <div>tel: +420 234 612 111 (<?=$this->transEsc('Reception desk')?>)</div>
+      <div>tel: +420 234 612 117 (<?=$this->transEsc('Back office')?>)</div>
+      <div>Email: <a href="mailto:clb@ucl.cas.cz"> clb@ucl.cas.cz</a></div>
+    </div>
+
+    <div class="footer-column">
+      <br><p><strong><?=$this->transEsc('Search Options')?></strong></p>
+      <ul>
+	<li></li>
+        <li><a href="<?=$this->url('search-history')?>"><?=$this->transEsc('Search History')?></a></li>
+<!--        <li><a href="<?=$this->url('search-advanced')?>"><?=$this->transEsc('Advanced Search')?></a></li> -->
+        <li><a href="<?=$this->url('alphabrowse-home')?>"><?=$this->transEsc('Browse Alphabetically')?> (beta)</a></li>
+        <li><a href="<?=$this->url('browse-home')?>"><?=$this->transEsc('Browse the Catalog')?></a></li>
+        <li><a href="https://clb.ucl.cas.cz/napoveda/"><?=$this->transEsc('Help')?></a></li>
+<!--        <li><a href="<?=$this->url('help-home')?>?topic=search&amp;_=<?=time() ?>" data-lightbox class="help-link"><?=$this->transEsc('Search Tips')?></a></li> -->
+      </ul>
+
+
+    </div>
+    <div class="footer-column">
+      <br><p><strong><?=$this->transEsc('Quick links')?></strong></p>
+      <ul>
+	<li></li>
+        <li><a href="https://clb.ucl.cas.cz/kontakty/"><?=$this->transEsc('Contacts')?></a></li>
+        <li><a href="https://clb.ucl.cas.cz/lide/"><?=$this->transEsc('People')?></a></li>
+        <li><a href="https://clb.ucl.cas.cz/ochrana-osobnich-udaju/"><?=$this->transEsc('Personal Data Protection')?></a></li>
+        <li><a href="https://clb.ucl.cas.cz/open-access/"><?=$this->transEsc('Open Access')?></a></li>
+      </ul>
+    </div>
+
+  </div>
+ <div style="">Copyright (c) 2018-2021 Ústav pro českou literaturu AV ČR</div>
+  <div class="poweredby">
+    <?=$this->layout()->poweredBy ?>
+  </div>
+</footer>

@@ -1,0 +1,5 @@
+<?php 
+	$value = $this->driver->getZanr(); 
+	$result = $this->url($searchRoute) . "lookfor=%22" . urlencode($value) . "%22&amp;type=Genre";
+	echo $result;
+?>
