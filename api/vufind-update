@@ -15,7 +15,7 @@ OAI_URL='https://aleph.lib.cas.cz/OAI'
 OAI_SET='UCLA'
 DB='/usr/local/bin/api/vufind.db'
 RRD='/usr/local/bin/api/vufind.rrd'
-PLOT='/usr/local/bin/api/static/'
+PLOT='/usr/local/bin/api/static/oai_plot.png'
 DELETES='/usr/local/bin/api/templates/deletes.txt'
 
 # DEF -------------------
@@ -390,7 +390,7 @@ if DEL: DS2 = str(len(DEL))
 rrdtool.update(RRD, 'N:' + DS1 + ':' + DS2)
 
 # UPDATE PLOT
-rrdtool.graph(PLOT + 'oai_plot.png',
+rrdtool.graph(PLOT,
 	'--title', 'Aleph OAI-PMH Records',
 	'--start', 'now-2w',
 	'--end','now',
