@@ -4,6 +4,9 @@ Vufind server howto.
 
 TODO
 <pre>
+Cover:
+http://vufind2.ucl.cas.cz/Record/002712500
+https://vufind.ucl.cas.cz/Record/002712500
 FMT -> 990
 sudo -u solr index-alphabetic-browse.sh
 bbg,rej - author-classification.ini translation.
