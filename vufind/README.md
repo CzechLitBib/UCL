@@ -4,6 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
+FMT -> 990
 sudo -u solr index-alphabetic-browse.sh
 bbg,rej - author-classification.ini translation.
 </pre>
