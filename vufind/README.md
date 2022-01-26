@@ -163,6 +163,12 @@ THEME
 <pre>
 php public/index.php generate theme ThemeUCL
 </pre>
+CSS
+<pre>
+cd /usr/local/vufind/themes/ThemeUCL/less/
+lessc bootprint.css compiled.css
+mv compiled.css ../css/
+</pre>
 LANGUAGES
 <pre>
 php public/index.php language normalize cs.ini
