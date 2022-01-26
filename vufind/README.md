@@ -28,6 +28,10 @@ php php-fpm php-mbstring php-pear php-gd php-intl php-json php-ldap php-mysql ph
 
 (php-dev)
 
+# CSS
+
+node-less
+
 # JAVA
 
 openjdk-11-jre-headless
