@@ -174,8 +174,7 @@ mv compiled.css ../css/
 </pre>
 LANGUAGES
 <pre>
-php public/index.php language normalize cs.ini
-
-rmdir local/cache/languages
+php public/index.php language/normalize local/languages/cs.ini
+rmdir -r local/cache/languages
 </pre>
 
