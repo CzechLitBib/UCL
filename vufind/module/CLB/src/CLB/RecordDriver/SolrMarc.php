@@ -1,6 +1,6 @@
 <?php
 
-namespace SolrMarcUCL\RecordDriver;
+namespace CLB\RecordDriver;
 
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 {
@@ -240,6 +240,20 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
    }
    return  $string;
  }
+
+
+
+  public function getMoreInfo() { 
+        return isset($this->fields['more_info_str_mv'])
+            ? $this->fields['more_info_str_mv'] : [];
+    }
+
+
+
+  public function getConspectGroup() { 
+        return isset($this->fields['conspect_group_str_mv'])
+            ? $this->fields['conspect_group_str_mv'] : [];
+  }
 
 }
 

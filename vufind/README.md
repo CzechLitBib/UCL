@@ -72,7 +72,7 @@ server {
 		fastcgi_param SCRIPT_FILENAME /usr/local/vufind/public/index.php;
 		fastcgi_param VUFIND_LOCAL_DIR /usr/local/vufind/local/;
 		fastcgi_param VUFIND_HOME /usr/local/vufind/;
-		fastcgi_param VUFIND_LOCAL_MODULES SolrMarcUCL;
+		fastcgi_param VUFIND_LOCAL_MODULES CLB;
 		include fastcgi_params;
 
 		fastcgi_pass unix:/var/run/php/php-fpm.sock;
@@ -103,7 +103,7 @@ mkdir /usr/local/vufind/local/cache/cli
 export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 export VUFIND_HOME="/usr/local/vufind"
 export VUFIND_LOCAL_DIR="$VUFIND_HOME/local"
-export VUFIND_LOCAL_MODULES="SolrMarcUCL"
+export VUFIND_LOCAL_MODULES="CLB"
 
 source /etc/profile.d/vufind.sh
 
@@ -160,15 +160,15 @@ chown www-data:www-data /var/log/vufind.log
 MODULE
 <pre>
 php install.php
-php public/index.php generate extendclass VuFind\\RecordDriver\\SolrMarc SolrMarcUCL
+php public/index.php generate/extendclass VuFind\\RecordDriver\\SolrMarc CLB
 </pre>
 THEME
 <pre>
-php public/index.php generate theme ThemeUCL
+php public/index.php generate/theme CLB
 </pre>
 CSS
 <pre>
-cd /usr/local/vufind/themes/ThemeUCL/less/
+cd /usr/local/vufind/themes/CLB/less/
 lessc bootprint.css compiled.css
 mv compiled.css ../css/
 </pre>
