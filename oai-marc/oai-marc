@@ -545,7 +545,7 @@ for record in records:
 					write_error(header.identifier(), '700', SIF, '074', 'Chybný kód podpole v poli 700.')
 		for F in metadata.get_fields('710'):
 			for SUB in F.subfields[0::2]:
-				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x'):
+				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x', 'j'):
 					write_error(header.identifier(), '710', SIF, '075', 'Chybný kód podpole v poli 710.')
 		for F in metadata.get_fields('773'):
 			for SUB in F.subfields[0::2]:
