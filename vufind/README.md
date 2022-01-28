@@ -4,6 +4,9 @@ Vufind server howto.
 
 TODO
 <pre>
+icons
+ojs.properties
+a text-decoration ??
 Cover:
 http://vufind2.ucl.cas.cz/Record/002712500
 https://vufind.ucl.cas.cz/Record/002712500
