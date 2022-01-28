@@ -4,6 +4,8 @@ Vufind server howto.
 
 TODO
 <pre>
+facet column h2 -> h4 + color
+spell check always on
 icons
 ojs.properties
 a text-decoration ??
