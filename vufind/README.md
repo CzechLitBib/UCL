@@ -4,10 +4,10 @@ Vufind server howto.
 
 TODO
 <pre>
+adv search: adv_search_place
 language span in search
 facet column h2 -> h4 + color
 spell check always on
-icons
 ojs.properties
 a text-decoration ??
 Cover:
