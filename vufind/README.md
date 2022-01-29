@@ -4,6 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
+language span in search
 facet column h2 -> h4 + color
 spell check always on
 icons

@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- oai-marc excluded sqlite "serialized" interface
 - Kramerius: details:"***", "Příl." + per.issn module
 - Web Framework
 - improve "prev month"
