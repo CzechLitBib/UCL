@@ -4,7 +4,14 @@ Vufind server howto.
 
 TODO
 <pre>
-adv search: adv_search_place
+final:
+-log=/debug
+-ENV_VAR = 'devel'
+-SSL
+
+buglist:
+
+-->(Record detail)
 language span in search
 facet column h2 -> h4 + color
 spell check always on
