@@ -11,16 +11,17 @@ final:
 
 buglist:
 
--->(Record detail)
-language span in search
-facet column h2 -> h4 + color
-spell check always on
+-advanced search langauge externd
+-facet column h2 -> h4 + color
+-spell check always on
+-FMT -> 990
+-sudo -u solr index-alphabetic-browse.sh
+
 Cover:
 http://vufind2.ucl.cas.cz/Record/002712500
 https://vufind.ucl.cas.cz/Record/002712500
-FMT -> 990
-sudo -u solr index-alphabetic-browse.sh
 bbg,rej - author-classification.ini translation.
+
 </pre>
 INSTALL
 <pre>
