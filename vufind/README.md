@@ -4,23 +4,22 @@ Vufind server howto.
 
 TODO
 <pre>
-final:
+
+-FMT -> 990
+-sudo -u solr index-alphabetic-browse.sh
+
+-factory mod add(misto,genre) + order
+-advanced search langauge externd
+-facet column h2 -> h4 + color
+-bbg,rej - author-classification.ini translation.
+
 -log=/debug
 -ENV_VAR = 'devel'
 -SSL
 
-buglist:
-
--advanced search langauge externd
--facet column h2 -> h4 + color
--spell check always on
--FMT -> 990
--sudo -u solr index-alphabetic-browse.sh
-
 Cover:
 http://vufind2.ucl.cas.cz/Record/002712500
 https://vufind.ucl.cas.cz/Record/002712500
-bbg,rej - author-classification.ini translation.
 
 </pre>
 INSTALL
