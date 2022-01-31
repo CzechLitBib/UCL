@@ -5,12 +5,12 @@ Vufind server howto.
 TODO
 <pre>
 
--FMT -> 990
--sudo -u solr index-alphabetic-browse.sh
+(FMT -> 990)
+(author "7" custom search)
 
+-sudo -u solr index-alphabetic-browse.sh
 -OPRAVA UCL
 -6xx subfield "x" ?
--author "7" custom search
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
 
