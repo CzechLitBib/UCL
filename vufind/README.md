@@ -8,6 +8,7 @@ TODO
 -FMT -> 990
 -sudo -u solr index-alphabetic-browse.sh
 
+-author "7" custom search
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
 
@@ -178,7 +179,7 @@ php public/index.php generate/theme CLB
 CSS
 <pre>
 cd /usr/local/vufind/themes/CLB/less/
-lessc bootprint.css compiled.css
+lessc --verbose bootprint.less compiled.css
 mv compiled.css ../css/
 </pre>
 LANGUAGES
