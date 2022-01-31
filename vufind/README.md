@@ -4,12 +4,11 @@ Vufind server howto.
 
 TODO
 <pre>
-
-(FMT -> 990)
-(author "7" custom search)
-
+-dynamic loading ?
+-result list 'in'/'anotace'
+-metadata order
 -sudo -u solr index-alphabetic-browse.sh
--OPRAVA UCL
+-OPRAVA UCL http://vufind2.ucl.cas.cz/Record/001355794
 -6xx subfield "x" ?
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
