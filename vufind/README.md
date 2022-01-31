@@ -8,7 +8,6 @@ TODO
 -FMT -> 990
 -sudo -u solr index-alphabetic-browse.sh
 
--factory mod add(misto,genre) + order
 -advanced search langauge externd
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
