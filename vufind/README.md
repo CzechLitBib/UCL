@@ -188,4 +188,9 @@ LANGUAGES
 php public/index.php language/normalize local/languages/cs.ini
 rmdir -r local/cache/languages
 </pre>
-
+REINDEX
+<pre>
+systemctl stop solr
+rm -rf $VUFIND_HOME/solr/vufind/biblio/index $VUFIND_HOME/solr/vufind/spell*
+./vufind-manual-update.sh
+</pre>
