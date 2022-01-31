@@ -43,12 +43,39 @@
      public function getDefaultCoreSpecs()
      {
          $spec = new SpecBuilder(parent::getDefaultCoreSpecs());
+        
+         $spec->setLine('Statement of Responsibility','getResponsibility');
          $spec->setLine(
             'Language', 'getLanguages', null,
             ['itemPrefix' => '<span property="availableLanguage" typeof="Language">'
                            . '<span property="name">',
              'itemSuffix' => '</span></span>', 'translate' => true]
          );
+         $spec->setTemplateLine('In','getMisto', 'data-in.phtml');
+         $spec->setTemplateLine('Form/Genre','getZanr', 'link-genre.phtml');
+	 $spec->setLine('Citation','getCitation');
+         $spec->setTemplateLine('Referred work','getOdkazovaneDilo', 'data-reffered.phtml');
+         $spec->reorderKeys([
+             'Statement of Responsibility',
+             'Published in',
+             'New Title',
+             'Previous Title',
+             'Authors',
+             'Format',
+             'Language',
+             'In',
+             'Form/Genre',
+             'Referred work',
+             //'Published',
+             //'Edition',
+             //'Series',
+             'Subjects',
+             //'child_records',
+             'Online Access',
+             //'Related items',
+             'Tags',
+             'Citation'
+         ]);
          return $spec->getArray();
      }
 
