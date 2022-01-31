@@ -458,7 +458,7 @@ header .navbar .navbar-brand {
 }
 
 .action-toolbar {
-  display: flex !important;
+  display: flex;
   list-style: none !important;
   padding: 0 !important;
 }
@@ -501,3 +501,10 @@ a {
   text-decoration: none;/* ../../bootstrap3/less/components/accessibility.css overide */
 }
 
+.action-toolbar li {  /* center toolbox */
+  display: inline-block;
+}
+
+.toolbar-btn { /* ../../bootstrap3/less/components/search.css overide */
+  background-color: transparent;
+}
