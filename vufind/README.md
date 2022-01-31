@@ -8,6 +8,7 @@ TODO
 -FMT -> 990
 -sudo -u solr index-alphabetic-browse.sh
 
+-OPRAVA UCL
 -6xx subfield "x" ?
 -author "7" custom search
 -facet column h2 -> h4 + color
