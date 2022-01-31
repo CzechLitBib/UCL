@@ -55,6 +55,11 @@ def convert(record):
 	# Drop 022
 	if metadata.leader[7] != 's': metadata.remove_fields('022')
 
+	# Convert FTM to 990
+	if 'FMT' in metadata and 'a' in metadata['FMT']:
+		metadata.add_ordered_field(Field(tag='990', indicators=[' ',' '], subfields=['a', metadata['FMT']['a']]))
+		metadata.remove_fields('FMT')
+
 	# Webarchiv
 	for F in metadata.get_fields('856'):
 		if 'y' in F:
