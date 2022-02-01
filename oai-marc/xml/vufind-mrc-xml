@@ -325,13 +325,12 @@ def convert(record):
 
 
 	# RE-ORDER
-	if '990' in metadata:
-		metadata_sort = Record()
-		metadata_sort.leader = metadata.leader
-		for T in sorted([F.tag for F in metadata.fields]):
-			for F in metadata.fields:
-				if T == F.tag : metadata_sort.add_field(F)
-		metadata = metadata_sort
+	metadata_sort = Record()
+	metadata_sort.leader = metadata.leader
+	for T in sorted([F.tag for F in metadata.fields]):
+		for F in metadata.fields:
+			if T == F.tag: metadata_sort.add_field(F)
+	metadata = metadata_sort
 
 	# WRITE
 	writer.write(metadata)
