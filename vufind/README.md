@@ -4,12 +4,13 @@ Vufind server howto.
 
 TODO
 <pre>
+(metadata order)
+
 -dynamic loading ?
--result list 'in'/'anotace'
--metadata order
+-OPRAVA UCL ('x') http://vufind2.ucl.cas.cz/Record/001355794
+-result-list 'in'/'anotace'
 -sudo -u solr index-alphabetic-browse.sh
--OPRAVA UCL http://vufind2.ucl.cas.cz/Record/001355794
--6xx subfield "x" ?
+
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
 
