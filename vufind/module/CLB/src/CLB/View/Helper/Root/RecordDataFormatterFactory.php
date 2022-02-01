@@ -69,7 +69,7 @@
              //'Published',
              //'Edition',
              //'Series',
-             'Subjects',
+             //'Subjects',
              //'child_records',
              'Online Access',
              //'Related items',
