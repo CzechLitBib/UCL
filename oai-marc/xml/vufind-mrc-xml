@@ -5,7 +5,7 @@
 
 import sys,re
 
-from pymarc import MARCWriter,Field,marcxml
+from pymarc import MARCWriter,Record,Field,marcxml
 
 DATA='ucla.xml'
 
@@ -57,7 +57,7 @@ def convert(record):
 
 	# Convert FTM to 990
 	if 'FMT' in metadata and '990' not in metadata:
-		metadata.add_ordered_field(Field(tag='990', indicators=[' ',' '], subfields=['a', metadata['FMT'].value()]))
+		metadata.add_field(Field(tag='990', indicators=[' ',' '], subfields=['a', metadata['FMT'].value()]))
 		metadata.remove_fields('FMT')
 
 	# Webarchiv
@@ -90,7 +90,7 @@ def convert(record):
 	for F in metadata.get_fields('964'):
 		if 'CLE' in F.value(): MBK=False
 	if MBK:
-		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+		metadata.add_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
 	# 100/505/600/700 remove << >>
 	for F in metadata.get_fields('100', '505', '600', '700'):
@@ -122,7 +122,7 @@ def convert(record):
 	#					B=' '.join(AUT[0].get_subfields('b', 'c', 'd', 'g', 'x', 'q', 'j')[0::2])#B
 	#					if B: SUB+=['b', B]
 	#					if '7' in AUT[0]: SUB+=['c', AUT[0]['7']]#C
-	#					metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '], subfields=SUB))
+	#					metadata.add_field(Field(tag='593', indicators=[' ',' '], subfields=SUB))
 	#					AUT=AUT[1:]
 	# 245c remove <<>>
 	#if '245' in metadata and 'c' in metadata['245']:
@@ -137,24 +137,24 @@ def convert(record):
 		for LH in LHT:
 			SUB = re.findall('<<([^>[]+)', LH)
 			if SUB:
-				metadata.add_ordered_field(Field(tag='593', indicators=[' ',' '],
+				metadata.add_field(Field(tag='593', indicators=[' ',' '],
 					subfields=['a', SUB[0].strip()]
 				))
 
 	# 592
 	if '630' in metadata and 'a' in metadata['630']:
-		metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+		metadata.add_field(Field(tag='592', indicators=[' ',' '],
 			subfields=['a', metadata['630']['a']]
 		))
 
 	for F in metadata.get_fields('787'):
 		if 't' in F and '4' in F:
 			if 'a' in F:
-				metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+				metadata.add_field(Field(tag='592', indicators=[' ',' '],
 					subfields=['a', F['a'] + ': ' + F['t'], 'b', F['4']]
 				))
 			else:
-				metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+				metadata.add_field(Field(tag='592', indicators=[' ',' '],
 					subfields=['a', F['t'], 'b', F['4']]
 				))
 	# Citace
@@ -231,7 +231,7 @@ def convert(record):
 		GTEXT = GTEXT.replace('-', u'–')
 
 		BUFF = NAME + DATA + CTEXT + TTEXT + GTEXT + URL
-		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
+		metadata.add_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
 	# 100a - 700a: 245abnp. 245c. In: 773a: 773t. 773n. 773d, 773g.
 	ATEXT,TTEXT,NTEXT,DTEXT,GTEXT,URL = '','','','','',''
@@ -306,7 +306,7 @@ def convert(record):
 		BUFF = NAME + DATA + CTEXT + 'In: ' + ATEXT + TTEXT + NTEXT + DTEXT + GTEXT + URL
 
 		if not BROKEN:
-			metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
+			metadata.add_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
 
 	# 100a - 700a: 245abnp. 245c. 260abc[264abc].
 	ABC = ''
@@ -321,7 +321,17 @@ def convert(record):
 		ABC = ABC.replace(' - ', u' – ')
 
 		BUFF = NAME + DATA + CTEXT + ABC
-		metadata.add_ordered_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
+		metadata.add_field(Field(tag='524', indicators=[' ',' '], subfields=['a', BUFF.replace('....', '...')]))
+
+
+	# RE-ORDER
+	if '990' in metadata:
+		metadata_sort = Record()
+		metadata_sort.leader = metadata.leader
+		for T in sorted([F.tag for F in metadata.fields]):
+			for F in metadata.fields:
+				if T == F.tag : metadata_sort.add_field(F)
+		metadata = metadata_sort
 
 	# WRITE
 	writer.write(metadata)
