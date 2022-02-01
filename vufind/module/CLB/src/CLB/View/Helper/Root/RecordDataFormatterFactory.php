@@ -6,7 +6,7 @@
  
  class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
  {
-     // Add Bulk Tab item
+     // Bulk Tab
      public function getDefaultDescriptionSpecs()
      {
          $spec = new SpecBuilder(parent::getDefaultDescriptionSpecs());
@@ -15,7 +15,6 @@
          return $spec->getArray();
      }
 
-     // Translate language index
      public function getDefaultCollectionInfoSpecs()
      {
          $spec = new SpecBuilder(parent::getDefaultCollectionInfoSpecs());
@@ -40,9 +39,11 @@
          return $spec->getArray();
      }
 
+     // Record detail
      public function getDefaultCoreSpecs()
      {
-         $spec = new SpecBuilder(parent::getDefaultCoreSpecs());
+         //$spec = new SpecBuilder(parent::getDefaultCoreSpecs());
+         $spec = new SpecBuilder();
         
          $spec->setLine('Statement of Responsibility','CLB_getResponsibility');
          $spec->setLine(
@@ -53,15 +54,15 @@
          );
          $spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
          $spec->setTemplateLine('Form/Genre','CLB_getGenre', 'link-genre.phtml');
-	 $spec->setLine('Citation','getCitation');
+	 $spec->setLine('Citation','CLB_getCitation');
          $spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
          $spec->reorderKeys([
              'Statement of Responsibility',
-             'Published in',
-             'New Title',
-             'Previous Title',
-             'Authors',
-             'Format',
+             //'Published in',
+             //'New Title',
+             //'Previous Title',
+             //'Authors',
+             //'Format',
              'Language',
              'In',
              'Form/Genre',
