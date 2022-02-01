@@ -2,10 +2,12 @@
 
 namespace CLB\RecordDriver;
 
+//use Feature\MarcAdvancedTrait;
+
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 {
 
-  public function getMisto(bool $onlyOneResult = false) {
+  public function CLB_getIn(bool $onlyOneResult = false) {
         $result = '';
         $result2 = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : [];
         $result3 = isset($this->fields['article_issn_str']) ? $this->fields['article_issn_str'] : '';
@@ -40,7 +42,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         return $result;
   }
 
-  public function getZanr() {
+  public function CLB_getGenre() {
         $result = [];
         $result2 = isset($this->fields['genre_str_mv']) ? $this->fields['genre_str_mv'] : '';
 	if (!empty($result2)) {
@@ -51,12 +53,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	return implode(", ", $result);
   }
 
-    /**
-   * Get the book chapter info
-   *
-   * @return string
-   */
-  public function getBookChapterInfo() {
+  public function CLB_getBookChapterInfo() {
 # first we compare those fields and if their firt 10 chars are equal, we print getMisto else 
         $var773t = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : '';
         $var787t = isset($this->fields['related_doc_title_str_mv']) ? $this->fields['related_doc_title_str_mv'] : '';
@@ -103,7 +100,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
   }
 
-  public function getOdkazovaneDilo() {
+  public function CLB_getRelated() {
   $result = '';
   $result2 = isset($this->fields['related_doc_txt_mv']) ? $this->fields['related_doc_txt_mv'] : '';
   if (!empty($result2)) {
@@ -125,21 +122,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
     $partArray = Array();
     $partArray = explode("XGRXG",$result2[$i]);
-
-#    list($name, $piece, $rest) = explode(".",$result2[$i]);
-#    $nameLink = "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($name) . "&amp;type=Author'>" . $name . "</a>";
-#    $result2[$i] = str_replace($name, $nameLink, $result2[$i]);
-#echo $result2[$i];
-#    if (!empty($partArray[1])) {
-	    $pieceLink = "<a href='https://vufind.ucl.cas.cz/Search/Results?join=AND&lookfor0[]=" . urlencode($partArray[0]) . "&type0[]=LinkedResource&bool0[]=AND'>" . $partArray[0] . "</a>";
-#	    $result2[$i] = str_replace($piece, $pieceLink, $result2[$i]);
-#	    $partArray = array_slice($partArray, 2); 
-#    } else {
-#	    $pieceLink = "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($partArray[0]) . "&amp;type=Subject'>" . $partArray[1] . "</a>";
-            $partArray = array_slice($partArray, 1); 
-#    }
-#    echo "res: " . $result2[$i] . "name: " . $name . "link: " . $piece;
-#    $result .= $result2[$i] . '<br>';
+    $pieceLink = "<a href='https://vufind.ucl.cas.cz/Search/Results?join=AND&lookfor0[]=" . urlencode($partArray[0]) . "&type0[]=LinkedResource&bool0[]=AND'>" . $partArray[0] . "</a>";
     $result .= $pieceLink . implode("",$partArray) . '<br>';
   }
   }
@@ -148,17 +131,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     } 
 
     $result = ltrim($result, '. ');
-# echo(strlen($result)); 
-  return $result;
+    return $result;
  }
 
- public function getResponsibility() {
+ public function CLB_getResponsibility() {
 	$result = isset($this->fields['responsibility_str_mv']) ? implode(", ", $this->fields['responsibility_str_mv']) : '';
-#	$result2 = implode(", ", $result);
 	return $result;
  }
 
- public function getActualExcerption() {
+ public function CLB_getActualExcerption() {
 # first we compare those fields and if their firt 10 chars are equal, we print getMisto else 
         $result= isset($this->fields['actual_excerption_txt_mv']) ? $this->fields['actual_excerption_txt_mv'] : '';
 
@@ -178,7 +159,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         return $result2;
   }
 
-  public function getFinishedExcerption() {
+  public function CLB_getFinishedExcerption() {
 # first we compare those fields and if their firt 10 chars are equal, we print getMisto else 
         $result = isset($this->fields['finished_excerption_txt_mv']) ? $this->fields['finished_excerption_txt_mv'] : '';
         if (!empty($result)) {
@@ -198,16 +179,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
   }
 
-# public function getAnnotation() {
-#   $result = isset($this->fields['annotation_txt_mv']) ? $this->fields['annotation_txt_mv'] : '';
-#   if (!empty($result)) {
-#        $string = implode(',',$result);
-#        $result_string = (strlen($string) > 150) ? substr($string,0,150).'...' : $string;
-#   }
-#   return  $result_string;#implode("<br> ", $result);
-# }
-
- public function getAnnotation() {
+ public function CLB_getAnnotation() {
    $result = isset($this->fields['annotation_txt_mv']) ? $this->fields['annotation_txt_mv'] : '';
    $break = " ";
    $limit = 150;
@@ -230,11 +202,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 
 
- public function getCitation() {
+ public function CLB_getCitation() {
    $result = isset($this->fields['citation_txt_mv']) ? $this->fields['citation_txt_mv'] : '';
    if (!empty($result)) {
         $string = implode(',',$result);
-#        $result_string = (strlen($string) > 150) ? substr($string,0,150).'...' : $string;
    } else {
 	$string = "";
    }
@@ -243,14 +214,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 
 
-  public function getMoreInfo() { 
+  public function CLB_getMoreInfo() { 
         return isset($this->fields['more_info_str_mv'])
             ? $this->fields['more_info_str_mv'] : [];
     }
 
 
 
-  public function getConspectGroup() { 
+  public function CLB_getConspectGroup() { 
         return isset($this->fields['conspect_group_str_mv'])
             ? $this->fields['conspect_group_str_mv'] : [];
   }
