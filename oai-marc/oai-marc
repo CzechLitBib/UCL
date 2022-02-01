@@ -1241,7 +1241,7 @@ for record in records:
 					if re.match('^\[.*\]$', F['c']):
 						C = re.sub('^\[(.*)\]$', '\\1', F['c']).strip()
 						CS = re.sub('^([^(]+).*', '\\1', C).strip()
-						F = [F['a'].strip('./ ') for F in metadata.get_fields('245') if 'a' in F]
+						F = [F['a'].strip('.:=/ ') for F in metadata.get_fields('245') if 'a' in F]
 						if C not in F:
 							if CS not in F:
 								write_error(header.identifier(), '700', SIF, '188', 'Nesoulad názvu zdrojového dokumentu 700c/245a.')
