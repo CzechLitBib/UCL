@@ -65,7 +65,7 @@
              'Language',
              'In',
              'Form/Genre',
-             'Referred work',
+             'Related work',
              'Online Access',
              'Tags',
              'Citation'

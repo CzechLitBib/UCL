@@ -4,7 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
-(metadata order)
 
 -dynamic loading ?
 -OPRAVA UCL ('x') http://vufind2.ucl.cas.cz/Record/001355794
