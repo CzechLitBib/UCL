@@ -3,7 +3,7 @@
 # Update database from OAI-PMH 2.0
 #
 
-import argparse,rrdtool,sqlite3,sys,io,re
+import argparse,rrdtool,sqlite3,locale,sys,io,re
 
 from pymarc import marcxml,Field,Record
 from datetime import datetime,timedelta
@@ -398,12 +398,15 @@ if DEL: DS2 = str(len(DEL))
 rrdtool.update(RRD, 'N:' + DS1 + ':' + DS2)
 
 # UPDATE PLOT
+locale.setlocale(locale.LC_ALL, 'cs_CZ.utf8')
+
 rrdtool.graph(PLOT,
-	'--title', 'Aleph OAI-PMH Records',
-	'--start', 'now-2w',
+	'--title', 'Aleph OAI-PMH - Stažené záznamy\n',
+	'--start', 'now-1w',
 	'--end','now',
 	'--width','600',
 	'--height','150',
+	'--x-grid', 'HOUR:2:DAY:1:DAY:1:0:%a %d.',
 	'DEF:record=' + RRD + ':record:LAST',
 	'DEF:delete=' + RRD + ':delete:LAST',
 	'VDEF:last=record,LAST',
