@@ -4,16 +4,11 @@ Vufind server howto.
 
 TODO
 <pre>
--dynamic loading ?
--result list 'in'/'anotace'
--metadata order
--sudo -u solr index-alphabetic-browse.sh
--OPRAVA UCL http://vufind2.ucl.cas.cz/Record/001355794
--6xx subfield "x" ?
+-local_marc (sort)
+-OPRAVA UCL ('x') http://vufind2.ucl.cas.cz/Record/001355794
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
-
--log=/debug
+-log!=debug
 -ENV_VAR = 'devel'
 -SSL
 
@@ -194,3 +189,8 @@ systemctl stop solr
 rm -rf $VUFIND_HOME/solr/vufind/biblio/index $VUFIND_HOME/solr/vufind/spell*
 ./vufind-manual-update.sh
 </pre>
+ALPHA
+<pre>
+./index-alphabetic-browse.sh
+</pre>
+
