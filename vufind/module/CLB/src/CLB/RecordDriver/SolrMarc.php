@@ -7,6 +7,13 @@ namespace CLB\RecordDriver;
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 {
 
+  // override Versions = $this->displayVersions 
+
+  // override AJAX ILS
+  public function supportsAjaxStatus() {
+    return False;
+  }
+
   public function CLB_getIn(bool $onlyOneResult = false) {
         $result = '';
         $result2 = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : [];
@@ -60,7 +67,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	$text1 = isset($var773t[0]) ? trim(substr($var773t[0], 0 , 10)) : '';
 	$text2 = isset($var787t[0]) ? trim(substr($var787t[0], 0 , 10)) : '';
 	if (!($text1 == $text2)) {
-		return $this->getMisto(true);	
+		return $this->CLB_getIn(true);	
 	} else {
 		$result = "";
 		$result2 = isset($this->fields['an_index_str_mv']) ? $this->fields['an_index_str_mv'] : '';
