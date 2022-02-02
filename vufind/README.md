@@ -194,3 +194,8 @@ systemctl stop solr
 rm -rf $VUFIND_HOME/solr/vufind/biblio/index $VUFIND_HOME/solr/vufind/spell*
 ./vufind-manual-update.sh
 </pre>
+ALPHA
+<pre>
+./index-alphabetic-browse.sh
+</pre>
+
