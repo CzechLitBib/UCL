@@ -4,16 +4,11 @@ Vufind server howto.
 
 TODO
 <pre>
-
--dynamic loading ?
+-local_marc (sort)
 -OPRAVA UCL ('x') http://vufind2.ucl.cas.cz/Record/001355794
--result-list 'in'/'anotace'
--sudo -u solr index-alphabetic-browse.sh
-
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
-
--log=/debug
+-log!=debug
 -ENV_VAR = 'devel'
 -SSL
 
