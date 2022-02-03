@@ -13,7 +13,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getIn(bool $one = False) {// IN
-		if preg_match('^Kapitola)?.*(knihy)?$', $this->getFormatList()) {
+		if (in_array($this->fields['format'], array('Book','Book Chapter'))) {
 			return CLB_getBookChapterInfo();
 		} else {
 			$number = False;
@@ -33,7 +33,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
  					if ($issn) {
 						$result .= ". -- ISSN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($issn) . "&amp;type=ISN'>" . $issn . "</a>";
 					} elseif ($isbn) {
-						foreach($isbn as $i) { $result .= ". -- ISBN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($i) . "&amp;type=ISN'>" . $i . "</a>"; }
+						foreach($isbn as $isn) {
+							$result .= ". -- ISBN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($isn) . "&amp;type=ISN'>" . $isn . "</a>";
+						}
 					}
 					$number = True;
 				}
@@ -190,7 +192,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getCitation() { // CITATION
 		$citation = isset($this->fields['citation_txt_mv']) ? $this->fields['citation_txt_mv'] : '';
-		$text=''
+		$text='';
 		if (!empty($citation)) { $text = implode(',',$citation); }
 		return $text;
 	}

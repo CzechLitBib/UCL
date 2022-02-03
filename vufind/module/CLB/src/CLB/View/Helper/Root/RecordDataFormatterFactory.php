@@ -1,35 +1,78 @@
 <?php
  
 namespace CLB\View\Helper\Root;
- 
+
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
  
 class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
 {
-
-	// result-list additional specs
-	public function getDefaultSearchInfoSpecs()
+	public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 	{
-		$spec = new SpecBuilder();
+		if (!empty($options)) {
+			throw new \Exception('Unexpected options sent to factory.');
+		}
+		$helper = new $requestedName();
+		$helper->setDefaults('search-info', [$this, 'getDefaultSearchInfoSpecs']);
+		$helper->setDefaults('collection-info', [$this, 'getDefaultCollectionInfoSpecs']);
+		$helper->setDefaults('collection-record', [$this, 'getDefaultCollectionRecordSpecs']);
+		$helper->setDefaults('core', [$this, 'getDefaultCoreSpecs']);
+		$helper->setDefaults('description', [$this, 'getDefaultDescriptionSpecs']);
+		return $helper;
+	}
+
+	// CORE
+	public function getDefaultCoreSpecs()
+	{
+		$spec = new SpecBuilder(parent::getDefaultCoreSpecs());
+		//$spec = new SpecBuilder();
+		//$pec->setLine('Statement of Responsibility','CLB_getResponsibility');
 		$spec->setLine(
 			'Language', 'getLanguages', null,
 			['itemPrefix' => '<span property="availableLanguage" typeof="Language">'
 			. '<span property="name">',
 			'itemSuffix' => '</span></span>', 'translate' => true]
 		);
-		// $spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
-		// $spec->setLine('Annotation','CLB_getAnnotation');
+		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
+		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'link-genre.phtml');
+		$spec->setLine('Citation','CLB_getCitation');
+		$spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
+		//$spec->reorderKeys([
+			//'Statement of Responsibility',
+			//'Published in',
+			//'New Title',
+			//'Previous Title',
+			//'Authors',
+			//'Format',
+			//'Language',
+			//'In',
+			//'Form/Genre',
+			//'Related work',
+			//'Online Access',
+			//'Tags',
+			//'Citation'
+		//]);
 		return $spec->getArray();
 	}
 
-	// Bulk Tab
-	//public function getDefaultDescriptionSpecs()
-	//{
-	//	$spec = new SpecBuilder(parent::getDefaultDescriptionSpecs());
-	//	$spec->setLine('Conspectus', 'CLB_getMoreInfo');
-	//	$spec->setLine('MDT', 'CLB_getConspectGroup');
-	//	return $spec->getArray();
-	//}
+	// RESULT-LIST
+	public function getDefaultSearchInfoSpecs()
+	{
+		$spec = new SpecBuilder();
+		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
+		$spec->setLine('Annotation','CLB_getAnnotation');
+		return $spec->getArray();
+	}
+
+	// BULK DESCRIPTION
+	public function getDefaultDescriptionSpecs()
+	{
+		$spec = new SpecBuilder(parent::getDefaultDescriptionSpecs());
+		$spec->setLine('Conspectus', 'CLB_getMoreInfo');
+		$spec->setLine('MDT', 'CLB_getConspectGroup');
+		return $spec->getArray();
+	}
 
 	public function getDefaultCollectionInfoSpecs()
 	{
@@ -52,40 +95,6 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 			. '<span property="name">',
 			'itemSuffix' => '</span></span>', 'translate' => true]
 		);
-		return $spec->getArray();
-	}
-
-	// Record detail
-	public function getDefaultCoreSpecs()
-	{
-		$spec = new SpecBuilder(parent::getDefaultCoreSpecs());
-		//$spec = new SpecBuilder();
-		//$pec->setLine('Statement of Responsibility','CLB_getResponsibility');
-		$spec->setLine(
-			'Language', 'getLanguages', null,
-			['itemPrefix' => '<span property="availableLanguage" typeof="Language">'
-			. '<span property="name">',
-			'itemSuffix' => '</span></span>', 'translate' => true]
-		);
-		//$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
-		//$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'link-genre.phtml');
-		//$spec->setLine('Citation','CLB_getCitation');
-		//$spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
-		//$spec->reorderKeys([
-			//'Statement of Responsibility',
-			//'Published in',
-			//'New Title',
-			//'Previous Title',
-			//'Authors',
-			//'Format',
-			//'Language',
-			//'In',
-			//'Form/Genre',
-			//'Related work',
-			//'Online Access',
-			//'Tags',
-			//'Citation'
-		//]);
 		return $spec->getArray();
 	}
 }

@@ -119,7 +119,7 @@
           <div class="locationDetails"></div>
         <?php else: ?>
           <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
-            <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
+            <strong><?=$this->transEsc('Call Number')?>:</strong><?=$this->escapeHtml($summCallNo)?>
           <?php endif; ?>
         <?php endif; ?>
       </div>
@@ -150,17 +150,14 @@
         <?php endif; ?>
       <?php endif; ?>
 
-      <?php
-        // CLB implant
+      <?php // CLB implant
         $formatter = $this->recordDataFormatter();
-        $infoFields = $formatter->getData($driver, getDefaultSearchInfoSpec());
+        $infoFields = $formatter->getData($driver, $formatter->getDefaults('search-info'));
       ?>
       <?php if (!empty($infoFields)): ?>
-           <table class="search-info">
-             <? php foreach ($infoFields as $current): ?>
-               <tr><th><?=$this->transEsc($current['label'])?>:</th><td><?=$current['value']?></td></tr>
+             <?php foreach ($infoFields as $current): ?>
+               <strong><?=$this->transEsc($current['label'])?>:</strong> <?=$current['value']?>
              <?php endforeach; ?>
-           </table>
       <?php endif; ?>
 
       <div class="result-formats">
