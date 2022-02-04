@@ -4,17 +4,11 @@ Vufind server howto.
 
 TODO
 <pre>
--"Hlavni autor"
--facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
 -log!=debug
 -ENV_VAR = 'devel'
 -SSL
-
-Cover:
-http://vufind2.ucl.cas.cz/Record/002712500
-https://vufind.ucl.cas.cz/Record/002712500
-
+-Cover ? 002712500
 </pre>
 INSTALL
 <pre>
