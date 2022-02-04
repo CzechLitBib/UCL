@@ -6,7 +6,77 @@ namespace CLB\RecordDriver;
 
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 {
-	// override Versions = $this->displayVersions 
+
+	// exclude 630/655/656; exclude 'x' subfield
+	public function getAllSubjectHeadings($extended = false)
+	{
+		$subjectFields = [
+			'600' => 'personal name',
+			'610' => 'corporate name',
+			'611' => 'meeting name',
+			#'630' => 'uniform title',
+			'648' => 'chronological',
+			'650' => 'topic',
+			'651' => 'geographic',
+			'653' => '',
+			#'655' => 'genre/form',
+			#'656' => 'occupation'
+		];
+
+		// This is all the collected data:
+		$retval = [];
+
+		// Try each MARC field one at a time:
+		foreach ($subjectFields as $field => $fieldType) {
+			// Do we have any results for the current field?  If not, try the next.
+			$results = $this->getMarcReader()->getFields($field);
+			if (!$results) {
+				continue;
+			}
+
+			// If we got here, we found results -- let's loop through them.
+			foreach ($results as $result) {
+				// Start an array for holding the chunks of the current heading:
+				$current = [];
+
+				// Get all the chunks and collect them together:
+				foreach ($result['subfields'] as $subfield) {
+					// Numeric subfields are for control purposes and should not be displayed:
+					if (!is_numeric($subfield['code'])) {
+						if ($subfield['code'] != 'x')  {
+							$current[] = $subfield['data'];
+						}	
+					}
+				}
+				// If we found at least one chunk, add a heading to our result:
+				if (!empty($current)) {
+					if ($extended) {
+						$sourceIndicator = $result['i2'];
+						$source = '';
+						if (isset($this->subjectSources[$sourceIndicator])) {
+							$source = $this->subjectSources[$sourceIndicator] ?? '';
+						} else {
+							$source = $this->getSubfield($result, '2');
+						}
+						$retval[] = [
+							'heading' => $current,
+							'type' => $fieldType,
+							'source' => $source,
+							'id' => $this->getSubfield($result, '0')
+						];
+					} else {
+						$retval[] = $current;
+					}
+				}
+			}
+		}
+
+		// Remove duplicates and then send back everything we collected:
+		return array_map(
+			'unserialize',
+			array_unique(array_map('serialize', $retval))
+		);
+	}
 
 	public function supportsAjaxStatus() {// override AJAX ILS
 		return False;

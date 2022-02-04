@@ -25,34 +25,28 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	// CORE
 	public function getDefaultCoreSpecs()
 	{
-		$spec = new SpecBuilder(parent::getDefaultCoreSpecs());
-		//$spec = new SpecBuilder();
-		//$pec->setLine('Statement of Responsibility','CLB_getResponsibility');
+		//$spec = new SpecBuilder(parent::getDefaultCoreSpecs());
+		$spec = new SpecBuilder();
+		$spec->setLine('Statement of Responsibility','CLB_getResponsibility');
+		$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
+		$spec->setLine('Format', 'getFormats', 'RecordHelper',['helperMethod' => 'getFormatList']);
 		$spec->setLine(
 			'Language', 'getLanguages', null,
 			['itemPrefix' => '<span property="availableLanguage" typeof="Language">'
 			. '<span property="name">',
 			'itemSuffix' => '</span></span>', 'translate' => true]
 		);
+		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
+		$spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
 		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'link-genre.phtml');
-		$spec->setLine('Citation','CLB_getCitation');
 		$spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
-		//$spec->reorderKeys([
-			//'Statement of Responsibility',
-			//'Published in',
-			//'New Title',
-			//'Previous Title',
-			//'Authors',
-			//'Format',
-			//'Language',
-			//'In',
-			//'Form/Genre',
-			//'Related work',
-			//'Online Access',
-			//'Tags',
-			//'Citation'
-		//]);
+		$spec->setTemplateLine('Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml');
+		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
+		$spec->setTemplateLine('Tags', true, 'data-tags.phtml');
+		$spec->setLine('Actual Excerption','CLB_getActualExcerption');
+		$spec->setLine('Finished Excerption','CLB_getFinishedExcerption');
+		$spec->setLine('Citation','CLB_getCitation');
 		return $spec->getArray();
 	}
 
@@ -72,8 +66,8 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Summary', true, 'data-summary.phtml');
 		$spec->setLine('Conspectus', 'CLB_getMoreInfo');
 		$spec->setLine('MDT', 'CLB_getConspectGroup');
-		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
 		$spec->setLine('Item Description', 'getGeneralNotes');
+		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
 		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
 		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
 		$spec->setLine('Access', 'getAccessRestrictions');
