@@ -4,6 +4,8 @@ Vufind server howto.
 
 TODO
 <pre>
+-en.ini
+-spell check
 -bbg,rej - author-classification.ini translation.
 -log!=debug
 -ENV_VAR = 'devel'
