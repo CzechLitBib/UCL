@@ -68,9 +68,15 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	// BULK DESCRIPTION
 	public function getDefaultDescriptionSpecs()
 	{
-		$spec = new SpecBuilder(parent::getDefaultDescriptionSpecs());
+		$spec = new SpecBuilder();
+		$spec->setTemplateLine('Summary', true, 'data-summary.phtml');
 		$spec->setLine('Conspectus', 'CLB_getMoreInfo');
 		$spec->setLine('MDT', 'CLB_getConspectGroup');
+		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
+		$spec->setLine('Item Description', 'getGeneralNotes');
+		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
+		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
+		$spec->setLine('Access', 'getAccessRestrictions');
 		return $spec->getArray();
 	}
 
