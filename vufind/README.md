@@ -4,8 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
--local_marc (sort)
--OPRAVA UCL ('x') http://vufind2.ucl.cas.cz/Record/001355794
+-"Hlavni autor"
 -facet column h2 -> h4 + color
 -bbg,rej - author-classification.ini translation.
 -log!=debug
