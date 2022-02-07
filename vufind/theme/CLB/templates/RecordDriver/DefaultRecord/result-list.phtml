@@ -34,14 +34,16 @@
         <?php if($this->driver->isCollection()): ?>
           <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
         <?php else: ?>
-          <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
+          <?php /* $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)):*/ ?>
+          <?php $summAuthors = ''; if (!empty($summAuthors)): ?>
             <?=$this->transEsc('by')?>
             <?php $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
               <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight(rtrim($summAuthor, ','))?></a><?=$i + 1 < $authorCount ? ',' : ''?>
             <?php endforeach; ?>
           <?php endif; ?>
 
-          <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+          <?php /*$journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); */ ?>
+          <?php $journalTitle = ''; $summDate = ''; ?>
           <?php if (!empty($journalTitle)): ?>
             <?=!empty($summAuthor) ? '<br />' : ''?>
             <?=$this->transEsc('Published in')?>
@@ -131,7 +133,8 @@
         $doi = $this->doi($this->driver, 'results');
         $doiActive = $doi->isActive();
         // Account for replace_other_urls setting
-        $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+        //$urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+        $urls = '';
 
         if ($openUrlActive || $doiActive || !empty($urls)): ?>
         <?php if ($openUrlActive): ?>
@@ -155,9 +158,11 @@
         $infoFields = $formatter->getData($driver, $formatter->getDefaults('search-info'));
       ?>
       <?php if (!empty($infoFields)): ?>
+             <br/><table>
              <?php foreach ($infoFields as $current): ?>
-               <strong><?=$this->transEsc($current['label'])?>:</strong> <?=$current['value']?>
+               <tr><th><?=$this->transEsc($current['label'])?>:</th><td> <?=$current['value']?></td></tr>
              <?php endforeach; ?>
+             </table>
       <?php endif; ?>
 
       <div class="result-formats">
@@ -200,7 +205,6 @@
           <?php /* Add to favorites */ ?>
           <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" data-lightbox class="save-record" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
             <i class="result-link-icon fa fa-fw fa-star" aria-hidden="true"></i>
-            <span class="result-link-label"><?=$this->transEsc('Add to favorites')?></span>
           </a><br/>
         <?php elseif ($block = $this->permission()->getAlternateContent('feature.Favorites')): ?>
           <?=$block?>

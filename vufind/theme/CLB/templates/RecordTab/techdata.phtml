@@ -1,0 +1,17 @@
+<?php
+    // Set page title.
+    $this->headTitle($this->translate('TechData') . ': ' . $this->driver->getBreadcrumb());
+
+    $formatter = $this->recordDataFormatter();
+    $mainFields = $formatter->getData($driver, $formatter->getDefaults('techdata'));
+?>
+<table class="table table-striped">
+  <caption class="sr-only"><?=$this->transEsc('TechData')?></caption>
+  <?php if (!empty($mainFields)): ?>
+    <?php foreach ($mainFields as $current): ?>
+      <tr><th><?=$this->transEsc($current['label'])?>:</th><td><?=$current['value']?></td></tr>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <tr><td><?=$this->transEsc('no_description')?></td></tr>
+  <?php endif; ?>
+</table>

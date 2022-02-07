@@ -4,18 +4,13 @@ Vufind server howto.
 
 TODO
 <pre>
--local_marc (sort)
--OPRAVA UCL ('x') http://vufind2.ucl.cas.cz/Record/001355794
--facet column h2 -> h4 + color
+-en.ini
+-spell check
 -bbg,rej - author-classification.ini translation.
 -log!=debug
 -ENV_VAR = 'devel'
 -SSL
-
-Cover:
-http://vufind2.ucl.cas.cz/Record/002712500
-https://vufind.ucl.cas.cz/Record/002712500
-
+-Cover ? 002712500
 </pre>
 INSTALL
 <pre>
