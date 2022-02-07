@@ -36,7 +36,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 			. '<span property="name">',
 			'itemSuffix' => '</span></span>', 'translate' => true]
 		);
-		$spec->setLine('Country', 'getCountry');
+		$spec->setLine('Country', 'CLB_getCountry');
 		$spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');

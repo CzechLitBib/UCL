@@ -4,6 +4,14 @@ Vufind server howto.
 
 TODO
 <pre>
+-country_map translation
+-retrobi = import + <img> from tag implant.
+-tech data:
+  Systémové číslo - 001
+  Datum založení záznamu - record_creation_str_mv
+  Datum poslední úpravy - record_change_str_mv
+  Excerptor - processor_txt_mv
+-Search/Advanced search filed update
 -en.ini
 -spell check
 -bbg,rej - author-classification.ini translation.
