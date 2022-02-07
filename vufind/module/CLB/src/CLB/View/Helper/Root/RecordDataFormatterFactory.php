@@ -54,8 +54,11 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	public function getDefaultSearchInfoSpecs()
 	{
 		$spec = new SpecBuilder();
+		$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
+		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
 		$spec->setLine('Annotation','CLB_getAnnotation');
+		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
 		return $spec->getArray();
 	}
 
