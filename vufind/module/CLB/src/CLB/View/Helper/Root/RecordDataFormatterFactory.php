@@ -19,13 +19,13 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$helper->setDefaults('collection-record', [$this, 'getDefaultCollectionRecordSpecs']);
 		$helper->setDefaults('core', [$this, 'getDefaultCoreSpecs']);
 		$helper->setDefaults('description', [$this, 'getDefaultDescriptionSpecs']);
+		$helper->setDefaults('techdata', [$this, 'getDefaultTechDataSpecs']);
 		return $helper;
 	}
 
 	// CORE
 	public function getDefaultCoreSpecs()
 	{
-		//$spec = new SpecBuilder(parent::getDefaultCoreSpecs());
 		$spec = new SpecBuilder();
 		$spec->setLine('Statement of Responsibility','CLB_getResponsibility');
 		$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
@@ -79,6 +79,19 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		return $spec->getArray();
 	}
 
+	// BULK TECH DATA
+	public function getDefaultTechDataSpecs()
+	{
+		$spec = new SpecBuilder();
+		$spec->setLine('MDT', 'CLB_getConspectGroup');
+		$spec->setLine('Item Description', 'getGeneralNotes');
+		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
+		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
+		$spec->setLine('Access', 'getAccessRestrictions');
+		return $spec->getArray();
+	}
+
+	// FIX LAGUAGE
 	public function getDefaultCollectionInfoSpecs()
 	{
 		$spec = new SpecBuilder(parent::getDefaultCollectionInfoSpecs());

@@ -2,8 +2,6 @@
 
 namespace CLB\RecordDriver;
 
-//use Feature\MarcAdvancedTrait;
-
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 {
 
@@ -279,7 +277,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getExcerptionPeriod() { // EXCERPTION PERIOD
-		return isset($this->fields['excerption_period_str']) ? $this->fields['excerption_period_str'] : '';
+		return isset($this->fields['excerption_period_str_mv']) ? $this->fields['excerption_period_str_mv'] : [];
 	}
 
 	public function CLB_getCountry() { // COUNTRY
