@@ -18,7 +18,7 @@ URL="https://vyvoj.ucl.cas.cz/api/ListRecords?from=$FROM&until=$UNTIL"
 
 wget -O "$FILE" --header='Accept:application/octet-stream' "$URL"
 
-[ -s "$FILE" ] && /usr/local/vufind/import-marc.sh "$FILE"
+[ -s "$FILE" ] && /usr/local/vufind/import-marc.sh "$FILE" > import.log 2>&1 &
 
 rm "$FILE" 2>/dev/null
 
