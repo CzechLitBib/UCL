@@ -36,9 +36,10 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 			. '<span property="name">',
 			'itemSuffix' => '</span></span>', 'translate' => true]
 		);
-		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
+		$spec->setLine('Country', 'getCountry');
 		$spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
+		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
 		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'link-genre.phtml');
 		$spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
 		$spec->setTemplateLine('Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml');
@@ -56,6 +57,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec = new SpecBuilder();
 		$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
+		$spec->setLine('Excerption Period', 'CLB_getExcerptionPeriod');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
 		$spec->setLine('Annotation','CLB_getAnnotation');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');

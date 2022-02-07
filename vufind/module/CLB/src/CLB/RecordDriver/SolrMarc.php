@@ -215,13 +215,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		$data = '';
 
 		if (!empty($ex)) {
-			$count = count($ex);
-			for ($i=0; $i < $ex; $i++) {
-				$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
-				$ex[$i] = rtrim($ex[$i], ", ");
-				$ex[$i] = ltrim($ex[$i], ", ");
-				$ex[$i] = str_replace("pocet zaznamu", "počet záznamů:", $ex[$i]);
-			}
+		//	for ($i=0; $i < count($ex); $i++) {
+		//		$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
+		//		$ex[$i] = rtrim($ex[$i], ", ");
+		//		$ex[$i] = ltrim($ex[$i], ", ");
+		//		$ex[$i] = str_replace("pocet zaznamu", "počet záznamů:", $ex[$i]);
+		//	}
 			$data = implode("<br> ", $ex);
 		}
 		return $data;
@@ -278,5 +277,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	public function CLB_getConspectGroup() { // CONSPEKT
 		return isset($this->fields['conspect_group_str_mv']) ? $this->fields['conspect_group_str_mv'] : [];
 	}
+
+	public function CLB_getExcerptionPeriod() { // EXCERPTION PERIOD
+		return isset($this->fields['excerption_period_str']) ? $this->fields['excerption_period_str'] : '';
+	}
+
+	public function CLB_getCountry() { // COUNTRY
+		return isset($this->fields['country_str_mv']) ? $this->fields['country_str_mv'] : [];
+	}
+
 }
 
