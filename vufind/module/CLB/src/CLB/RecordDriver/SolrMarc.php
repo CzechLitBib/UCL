@@ -21,32 +21,23 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 			#'656' => 'occupation'
 		];
 
-		// This is all the collected data:
 		$retval = [];
 
-		// Try each MARC field one at a time:
 		foreach ($subjectFields as $field => $fieldType) {
-			// Do we have any results for the current field?  If not, try the next.
 			$results = $this->getMarcReader()->getFields($field);
-			if (!$results) {
-				continue;
-			}
+			if (!$results) { continue; }
 
-			// If we got here, we found results -- let's loop through them.
 			foreach ($results as $result) {
-				// Start an array for holding the chunks of the current heading:
 				$current = [];
 
-				// Get all the chunks and collect them together:
 				foreach ($result['subfields'] as $subfield) {
-					// Numeric subfields are for control purposes and should not be displayed:
 					if (!is_numeric($subfield['code'])) {
 						if ($subfield['code'] != 'x')  {
 							$current[] = $subfield['data'];
 						}	
 					}
 				}
-				// If we found at least one chunk, add a heading to our result:
+		
 				if (!empty($current)) {
 					if ($extended) {
 						$sourceIndicator = $result['i2'];
@@ -69,11 +60,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 			}
 		}
 
-		// Remove duplicates and then send back everything we collected:
-		return array_map(
-			'unserialize',
-			array_unique(array_map('serialize', $retval))
-		);
+		return array_map('unserialize', array_unique(array_map('serialize', $retval)));
 	}
 
 	public function supportsAjaxStatus() {// override AJAX ILS
@@ -81,41 +68,43 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getIn(bool $one = False) {// IN
-		if (in_array($this->fields['format'], array('Book','Book Chapter'))) {
-			return CLB_getBookChapterInfo();
-		} else {
-			$number = False;
-			$result = '';
+		foreach($this->fields['format'] as $format) {
+			if (in_array($format, array('Book','Book Chapter'))) {
+				return $this->CLB_getBookChapterInfo();
+			}
+		}
+		$number = False;
+		$result = '';
 		
-			$resource = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : [];
-			$related = isset($this->fields['article_resource_related_str_mv']) ? $this->fields['article_resource_related_str_mv'] : '';
-			$issn = isset($this->fields['article_issn_str']) ? $this->fields['article_issn_str'] : '';
-			$isbn = isset($this->fields['article_isbn_str_mv']) ? $this->fields['article_isbn_str_mv'] : '';
+		$resource = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : [];
+		$related = isset($this->fields['article_resource_related_str_mv']) ? $this->fields['article_resource_related_str_mv'] : '';
+		$issn = isset($this->fields['article_issn_str']) ? $this->fields['article_issn_str'] : '';
+		$isbn = isset($this->fields['article_isbn_str_mv']) ? $this->fields['article_isbn_str_mv'] : '';
 	
-			for ($i=0; $i < count($resource); $i++) {
-				if (empty($related[$i])) continue;
+		for ($i=0; $i < count($resource); $i++) {
+			if (empty($related[$i])) continue;
+
+			if(!empty($resource[$i])) { $result .= "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($resource[$i]) . "&amp;type=ArticleResource'>" . $resource[$i] . "</a>"; }
 		
-				if(!empty($resource[$i])) { $result .= "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($resource[$i]) . "&amp;type=ArticleResource'>" . $resource[$i] . "</a>"; }
-		
-				if (!$number) {
- 					if ($issn) {
-						$result .= ". -- ISSN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($issn) . "&amp;type=ISN'>" . $issn . "</a>";
-					} elseif ($isbn) {
-						foreach($isbn as $isn) {
-							$result .= ". -- ISBN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($isn) . "&amp;type=ISN'>" . $isn . "</a>";
-						}
+			if (!$number) {
+				if ($issn) {
+					$result .= ". -- ISSN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($issn) . "&amp;type=ISN'>" . $issn . "</a>";
+				} elseif ($isbn) {
+					foreach($isbn as $isn) {
+						$result .= ". -- ISBN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($isn) . "&amp;type=ISN'>" . $isn . "</a>";
 					}
-					$number = True;
 				}
+				$number = True;
+			}
 			
-				$result .=  '. -- ' . $related[$i] . '<br>';
-				if ($one) break;
-      			}
-			return $result;
-	 	}
+			$result .=  '. -- ' . $related[$i] . '<br>';
+			if ($one) break;
+		}
+		return $result;
 	}
 
 	public function CLB_getBookChapterInfo() {// CHAPTER INFO
+		return '[in progress..]';
 		$resource = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : '';
 		$title = isset($this->fields['related_doc_title_str_mv']) ? $this->fields['related_doc_title_str_mv'] : '';
 		$data = '';
@@ -287,7 +276,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getCreationDate() { // COUNTRY
 		if (isset($this->fields['record_creation_str_mv'])) {
-			return preg_replace('/(\d{2})(\d{2})(\d{2})/','\3.\2.20\1', $this->fields['record_creation_str_mv']);
+			return preg_replace('/(\d{2})(\d{2})(\d{2})/','\3.\2.\1', $this->fields['record_creation_str_mv']);
 		}
 		return [];
 	}
