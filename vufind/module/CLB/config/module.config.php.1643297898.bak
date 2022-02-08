@@ -1,7 +1,0 @@
-<?php
-namespace CLB\Module\Configuration;
-
-$config = [
-];
-
-return $config;

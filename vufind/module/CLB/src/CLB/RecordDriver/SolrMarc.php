@@ -284,5 +284,23 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return isset($this->fields['country_str_mv']) ? $this->fields['country_str_mv'] : [];
 	}
 
+	public function CLB_getCreationDate() { // COUNTRY
+		if (isset($this->fields['record_creation_str_mv'])) {
+			return preg_replace('/(\d{2})(\d{2})(\d{2})/','\3.\2.20\1', $this->fields['record_creation_str_mv']);
+		}
+		return [];
+	}
+
+	public function CLB_getEditDate() { // COUNTRY
+		if (isset($this->fields['record_change_str_mv'])) {
+			return preg_replace('/(\d{4})(\d{2})(\d{2})/', '\3.\2.\1', $this->fields['record_change_str_mv']);
+		}
+		return [];
+	}
+
+	public function CLB_getExcerptor() { // COUNTRY
+		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : [];
+	}
+
 }
 
