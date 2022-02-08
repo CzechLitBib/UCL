@@ -224,24 +224,25 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return $data;
 	}
 
-	public function CLB_getAnnotation() { // ANNOTATION
+	public function CLB_getAnnotation(bool $full = True) { // ANNOTATION
 		$annotation = isset($this->fields['annotation_txt_mv']) ? $this->fields['annotation_txt_mv'] : '';
-		$break = " ";
-		$limit = 150;
-		$pad = "...";
 		$data = '';
 
 		if (!empty($annotation)) {
-			$data = implode(',',$annotation);
-			if (strlen($data) > 150) {
-				if(false !== ($breakpoint = strpos($data, $break, $limit))) {
+			$data = implode(',', $annotation);
+			if (!$full and strlen($data) > 150) {
+				if(false !== ($breakpoint = strpos($data, ' ', 150))) {
 					if($breakpoint < strlen($data) - 1) {
-						$text = substr($data, 0, $breakpoint) . $pad;
+						$data = substr($data, 0, $breakpoint) . '...';
 					}
 				}
 			}
 		}
 		return $data;
+	}
+
+	public function CLB_getAnnotationShort() { // ANNOTATION - SHORT
+		return  $this->CLB_getAnnotation(False);
 	}
 
 	public function CLB_getGenre() { // GENRE

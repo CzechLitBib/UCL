@@ -63,7 +63,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
 		$spec->setLine('Excerption Period', 'CLB_getExcerptionPeriod');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
-		$spec->setLine('Annotation','CLB_getAnnotation');
+		$spec->setLine('Annotation','CLB_getAnnotationShort');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
 		return $spec->getArray();
 	}
@@ -79,7 +79,6 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
 		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
 		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
-		$spec->setLine('Access', 'getAccessRestrictions');
 		return $spec->getArray();
 	}
 
