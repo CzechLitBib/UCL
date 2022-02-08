@@ -4,8 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
--retrobi = import + <img> from tag implant.
--Search/Advanced search filed update
+-translate.mrc fix
 -en.ini
 -spell check
 -bbg,rej - author-classification.ini translation.
