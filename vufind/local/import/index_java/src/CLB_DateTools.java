@@ -30,7 +30,7 @@ import org.marc4j.marc.Record;
 public class CLB_DateTools
 {
     private DateTimeFormatter marc005date = DateTimeFormatter.ofPattern("yyyyMMddHHmmss.S");
-    private DateTimeFormatter marc008date = DateTimeFormatter.ofPattern("yyMMdd");
+    private DateTimeFormatter marc008date = DateTimeFormatter.ofPattern("yyyyMMdd");
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");//TODO: regular ISO_INSTANT
 
     private String normalize005Date(String input)
@@ -54,9 +54,16 @@ public class CLB_DateTools
             input = "null";
         }
 
+	String year;
+	if (input.matches("(0|1|2).*")) {// TODO: do it better..
+	   year = String.format("20%s", input.substring(0, 6));
+	} else {
+	   year = String.format("19%s", input.substring(0, 6));
+	}
+
         LocalDateTime retVal;
-        try {
-            retVal = LocalDate.parse(input.substring(0, 6), marc008date).atStartOfDay();
+       	try {
+            retVal = LocalDate.parse(year, marc008date).atStartOfDay();
         } catch(java.lang.StringIndexOutOfBoundsException | java.time.format.DateTimeParseException e) {
             retVal = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         }

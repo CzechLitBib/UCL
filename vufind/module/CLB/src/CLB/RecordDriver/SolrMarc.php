@@ -275,21 +275,17 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getCreationDate() { // RECORD CREATION DATE
-		if (isset($this->fields['record_creation_str_mv'])) {
-			foreach($this->fields['record_creation_str_mv'] as $date) {
-				return date_format(date_create_from_format('Y-m-d\TH:i:s', $date), 'j. n. Y');
-			}
+		if (isset($this->fields['record_creation_date'])) {
+			return date_format(date_create_from_format('Y-m-d\TH:i:s\Z', $this->fields['record_creation_date']), 'j. n. Y');
 		}
-		return [];
+		return '';
 	}
 
 	public function CLB_getEditDate() { // RECORD EDIT DATE
-		if (isset($this->fields['record_change_str_mv'])) {
-			foreach($this->fields['record_change_str_mv'] as $date) {
-				return date_format(date_create_from_format('Y-m-d\TH:i:s', $date), 'j. n. Y');
-			}
+		if (isset($this->fields['record_change_date'])) {
+			return date_format(date_create_from_format('Y-m-d\TH:i:s\Z', $this->fields['record_change_date']), 'j. n. Y');
 		}
-		return [];
+		return '';
 	}
 
 	public function CLB_getExcerptor() { // EXCERPTOR
