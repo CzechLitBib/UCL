@@ -4,6 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
+-retrobi indicators backslash
 -mod hardcoded paths
 -en.ini
 -spell check
