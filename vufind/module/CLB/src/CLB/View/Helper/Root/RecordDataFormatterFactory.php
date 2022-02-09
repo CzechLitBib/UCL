@@ -36,7 +36,11 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 			. '<span property="name">',
 			'itemSuffix' => '</span></span>', 'translate' => true]
 		);
-		$spec->setLine('Country', 'getCountry');
+		$spec->setLine('Country', 'CLB_getCountry', null,
+			['itemPrefix' => '<span property="availableCountry" typeof="Country">'
+			. '<span property="name">',
+			'itemSuffix' => '</span></span>', 'translate' => true]
+		);
 		$spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
@@ -59,7 +63,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
 		$spec->setLine('Excerption Period', 'CLB_getExcerptionPeriod');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
-		$spec->setLine('Annotation','CLB_getAnnotation');
+		$spec->setLine('Annotation','CLB_getAnnotationShort');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
 		return $spec->getArray();
 	}
@@ -73,9 +77,9 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setLine('MDT', 'CLB_getConspectGroup');
 		$spec->setLine('Item Description', 'getGeneralNotes');
 		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
+		$spec->setLine('Journal Period', 'CLB_getJournalPeriod');
 		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
 		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
-		$spec->setLine('Access', 'getAccessRestrictions');
 		return $spec->getArray();
 	}
 
@@ -83,11 +87,10 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	public function getDefaultTechDataSpecs()
 	{
 		$spec = new SpecBuilder();
-		$spec->setLine('MDT', 'CLB_getConspectGroup');
-		$spec->setLine('Item Description', 'getGeneralNotes');
-		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
-		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
-		$spec->setLine('Access', 'getAccessRestrictions');
+		$spec->setLine('System Number', 'getUniqueID');
+		$spec->setLine('Record Creation', 'CLB_getCreationDate');
+		$spec->setLine('Record Edit', 'CLB_getEditDate');
+		$spec->setLine('Excerptor', 'CLB_getExcerptor');
 		return $spec->getArray();
 	}
 

@@ -7,7 +7,7 @@ return array (
 		array (
 			'recordtab' =>
 			array (
-				'abstract_factories' => array('VuFind\RecordTab\PluginFactory'),
+				'abstract_factories' => array('VuFind\\RecordTab\\PluginFactory'),
 				'invokables' => array(
 					'techdata' => 'CLB\\RecordTab\\TechData',
 				),
