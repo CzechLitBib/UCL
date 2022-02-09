@@ -274,22 +274,30 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return isset($this->fields['country_str_mv']) ? $this->fields['country_str_mv'] : [];
 	}
 
-	public function CLB_getCreationDate() { // COUNTRY
+	public function CLB_getCreationDate() { // RECORD CREATION DATE
 		if (isset($this->fields['record_creation_str_mv'])) {
-			return preg_replace('/(\d{2})(\d{2})(\d{2})/','\3.\2.\1', $this->fields['record_creation_str_mv']);
+			foreach($this->fields['record_creation_str_mv'] as $date) {
+				return date_format(date_create_from_format('Y-m-d\TH:i:s', $date), 'j. n. Y');
+			}
 		}
 		return [];
 	}
 
-	public function CLB_getEditDate() { // COUNTRY
+	public function CLB_getEditDate() { // RECORD EDIT DATE
 		if (isset($this->fields['record_change_str_mv'])) {
-			return preg_replace('/(\d{4})(\d{2})(\d{2})/', '\3.\2.\1', $this->fields['record_change_str_mv']);
+			foreach($this->fields['record_change_str_mv'] as $date) {
+				return date_format(date_create_from_format('Y-m-d\TH:i:s', $date), 'j. n. Y');
+			}
 		}
 		return [];
 	}
 
-	public function CLB_getExcerptor() { // COUNTRY
+	public function CLB_getExcerptor() { // EXCERPTOR
 		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : [];
+	}
+
+	public function CLB_getJournalPeriod() { // JOURNAL PERIOD
+		return isset($this->fields['journal_period_str_mv']) ? $this->fields['journal_period_str_mv'] : [];
 	}
 
 }

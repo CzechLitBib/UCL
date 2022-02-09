@@ -4,7 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--translate.mrc fix
 -en.ini
 -spell check
 -bbg,rej - author-classification.ini translation.

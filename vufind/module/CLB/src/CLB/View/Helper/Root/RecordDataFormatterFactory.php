@@ -77,6 +77,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setLine('MDT', 'CLB_getConspectGroup');
 		$spec->setLine('Item Description', 'getGeneralNotes');
 		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
+		$spec->setLine('Journal Period', 'CLB_getJournalPeriod');
 		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
 		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
 		return $spec->getArray();
