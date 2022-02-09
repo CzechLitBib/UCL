@@ -4,6 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
+-mod hardcoded paths
 -en.ini
 -spell check
 -bbg,rej - author-classification.ini translation.

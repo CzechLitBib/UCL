@@ -84,14 +84,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		for ($i=0; $i < count($resource); $i++) {
 			if (empty($related[$i])) continue;
 
-			if(!empty($resource[$i])) { $result .= "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($resource[$i]) . "&amp;type=ArticleResource'>" . $resource[$i] . "</a>"; }
+			if(!empty($resource[$i])) { $result .= "<a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($resource[$i]) . "&amp;type=ArticleResource'>" . $resource[$i] . "</a>"; }
 		
 			if (!$number) {
 				if ($issn) {
-					$result .= ". -- ISSN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($issn) . "&amp;type=ISN'>" . $issn . "</a>";
+					$result .= ". -- ISSN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($issn) . "&amp;type=ISN'>" . $issn . "</a>";
 				} elseif ($isbn) {
 					foreach($isbn as $isn) {
-						$result .= ". -- ISBN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($isn) . "&amp;type=ISN'>" . $isn . "</a>";
+						$result .= ". -- ISBN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($isn) . "&amp;type=ISN'>" . $isn . "</a>";
 					}
 				}
 				$number = True;
@@ -171,7 +171,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 				$partArray = Array();
 				$partArray = explode("XGRXG",$rel[$i]);
-				$pieceLink = "<a href='https://vufind.ucl.cas.cz/Search/Results?join=AND&lookfor0[]=" . urlencode($partArray[0]) . "&type0[]=LinkedResource&bool0[]=AND'>" . $partArray[0] . "</a>";
+				$pieceLink = "<a href='http://vufind2.ucl.cas.cz/Search/Results?join=AND&lookfor0[]=" . urlencode($partArray[0]) . "&type0[]=LinkedResource&bool0[]=AND'>" . $partArray[0] . "</a>";
 				$data .= $pieceLink . implode("",$partArray) . '<br>';
 			}
 		}
@@ -240,7 +240,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 		if (!empty($genre)) {
 			foreach ($genre as $item) { 
-				$data[] = "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($item) . "&amp;type=Genre'>" . $item . "</a>";
+				$data[] = "<a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($item) . "&amp;type=Genre'>" . $item . "</a>";
 			}
 		}
 		return implode(", ", $data);
