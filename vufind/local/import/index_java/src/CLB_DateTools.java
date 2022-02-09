@@ -31,9 +31,8 @@ public class CLB_DateTools
 {
     private DateTimeFormatter marc005date = DateTimeFormatter.ofPattern("yyyyMMddHHmmss.S");
     private DateTimeFormatter marc008date = DateTimeFormatter.ofPattern("yyMMdd");
-    private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");//TODO: regular ISO_INSTANT
 
-    //private LocalDateTime normalize005Date(String input)
     private String normalize005Date(String input)
     {
         if (input == null) {
@@ -49,7 +48,6 @@ public class CLB_DateTools
         return retVal.format(formatter);
     }
 
-    //private LocalDateTime normalize008Date(String input)
     private String normalize008Date(String input)
     {
         if (input == null || input.length() < 6) {
@@ -70,7 +68,6 @@ public class CLB_DateTools
      * @param record MARC record
      * @return Latest transaction date.
      */
-    //public LocalDateTime CLB_getLatestTransactionDate(Record record) {
     public String CLB_getLatestTransactionDate(Record record) {
      
         Set<String> dates = SolrIndexer.instance().getFieldList(record, "005");
@@ -89,7 +86,6 @@ public class CLB_DateTools
      * @param record MARC record
      * @return Creation date.
      */
-    //public LocalDateTime CLB_getCreationDate(Record record) {
     public String CLB_getCreationDate(Record record) {
         Set<String> dates = SolrIndexer.instance().getFieldList(record, "008");
         if (dates != null) {
