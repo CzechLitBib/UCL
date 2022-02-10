@@ -297,16 +297,16 @@ with open(IN, 'r') as f:
 		record.add_ordered_field(Field(tag='FMT', data='RS'))
 		record.add_ordered_field(Field(tag='003', data='CZ PrUCL'))
 		record.add_ordered_field(Field(tag='005', data='20201231'))
-		record.add_ordered_field(Field(tag='040', indicators=['\\','\\'], subfields=['a', 'ABB060','b', 'cze']))
-		#record.add_ordered_field(Field(tag='041', indicators=['0','\\'], subfields=['a', 'cze']))
-		record.add_ordered_field(Field(tag='336', indicators=['\\','\\'], subfields=['a', 'text', 'b', 'txt', '2', 'rdacontent']))
-		record.add_ordered_field(Field(tag='337', indicators=['\\','\\'], subfields=['a', 'bez média', 'b', 'n', '2', 'rdamedia']))
-		record.add_ordered_field(Field(tag='338', indicators=['\\','\\'], subfields=['a', 'jiný', 'b', 'nz', '2', 'rdacarrier']))
-		record.add_ordered_field(Field(tag='500', indicators=['\\','\\'], subfields=['a', 'Strojově převedený záznam z RETROBI bez redakční kontroly.']))
-		record.add_ordered_field(Field(tag='910', indicators=['\\','\\'], subfields=['a', 'ABB060']))
-		record.add_ordered_field(Field(tag='964', indicators=['\\','\\'], subfields=['a', 'RETROBI']))
-		record.add_ordered_field(Field(tag='OWN', indicators=['\\','\\'], subfields=['a', 'UCLA']))
-		record.add_ordered_field(Field(tag='SIF', indicators=['\\','\\'], subfields=['a', 'RET']))
+		record.add_ordered_field(Field(tag='040', indicators=[' ',' '], subfields=['a', 'ABB060','b', 'cze']))
+		#record.add_ordered_field(Field(tag='041', indicators=['0',' '], subfields=['a', 'cze']))
+		record.add_ordered_field(Field(tag='336', indicators=[' ',' '], subfields=['a', 'text', 'b', 'txt', '2', 'rdacontent']))
+		record.add_ordered_field(Field(tag='337', indicators=[' ',' '], subfields=['a', 'bez média', 'b', 'n', '2', 'rdamedia']))
+		record.add_ordered_field(Field(tag='338', indicators=[' ',' '], subfields=['a', 'jiný', 'b', 'nz', '2', 'rdacarrier']))
+		record.add_ordered_field(Field(tag='500', indicators=[' ',' '], subfields=['a', 'Strojově převedený záznam z RETROBI bez redakční kontroly.']))
+		record.add_ordered_field(Field(tag='910', indicators=[' ',' '], subfields=['a', 'ABB060']))
+		record.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'RETROBI']))
+		record.add_ordered_field(Field(tag='OWN', indicators=[' ',' '], subfields=['a', 'UCLA']))
+		record.add_ordered_field(Field(tag='SIF', indicators=[' ',' '], subfields=['a', 'RET']))
 
 		# PARSE -----------------
 		try:
@@ -354,7 +354,7 @@ with open(IN, 'r') as f:
 			if MDT:
 				MDT.append('4')
 				MDT.append('aut')
-				record.add_ordered_field(Field(tag='100', indicators=['1','\\'], subfields=MDT))
+				record.add_ordered_field(Field(tag='100', indicators=['1',' '], subfields=MDT))
 		# 245
 		NAME = re.sub('(.*), (.*)', '\\2 \\1', find('tree/nazvova_cast/autor/jmeno', jsn))
 		if NAME:
@@ -367,7 +367,7 @@ with open(IN, 'r') as f:
 		if ANOT:
 			ANOT = re.sub('^\[(.*)\]$', '\\1', ANOT)# remove bracers
 			if not re.match('.*\.$', ANOT): ANOT = ANOT + '.'# trailing dot
-			record.add_ordered_field(Field(tag='520', indicators=['2','\\'], subfields=['a', ANOT]))
+			record.add_ordered_field(Field(tag='520', indicators=['2',' '], subfields=['a', ANOT]))
 		# 600
 		NAME = find('tree/anotacni_cast/odkazovana_osoba/jmeno', jsn)
 		IDENT = find('tree/anotacni_cast/odkazovana_osoba/id', jsn)
@@ -382,7 +382,7 @@ with open(IN, 'r') as f:
 		# 655
 		CHAR = find('tree/nazvova_cast/charakteristika', jsn)
 		if CHAR:
-			record.add_ordered_field(Field(tag='655', indicators=['\\','7'], subfields=['a', CHAR]))
+			record.add_ordered_field(Field(tag='655', indicators=[' ','7'], subfields=['a', CHAR]))
 
 		# 773
 		NAME = find('tree/bibliograficka_cast/zdroj/nazev', jsn)
@@ -402,23 +402,23 @@ with open(IN, 'r') as f:
 			#DATE = re.sub('(?<=\d{3})\.$', '', DATE)# trailing dot
 			#DATE = DATE.rstrip('.')
 			if LANG == 'ger':
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', 'Jg. ' + DATE, '9', YEAR]))
+				record.add_ordered_field(Field(tag='773', indicators=['0',' '], subfields=['t', SRC, 'g', 'Jg. ' + DATE, '9', YEAR]))
 			else:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', SRC, 'g', u'Roč. ' + DATE, '9', YEAR]))
+				record.add_ordered_field(Field(tag='773', indicators=['0',' '], subfields=['t', SRC, 'g', u'Roč. ' + DATE, '9', YEAR]))
 		else:
 			if NAME and YEAR:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', NAME, 'g', 'R. ' + YEAR, '9', YEAR]))
+				record.add_ordered_field(Field(tag='773', indicators=['0',' '], subfields=['t', NAME, 'g', 'R. ' + YEAR, '9', YEAR]))
 			if NAME and not YEAR:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['t', NAME]))
+				record.add_ordered_field(Field(tag='773', indicators=['0',' '], subfields=['t', NAME]))
 			if not NAME and YEAR:
-				record.add_ordered_field(Field(tag='773', indicators=['0','\\'], subfields=['g','R. ' + YEAR, '9', YEAR]))
+				record.add_ordered_field(Field(tag='773', indicators=['0',' '], subfields=['g','R. ' + YEAR, '9', YEAR]))
 
 		# 856
 		LINK = 'http://retrobi.ucl.cas.cz/retrobi/katalog/listek/' + find('_id', jsn)
 		record.add_ordered_field(Field(tag='856', indicators=['4','0'], subfields=['u', LINK, 'y', u'původní lístek v RETROBI', '4', 'N']))
 		# SIR
 		if find('segment_excerpter', jsn):
-			record.add_ordered_field(Field(tag='SIR', indicators=['\\', '\\'], subfields=['a', find('segment_excerpter', jsn)]))
+			record.add_ordered_field(Field(tag='SIR', indicators=[' ', ' '], subfields=['a', find('segment_excerpter', jsn)]))
 		# 245 / TIT / TIZ
 		TITLE = find('segment_title', jsn)
 		if TITLE:
@@ -427,7 +427,7 @@ with open(IN, 'r') as f:
 			BRACE = re.findall('(?<= \[)(?<!=)[^\[\]]+(?=\]$)', TITLE)
 			if BRACE:
 				if '655' not in record:
-					record.add_ordered_field(Field(tag='655', indicators=['\\', '4'], subfields=['a', BRACE[0]]))
+					record.add_ordered_field(Field(tag='655', indicators=[' ', '4'], subfields=['a', BRACE[0]]))
 				else:
 					if 'a' not in record['655']:
 						record['655'].add_subfield('a', BRACE[0], 0)
@@ -451,15 +451,15 @@ with open(IN, 'r') as f:
 				else:
 					segment_recursion(TITLE,record)
 			# TIT
-			record.add_ordered_field(Field(tag='TIT', indicators=['\\', '\\'], subfields=['a', TITLE]))
+			record.add_ordered_field(Field(tag='TIT', indicators=[' ', ' '], subfields=['a', TITLE]))
 
 		# 989
 		OCRF = find('ocr_fix', jsn).replace('\n', ' ')
 		OCR = find('ocr', jsn).replace('\n', ' ')
 		if OCRF:
-			record.add_ordered_field(Field(tag='989', indicators=['\\', '\\'], subfields=['a', OCRF]))
+			record.add_ordered_field(Field(tag='989', indicators=[' ', ' '], subfields=['a', OCRF]))
 		elif OCR:
-			record.add_ordered_field(Field(tag='989', indicators=['\\', '\\'], subfields=['a', OCR]))
+			record.add_ordered_field(Field(tag='989', indicators=[' ', ' '], subfields=['a', OCR]))
 
 		# FIX -----------------
 	
@@ -526,11 +526,11 @@ with open(IN, 'r') as f:
 			try:
 				IND=''
 				if F.indicator1: IND += F.indicator1
-				else: IND += "\\"
+				else: IND += " "
 				if F.indicator2: IND += F.indicator2
-				else: IND += "\\"
+				else: IND += " "
 			except:
-				 IND = "\\\\"
+				 IND = "  "
 			try:
 				VAL=[]
 				if F.subfields:
