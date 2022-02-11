@@ -4,6 +4,41 @@ Vufind server howto.
 
 TODO
 <pre>
+-Name/Author short extreme [...]
+-Result list - "main author or nothing"
+-In: 773 jenom s "g"
+-In: highlight
+-In: (book)/chapter(LDR8 an) => 773 == 787 case.
+-Core: flex: 1
+-Title: clean too much..(/ only)
+-Core: Anotace pod titulkem cela(!) z tabulky pric.
+-Vice informaci: Obor -> "Skupina konspektu"
+-Seznam tipu poli od vyrobce. core/result @.
+-Nahled Retrobi:
+
+Pokud by šlo, připravit následující 2 věci, prosím, upravte, pokud by to mělo být na delší úpravu, nechte být (ve stávající verzi to není)
+a) Prosím u záznamu zobrazit náhled lístku nad tabulkový rozpis v proporcích dle vzoru zde: https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html  (hned pod název);
+Link na lístek je v poli 856
+b) Pakliže není vyplněna anotace (520), prosím hned pod obrázek dát s návěštím „OCR přepis lístku:“ obsah pole 989a
+Další úpravy pak není třeba řešit, uděláme pak jako jeden větší balík
+
+-Dismax @
+-Půjde-li, do pokročilého vyhledávání prosím přidat pole „Konspekt“ (=“Obor“=072a), „MDT“, „OCR přepis RETROBI“, „Aktuální excerpce“, „Ukončená excerpce“, „Systémové číslo“ a „Excerptor“  (v klidu v tomto pořadí)
+
+-Year facet: _str -> _date
+-[DONE] Adv. search Rok vydani -> "Datum vydani
+-Advanced search: facet gray example JS
+b) zobrazení jednotlivého záznamu v rešerši - prosím upravit zalomování
+a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
+stačí jedna mezera. návěští zarovnat vlevo nahoru)
+b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
+
+-related_doc_txt_mv CLB_getRelated() ? "Odkozovane dilo"
+-Advanced search(En): Czech facet ??
+-Diacritic sort order. MZK
+-Grafy
+
+
 -retrobi indicators backslash
 -mod hardcoded paths
 -en.ini
