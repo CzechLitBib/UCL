@@ -4,14 +4,47 @@ Vufind server howto.
 
 TODO
 <pre>
--Result list - "main author or nothing"
+-Půjde-li, do pokročilého vyhledávání prosím přidat pole „Konspekt“ (=“Obor“=072a), „MDT“, „OCR přepis RETROBI“, „Aktuální excerpce“, „Ukončená excerpce“, „Systémové číslo“ a „Excerptor“  (v klidu v tomto pořadí)
+-Year facet: _str -> _date
+-mod hardcoded paths
+-Nginx API ACL
+
 -In: 773 jenom s "g"
--In: highlight
 -In: (book)/chapter(LDR8 an) => 773 == 787 case.
--Core: flex: 1
--Title: clean too much..(/ only)
+
+-related_doc_txt_mv CLB_getRelated() ? "Odkozovane dilo":
+
+ a) z pole 630 (významná menšina) pro zobrazení stačí 630a. 630l. 630p. 630s
+ b) z pole 787  pro zobrazení prosím pořadí:
+   787a. -- 787t. -- 787n. -- 787b. -- 787d. -- 787k. -- 787h. -- 787x. -- 787z. [787-4]
+   (za polem je vždy tečka, možná už se tam ale bude dostávat přímo ze záznamu;
+   prosím, raději ověřte, aby nevznikaly dvě tečky po sobě; oddělující znak je spojovník = krátká pomlčka)
+ c)pro fasetu prosím stávající 787a 787t (t je vždy, a nemusí být pokaždé) nebo 630alps
+ d)pro hyperlink v detailu z. prosím to stejné (787a+t, nebo 630alps)
+
 -Core: Anotace pod titulkem cela(!) z tabulky pric.
+-Result list - "main author or nothing"
+-Title: clean too much..(/ only)
 -Seznam tipu poli od vyrobce. core/result @.
+-Dismax @
+-Diacritic sort order. MZK
+-en.ini + Advanced search(En): Czech facet ??
+-article_resource_* dup
+-spell check
+-SAM Grafy
+-bbg,rej - author-classification.ini translation.
+-Cover ? 002712500
+-ENV_VAR = 'devel'
+-SSL
+
+-In: highlight
+-Core: flex: 1
+-Advanced search: facet HTML placeholder
+-b) zobrazení jednotlivého záznamu v rešerši - prosím upravit zalomování
+ a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
+ stačí jedna mezera. návěští zarovnat vlevo nahoru)
+-b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
+
 -Nahled Retrobi:
 
 Pokud by šlo, připravit následující 2 věci, prosím, upravte, pokud by to mělo být na delší úpravu, nechte být (ve stávající verzi to není)
@@ -20,43 +53,6 @@ Link na lístek je v poli 856
 b) Pakliže není vyplněna anotace (520), prosím hned pod obrázek dát s návěštím „OCR přepis lístku:“ obsah pole 989a
 Další úpravy pak není třeba řešit, uděláme pak jako jeden větší balík
 
--Dismax @
--Půjde-li, do pokročilého vyhledávání prosím přidat pole „Konspekt“ (=“Obor“=072a), „MDT“, „OCR přepis RETROBI“, „Aktuální excerpce“, „Ukončená excerpce“, „Systémové číslo“ a „Excerptor“  (v klidu v tomto pořadí)
-
--Year facet: _str -> _date
--Advanced search: facet gray example JS
-b) zobrazení jednotlivého záznamu v rešerši - prosím upravit zalomování
-a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
-stačí jedna mezera. návěští zarovnat vlevo nahoru)
-b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
-
--related_doc_txt_mv CLB_getRelated() ? "Odkozovane dilo":
-
-a) z pole 630 (významná menšina)
-- pro zobrazení stačí 630a. 630l. 630p. 630s
-b) z pole 787
-- pro zobrazení prosím pořadí:
-787a. -- 787t. -- 787n. -- 787b. -- 787d. -- 787k. -- 787h. -- 787x. -- 787z. [787-4]
-(za polem je vždy tečka, možná už se tam ale bude dostávat přímo ze záznamu;
-prosím, raději ověřte, aby nevznikaly dvě tečky po sobě; oddělující znak je spojovník = krátká pomlčka)
-
-- pro fasetu prosím stávající 787a 787t (t je vždy, a nemusí být pokaždé) nebo 630alps
-
-- pro hyperlink v detailu z. prosím to stejné (787a+t, nebo 630alps)
-
--Advanced search(En): Czech facet ??
--Diacritic sort order. MZK
--HTML Placeholders
--Grafy
--mod hardcoded paths
--en.ini
--spell check
--bbg,rej - author-classification.ini translation.
--Nginx API ACL
--log!=debug
--ENV_VAR = 'devel'
--SSL
--Cover ? 002712500
 </pre>
 INSTALL
 <pre>
