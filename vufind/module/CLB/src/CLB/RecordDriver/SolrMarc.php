@@ -257,8 +257,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	public function CLB_getResponsibility() { // RESPONSIBILITY
 		$data = '';
 		if (!empty($this->getMarcReader()->getField('700')) or !empty($this->getMarcReader()->getField('710'))) {
-			if (strpos('=', $this->getFirstFieldValue('245', ['c']), 0)) {
-				$data = $this->getFirstFieldValue('245', ['c']);
+			if (strpos('=', $this->getTitleStatement(), 0)) {
+				$data = $this->getTitleStatement();# 245c
 			}
 		}
 		return $data;
@@ -296,10 +296,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getExcerptor() { // EXCERPTOR
 		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : '';
-	}
-
-	public function CLB_getJournalPeriod() { // JOURNAL PERIOD
-		return  null !== $this->getFirstFieldValue('310', ['a']) ? $this->getFirstFieldValue('310', ['a']) : '';
 	}
 
 }
