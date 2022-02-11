@@ -4,13 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--Responsibility:
-
-Prosím zobrazovat pokud, platí alespoň jedna z následujících podmínek:
-a) záznam obsahuje pole 700 či 710
-b) v poli 245c je obsažen znak =
-Pole 245c by nemělo být opakovatelné (myslím, že jste mluvil  tom, že jako opakovatelné nastavené je)
-
 -Result list - "main author or nothing"
 -In: 773 jenom s "g"
 -In: highlight
@@ -18,7 +11,6 @@ Pole 245c by nemělo být opakovatelné (myslím, že jste mluvil  tom, že jako
 -Core: flex: 1
 -Title: clean too much..(/ only)
 -Core: Anotace pod titulkem cela(!) z tabulky pric.
--Vice informaci: Obor -> "Skupina konspektu"
 -Seznam tipu poli od vyrobce. core/result @.
 -Nahled Retrobi:
 
@@ -32,7 +24,6 @@ Další úpravy pak není třeba řešit, uděláme pak jako jeden větší bal�
 -Půjde-li, do pokročilého vyhledávání prosím přidat pole „Konspekt“ (=“Obor“=072a), „MDT“, „OCR přepis RETROBI“, „Aktuální excerpce“, „Ukončená excerpce“, „Systémové číslo“ a „Excerptor“  (v klidu v tomto pořadí)
 
 -Year facet: _str -> _date
--[DONE] Adv. search Rok vydani -> "Datum vydani
 -Advanced search: facet gray example JS
 b) zobrazení jednotlivého záznamu v rešerši - prosím upravit zalomování
 a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
@@ -55,10 +46,8 @@ prosím, raději ověřte, aby nevznikaly dvě tečky po sobě; oddělující zn
 
 -Advanced search(En): Czech facet ??
 -Diacritic sort order. MZK
+-HTML Placeholders
 -Grafy
-
-
--retrobi indicators backslash
 -mod hardcoded paths
 -en.ini
 -spell check
