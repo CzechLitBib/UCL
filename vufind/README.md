@@ -4,7 +4,13 @@ Vufind server howto.
 
 TODO
 <pre>
--Name/Author short extreme [...]
+-Responsibility:
+
+Prosím zobrazovat pokud, platí alespoň jedna z následujících podmínek:
+a) záznam obsahuje pole 700 či 710
+b) v poli 245c je obsažen znak =
+Pole 245c by nemělo být opakovatelné (myslím, že jste mluvil  tom, že jako opakovatelné nastavené je)
+
 -Result list - "main author or nothing"
 -In: 773 jenom s "g"
 -In: highlight
@@ -33,7 +39,20 @@ a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. n
 stačí jedna mezera. návěští zarovnat vlevo nahoru)
 b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
 
--related_doc_txt_mv CLB_getRelated() ? "Odkozovane dilo"
+-related_doc_txt_mv CLB_getRelated() ? "Odkozovane dilo":
+
+a) z pole 630 (významná menšina)
+- pro zobrazení stačí 630a. 630l. 630p. 630s
+b) z pole 787
+- pro zobrazení prosím pořadí:
+787a. -- 787t. -- 787n. -- 787b. -- 787d. -- 787k. -- 787h. -- 787x. -- 787z. [787-4]
+(za polem je vždy tečka, možná už se tam ale bude dostávat přímo ze záznamu;
+prosím, raději ověřte, aby nevznikaly dvě tečky po sobě; oddělující znak je spojovník = krátká pomlčka)
+
+- pro fasetu prosím stávající 787a 787t (t je vždy, a nemusí být pokaždé) nebo 630alps
+
+- pro hyperlink v detailu z. prosím to stejné (787a+t, nebo 630alps)
+
 -Advanced search(En): Czech facet ??
 -Diacritic sort order. MZK
 -Grafy
@@ -44,6 +63,7 @@ b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení 
 -en.ini
 -spell check
 -bbg,rej - author-classification.ini translation.
+-Nginx API ACL
 -log!=debug
 -ENV_VAR = 'devel'
 -SSL
