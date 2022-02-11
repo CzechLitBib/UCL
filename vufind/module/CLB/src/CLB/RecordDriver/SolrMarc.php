@@ -255,7 +255,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getResponsibility() { // RESPONSIBILITY
-		return isset($this->fields['responsibility_str_mv']) ? implode(", ", $this->fields['responsibility_str_mv']) : '';
+		$data = '';
+		if (!empty($this->getMarcReader()->getField('700')) or !empty($this->getMarcReader()->getField('710'))) {
+			if (strpos('=', $this->getFirstFieldValue('245', ['c']), 0)) {
+				$data = $this->getFirstFieldValue('245', ['c']);
+			}
+		}
+		return $data;
 	}
 
 	public function CLB_getMoreInfo() { // INFO
@@ -289,11 +295,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getExcerptor() { // EXCERPTOR
-		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : [];
+		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : '';
 	}
 
 	public function CLB_getJournalPeriod() { // JOURNAL PERIOD
-		return isset($this->fields['journal_period_str_mv']) ? $this->fields['journal_period_str_mv'] : [];
+		return  null !== $this->getFirstFieldValue('310', ['a']) ? $this->getFirstFieldValue('310', ['a']) : '';
 	}
 
 }
