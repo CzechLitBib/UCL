@@ -151,33 +151,29 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getRelated() {// RELATED
-		$rel = isset($this->fields['related_doc_txt_mv']) ? $this->fields['related_doc_txt_mv'] : '';
 		$data = '';
+		$link = '';
+		$f1 = $this->getFieldArray('630', ['a', 'l', 'p', 's'], false);
+		$f2 = $this->getFieldArray('787', ['a', 't', 'n', 'b', 'd', 'k', 'h', 'x', 'z', '4'], false);
 
-		if (!empty($rel)) {
-			for ($i=0; $i < count($rel); $i++) {
-				$name = $piece = "";
-				$rel[$i] = str_replace("-- .", "", $rel[$i]);
-				$rel[$i] = str_replace("-- () ", "", $rel[$i]);
-				$rel[$i] = str_replace("-- [", "[", $rel[$i]);
-				$rel[$i] = ltrim($rel[$i], ' : ');
-				$rel[$i] = ltrim($rel[$i], '. ');
-				$rel[$i] = str_replace("--  --", "--", $rel[$i]);
-				$rel[$i] = str_replace('. -- [] ', '', $rel[$i]);
-				$rel[$i] = str_replace(".    --    []", "", $rel[$i]);
-				$rel[$i] = str_replace("    --    []", "", $rel[$i]);
-				$rel[$i] = str_replace(". .", ". ", $rel[$i]);
-				$rel[$i] = str_replace("..", ". ", $rel[$i]);
+		# link
+		# $this->getMarcReader()->getSubfieldArray('630', ['a','l','p'])
 
-				$partArray = Array();
-				$partArray = explode("XGRXG",$rel[$i]);
-				$pieceLink = "<a href='http://vufind2.ucl.cas.cz/Search/Results?join=AND&lookfor0[]=" . urlencode($partArray[0]) . "&type0[]=LinkedResource&bool0[]=AND'>" . $partArray[0] . "</a>";
-				$data .= $pieceLink . implode("",$partArray) . '<br>';
-			}
+		if (!empty($f1)) {
+			$i=0;
+			foreach($f1 as $subfield => $value) {
+				$i == 0 ? $data .= trim($value, '.') : $data .= '. -- ' . trim($value, '.');
+				$i++;
+			}	
 		}
 
-		if (strlen($data) < 116) { $data = ''; } //?
-		$data = ltrim($data, '. ');
+		if (!empty($f2)) {
+			$i=0;
+			foreach($f2 as $subfield => $value) {
+				$i == 0 ? $data .= trim($value, '.') : $data .= '. -- ' . trim($value, '.');
+				$i++;
+			}	
+		}
 		return $data;
 	}
 
