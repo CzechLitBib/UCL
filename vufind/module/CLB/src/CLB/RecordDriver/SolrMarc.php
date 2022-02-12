@@ -67,86 +67,34 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return False;
 	}
 
-	public function CLB_getIn(bool $one = False) {// IN
-		foreach($this->fields['format'] as $format) {
-			if (in_array($format, array('Book','Book Chapter'))) {
-				return $this->CLB_getBookChapterInfo();
-			}
+	public function CLB_getIn() {// IN
+		return '[opravuje se..]';
+		if ($this->fields['format'] == 'Book Chapter') {
+			return $this->CLB_getBookChapterInfo();
 		}
-		$number = False;
-		$result = '';
-		
-		$resource = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : [];
-		$related = isset($this->fields['article_resource_related_str_mv']) ? $this->fields['article_resource_related_str_mv'] : '';
-		$issn = isset($this->fields['article_issn_str']) ? $this->fields['article_issn_str'] : '';
-		$isbn = isset($this->fields['article_isbn_str_mv']) ? $this->fields['article_isbn_str_mv'] : '';
 	
-		for ($i=0; $i < count($resource); $i++) {
-			if (empty($related[$i])) continue;
+		$data = array('url' => [],'issn' => [], 'isbn' => [], 'data'=> '');
+		$resource = $this->getFieldArray('773', ['t', 'g', 'x', 'z'], false);
 
-			if(!empty($resource[$i])) { $result .= "<a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($resource[$i]) . "&amp;type=ArticleResource'>" . $resource[$i] . "</a>"; }
-		
-			if (!$number) {
-				if ($issn) {
-					$result .= ". -- ISSN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($issn) . "&amp;type=ISN'>" . $issn . "</a>";
-				} elseif ($isbn) {
-					foreach($isbn as $isn) {
-						$result .= ". -- ISBN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($isn) . "&amp;type=ISN'>" . $isn . "</a>";
-					}
-				}
-				$number = True;
-			}
-			
-			$result .=  '. -- ' . $related[$i] . '<br>';
-			if ($one) break;
-		}
-		return $result;
+		foreach($resource as $field => $subfields) {
+			if (!isset($field['g'])) {continue; } # skip missing 773g;
+				# title link<a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=".."&amp;type=ArticleResource'>"
+				# issn". -- ISSN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor="..."&amp;type=ISN'>"
+				# isbn [mv]". -- ISBN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=".."&amp;type=ISN'>" 
+		}		# 'g :  . -- ' . $related[0] . '<br>';
+		return $data;
 	}
 
 	public function CLB_getBookChapterInfo() {// CHAPTER INFO
-		return '[in progress..]';
-		$resource = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : '';
-		$title = isset($this->fields['related_doc_title_str_mv']) ? $this->fields['related_doc_title_str_mv'] : '';
+		return '[opravuje se..]';
 		$data = '';
+		$resouce = $this->getFieldArray('773', ['t', 'g']);
+		$an = $this->getFieldArray('787', ['a','t','d']);
 
-		$text1 = isset($resource[0]) ? trim(substr($resource[0], 0 , 10)) : '';
-		$text2 = isset($title[0]) ? trim(substr($title[0], 0 , 10)) : '';
-		if (!($text1 == $text2)) {
-			return $this->CLB_getIn(True);	
+		if ($resource['t'] != $an['t']) {
+			return $this->CLB_getIn();
 		} else {
-			$result2 = isset($this->fields['an_index_str_mv']) ? $this->fields['an_index_str_mv'] : '';
-			# deal with wrong order of 737 and 787 values
-			# TODO this can be removed if there will not be needed those fields
-			if (!is_array($result2)) {
-				$result3[] = $result2;
-				array_push($result3, " ");
-				$result2 = $result3;			
-			} else {
-				$odd = array();
-				$even = array();
-				$both = array(&$even, &$odd);
-				array_walk($result2, function($v, $k) use ($both) { $both[$k % 2][] = $v; });
-				$count=round(count($result2)/2);
-				for ($i=0; $i < $count; $i++) {
-					if (array_key_exists($i, $odd)) { $result3[] = $odd[$i]; } 
-					if (array_key_exists($i, $odd)) { $result3[] = $even[$i]; }
-				}
-			}
-			$data = $result3[0] . ", " . $result3[1];
-			$data = str_replace("-- .", "", $data);
-			$data = str_replace(". . ", ". ", $data);
-			$data = str_replace(".. ", ". ", $data);
-			$data = str_replace(". ,", ", ", $data);
-			$data = str_replace("[], :","", $data);
-			$data = str_replace(',  ,', ', ', $data);
-			$data = str_replace(',  , ', ', ', $data);
-			$data = str_replace(', , : ,  ', ', ', $data);
-			$data = str_replace(', , ,  ', ', ', $data);
-			$data = ltrim($data, "-- , ,");
-			$data = ltrim($data, ". ");
-			$data = ltrim($data, ": ");
-			$data = rtrim($data, " -- , ");
-			return $data;
+			return $data = $an['a'] . '. ' . $an['t'] . '. ' . $an['d'] . ', ' . $resource['g']; 
 		}
 	}
 
