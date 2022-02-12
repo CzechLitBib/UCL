@@ -67,7 +67,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return False;
 	}
 
-	public function CLB_getIn() {// IN
+	public function CLB_getInfo() {// INFO
 		return '[opravuje se..]';
 		if ($this->fields['format'] == 'Book Chapter') {
 			return $this->CLB_getBookChapterInfo();
@@ -130,12 +130,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		$data = '';
 
 		if (!empty($ex)) {
-			for ($i=0; $i < count($ex); $i++) {
-				$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
-				$ex[$i] = rtrim($ex[$i], ", ");
-				$ex[$i] = ltrim($ex[$i], ", ");
-				$ex[$i] = str_replace("pocet zaznamu", "poet záznamů", $ex[$i]);
-			}
+		//	for ($i=0; $i < count($ex); $i++) {
+		//		$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
+		//		$ex[$i] = rtrim($ex[$i], ", ");
+		//		$ex[$i] = ltrim($ex[$i], ", ");
+		//		$ex[$i] = str_replace("pocet zaznamu", "poet záznamů", $ex[$i]);
+		//	}
 			$data = implode("<br> ", $ex);
 		}
 		return $data;

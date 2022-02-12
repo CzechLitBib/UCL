@@ -4,12 +4,11 @@ Vufind server howto.
 
 TODO
 <pre>
+-article_resource_ dup
+-Title: clean too much..(/ only)
 -mod hardcoded paths (module + theme)
--Nginx API ACL
-
 -In: 773 jenom s "g"
 -In: (book)/chapter(LDR8 an) => 773 == 787 case.
-
 -related_doc_txt_mv CLB_getRelated() ? "Odkozovane dilo":
 
  a) z pole 630 (významná menšina) pro zobrazení stačí 630a. 630l. 630p. 630s
@@ -20,22 +19,11 @@ TODO
  c)pro fasetu prosím stávající 787a 787t (t je vždy, a nemusí být pokaždé) nebo 630alps
  d)pro hyperlink v detailu z. prosím to stejné (787a+t, nebo 630alps)
 
--Core: Anotace pod titulkem cela(!) z tabulky pric.
 -Result list - "main author or nothing"
--Title: clean too much..(/ only)
--Seznam tipu poli od vyrobce. core/result @.
--Dismax @
--Diacritic sort order. MZK
+-Core: Anotace pod titulkem cela(!) z tabulky pric.
 -en.ini + Advanced search(En): Czech facet ??
--article_resource_* dup
--spell check
--SAM Grafy
--bbg,rej - author-classification.ini translation.
--Cover ? 002712500
--ENV_VAR = 'devel'
--SSL
 -file chown/perm check
-
+-Diacritic sort order. MZK
 -In: highlight
 -Core: flex: 1
 -Advanced search: facet HTML placeholder
@@ -44,6 +32,17 @@ TODO
  stačí jedna mezera. návěští zarovnat vlevo nahoru)
 -b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
 
+-Nginx API ACL
+-ENV_VAR = 'devel'
+-SSL
+-Seznam tipu poli od vyrobce. core/result @.
+-Dismax @
+-SAM Grafy
+-bbg,rej - author-classification.ini translation.
+-Cover ? 002712500
+
+-spell check
+-SAM Grafy
 -Nahled Retrobi:
 
 Pokud by šlo, připravit následující 2 věci, prosím, upravte, pokud by to mělo být na delší úpravu, nechte být (ve stávající verzi to není)
