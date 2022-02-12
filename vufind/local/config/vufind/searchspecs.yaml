@@ -19,7 +19,7 @@ ActualExcerption:
     - actual_excerption_txt_mv
   DismaxHandler: edismax
 
-finishedExcerption:
+FinishedExcerption:
   DismaxFields:
     - finished_excerption_txt_mv
   DismaxHandler: edismax

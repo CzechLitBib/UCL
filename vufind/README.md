@@ -4,7 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
--mod hardcoded paths
+-mod hardcoded paths (module + theme)
 -Nginx API ACL
 
 -In: 773 jenom s "g"
