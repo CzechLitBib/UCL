@@ -1,0 +1,6 @@
+<div class="genre-line" property="keywords">
+<?php $i=0; foreach ($data as $genre): ?>
+	<?=($i++ == 0) ? '' : ' &gt; '?>
+		<a title="<?=$this->escapeHtmlAttr($genre)?>" href="<?=$this->record($this->driver)->getLink('genre', $genre)?>" rel="nofollow"><?=trim($this->escapeHtml($genre))?></a>
+	<?php endforeach; ?>
+</div>

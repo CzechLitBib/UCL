@@ -44,7 +44,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
 		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
-		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'link-genre.phtml');
+		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'data-genre.phtml');
 		$spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
 		$spec->setTemplateLine('Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
@@ -77,7 +77,6 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setLine('MDT', 'CLB_getConspectGroup');
 		$spec->setLine('Item Description', 'getGeneralNotes');
 		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
-		//$spec->setLine('Journal Period', 'CLB_getJournalPeriod');
 		$spec->setLine('Publication Frequency', 'getPublicationFrequency');
 		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
 		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);

@@ -235,20 +235,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getGenre() { // GENRE
-		$genre = isset($this->fields['genre_str_mv']) ? $this->fields['genre_str_mv'] : '';
-		$data = [];
-
-		if (!empty($genre)) {
-			foreach ($genre as $item) { 
-				$data[] = "<a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=" . urlencode($item) . "&amp;type=Genre'>" . $item . "</a>";
-			}
-		}
-		return implode(", ", $data);
+		return isset($this->fields['genre_str_mv']) ? $this->fields['genre_str_mv'] : [];
 	}
 
-
 	public function CLB_getCitation() { // CITATION
-		$citation = isset($this->fields['citation_txt_mv']) ? $this->fields['citation_txt_mv'] : '';
+		$citation = isset($this->fields['citation_txt_mv']) ? $this->fields['citation_txt_mv'] : [];
 		$text='';
 		if (!empty($citation)) { $text = implode(',',$citation); }
 		return $text;

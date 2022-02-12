@@ -4,8 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--Půjde-li, do pokročilého vyhledávání prosím přidat pole „Konspekt“ (=“Obor“=072a), „MDT“, „OCR přepis RETROBI“, „Aktuální excerpce“, „Ukončená excerpce“, „Systémové číslo“ a „Excerptor“  (v klidu v tomto pořadí)
--Year facet: _str -> _date
 -mod hardcoded paths
 -Nginx API ACL
 
@@ -36,6 +34,7 @@ TODO
 -Cover ? 002712500
 -ENV_VAR = 'devel'
 -SSL
+-file chown/perm check
 
 -In: highlight
 -Core: flex: 1
