@@ -69,33 +69,67 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getInfo() {// INFO
 		return '[opravuje se..]';
-		if ($this->fields['format'] == 'Book Chapter') {
-			return $this->CLB_getBookChapterInfo();
-		}
-	
-		$data = array('url' => [],'issn' => [], 'isbn' => [], 'data'=> '');
-		$resource = $this->getFieldArray('773', ['t', 'g', 'x', 'z'], false);
+		if (!$this->CLB_getInfoRoute()) { return; }// book chapter
+		$data = [];
+		$resources = $this->getMarcReader()->getFields('773');
+		foreach($resources as $resource) {
+			if (empty($this->getSubfield($resource, ['g']))) { continue; } # skip non 'g'
+			$title='';
+			$related='';
+			$isbn=[];
+			$issn='';
+			foreach ($resource['subfields'] as $subfield) {
+				if $subfield['code'] == 't': $title = $subfield['data'];
+				if $subfield['code'] == 'g': $related = $subfield['data'];
+				if $subfield['code'] == 'x': $isbn[] = $subfield['data'];
+				if $subfield['code'] == 'z': $issn = $subfield['data'];
+			}
+			$data[] = [
+				'title' => $title,
+				'related' => $related,
+				'isbn' => $isbn,
+				'issn' => $issn
 
-		foreach($resource as $field => $subfields) {
-			if (!isset($field['g'])) {continue; } # skip missing 773g;
-				# title link<a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=".."&amp;type=ArticleResource'>"
-				# issn". -- ISSN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor="..."&amp;type=ISN'>"
-				# isbn [mv]". -- ISBN <a href='http://vufind2.ucl.cas.cz/Search/Results?lookfor=".."&amp;type=ISN'>" 
-		}		# 'g :  . -- ' . $related[0] . '<br>';
+			];
+		}
 		return $data;
 	}
 
 	public function CLB_getBookChapterInfo() {// CHAPTER INFO
 		return '[opravuje se..]';
-		$data = '';
-		$resouce = $this->getFieldArray('773', ['t', 'g']);
-		$an = $this->getFieldArray('787', ['a','t','d']);
+		if ($this->CLB_getInfoRoute()) { return; }// non-chapter
+		$data = [];
+		$related = $this->getSubfieled('787',['g']);
+		$resources = $this->getMarcReader()->getFields('787');
+		foreach($resources as $resource) {
+			if (empty($this->getSubfield($resource, ['g']))) { continue; } # skip non 'g'
+			foreach ($result['subfields'] as $subfield) {
+				$a= '';
+				$t= '';
+				$d= '';
+				if $subfield['code'] == 'a': $title = $subfield['data'];
+				if $subfield['code'] == 't': $title = $subfield['data'];
+				if $subfield['code'] == 'd': $title = $subfield['data'];
+			}
+			$data[] = [
+				'a' => $a;	
+				't' => $t;	
+				'd' => $d;	
+				'related' => $related;	
+			];
+			}
+		return $data;
+	}
 
-		if ($resource['t'] != $an['t']) {
-			return $this->CLB_getIn();
-		} else {
-			return $data = $an['a'] . '. ' . $an['t'] . '. ' . $an['d'] . ', ' . $resource['g']; 
+	public function CLB_getInfoRoute() {// INFO ROUTE
+		if ($this->fields['format'] == 'Book Chapter') {
+			$sub1 = $this->getSubfield('773',['t']);
+			$sub2 = $this->getSubfield('787',['t']);
+			if ($sub1['t'] == $sub2['t']) {
+				return True;
+			}
 		}
+		return False;
 	}
 
 	public function CLB_getRelated() {// RELATED
