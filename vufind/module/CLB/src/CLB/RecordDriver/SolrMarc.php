@@ -12,13 +12,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 			'600' => 'personal name',
 			'610' => 'corporate name',
 			'611' => 'meeting name',
-			#'630' => 'uniform title',
 			'648' => 'chronological',
 			'650' => 'topic',
 			'651' => 'geographic',
 			'653' => '',
-			#'655' => 'genre/form',
-			#'656' => 'occupation'
 		];
 
 		$retval = [];
@@ -67,154 +64,74 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return False;
 	}
 
-	public function CLB_getIn(bool $one = False) {// IN
-		foreach($this->fields['format'] as $format) {
-			if (in_array($format, array('Book','Book Chapter'))) {
-				return $this->CLB_getBookChapterInfo();
-			}
-		}
-		$number = False;
-		$result = '';
-		
-		$resource = isset($this->fields['article_resource_txt_mv']) ? $this->fields['article_resource_txt_mv'] : [];
-		$related = isset($this->fields['article_resource_related_str_mv']) ? $this->fields['article_resource_related_str_mv'] : '';
-		$issn = isset($this->fields['article_issn_str']) ? $this->fields['article_issn_str'] : '';
-		$isbn = isset($this->fields['article_isbn_str_mv']) ? $this->fields['article_isbn_str_mv'] : '';
-	
-		for ($i=0; $i < count($resource); $i++) {
-			if (empty($related[$i])) continue;
-
-			if(!empty($resource[$i])) { $result .= "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($resource[$i]) . "&amp;type=ArticleResource'>" . $resource[$i] . "</a>"; }
-		
-			if (!$number) {
-				if ($issn) {
-					$result .= ". -- ISSN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($issn) . "&amp;type=ISN'>" . $issn . "</a>";
-				} elseif ($isbn) {
-					foreach($isbn as $isn) {
-						$result .= ". -- ISBN <a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($isn) . "&amp;type=ISN'>" . $isn . "</a>";
-					}
+	public function CLB_getSubfields(string $field, array $subfields) {// CUSTOM SUBFIELD READER
+		$data = [];
+		$fields = $this->getMarcReader()->getFields($field);
+		foreach($fields as $fd) {
+			$batch = [];
+			foreach ($fd['subfields'] as $subfield) {
+				if (in_array( $subfield['code'], $subfields)) {
+					$batch[$subfield['code']] = $subfield['data'];
 				}
-				$number = True;
 			}
-			
-			$result .=  '. -- ' . $related[$i] . '<br>';
-			if ($one) break;
+			$data[] = $batch;
 		}
-		return $result;
+		return $data;
 	}
 
-	public function CLB_getBookChapterInfo() {// CHAPTER INFO
-		return '[in progress..]';
-		$resource = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : '';
-		$title = isset($this->fields['related_doc_title_str_mv']) ? $this->fields['related_doc_title_str_mv'] : '';
-		$data = '';
-
-		$text1 = isset($resource[0]) ? trim(substr($resource[0], 0 , 10)) : '';
-		$text2 = isset($title[0]) ? trim(substr($title[0], 0 , 10)) : '';
-		if (!($text1 == $text2)) {
-			return $this->CLB_getIn(True);	
-		} else {
-			$result2 = isset($this->fields['an_index_str_mv']) ? $this->fields['an_index_str_mv'] : '';
-			# deal with wrong order of 737 and 787 values
-			# TODO this can be removed if there will not be needed those fields
-			if (!is_array($result2)) {
-				$result3[] = $result2;
-				array_push($result3, " ");
-				$result2 = $result3;			
-			} else {
-				$odd = array();
-				$even = array();
-				$both = array(&$even, &$odd);
-				array_walk($result2, function($v, $k) use ($both) { $both[$k % 2][] = $v; });
-				$count=round(count($result2)/2);
-				for ($i=0; $i < $count; $i++) {
-					if (array_key_exists($i, $odd)) { $result3[] = $odd[$i]; } 
-					if (array_key_exists($i, $odd)) { $result3[] = $even[$i]; }
-				}
+	public function CLB_getInfo() {// INFO
+		$data = [];
+		$resource = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];
+		$related = $this->getFieldArray('773', ['g']);
+	
+		if ($this->fields['format'] == 'Book Chapter') {
+			$is_chapter = False;
+			$resources = $this->getFieldArray('787',['t']);
+			$title = $this->Fields['article_resouce_str_mv'];# 773t
+			foreach($resources as $resource) {
+				if ($resource['subfields']['code']['t'] == $title) { $is_chapter = True; }
 			}
-			$data = $result3[0] . ", " . $result3[1];
-			$data = str_replace("-- .", "", $data);
-			$data = str_replace(". . ", ". ", $data);
-			$data = str_replace(".. ", ". ", $data);
-			$data = str_replace(". ,", ", ", $data);
-			$data = str_replace("[], :","", $data);
-			$data = str_replace(',  ,', ', ', $data);
-			$data = str_replace(',  , ', ', ', $data);
-			$data = str_replace(', , : ,  ', ', ', $data);
-			$data = str_replace(', , ,  ', ', ', $data);
-			$data = ltrim($data, "-- , ,");
-			$data = ltrim($data, ". ");
-			$data = ltrim($data, ": ");
-			$data = rtrim($data, " -- , ");
-			return $data;
+			if ($is_chapter) {
+				$sub = $this->CLB_getSubfields('787', ['a', 't', 'd']);
+				return $data[] = [
+					'resource' => $resource,
+					'sub' => $sub,
+					'related' => $related
+				];# $a. $t. $d, $g
+			}
 		}
+	
+		$sub = $this->CLB_getSubfields('773', ['a', 'd', 'x' ,'z']);
+		return $data[] = [
+			'resource' => $resource,
+			'sub' => $sub,
+			'related' => $related
+		];
 	}
 
 	public function CLB_getRelated() {// RELATED
-		$rel = isset($this->fields['related_doc_txt_mv']) ? $this->fields['related_doc_txt_mv'] : '';
-		$data = '';
+		$data = [];
+		$detail = isset($this->fields['related_doc_detail_str_mv']) ? $this->fields['related_doc_detail_str_mv'] : [];# 630alps
+		$author = isset($this->fields['related_doc_author_str_mv']) ? $this->fields['related_doc_author_str_mv'] : [];# 787an
+		$sub = $this->CLB_getSubfields('787', ['b', 'd', 'k', 'h', 'x', 'z', '4']);
 
-		if (!empty($rel)) {
-			for ($i=0; $i < count($rel); $i++) {
-				$name = $piece = "";
-				$rel[$i] = str_replace("-- .", "", $rel[$i]);
-				$rel[$i] = str_replace("-- () ", "", $rel[$i]);
-				$rel[$i] = str_replace("-- [", "[", $rel[$i]);
-				$rel[$i] = ltrim($rel[$i], ' : ');
-				$rel[$i] = ltrim($rel[$i], '. ');
-				$rel[$i] = str_replace("--  --", "--", $rel[$i]);
-				$rel[$i] = str_replace('. -- [] ', '', $rel[$i]);
-				$rel[$i] = str_replace(".    --    []", "", $rel[$i]);
-				$rel[$i] = str_replace("    --    []", "", $rel[$i]);
-				$rel[$i] = str_replace(". .", ". ", $rel[$i]);
-				$rel[$i] = str_replace("..", ". ", $rel[$i]);
-
-				$partArray = Array();
-				$partArray = explode("XGRXG",$rel[$i]);
-				$pieceLink = "<a href='https://vufind.ucl.cas.cz/Search/Results?join=AND&lookfor0[]=" . urlencode($partArray[0]) . "&type0[]=LinkedResource&bool0[]=AND'>" . $partArray[0] . "</a>";
-				$data .= $pieceLink . implode("",$partArray) . '<br>';
-			}
-		}
-
-		if (strlen($data) < 116) { $data = ''; } //?
-		$data = ltrim($data, '. ');
-		return $data;
+		return $data[] = [
+			'detail' => $detail,
+			'author' => $author,
+			'sub' => $sub
+		];
 	}
 
 	public function CLB_getActualExcerption() { // ACTUAL EXCERPTION
-		$ex = isset($this->fields['actual_excerption_txt_mv']) ? $this->fields['actual_excerption_txt_mv'] : '';
-		$data = '';
-
-		if (!empty($ex)) {
-			for ($i=0; $i < count($ex); $i++) {
-				$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
-				$ex[$i] = rtrim($ex[$i], ", ");
-				$ex[$i] = ltrim($ex[$i], ", ");
-				$ex[$i] = str_replace("pocet zaznamu", "poet záznamů", $ex[$i]);
-			}
-			$data = implode("<br> ", $ex);
-		}
-		return $data;
+		return $this->CLB_getSubfields('912', ['q', 'r', 'm', 'n', 'z']);
 	}
 
 	public function CLB_getFinishedExcerption() { // FINISHED EXCERPTION
-		$ex = isset($this->fields['finished_excerption_txt_mv']) ? $this->fields['finished_excerption_txt_mv'] : '';
-		$data = '';
-
-		if (!empty($ex)) {
-		//	for ($i=0; $i < count($ex); $i++) {
-		//		$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
-		//		$ex[$i] = rtrim($ex[$i], ", ");
-		//		$ex[$i] = ltrim($ex[$i], ", ");
-		//		$ex[$i] = str_replace("pocet zaznamu", "počet záznamů:", $ex[$i]);
-		//	}
-			$data = implode("<br> ", $ex);
-		}
-		return $data;
+		return $this->CLB_getSubfields('913', ['q', 'r', 'm', 'n', 'z']);
 	}
 
 	public function CLB_getAnnotation(bool $full = True) { // ANNOTATION
-		$annotation = isset($this->fields['annotation_txt_mv']) ? $this->fields['annotation_txt_mv'] : '';
+		$annotation = $this->getSummary();
 		$data = '';
 
 		if (!empty($annotation)) {
@@ -235,27 +152,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getGenre() { // GENRE
-		$genre = isset($this->fields['genre_str_mv']) ? $this->fields['genre_str_mv'] : '';
-		$data = [];
-
-		if (!empty($genre)) {
-			foreach ($genre as $item) { 
-				$data[] = "<a href='https://vufind.ucl.cas.cz/Search/Results?lookfor=" . urlencode($item) . "&amp;type=Genre'>" . $item . "</a>";
-			}
-		}
-		return implode(", ", $data);
+		return isset($this->fields['genre_str_mv']) ? $this->fields['genre_str_mv'] : [];
 	}
 
-
 	public function CLB_getCitation() { // CITATION
-		$citation = isset($this->fields['citation_txt_mv']) ? $this->fields['citation_txt_mv'] : '';
+		$citation = isset($this->fields['citation_txt_mv']) ? $this->fields['citation_txt_mv'] : [];
 		$text='';
 		if (!empty($citation)) { $text = implode(',',$citation); }
 		return $text;
 	}
 
 	public function CLB_getResponsibility() { // RESPONSIBILITY
-		return isset($this->fields['responsibility_str_mv']) ? implode(", ", $this->fields['responsibility_str_mv']) : '';
+		$data = '';
+		if (!empty($this->getMarcReader()->getField('700')) or !empty($this->getMarcReader()->getField('710'))) {
+			if (str_contains($this->getTitleStatement(), '=')) {
+				$data = $this->getTitleStatement();# 245c
+			}
+		}
+		return $data;
 	}
 
 	public function CLB_getMoreInfo() { // INFO
@@ -267,7 +181,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getExcerptionPeriod() { // EXCERPTION PERIOD
-		return isset($this->fields['excerption_period_str_mv']) ? $this->fields['excerption_period_str_mv'] : [];
+		return $this->getFieldArray('911', ['r']);
 	}
 
 	public function CLB_getCountry() { // COUNTRY
@@ -275,29 +189,21 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getCreationDate() { // RECORD CREATION DATE
-		if (isset($this->fields['record_creation_str_mv'])) {
-			foreach($this->fields['record_creation_str_mv'] as $date) {
-				return date_format(date_create_from_format('Y-m-d\TH:i:s', $date), 'j. n. Y');
-			}
+		if (isset($this->fields['record_creation_date'])) {
+			return date_format(date_create_from_format('Y-m-d\TH:i:s\Z', $this->fields['record_creation_date']), 'j. n. Y');
 		}
-		return [];
+		return '';
 	}
 
 	public function CLB_getEditDate() { // RECORD EDIT DATE
-		if (isset($this->fields['record_change_str_mv'])) {
-			foreach($this->fields['record_change_str_mv'] as $date) {
-				return date_format(date_create_from_format('Y-m-d\TH:i:s', $date), 'j. n. Y');
-			}
+		if (isset($this->fields['record_change_date'])) {
+			return date_format(date_create_from_format('Y-m-d\TH:i:s\Z', $this->fields['record_change_date']), 'j. n. Y');
 		}
-		return [];
+		return '';
 	}
 
 	public function CLB_getExcerptor() { // EXCERPTOR
-		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : [];
-	}
-
-	public function CLB_getJournalPeriod() { // JOURNAL PERIOD
-		return isset($this->fields['journal_period_str_mv']) ? $this->fields['journal_period_str_mv'] : [];
+		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : '';
 	}
 
 }

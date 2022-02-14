@@ -42,15 +42,15 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 			'itemSuffix' => '</span></span>', 'translate' => true]
 		);
 		$spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
-		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
+		$spec->setTemplateLine('Info','CLB_getInfo', 'data-info.phtml');
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
-		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'link-genre.phtml');
+		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'data-genre.phtml');
 		$spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
 		$spec->setTemplateLine('Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
 		$spec->setTemplateLine('Tags', true, 'data-tags.phtml');
-		$spec->setLine('Actual Excerption','CLB_getActualExcerption');
-		$spec->setLine('Finished Excerption','CLB_getFinishedExcerption');
+		$spec->setTemplateLine('Actual Excerption', 'CLB_getActualExcerption', 'data-excerption.phtml');
+		$spec->setTemplateLine('Finished Excerption', 'CLB_getFinishedExcerption', 'data-excerption.phtml');
 		$spec->setLine('Citation','CLB_getCitation');
 		return $spec->getArray();
 	}
@@ -62,7 +62,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
 		$spec->setLine('Excerption Period', 'CLB_getExcerptionPeriod');
-		$spec->setTemplateLine('In','CLB_getIn', 'data-in.phtml');
+		$spec->setTemplateLine('Info','CLB_getInfo', 'data-info.phtml');
 		$spec->setLine('Annotation','CLB_getAnnotationShort');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
 		return $spec->getArray();
@@ -72,12 +72,11 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	public function getDefaultDescriptionSpecs()
 	{
 		$spec = new SpecBuilder();
-		$spec->setTemplateLine('Summary', true, 'data-summary.phtml');
 		$spec->setLine('Conspectus', 'CLB_getMoreInfo');
 		$spec->setLine('MDT', 'CLB_getConspectGroup');
 		$spec->setLine('Item Description', 'getGeneralNotes');
 		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
-		$spec->setLine('Journal Period', 'CLB_getJournalPeriod');
+		$spec->setLine('Publication Frequency', 'getPublicationFrequency');
 		$spec->setLine('ISBN', 'getISBNs', null, ['itemPrefix' => '<span property="isbn">', 'itemSuffix' => '</span>']);
 		$spec->setLine('ISSN', 'getISSNs', null, ['itemPrefix' => '<span property="issn">', 'itemSuffix' => '</span>']);
 		return $spec->getArray();

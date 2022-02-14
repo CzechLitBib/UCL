@@ -1,3 +1,29 @@
+
+RetrobiOCR:
+  DismaxFields:
+    - retrobitxt_txt_mv
+  DismaxHandler: edismax
+
+ConspectGroup:
+  DismaxFields:
+    - conspect_group_str_mv
+  DismaxHandler: edismax
+
+ConspectResource:
+  DismaxFields:
+    - more_info_str_mv
+  DismaxHandler: edismax
+
+ActualExcerption:
+  DismaxFields:
+    - actual_excerption_txt_mv
+  DismaxHandler: edismax
+
+FinishedExcerption:
+  DismaxFields:
+    - finished_excerption_txt_mv
+  DismaxHandler: edismax
+
 ArticleResource:
   DismaxFields:
     - article_resource_txt_mv

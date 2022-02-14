@@ -4,13 +4,36 @@ Vufind server howto.
 
 TODO
 <pre>
--en.ini
--spell check
--bbg,rej - author-classification.ini translation.
--log!=debug
+-Result list - "main author or nothing"
+-en.ini + Advanced search(En): Czech facet ??
+-file chown/perm check
+-Diacritic sort order. MZK
+-In: highlight
+-Core: flex: 1
+-Advanced search: facet HTML placeholder
+-b) zobrazení jednotlivého záznamu v rešerši - prosím upravit zalomování
+ a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
+ stačí jedna mezera. návěští zarovnat vlevo nahoru)
+-b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
+-Nginx API ACL
 -ENV_VAR = 'devel'
 -SSL
+-Seznam tipu poli od vyrobce. core/result @.
+-Dismax @
+-SAM Grafy
+-bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
+
+-spell check
+-SAM Grafy
+-Nahled Retrobi:
+
+Pokud by šlo, připravit následující 2 věci, prosím, upravte, pokud by to mělo být na delší úpravu, nechte být (ve stávající verzi to není)
+a) Prosím u záznamu zobrazit náhled lístku nad tabulkový rozpis v proporcích dle vzoru zde: https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html  (hned pod název);
+Link na lístek je v poli 856
+b) Pakliže není vyplněna anotace (520), prosím hned pod obrázek dát s návěštím „OCR přepis lístku:“ obsah pole 989a
+Další úpravy pak není třeba řešit, uděláme pak jako jeden větší balík
+
 </pre>
 INSTALL
 <pre>

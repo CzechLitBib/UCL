@@ -1,0 +1,19 @@
+<?php foreach ($data as $field): ?>
+	<?php $result='';?>
+	<?php if (isset($field['q'])): ?>
+		<?php $result .= $field['q'] . ', '; ?>
+	<?php endif; ?>
+	<?php if (isset($field['r'])): ?>
+		<?php $result .= $field['r'] . ', '; ?>
+	<?php endif; ?>
+	<?php if (isset($field['m'])): ?>
+		<?php $result .= $this->transEsc('excerption range') . ': ' . $field['m'] . ', '; ?>
+	<?php endif; ?>
+	<?php if (isset($field['n'])): ?>
+		<?php $result .= $this->transEsc('excerption count') . ': ' . $field['n'] . ', '; ?>
+	<?php endif; ?>
+	<?php if (isset($field['z'])): ?>
+		<?php $result .= $field['z']; ?>
+	<?php endif; ?>
+	<?=trim($result, ', ')?></br>
+<?php endforeach; ?>
