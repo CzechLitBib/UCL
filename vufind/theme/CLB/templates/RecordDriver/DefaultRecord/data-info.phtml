@@ -1,22 +1,27 @@
 <div class="info-line" property="keywords">
-<?php foreach ($data as $info): ?>
-	<?php $i=0; foreach ($info as $label => $value): ?>
-		<?= ($i++ == 0) ? '' : ' -- '; ?>
-		<?php if ($label == 'title'): ?>
-			<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('title', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
-		<?php endif; ?>
-		<?php if ($label == 'isbn'): ?>
-			<?php $j=0; foreach ($value as $isn): ?>
-				<?= ($j++ == 0) ? '' : ' -- '; ?>
-				<a title="<?=$this->escapeHtmlAttr($isn)?>" href="<?=$this->record($this->driver)->getLink('isn', $isn)?>" rel="nofollow"><?=trim($this->escapeHtml($isn))?></a>
-			<?php endforeach; ?>
-		<?php endif; ?>
-		<?php if ($label == 'issn'): ?>
-			<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
-		<?php endif; ?>
-		<?php if ($label == 'related'): ?>
-			<?php echo $value; ?>
-		<?php endif; ?>
+<?php if (isset($data['resource'])): ?>
+	<?php $i=0; foreach ($data['resource'] as $resource): ?>
+		<a title="<?=$this->escapeHtmlAttr($resource)?>" href="<?=$this->record($this->driver)->getLink('article', $resource)?>" rel="nofollow"><?=trim($this->escapeHtml($resource))?></a>
+		<?=' -- '?>
 	<?php endforeach; ?>
-<?php endforeach; ?>
+<?php endif; ?>
+<?php if (isset($data['sub'])): ?>
+	<?php foreach ($data['sub'] as $subfields): ?>
+		<?php foreach ($subfields as $subfield => $value): ?>
+			<?php if ($subfield == 'x'): ?>
+				<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
+				<?=' -- '?>
+			<?php elseif ($subfield == 'z'): ?>
+				<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
+			<?php else: ?>
+				<?php echo $value . ' -- ' ; ?>
+			<?php endif; ?>
+		<?php endforeach; ?>
+	<?php endforeach; ?>
+<?php endif; ?>
+<?php if (isset($data['related'])): ?>
+	<?php foreach ($data['related'] as $related): ?>
+		<?=$related;?>
+	<?php endforeach; ?>
+<?php endif; ?>
 </div>

@@ -43,7 +43,6 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		);
 		$spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
 		$spec->setTemplateLine('Info','CLB_getInfo', 'data-info.phtml');
-		$spec->setTemplateLine('Info','CLB_getBookChapterInfo', 'data-chapter.phtml');
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
 		$spec->setTemplateLine('Form/Genre','CLB_getGenre', 'data-genre.phtml');
 		$spec->setTemplateLine('Related work', 'CLB_getRelated', 'data-related.phtml');
@@ -64,7 +63,6 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
 		$spec->setLine('Excerption Period', 'CLB_getExcerptionPeriod');
 		$spec->setTemplateLine('Info','CLB_getInfo', 'data-info.phtml');
-		$spec->setTemplateLine('Info','CLB_getBookChapterInfo', 'data-chapter.phtml');
 		$spec->setLine('Annotation','CLB_getAnnotationShort');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
 		return $spec->getArray();

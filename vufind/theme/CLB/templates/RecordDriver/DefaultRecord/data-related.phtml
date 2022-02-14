@@ -1,1 +1,21 @@
-<?php echo $this->driver->CLB_getRelated(); ?>
+<div class="related-line" property="keywords">
+	<?php if (isset($data['detail'])): ?>
+		<?php $i=0; foreach ($data['detail'] as $detail): ?>
+		<a title="<?=$this->escapeHtmlAttr($link)?>" href="<?=$this->record($this->driver)->getLink('subject', $detail)?>" rel="nofollow"><?=trim($this->escapeHtml($detail))?></a>
+		<?php endforeach; ?>
+	<?php endif; ?>
+	<?php if (isset($data['author'])): ?>
+		<?php $i=0; foreach ($data['author'] as $author): ?>
+			<a title="<?=$this->escapeHtmlAttr($author)?>" href="<?=$this->record($this->driver)->getLink('author', $author)?>" rel="nofollow"><?=trim($this->escapeHtml($author))?></a><?=' -- '?>
+		<?php endforeach; ?>
+	<?php endif; ?>
+	<?php foreach ($data['sub'] as $subfields): ?>
+		<?php foreach ($subfields as $subfield => $value): ?>
+			<?php if ($subfield == '4'): ?>
+				<?php echo '[' . $value . ']' ; ?>
+			<?php else: ?>
+				<?php echo $value . ' -- ' ; ?>
+			<?php endif; ?>
+		<?php endforeach; ?>
+	<?php endforeach; ?>
+</div>
