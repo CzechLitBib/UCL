@@ -111,9 +111,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getRelated() {// RELATED
 		$data = [];
-		$detail = isset($this->fields['related_doc_detail_str_mv']) ? $this->fields['related_doc_detail_str_mv'] : [];
-		$author = isset($this->fields['related_doc_author_str_mv']) ? $this->fields['related_doc_author_str_mv'] : [];
-		$sub = $this->CLB_getSubfields('787', ['n', 'b', 'd', 'k', 'h', 'x', 'z', '4']);
+		$detail = isset($this->fields['related_doc_detail_str_mv']) ? $this->fields['related_doc_detail_str_mv'] : [];# 630alps
+		$author = isset($this->fields['related_doc_author_str_mv']) ? $this->fields['related_doc_author_str_mv'] : [];# 787an
+		$sub = $this->CLB_getSubfields('787', ['b', 'd', 'k', 'h', 'x', 'z', '4']);
 
 		return $data[] = [
 			'detail' => $detail,
