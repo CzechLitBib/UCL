@@ -5,8 +5,6 @@ Vufind server howto.
 TODO
 <pre>
 -Result list - "main author or nothing"
--en.ini + Advanced search(En): Czech facet ??
--file chown/perm check
 -Diacritic sort order. MZK
 -In: highlight
 -Core: flex: 1
@@ -16,8 +14,7 @@ TODO
  stačí jedna mezera. návěští zarovnat vlevo nahoru)
 -b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
 -ENV_VAR = 'devel'
--Seznam tipu poli od vyrobce. core/result @.
--Dismax @
+-core/result/Dislax @.
 -SAM Grafy
 -bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
