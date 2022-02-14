@@ -131,7 +131,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getAnnotation(bool $full = True) { // ANNOTATION
-		$annotation = isset($this->fields['annotation_txt_mv']) ? $this->fields['annotation_txt_mv'] : [];
+		$annotation = $this->getSummary();
 		$data = '';
 
 		if (!empty($annotation)) {

@@ -5,7 +5,6 @@ Vufind server howto.
 TODO
 <pre>
 -Result list - "main author or nothing"
--Core: Anotace pod titulkem cela(!) z tabulky pric.
 -en.ini + Advanced search(En): Czech facet ??
 -file chown/perm check
 -Diacritic sort order. MZK
