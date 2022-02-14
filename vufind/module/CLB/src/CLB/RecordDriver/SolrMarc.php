@@ -67,132 +67,149 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return False;
 	}
 
-	public function CLB_getInfo() {// INFO
-		return '[opravuje se..]';
-		if (!$this->CLB_getInfoRoute()) { return; }// book chapter
+	public function CLB_getSubfields(string $field, array $subfields) { 
 		$data = [];
+		$fields = $this->getMarcReader()->getFields($field);
+		foreach($fields as $fd) {
+			$batch = [];
+			foreach ($fd['subfields'] as $subfield) {
+				if (in_array( $subfield['code'], $subfields)) {
+					$batch[$subfield['code']] = $subfield['data'];
+				}
+			}
+			$data[] = $batch;
+		}
+		return $data;
+	}
+
+	public function CLB_getInfo() {// INFO
+		$data = [];
+		#if ($this->fields['format'] == 'Book Chapter') {
+		#	$resources = $this->getFieldArray('787',[t]);
+		#	$title = $this->Fields['article_resouce_str_mv'];# one 773t
+		#	foreach($resources as $resource) {
+		#		if ($resource['subfields']['code']['t'] == $title) {
+		#
+		#	$resources = $this->getMarcReader()->getFields('787');
+		#	$title = $this->Fields['article_resouce_str_mv'];# one 773t
+		#	$related = $this->getFieldArray('773', ['g']);
+		#	$resources = $this->getMarcReader()->getFields('787');
+		#	foreach($resources as $resource) {
+		#		if ($resource['subfields']['code']['t'] == $title) {
+		#			foreach($resources as $resource) {
+		#				foreach ($result['subfields'] as $subfield) {
+		#					$a= '';
+		#					$t= '';
+		#					$d= '';
+		#					if ($subfield['code'] == 'a') { $title = $subfield['data']; }
+		#					if ($subfield['code'] == 't') { $title = $subfield['data']; }
+		#					if ($subfield['code'] == 'd') { $title = $subfield['data']; }
+		#				}
+		#				$data[] = [
+		#					'a' => $a,	
+		#					't' => $t,	
+		#					'd' => $d,	
+		#					'related' => $related
+		#				];
+		#			}
+		#			return $data;
+		#		}
+		#	}
+		#}
+
 		$resources = $this->getMarcReader()->getFields('773');
-		foreach($resources as $resource) {
+		foreach ($resources as $resource) {
 			if (empty($this->getSubfield($resource, ['g']))) { continue; } # skip non 'g'
 			$title='';
 			$related='';
 			$isbn=[];
 			$issn='';
 			foreach ($resource['subfields'] as $subfield) {
-				if $subfield['code'] == 't': $title = $subfield['data'];
-				if $subfield['code'] == 'g': $related = $subfield['data'];
-				if $subfield['code'] == 'x': $isbn[] = $subfield['data'];
-				if $subfield['code'] == 'z': $issn = $subfield['data'];
+				if ($subfield['code'] == 't') { $title = $subfield['data']; }
+				if ($subfield['code'] == 'x') { $isbn[] = $subfield['data']; } 
+				if ($subfield['code'] == 'z') { $issn = $subfield['data']; }
+				if ($subfield['code'] == 'g') { $related = $subfield['data']; }
 			}
 			$data[] = [
 				'title' => $title,
-				'related' => $related,
 				'isbn' => $isbn,
-				'issn' => $issn
-
+				'issn' => $issn,
+				'related' => $related
 			];
 		}
 		return $data;
 	}
 
-	public function CLB_getBookChapterInfo() {// CHAPTER INFO
-		return '[opravuje se..]';
-		if ($this->CLB_getInfoRoute()) { return; }// non-chapter
-		$data = [];
-		$related = $this->getSubfieled('787',['g']);
-		$resources = $this->getMarcReader()->getFields('787');
-		foreach($resources as $resource) {
-			if (empty($this->getSubfield($resource, ['g']))) { continue; } # skip non 'g'
-			foreach ($result['subfields'] as $subfield) {
-				$a= '';
-				$t= '';
-				$d= '';
-				if $subfield['code'] == 'a': $title = $subfield['data'];
-				if $subfield['code'] == 't': $title = $subfield['data'];
-				if $subfield['code'] == 'd': $title = $subfield['data'];
-			}
-			$data[] = [
-				'a' => $a;	
-				't' => $t;	
-				'd' => $d;	
-				'related' => $related;	
-			];
-			}
-		return $data;
-	}
+	#public function CLB_getBookChapterInfo() {// CHAPTER INFO
+	#	if ($this->CLB_getInfoRoute()) { return; }// non-chapter
+	#	$data = [];
+	#	$related = $this->getFieldArray('773', ['g']);
+	#	$resources = $this->getMarcReader()->getFields('787');
+	#	foreach($resources as $resource) {
+	#		if (empty($this->getSubfield($resource, 'g'))) { continue; } # skip non 'g'
+	#		foreach ($result['subfields'] as $subfield) {
+	#			$a= '';
+	#			$t= '';
+	#			$d= '';
+	#			if ($subfield['code'] == 'a') { $title = $subfield['data']; }
+	#			if ($subfield['code'] == 't') { $title = $subfield['data']; }
+	#			if ($subfield['code'] == 'd') { $title = $subfield['data']; }
+	#		}
+	#		$data[] = [
+	#			'a' => $a,	
+	#			't' => $t,	
+	#			'd' => $d,	
+	#			'related' => $related
+	#		];
+	#		}
+	#	return $data;
+	#} # neshoda 773atdxzg
 
-	public function CLB_getInfoRoute() {// INFO ROUTE
-		if ($this->fields['format'] == 'Book Chapter') {
-			$sub1 = $this->getSubfield('773',['t']);
-			$sub2 = $this->getSubfield('787',['t']);
-			if ($sub1['t'] == $sub2['t']) {
-				return True;
-			}
-		}
-		return False;
-	}
+	#public function CLB_getInfoRoute() {// INFO ROUTE
+	#	if ($this->fields['format'] == 'Book Chapter') {
+	#		$sub1 = $this->getSubfield('773',['t']);#   one
+	#		$sub2 = $this->getSubfield('787',['t']);# one of many
+	#		if ($sub1['t'] == $sub2['t']) {
+	#			return True;
+	#		}
+	#	}
+	#	return False;
+	#}
 
 	public function CLB_getRelated() {// RELATED
 		$data = '';
 		$link = '';
-		$f1 = $this->getFieldArray('630', ['a', 'l', 'p', 's'], false);
-		$f2 = $this->getFieldArray('787', ['a', 't', 'n', 'b', 'd', 'k', 'h', 'x', 'z', '4'], false);
+		$f1 = $this->getFieldArray('630', ['a', 'l', 'p', 's'], false); # chain 787
+		$f2 = $this->getFieldArray('787', ['a', 't', 'n', 'b', 'd', 'k', 'h', 'x', 'z', '4'], false);# [4]
 
-		# link
-		# $this->getMarcReader()->getSubfieldArray('630', ['a','l','p'])
+		# link 630 all + 787 at = link (' ')
 
+		$i=0;
 		if (!empty($f1)) {
-			$i=0;
 			foreach($f1 as $subfield => $value) {
-				$i == 0 ? $data .= trim($value, '.') : $data .= '. -- ' . trim($value, '.');
+				$i == 0 ? $data .= $value : $data .= ' -- ' . $value;
 				$i++;
 			}	
 		}
-
 		if (!empty($f2)) {
-			$i=0;
 			foreach($f2 as $subfield => $value) {
-				$i == 0 ? $data .= trim($value, '.') : $data .= '. -- ' . trim($value, '.');
+				$i == 0 ? $data .= $value : $data .= ' -- ' . $value;
 				$i++;
 			}	
 		}
 		return $data;
 	}
 
-	public function CLB_getActualExcerption() { // ACTUAL EXCERPTION
-		$ex = isset($this->fields['actual_excerption_txt_mv']) ? $this->fields['actual_excerption_txt_mv'] : '';
-		$data = '';
-
-		if (!empty($ex)) {
-		//	for ($i=0; $i < count($ex); $i++) {
-		//		$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
-		//		$ex[$i] = rtrim($ex[$i], ", ");
-		//		$ex[$i] = ltrim($ex[$i], ", ");
-		//		$ex[$i] = str_replace("pocet zaznamu", "poet záznamů", $ex[$i]);
-		//	}
-			$data = implode("<br> ", $ex);
-		}
-		return $data;
+	public function CLB_getActualExcerption() { // ACTUAL EXCERPTION ........... index (R)
+		return $this->CLB_getSubfields('912', ['q', 'r', 'm', 'n', 'z']);
 	}
 
-	public function CLB_getFinishedExcerption() { // FINISHED EXCERPTION
-		$ex = isset($this->fields['finished_excerption_txt_mv']) ? $this->fields['finished_excerption_txt_mv'] : '';
-		$data = '';
-
-		if (!empty($ex)) {
-		//	for ($i=0; $i < count($ex); $i++) {
-		//		$ex[$i] = str_replace("pocet zaznamu ,", "", $ex[$i]);
-		//		$ex[$i] = rtrim($ex[$i], ", ");
-		//		$ex[$i] = ltrim($ex[$i], ", ");
-		//		$ex[$i] = str_replace("pocet zaznamu", "počet záznamů:", $ex[$i]);
-		//	}
-			$data = implode("<br> ", $ex);
-		}
-		return $data;
+	public function CLB_getFinishedExcerption() { // FINISHED EXCERPTION. ......... index(R)
+		return $this->CLB_getSubfields('913', ['q', 'r', 'm', 'n', 'z']);
 	}
 
 	public function CLB_getAnnotation(bool $full = True) { // ANNOTATION
-		$annotation = isset($this->fields['annotation_txt_mv']) ? $this->fields['annotation_txt_mv'] : '';
+		$annotation = isset($this->fields['annotation_txt_mv']) ? $this->fields['annotation_txt_mv'] : [];
 		$data = '';
 
 		if (!empty($annotation)) {
@@ -226,7 +243,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	public function CLB_getResponsibility() { // RESPONSIBILITY
 		$data = '';
 		if (!empty($this->getMarcReader()->getField('700')) or !empty($this->getMarcReader()->getField('710'))) {
-			if (strpos('=', $this->getTitleStatement(), 0)) {
+			if (str_contains($this->getTitleStatement(), '=')) {
 				$data = $this->getTitleStatement();# 245c
 			}
 		}
@@ -242,7 +259,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getExcerptionPeriod() { // EXCERPTION PERIOD
-		return isset($this->fields['excerption_period_str_mv']) ? $this->fields['excerption_period_str_mv'] : [];
+		return $this->getFieldArray('911', ['r']);
 	}
 
 	public function CLB_getCountry() { // COUNTRY

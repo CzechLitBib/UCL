@@ -50,8 +50,8 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml');
 		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
 		$spec->setTemplateLine('Tags', true, 'data-tags.phtml');
-		$spec->setLine('Actual Excerption','CLB_getActualExcerption');
-		$spec->setLine('Finished Excerption','CLB_getFinishedExcerption');
+		$spec->setTemplateLine('Actual Excerption', 'CLB_getActualExcerption', 'data-excerption.phtml');
+		$spec->setTemplateLine('Finished Excerption', 'CLB_getFinishedExcerption', 'data-excerption.phtml');
 		$spec->setLine('Citation','CLB_getCitation');
 		return $spec->getArray();
 	}
