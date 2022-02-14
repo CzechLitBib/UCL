@@ -4,21 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--article_resource_ dup
--Title: clean too much..(/ only)
--mod hardcoded paths (module + theme)
--In: 773 jenom s "g"
--In: (book)/chapter(LDR8 an) => 773 == 787 case.
--related_doc_txt_mv CLB_getRelated() ? "Odkozovane dilo":
-
- a) z pole 630 (významná menšina) pro zobrazení stačí 630a. 630l. 630p. 630s
- b) z pole 787  pro zobrazení prosím pořadí:
-   787a. -- 787t. -- 787n. -- 787b. -- 787d. -- 787k. -- 787h. -- 787x. -- 787z. [787-4]
-   (za polem je vždy tečka, možná už se tam ale bude dostávat přímo ze záznamu;
-   prosím, raději ověřte, aby nevznikaly dvě tečky po sobě; oddělující znak je spojovník = krátká pomlčka)
- c)pro fasetu prosím stávající 787a 787t (t je vždy, a nemusí být pokaždé) nebo 630alps
- d)pro hyperlink v detailu z. prosím to stejné (787a+t, nebo 630alps)
-
 -Result list - "main author or nothing"
 -Core: Anotace pod titulkem cela(!) z tabulky pric.
 -en.ini + Advanced search(En): Czech facet ??
