@@ -15,9 +15,7 @@ TODO
  a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
  stačí jedna mezera. návěští zarovnat vlevo nahoru)
 -b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
--Nginx API ACL
 -ENV_VAR = 'devel'
--SSL
 -Seznam tipu poli od vyrobce. core/result @.
 -Dismax @
 -SAM Grafy
@@ -74,6 +72,15 @@ certbot python3-certbot-nginx
 server {
 	listen 80;
 
+	#listen 443 ssl;
+	#add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+	#add_header X-Frame-Options "DENY";
+	#add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+
+	#ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
+	#ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
+	#include /etc/letsencrypt/options-ssl-nginx.conf;
+
 	server_name xxx;
 
 	location /themes/ {
@@ -83,6 +90,12 @@ server {
 	location /cache/ {
 		alias /usr/local/vufind/local/cache/;
 	}
+
+	location ~ api {
+		try_files $uri $uri/ /index.php$is_args$args;
+		allow x.x.x.x/24;
+		deny all;
+        }
 
 	location / {
 		root /usr/local/vufind/public/;
