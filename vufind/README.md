@@ -15,7 +15,6 @@ TODO
  a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
  stačí jedna mezera. návěští zarovnat vlevo nahoru)
 -b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
-
 -Nginx API ACL
 -ENV_VAR = 'devel'
 -SSL
