@@ -81,20 +81,19 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getInfo() {// INFO
 		$data = [];
-		$resource = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];
+		$title = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];# 773t
 		$related = $this->getFieldArray('773', ['g']);
 	
 		if ($this->fields['format'] == 'Book Chapter') {
 			$is_chapter = False;
 			$resources = $this->getFieldArray('787',['t']);
-			$title = $this->Fields['article_resouce_str_mv'];# 773t
 			foreach($resources as $resource) {
 				if ($resource['subfields']['code']['t'] == $title) { $is_chapter = True; }
 			}
 			if ($is_chapter) {
 				$sub = $this->CLB_getSubfields('787', ['a', 't', 'd']);
 				return $data[] = [
-					'resource' => $resource,
+					'resource' => $title,
 					'sub' => $sub,
 					'related' => $related
 				];# $a. $t. $d, $g
@@ -103,7 +102,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	
 		$sub = $this->CLB_getSubfields('773', ['a', 'd', 'x' ,'z']);
 		return $data[] = [
-			'resource' => $resource,
+			'resource' => $title,
 			'sub' => $sub,
 			'related' => $related
 		];
@@ -112,7 +111,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	public function CLB_getRelated() {// RELATED
 		$data = [];
 		$detail = isset($this->fields['related_doc_detail_str_mv']) ? $this->fields['related_doc_detail_str_mv'] : [];# 630alps
-		$author = isset($this->fields['related_doc_author_str_mv']) ? $this->fields['related_doc_author_str_mv'] : [];# 787an
+		$author = isset($this->fields['related_doc_author_str_mv']) ? $this->fields['related_doc_author_str_mv'] : [];# 787at
 		$sub = $this->CLB_getSubfields('787', ['b', 'd', 'k', 'h', 'x', 'z', '4']);
 
 		return $data[] = [

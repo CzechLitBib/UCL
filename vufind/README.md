@@ -5,21 +5,24 @@ Vufind server howto.
 TODO
 <pre>
 -Result list - "main author or nothing"
--Diacritic sort order. MZK
 -In: highlight
 -Core: flex: 1
 -Advanced search: facet HTML placeholder
+
 -b) zobrazení jednotlivého záznamu v rešerši - prosím upravit zalomování
  a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
  stačí jedna mezera. návěští zarovnat vlevo nahoru)
+
 -b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
+
+-Retrobi (ind\)
+-Diacritic sort order. MZK
 -ENV_VAR = 'devel'
--core/result/Dislax @.
--SAM Grafy
+
 -bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
-
 -spell check
+-core/result/Dislax @.
 -SAM Grafy
 -Nahled Retrobi:
 
