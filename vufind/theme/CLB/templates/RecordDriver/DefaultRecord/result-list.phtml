@@ -158,11 +158,9 @@
         $infoFields = $formatter->getData($driver, $formatter->getDefaults('search-info'));
       ?>
       <?php if (!empty($infoFields)): ?>
-             <br/><table>
              <?php foreach ($infoFields as $current): ?>
-               <tr><th><?=$this->transEsc($current['label'])?>:</th><td> <?=$current['value']?></td></tr>
+               <strong><?=$this->transEsc($current['label'])?>:</strong> <?=$current['value']?><br />
              <?php endforeach; ?>
-             </table>
       <?php endif; ?>
 
       <div class="result-formats">

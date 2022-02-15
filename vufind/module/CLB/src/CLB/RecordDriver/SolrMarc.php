@@ -64,6 +64,25 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return False;
 	}
 
+
+	public function CLB_getDeduplicatedPrimaryAuthors() {// CUSTOM PRIMARY AUTHORS
+		$authors = [];
+		$authors['primary'] = $this->getAuthorDataFields('primary', ['role']);
+
+		$dedup_data = function (&$array) {
+			foreach ($array as $author => $data) {
+				foreach ($data as $field => $values) {
+					if (is_array($values)) {
+						$array[$author][$field] = array_unique($values);
+					}
+				}
+			}
+		};
+
+		$dedup_data($authors['primary']);
+		return $authors;
+	}
+
 	public function CLB_getSubfields(string $field, array $subfields) {// CUSTOM SUBFIELD READER
 		$data = [];
 		$fields = $this->getMarcReader()->getFields($field);

@@ -1,4 +1,3 @@
-<div class="info-line" property="keywords">
 <?php if (isset($data['resource'])): ?>
 	<?php $i=0; foreach ($data['resource'] as $resource): ?>
 		<a title="<?=$this->escapeHtmlAttr($resource)?>" href="<?=$this->record($this->driver)->getLink('article', $resource)?>" rel="nofollow"><?=trim($this->escapeHtml($resource))?></a>
@@ -24,4 +23,3 @@
 		<?=$related;?>
 	<?php endforeach; ?>
 <?php endif; ?>
-</div>
