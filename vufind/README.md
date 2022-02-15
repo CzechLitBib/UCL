@@ -4,14 +4,13 @@ Vufind server howto.
 
 TODO
 <pre>
+-Fix Info()/Related()
 -In: highlight
--Retrobi (ind\)
 -Diacritic sort order. MZK
 -ENV_VAR = 'devel'
 -bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
 -spell check
--core/result/Dislax @.
 -SAM Grafy
 -Nahled Retrobi:
 

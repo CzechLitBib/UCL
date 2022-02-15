@@ -1,4 +1,9 @@
 
+SysNo:
+  DismaxFields:
+    - id
+    - id2_str
+
 ConspectGroup:
   DismaxFields:
     - conspect_group_str_mv

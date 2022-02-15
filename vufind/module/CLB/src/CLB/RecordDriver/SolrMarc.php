@@ -166,7 +166,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getAnnotationShort() { // ANNOTATION - SHORT
-		return  $this->CLB_getAnnotation(False);
+		return $this->CLB_getAnnotation(False);
 	}
 
 	public function CLB_getGenre() { // GENRE
@@ -181,13 +181,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getResponsibility() { // RESPONSIBILITY
-		$data = '';
-		if (!empty($this->getMarcReader()->getField('700')) or !empty($this->getMarcReader()->getField('710'))) {
-			if (str_contains($this->getTitleStatement(), '=')) {
-				$data = $this->getTitleStatement();# 245c
-			}
+		$statement = $this->getTitleStatement();# 245c
+		if (
+			!empty($this->getMarcReader()->getField('700'))
+			or !empty($this->getMarcReader()->getField('710'))
+			or str_contains($statement, '=')
+		) {
+			return $statement;
 		}
-		return $data;
+		return '';
 	}
 
 	public function CLB_getMoreInfo() { // INFO
