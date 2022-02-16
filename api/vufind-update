@@ -400,6 +400,14 @@ rrdtool.update(RRD, 'N:' + DS1 + ':' + DS2)
 # UPDATE PLOT
 locale.setlocale(locale.LC_ALL, 'cs_CZ.utf8')
 
+FETCH = rrdtool.fetch(RRD, 'LAST','-s', 'now-1w', '-e', 'now')
+try:
+        TOTAL = round(sum(r for r,d in data[2] if r != None))
+except: TOTAL = 0
+try:
+        DELETED = round(sum(d for r,d in data[2] if d != None))
+except: DELETED = 0
+
 rrdtool.graph(PLOT,
 	'--title', 'Aleph OAI-PMH - Stažené záznamy\n',
 	'--start', 'now-1w',
@@ -420,7 +428,9 @@ rrdtool.graph(PLOT,
 	'TEXTALIGN:center',
 	'GPRINT:last:Poslední\: %.0lf',
 	'GPRINT:avg:Průměr\: %.0lf',
-	'GPRINT:max:Maximum\: %.0lf'
+	'GPRINT:max:Maximum\: %.0lf',
+	'COMMENT:Celkem\: ' + str(TOTAL),
+	'COMMENT:Smazáno\: ' + str(DELETED)
 )
 
 # WRITE SQL
