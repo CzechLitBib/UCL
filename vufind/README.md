@@ -4,7 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--Fix Info()/Related()
 -In: highlight
 -Diacritic sort order. MZK
 -ENV_VAR = 'devel'
@@ -13,13 +12,9 @@ TODO
 -spell check
 -SAM Grafy
 -Nahled Retrobi:
-
-Pokud by šlo, připravit následující 2 věci, prosím, upravte, pokud by to mělo být na delší úpravu, nechte být (ve stávající verzi to není)
-a) Prosím u záznamu zobrazit náhled lístku nad tabulkový rozpis v proporcích dle vzoru zde: https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html  (hned pod název);
-Link na lístek je v poli 856
-b) Pakliže není vyplněna anotace (520), prosím hned pod obrázek dát s návěštím „OCR přepis lístku:“ obsah pole 989a
-Další úpravy pak není třeba řešit, uděláme pak jako jeden větší balík
-
+ a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
+ b] link 856
+ c] !520 => 989a.
 </pre>
 INSTALL
 <pre>
