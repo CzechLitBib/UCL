@@ -1,21 +1,17 @@
-<?php if (isset($data['resource'])): ?>
-	<?php $i=0; foreach ($data['resource'] as $resource): ?>
-		<a title="<?=$this->escapeHtmlAttr($resource)?>" href="<?=$this->record($this->driver)->getLink('article', $resource)?>" rel="nofollow"><?=trim($this->escapeHtml($resource))?></a>
-		<?=' -- '?>
-	<?php endforeach; ?>
-<?php endif; ?>
 <?php if (isset($data['sub'])): ?>
 	<?php foreach ($data['sub'] as $subfields): ?>
-		<?php foreach ($subfields as $subfield => $value): ?>
-			<?php if ($subfield == 'x'): ?>
-				<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
-				<?=' -- '?>
-			<?php elseif ($subfield == 'z'): ?>
+		<?php if (count($subfields) == 1): continue; endif;# skip 't' singleton ?> 
+		<?php $i=0; foreach ($subfields as $subfield => $value): ?>
+			<?=($i++ == 0) ? '' : ' -- '?>
+			<?php if ($subfield == 't'): ?>
+				<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('article', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
+			<?php elseif (in_array($subfield, ['x', 'z'])): ?>
 				<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
 			<?php else: ?>
-				<?php echo $value . ' -- ' ; ?>
+				<?=$value?>
 			<?php endif; ?>
 		<?php endforeach; ?>
+		<br>
 	<?php endforeach; ?>
 <?php endif; ?>
 <?php if (isset($data['related'])): ?>

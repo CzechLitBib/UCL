@@ -100,42 +100,35 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getInfo() {// INFO
 		$data = [];
-		$title = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];# 773t
-		$related = $this->getFieldArray('773', ['g']);
 	
 		if ($this->fields['format'] == 'Book Chapter') {
+			$title = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];# 773t
+			$related = $this->getFieldArray('773', ['g']);
+			$resource = $this->getFieldArray('787',['t']);
 			$is_chapter = False;
-			$resources = $this->getFieldArray('787',['t']);
-			foreach($resources as $resource) {
-				if ($resource['subfields']['code']['t'] == $title) { $is_chapter = True; }
+
+			foreach($resource as $value) {
+				if ($value == $title){ $is_chapter = True; }
 			}
 			if ($is_chapter) {
 				$sub = $this->CLB_getSubfields('787', ['a', 't', 'd']);
 				return $data[] = [
-					'resource' => $title,
 					'sub' => $sub,
 					'related' => $related
 				];# $a. $t. $d, $g
 			}
 		}
 	
-		$sub = $this->CLB_getSubfields('773', ['x', 'z']);
-		return $data[] = [
-			'resource' => $title,
-			'sub' => $sub,
-			'related' => $related
-		];
+		$sub = $this->CLB_getSubfields('773', ['t', 'x', 'z', 'g']);
+		return $data[] = ['sub' => $sub];
 	}
 
 	public function CLB_getRelated() {// RELATED
 		$data = [];
 		$detail = isset($this->fields['related_doc_detail_str_mv']) ? $this->fields['related_doc_detail_str_mv'] : [];# 630alps
-		$author = isset($this->fields['related_doc_author_str_mv']) ? $this->fields['related_doc_author_str_mv'] : [];# 787at
-		$sub = $this->CLB_getSubfields('787', ['n', 'b', 'd', 'k', 'h', 'x', 'z', '4']);
-
+		$sub = $this->CLB_getSubfields('787', ['a', 't', 'n', 'b', 'd', 'k', 'h', 'x', 'z', '4']);
 		return $data[] = [
 			'detail' => $detail,
-			'author' => $author,
 			'sub' => $sub
 		];
 	}
