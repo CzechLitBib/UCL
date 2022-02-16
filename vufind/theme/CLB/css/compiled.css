@@ -11511,6 +11511,7 @@ i.fa-renew,
 i.fa-renew-all,
 i.fa-report,
 i.fa-rss,
+i.fa-save,
 i.fa-search,
 i.fa-search-plus,
 i.fa-sensorimage,
@@ -11609,7 +11610,7 @@ i.fa-print {
 }
 .btn-type-save::before,
 i.fa-star {
-  background-image: url("../../bootprint3/images/icons/star.png");
+  background-image: url("../../bootprint3/images/icons/disk.png");
 }
 /**
  * Other FontAwesome overrides
@@ -11789,6 +11790,9 @@ i.fa-report {
 }
 i.fa-rss {
   background-image: url("../../bootprint3/images/icons/feed.png");
+}
+i.fa-save {
+  background-image: url("../../bootprint3/images/icons/disk.png");
 }
 i.fa-search {
   background-image: url("../../bootprint3/images/icons/magnifier.png");
@@ -12721,7 +12725,7 @@ header .navbar .navbar-brand {
   background-image: url('../images/logo.svg');
 }
 .action-toolbar {
-  display: flex !important;
+  display: flex;
   list-style: none !important;
   padding: 0 !important;
 }
@@ -12763,4 +12767,28 @@ header .navbar .navbar-brand {
 }
 a {
   text-decoration: none;
+  /* ../../bootstrap3/less/components/accessibility.css overide */
+}
+.action-toolbar li {
+  /* center toolbox */
+  display: inline-block;
+}
+.result-links {
+  text-align: right;
+  width: 5%;
+}
+.result-body {
+  width: 95%;
+}
+div.result-formats span.format.bookchapter {
+  background-color: #BE0032;
+}
+div.result-formats span.format.book {
+  background-color: #008856;
+}
+div.result-formats span.format.journal {
+  background-color: #F6A600;
+}
+.media-body {
+  max-width: 700px;
 }
