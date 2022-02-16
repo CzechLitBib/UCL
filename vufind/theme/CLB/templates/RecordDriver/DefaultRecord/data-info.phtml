@@ -1,8 +1,9 @@
 <?php if (isset($data['sub'])): ?>
-	<?php foreach ($data['sub'] as $subfields): ?>
+	<?php $i=0; foreach ($data['sub'] as $subfields): ?>
 		<?php if (count($subfields) == 1): continue; endif;# skip 't' singleton ?> 
-		<?php $i=0; foreach ($subfields as $subfield => $value): ?>
-			<?=($i++ == 0) ? '' : ' -- '?>
+		<?=($i++ == 0) ? '' : '<br>'?>
+		<?php $j=0; foreach ($subfields as $subfield => $value): ?>
+			<?=($j++ == 0) ? '' : ' -- '?>
 			<?php if ($subfield == 't'): ?>
 				<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('article', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
 			<?php elseif (in_array($subfield, ['x', 'z'])): ?>
@@ -11,7 +12,6 @@
 				<?=$value?>
 			<?php endif; ?>
 		<?php endforeach; ?>
-		<br>
 	<?php endforeach; ?>
 <?php endif; ?>
 <?php if (isset($data['related'])): ?>

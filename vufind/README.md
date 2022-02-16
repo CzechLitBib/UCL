@@ -4,6 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
+-adv. search facet translation
 -In: highlight
 -Diacritic sort order. MZK
 -ENV_VAR = 'devel'
@@ -47,6 +48,8 @@ openjdk-11-jre-headless
 # CERTBOT
 
 certbot python3-certbot-nginx
+
+certbot certonly --standalone -d xxx
 
 # INSTALL
 
