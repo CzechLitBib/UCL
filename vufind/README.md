@@ -4,36 +4,21 @@ Vufind server howto.
 
 TODO
 <pre>
--Result list - "main author or nothing"
--en.ini + Advanced search(En): Czech facet ??
--file chown/perm check
--Diacritic sort order. MZK
--In: highlight
--Core: flex: 1
--Advanced search: facet HTML placeholder
--b) zobrazení jednotlivého záznamu v rešerši - prosím upravit zalomování
- a návěští tak, jak má stávající instalace (kvůli úspoře místa, tj. nedosazovat tabulátorem,
- stačí jedna mezera. návěští zarovnat vlevo nahoru)
--b1) prosím též zmenšit odsazení mezi názvy polí a hodnotami u zobrazení jednotlivého záznamu
--Nginx API ACL
--ENV_VAR = 'devel'
--SSL
--Seznam tipu poli od vyrobce. core/result @.
--Dismax @
+-awstats
+-copyright
+-787
 -SAM Grafy
+-adv. search facet translation
+-In: highlight
+-Diacritic sort order. MZK
+-ENV_VAR = 'devel'
 -bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
-
 -spell check
--SAM Grafy
 -Nahled Retrobi:
-
-Pokud by šlo, připravit následující 2 věci, prosím, upravte, pokud by to mělo být na delší úpravu, nechte být (ve stávající verzi to není)
-a) Prosím u záznamu zobrazit náhled lístku nad tabulkový rozpis v proporcích dle vzoru zde: https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html  (hned pod název);
-Link na lístek je v poli 856
-b) Pakliže není vyplněna anotace (520), prosím hned pod obrázek dát s návěštím „OCR přepis lístku:“ obsah pole 989a
-Další úpravy pak není třeba řešit, uděláme pak jako jeden větší balík
-
+ a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
+ b] link 856
+ c] !520 => 989a.
 </pre>
 INSTALL
 <pre>
@@ -67,12 +52,23 @@ openjdk-11-jre-headless
 
 certbot python3-certbot-nginx
 
+certbot certonly --standalone -d xxx
+
 # INSTALL
 
 /etc/nginx/sites-enabled/default:
 
 server {
 	listen 80;
+
+	#listen 443 ssl;
+	#add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+	#add_header X-Frame-Options "DENY";
+	#add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+
+	#ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
+	#ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
+	#include /etc/letsencrypt/options-ssl-nginx.conf;
 
 	server_name xxx;
 
@@ -83,6 +79,12 @@ server {
 	location /cache/ {
 		alias /usr/local/vufind/local/cache/;
 	}
+
+	location ~ api {
+		try_files $uri $uri/ /index.php$is_args$args;
+		allow x.x.x.x/24;
+		deny all;
+        }
 
 	location / {
 		root /usr/local/vufind/public/;

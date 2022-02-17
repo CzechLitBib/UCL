@@ -1,0 +1,16 @@
+<?php
+  $openUrl = $this->openUrl($this->driver, 'record');
+  $openUrlActive = $openUrl->isActive();
+  $doi = $this->doi($this->driver, 'record');
+  $doiActive = $doi->isActive();
+  // Account for replace_other_urls setting
+  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+?>
+<?php $i=0; foreach ($urls as $current): ?>
+  <?=($i++ == 0) ? '' : ' | '?>
+  <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>"><?=$this->escapeHtml($current['desc'])?></a>
+<?php endforeach; ?>
+<?php if ($openUrlActive): ?>
+  <?=$openUrl->renderTemplate()?><br/>
+<?php endif; ?>
+<?php if ($doiActive): ?><?=$doi->renderTemplate()?><?php endif; ?>

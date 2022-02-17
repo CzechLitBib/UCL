@@ -64,6 +64,25 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return False;
 	}
 
+
+	public function CLB_getDeduplicatedPrimaryAuthors() {// CUSTOM PRIMARY AUTHORS
+		$authors = [];
+		$authors['primary'] = $this->getAuthorDataFields('primary', ['role']);
+
+		$dedup_data = function (&$array) {
+			foreach ($array as $author => $data) {
+				foreach ($data as $field => $values) {
+					if (is_array($values)) {
+						$array[$author][$field] = array_unique($values);
+					}
+				}
+			}
+		};
+
+		$dedup_data($authors['primary']);
+		return $authors;
+	}
+
 	public function CLB_getSubfields(string $field, array $subfields) {// CUSTOM SUBFIELD READER
 		$data = [];
 		$fields = $this->getMarcReader()->getFields($field);
@@ -81,43 +100,35 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
 	public function CLB_getInfo() {// INFO
 		$data = [];
-		$resource = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];
-		$related = $this->getFieldArray('773', ['g']);
 	
 		if ($this->fields['format'] == 'Book Chapter') {
+			$title = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];# 773t
+			$related = $this->getFieldArray('773', ['g']);
+			$resource = $this->getFieldArray('787',['t']);
 			$is_chapter = False;
-			$resources = $this->getFieldArray('787',['t']);
-			$title = $this->Fields['article_resouce_str_mv'];# 773t
-			foreach($resources as $resource) {
-				if ($resource['subfields']['code']['t'] == $title) { $is_chapter = True; }
+
+			foreach($resource as $value) {
+				if ($value == $title){ $is_chapter = True; }
 			}
 			if ($is_chapter) {
 				$sub = $this->CLB_getSubfields('787', ['a', 't', 'd']);
 				return $data[] = [
-					'resource' => $resource,
 					'sub' => $sub,
 					'related' => $related
 				];# $a. $t. $d, $g
 			}
 		}
 	
-		$sub = $this->CLB_getSubfields('773', ['a', 'd', 'x' ,'z']);
-		return $data[] = [
-			'resource' => $resource,
-			'sub' => $sub,
-			'related' => $related
-		];
+		$sub = $this->CLB_getSubfields('773', ['t', 'x', 'z', 'g']);
+		return $data[] = ['sub' => $sub];
 	}
 
 	public function CLB_getRelated() {// RELATED
 		$data = [];
 		$detail = isset($this->fields['related_doc_detail_str_mv']) ? $this->fields['related_doc_detail_str_mv'] : [];# 630alps
-		$author = isset($this->fields['related_doc_author_str_mv']) ? $this->fields['related_doc_author_str_mv'] : [];# 787an
-		$sub = $this->CLB_getSubfields('787', ['b', 'd', 'k', 'h', 'x', 'z', '4']);
-
+		$sub = $this->CLB_getSubfields('787', ['a', 't', 'n', 'b', 'd', 'k', 'h', 'x', 'z', '4']);
 		return $data[] = [
 			'detail' => $detail,
-			'author' => $author,
 			'sub' => $sub
 		];
 	}
@@ -148,7 +159,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getAnnotationShort() { // ANNOTATION - SHORT
-		return  $this->CLB_getAnnotation(False);
+		return $this->CLB_getAnnotation(False);
 	}
 
 	public function CLB_getGenre() { // GENRE
@@ -163,13 +174,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getResponsibility() { // RESPONSIBILITY
-		$data = '';
-		if (!empty($this->getMarcReader()->getField('700')) or !empty($this->getMarcReader()->getField('710'))) {
-			if (str_contains($this->getTitleStatement(), '=')) {
-				$data = $this->getTitleStatement();# 245c
-			}
+		$statement = $this->getTitleStatement();# 245c
+		if (
+			!empty($this->getMarcReader()->getField('700'))
+			or !empty($this->getMarcReader()->getField('710'))
+			or str_contains($statement, '=')
+		) {
+			return $statement;
 		}
-		return $data;
+		return '';
 	}
 
 	public function CLB_getMoreInfo() { // INFO

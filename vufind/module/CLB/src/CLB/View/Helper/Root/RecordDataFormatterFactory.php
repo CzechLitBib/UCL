@@ -23,6 +23,36 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		return $helper;
 	}
 
+	protected function CLB_getAuthorFunction()
+	{
+		return function ($data, $options) {
+			$labels = ['primary' => ['Main Author', 'Main Authors']];
+			$schemaLabels = ['primary' => 'author'];
+			$order = ['primary' => 1];
+			$final = [];
+
+			foreach ($data as $type => $values) {
+				$final[] = [
+					'label' => $labels[$type][count($values) == 1 ? 0 : 1],
+					'values' => [$type => $values],
+					'options' => [
+						'pos' => $options['pos'] + $order[$type],
+						'renderType' => 'RecordDriverTemplate',
+						'template' => 'data-result-authors.phtml',
+						'context' => [
+							'type' => $type,
+							'schemaLabel' => $schemaLabels[$type],
+							'requiredDataFields' => [
+								['name' => 'role', 'prefix' => 'CreatorRoles::']
+							],
+						],
+					],
+				];
+			}
+			return $final;
+		};
+	}
+
 	// CORE
 	public function getDefaultCoreSpecs()
 	{
@@ -59,12 +89,13 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	public function getDefaultSearchInfoSpecs()
 	{
 		$spec = new SpecBuilder();
-		$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
-		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publicationDetails.phtml');
+		//$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
+		$spec->setMultiLine('Authors', 'CLB_getDeduplicatedPrimaryAuthors', $this->CLB_getAuthorFunction());
+		$spec->setTemplateLine('Published', 'getPublicationDetails', 'data-publication.phtml');
 		$spec->setLine('Excerption Period', 'CLB_getExcerptionPeriod');
 		$spec->setTemplateLine('Info','CLB_getInfo', 'data-info.phtml');
 		$spec->setLine('Annotation','CLB_getAnnotationShort');
-		$spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
+		$spec->setTemplateLine('Online Access', true, 'data-online.phtml');
 		return $spec->getArray();
 	}
 

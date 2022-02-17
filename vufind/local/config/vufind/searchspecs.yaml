@@ -1,8 +1,8 @@
 
-RetrobiOCR:
+SysNo:
   DismaxFields:
-    - retrobitxt_txt_mv
-  DismaxHandler: edismax
+    - id
+    - id2_str
 
 ConspectGroup:
   DismaxFields:
@@ -34,11 +34,6 @@ AuthorityResource:
     - authority_search_str_mv
   DismaxHandler: edismax
 
-Placestr:
-  DismaxFields:
-    - publication_place_txt_mv
-  DismaxHandler: edismax
-
 Yearstr:
   DismaxFields:
     - date_txt_mv
@@ -46,7 +41,7 @@ Yearstr:
 
 LinkedResource:
   DismaxFields:
-    - related_document_txt_mv
+    - related_doc_search_txt_mv
   DismaxHandler: edismax
   
 Subject:
@@ -67,7 +62,7 @@ AuthorTopic:
     - topic_person_txt_mv
   DismaxHandler: edismax
 
-retrobitxt:
+RetrobiOCR:
   DismaxFields:
     - retrobitxt_txt_mv
   DismaxHandler: edismax
