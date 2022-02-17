@@ -4,6 +4,10 @@ Vufind server howto.
 
 TODO
 <pre>
+-awstats
+-copyright
+-787
+-SAM Grafy
 -adv. search facet translation
 -In: highlight
 -Diacritic sort order. MZK
@@ -11,7 +15,6 @@ TODO
 -bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
 -spell check
--SAM Grafy
 -Nahled Retrobi:
  a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
  b] link 856
