@@ -101,24 +101,21 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	public function CLB_getInfo() {// INFO
 		$data = [];
 	
-		if ($this->fields['format'] == 'Book Chapter') {
-			$title = isset($this->fields['article_resource_str_mv']) ? $this->fields['article_resource_str_mv'] : [];# 773t
-			$related = $this->getFieldArray('773', ['g']);
-			$resource = $this->getFieldArray('787',['t']);
-			$is_chapter = False;
+		if (in_array('Book Chapter', $this->fields['format'])) {
+			$titles = $this->CLB_getSubfields('773', ['t', 'g']);
+			$results = $this->CLB_getSubfields('787', ['a', 't', 'd', 'x', 'z']);
 
-			foreach($resource as $value) {
-				if ($value == $title){ $is_chapter = True; }
-			}
-			if ($is_chapter) {
-				$sub = $this->CLB_getSubfields('787', ['a', 't', 'd']);
-				return $data[] = [
-					'sub' => $sub,
-					'related' => $related
-				];# $a. $t. $d, $g
+			foreach($titles as $title) {
+				foreach($results as $result) {
+					if (substr($result['t'], 0, 10) == substr($title['t'], 0, 10)) {
+						return $data[] = [
+							'title' => $title,
+							'result' => $result
+						];# $787a. $773t. $787d. $787x. $787z, $773g: only with matched 787: 002476925
+					}
+				}
 			}
 		}
-	
 		$sub = $this->CLB_getSubfields('773', ['t', 'x', 'z', 'g']);
 		return $data[] = ['sub' => $sub];
 	}

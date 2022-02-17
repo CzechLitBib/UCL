@@ -5,8 +5,6 @@ Vufind server howto.
 TODO
 <pre>
 -awstats
--copyright
--787
 -SAM Grafy
 -adv. search facet translation
 -In: highlight
@@ -53,6 +51,10 @@ openjdk-11-jre-headless
 certbot python3-certbot-nginx
 
 certbot certonly --standalone -d xxx
+
+# AWSTATS
+
+awstats
 
 # INSTALL
 
