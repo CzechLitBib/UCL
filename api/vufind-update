@@ -402,10 +402,10 @@ locale.setlocale(locale.LC_ALL, 'cs_CZ.utf8')
 
 FETCH = rrdtool.fetch(RRD, 'LAST','-s', 'now-1w', '-e', 'now')
 try:
-        TOTAL = round(sum(r for r,d in data[2] if r != None))
+	TOTAL = round(sum(r for r,d in FETCH[2] if r != None))
 except: TOTAL = 0
 try:
-        DELETED = round(sum(d for r,d in data[2] if d != None))
+	DELETED = round(sum(d for r,d in FETCH[2] if d != None))
 except: DELETED = 0
 
 rrdtool.graph(PLOT,
