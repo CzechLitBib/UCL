@@ -1,10 +1,14 @@
 <?php if (isset($data['chapter'])): ?>
 	<?php $i=0; foreach ($data['chapter'] as $subfield => $value): ?>
-		<?=($i++ == 0) ? '' : ' -- '?>
+		<?=($i++ <= 1) ? '' : ' -- '?>
 		<?php if (in_array($subfield, ['x','z'])): ?>
 			<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
 		<?php else: ?>
-			<?=$value?>
+			<?php if ($subfield == 'a'): ?>
+				<?=(isset($data['chapter']['a']) and isset($data['chapter']['t'])) ? $value . '.' : $value ?>
+			<?php else: ?>
+				<?=$value?>
+			<?php endif; ?>
 		<?php endif; ?>
 	<?php endforeach; ?>
 <?php endif; ?>
