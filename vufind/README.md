@@ -54,11 +54,27 @@ certbot certonly --standalone -d xxx
 
 # AWSTATS
 
-awstats
+awstats fcgiwrap
 
 # INSTALL
 
 /etc/nginx/sites-enabled/default:
+
+server {
+	listen 127.0.0.1:42;
+
+	access_log /var/log/nginx/awstats_access.log combined;
+	error_log /var/log/nginx/awstats_error.log;
+
+	root /usr/share/awstats/;
+	index /awstats.pl;
+
+	location ~ \.pl$ {
+		fastcgi_param SCRIPT_FILENAME /usr/lib/cgi-bin/awstats.pl;
+		include fastcgi_params;
+		fastcgi_pass unix:/var/run/fcgiwrap.socket;
+	}
+}
 
 server {
 	listen 80;
@@ -73,6 +89,16 @@ server {
 	#include /etc/letsencrypt/options-ssl-nginx.conf;
 
 	server_name xxx;
+
+	location ~ /awstats-icon {
+		alias /usr/share/awstats/icon/;
+		access_log off;
+	}
+
+	location /awstats/ {
+		proxy_pass http://127.0.0.1:42;
+		access_log off;
+	}
 
 	location /themes/ {
 		alias /usr/local/vufind/themes/;
