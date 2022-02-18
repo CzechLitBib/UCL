@@ -89,7 +89,7 @@ server {
 
 	server_name xxx;
 
-	location ~ /awstats-icon {
+	location /awstats-icon {
 		alias /usr/share/awstats/icon/;
 		access_log off;
 	}
