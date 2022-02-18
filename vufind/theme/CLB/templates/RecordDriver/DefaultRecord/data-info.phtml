@@ -1,14 +1,14 @@
-<?php if (isset($data['title']) and isset($data['result'])): ?> <!-- a. 773t. d. x. z, 773g --!>
-	<?=isset($data['result']['a']) ? $data['result']['a'] . '.' : ''?> 
-	<?=isset($data['title']['t']) ? $data['title']['t'] . '.' : ''?> 
-	<?php if (isset($data['result']['x'])): $isn = $data['result']['x']; ?>
-		<a title="<?=$this->escapeHtmlAttr($isn)?>" href="<?=$this->record($this->driver)->getLink('isn', $isn)?>" rel="nofollow"><?=trim($this->escapeHtml($isn))?></a><?=','?>
-	<?php endif; ?>
-	<?php if (isset($data['result']['z'])): $isn = $data['result']['z']; ?>
-		<a title="<?=$this->escapeHtmlAttr($isn)?>" href="<?=$this->record($this->driver)->getLink('isn', $isn)?>" rel="nofollow"><?=trim($this->escapeHtml($isn))?></a><?=','?>
-	<?php endif; ?>
-	<?=isset($data['title']['g']) ? $data['title']['g'] : ''?> 
+<?php if (isset($data['chapter'])): ?>
+	<?php $i=0; foreach ($data['chapter'] as $subfield => $value): ?>
+		<?=($i++ == 0) ? '' : ' -- '?>
+		<?php if (in_array($subfield, ['x','z'])): ?>
+			<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
+		<?php else: ?>
+			<?=$value?>
+		<?php endif; ?>
+	<?php endforeach; ?>
 <?php endif; ?>
+
 <?php if (isset($data['sub'])): ?>
 	<?php $i=0; foreach ($data['sub'] as $subfields): ?>
 		<?php if (count($subfields) == 1): continue; endif;# skip 't' singleton ?> 

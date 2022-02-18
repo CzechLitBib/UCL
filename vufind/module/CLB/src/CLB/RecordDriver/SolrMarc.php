@@ -108,14 +108,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 			foreach($titles as $title) {
 				foreach($results as $result) {
 					if (substr($result['t'], 0, 10) == substr($title['t'], 0, 10)) {
-						return $data[] = [
-							'title' => $title,
-							'result' => $result
-						];# $787a. $773t. $787d. $787x. $787z, $773g: only with matched 787: 002476925
+						$result['t'] = $title['t']; # replace title..
+						if (isset($title['g'])) { $result['g'] = $title['g']; }# trailing..
+						return $data[] = ['chapter' => $result];
 					}
 				}
 			}
 		}
+
 		$sub = $this->CLB_getSubfields('773', ['t', 'x', 'z', 'g']);
 		return $data[] = ['sub' => $sub];
 	}
