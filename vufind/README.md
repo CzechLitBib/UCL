@@ -4,7 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--awstats
 -SAM Grafy
 -adv. search facet translation
 -In: highlight
@@ -96,6 +95,8 @@ server {
 	}
 
 	location /awstats/ {
+		allow x.x.x.x/24;
+		deny all;
 		proxy_pass http://127.0.0.1:42;
 		access_log off;
 	}
