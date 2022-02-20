@@ -4,7 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--SAM Grafy
 -adv. search facet translation
 -In: highlight
 -Diacritic sort order. MZK
@@ -93,6 +92,21 @@ server {
 
 	server_name xxx;
 
+        # SAM
+	location /SAM {
+		proxy_pass https://sam.ucl.cas.cz/solr/;
+	}
+	location /css {
+		proxy_pass https://sam.ucl.cas.cz/css/;
+	}
+	location /js {
+		proxy_pass https://sam.ucl.cas.cz/js/;
+	}
+	location /clb.png {
+		proxy_pass https://sam.ucl.cas.cz/clb.png;
+	}
+
+	# AWSTATS
 	location /awstats-icon {
 		alias /usr/share/awstats/icon/;
 		access_log off;
@@ -105,6 +119,7 @@ server {
 		access_log off;
 	}
 
+	# VUFIND
 	location /themes/ {
 		alias /usr/local/vufind/themes/;
 	}
