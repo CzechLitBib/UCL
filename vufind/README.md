@@ -94,16 +94,16 @@ server {
 
         # SAM
 	location /SAM {
-		proxy_pass https://sam.ucl.cas.cz/solr/;
+		proxy_pass https://xxx/solr/;
 	}
 	location /css {
-		proxy_pass https://sam.ucl.cas.cz/css/;
+		proxy_pass https://xxx/css/;
 	}
 	location /js {
-		proxy_pass https://sam.ucl.cas.cz/js/;
+		proxy_pass https://xxx/js/;
 	}
 	location /clb.png {
-		proxy_pass https://sam.ucl.cas.cz/clb.png;
+		proxy_pass https://xxx/clb.png;
 	}
 
 	# AWSTATS
