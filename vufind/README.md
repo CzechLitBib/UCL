@@ -250,4 +250,5 @@ ALPHA
 STATIC ROUTE
 <pre>
 php public/index.php generate staticroute SAM CLB
+(clear local cache)
 </pre>
