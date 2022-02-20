@@ -8,8 +8,6 @@ TODO
 -adv. search facet translation
 -In: highlight
 -Diacritic sort order. MZK
--ENV_VAR = 'devel'
--bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
 -spell check
 -Nahled Retrobi:
