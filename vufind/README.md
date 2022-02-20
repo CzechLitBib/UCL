@@ -247,4 +247,7 @@ ALPHA
 <pre>
 ./index-alphabetic-browse.sh
 </pre>
-
+STATIC ROUTE
+<pre>
+php public/index.php generate staticroute SAM CLB
+</pre>
