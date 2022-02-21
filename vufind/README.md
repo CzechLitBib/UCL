@@ -4,15 +4,9 @@ Vufind server howto.
 
 TODO
 <pre>
--awstats
--copyright
--787
--SAM Grafy
 -adv. search facet translation
 -In: highlight
 -Diacritic sort order. MZK
--ENV_VAR = 'devel'
--bbg,rej - author-classification.ini translation.
 -Cover ? 002712500
 -spell check
 -Nahled Retrobi:
@@ -54,9 +48,35 @@ certbot python3-certbot-nginx
 
 certbot certonly --standalone -d xxx
 
+# AWSTATS
+
+awstats fcgiwrap
+
+/etc/awstats/awstats.conf.local:
+
+LogFile="/var/log/nginx/access.log"
+SiteDomain="xxx"
+DNSLookup=0
+
 # INSTALL
 
 /etc/nginx/sites-enabled/default:
+
+server {
+	listen 127.0.0.1:42;
+
+	access_log /var/log/nginx/awstats_access.log combined;
+	error_log /var/log/nginx/awstats_error.log;
+
+	root /usr/share/awstats/;
+	index /awstats.pl;
+
+	location ~ \.pl$ {
+		fastcgi_param SCRIPT_FILENAME /usr/lib/cgi-bin/awstats.pl;
+		include fastcgi_params;
+		fastcgi_pass unix:/var/run/fcgiwrap.socket;
+	}
+}
 
 server {
 	listen 80;
@@ -72,6 +92,34 @@ server {
 
 	server_name xxx;
 
+        # SAM
+	location /SAM {
+		proxy_pass https://xxx/solr/;
+	}
+	location /css {
+		proxy_pass https://xxx/css/;
+	}
+	location /js {
+		proxy_pass https://xxx/js/;
+	}
+	location /clb.png {
+		proxy_pass https://xxx/clb.png;
+	}
+
+	# AWSTATS
+	location /awstats-icon {
+		alias /usr/share/awstats/icon/;
+		access_log off;
+	}
+
+	location /awstats/ {
+		allow x.x.x.x/24;
+		deny all;
+		proxy_pass http://127.0.0.1:42;
+		access_log off;
+	}
+
+	# VUFIND
 	location /themes/ {
 		alias /usr/local/vufind/themes/;
 	}
@@ -172,6 +220,7 @@ TUNE
 <pre>
 /etc/crontab:
 '''
+*/15 *  * * *   root    /usr/bin/awstats -config=xxx -update > /var/log/awstats.log 2>&1 &
 15 *	* * *	root	/root/vufind-update.sh >> /var/log/vufind-update.log 2>&1 &
 00 5	* * *	root	/root/vufind-monitor.py > /dev/null 2>&1 &
 30 6	* * *	root	find /tmp/vufind_sessions/&ast; -mtime +5 -exec rm {} \; > /dev/null &
@@ -213,4 +262,8 @@ ALPHA
 <pre>
 ./index-alphabetic-browse.sh
 </pre>
-
+STATIC ROUTE
+<pre>
+php public/index.php generate staticroute SAM CLB
+(clear local cache)
+</pre>

@@ -1,3 +1,18 @@
+<?php if (isset($data['chapter'])): ?>
+	<?php $i=0; foreach ($data['chapter'] as $subfield => $value): ?>
+		<?=($i++ <= 1) ? '' : ' -- '?>
+		<?php if (in_array($subfield, ['x','z'])): ?>
+			<a title="<?=$this->escapeHtmlAttr($value)?>" href="<?=$this->record($this->driver)->getLink('isn', $value)?>" rel="nofollow"><?=trim($this->escapeHtml($value))?></a>
+		<?php else: ?>
+			<?php if ($subfield == 'a'): ?>
+				<?=(isset($data['chapter']['a']) and isset($data['chapter']['t'])) ? $value . '.' : $value ?>
+			<?php else: ?>
+				<?=$value?>
+			<?php endif; ?>
+		<?php endif; ?>
+	<?php endforeach; ?>
+<?php endif; ?>
+
 <?php if (isset($data['sub'])): ?>
 	<?php $i=0; foreach ($data['sub'] as $subfields): ?>
 		<?php if (count($subfields) == 1): continue; endif;# skip 't' singleton ?> 
@@ -12,10 +27,5 @@
 				<?=$value?>
 			<?php endif; ?>
 		<?php endforeach; ?>
-	<?php endforeach; ?>
-<?php endif; ?>
-<?php if (isset($data['related'])): ?>
-	<?php foreach ($data['related'] as $related): ?>
-		<?=$related;?>
 	<?php endforeach; ?>
 <?php endif; ?>

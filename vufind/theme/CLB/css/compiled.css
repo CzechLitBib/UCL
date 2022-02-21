@@ -11451,6 +11451,8 @@ i.fa-mobile,
 i.fa-print,
 .btn-type-save::before,
 i.fa-star,
+.btn-type-chart::before,
+i.fa-chart,
 i.fa-archive,
 i.fa-atlas,
 i.fa-bell,
@@ -11465,7 +11467,6 @@ i.fa-cancel-all-storage-retrieval-requests,
 i.fa-cancel-holds,
 i.fa-cancel-storage-retrieval-requests,
 i.fa-cdrom,
-i.fa-chart,
 i.fa-chipcartridge,
 i.fa-collage,
 i.fa-disccartridge,
@@ -11612,6 +11613,10 @@ i.fa-print {
 i.fa-star {
   background-image: url("../../bootprint3/images/icons/disk.png");
 }
+.btn-type-chart::before,
+i.fa-chart {
+  background-image: url("../../bootprint3/images/icons/chart_bar.png");
+}
 /**
  * Other FontAwesome overrides
  */
@@ -11656,9 +11661,6 @@ i.fa-cancel-storage-retrieval-requests {
 }
 i.fa-cdrom {
   background-image: url("../../bootprint3/images/icons/cd.png");
-}
-i.fa-chart {
-  background-image: url("../../bootprint3/images/icons/chart_bar.png");
 }
 i.fa-chipcartridge {
   background-image: url("../../bootprint3/images/icons/server.png");
