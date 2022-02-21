@@ -400,7 +400,7 @@ rrdtool.update(RRD, 'N:' + DS1 + ':' + DS2)
 # UPDATE PLOT
 locale.setlocale(locale.LC_ALL, 'cs_CZ.utf8')
 
-FETCH = rrdtool.fetch(RRD, 'LAST','-s', 'now-1w', '-e', 'now')
+FETCH = rrdtool.fetch(RRD, 'LAST', '-s', 'now-1w', '-e', 'now')
 try:
 	TOTAL = round(sum(r for r,d in FETCH[2] if r != None))
 except: TOTAL = 0
