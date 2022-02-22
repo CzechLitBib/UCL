@@ -142,7 +142,6 @@ server {
 
 	location ~\.php$ {
 		#fastcgi_param VUFIND_ENV development;
-		#fastcgi_param APPLICATION_ENV development;
 		fastcgi_param SCRIPT_FILENAME /usr/local/vufind/public/index.php;
 		fastcgi_param VUFIND_LOCAL_DIR /usr/local/vufind/local/;
 		fastcgi_param VUFIND_HOME /usr/local/vufind/;
