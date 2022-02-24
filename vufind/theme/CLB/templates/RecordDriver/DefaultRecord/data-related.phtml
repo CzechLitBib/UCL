@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php if (isset($data['sub'])): ?>
 	<?php foreach ($data['sub'] as $subfields): ?>
-		<?php $author = trim((isset($subfields['a']) ? $subfields['a'] : '') . '. ' . (isset($subfields['t']) ? $subfields['t'] : '')); ?>
+		<?php $author = trim((isset($subfields['a']) ? $subfields['a'] : '') . '. ' . (isset($subfields['t']) ? $subfields['t'] : ''), ' .'); ?>
 		<?php if (!empty($author)): ?>
 			<a title="<?=$this->escapeHtmlAttr($author)?>" href="<?=$this->record($this->driver)->getLink('related', $author)?>" rel="nofollow"><?=trim($this->escapeHtml($author))?></a><?=' -- '?>
 		<?php endif; ?>
