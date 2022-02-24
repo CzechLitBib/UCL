@@ -79,16 +79,16 @@ server {
 }
 
 server {
-	listen 80;
+	#listen 80;
+	listen 443 ssl;
 
-	#listen 443 ssl;
-	#add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-	#add_header X-Frame-Options "DENY";
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+	add_header X-Frame-Options "DENY";
 	#add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 
 	#ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
 	#ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
-	#include /etc/letsencrypt/options-ssl-nginx.conf;
+	include /etc/letsencrypt/options-ssl-nginx.conf;
 
 	server_name xxx;
 
