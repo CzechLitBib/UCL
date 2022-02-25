@@ -195,21 +195,21 @@ for record in records:
 				))
 
 	# 592
-	if '630' in metadata and 'a' in metadata['630']:
-		metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
-			subfields=['a', metadata['630']['a']]
-		))
+	#if '630' in metadata and 'a' in metadata['630']:
+	#	metadata.add_ordered_field(Field(tag='592', indicators=[' ',' '],
+	#		subfields=['a', metadata['630']['a']]
+	#	))
 
-	for F in metadata.get_fields('787'):
-		if 't' in F and '4' in F:
-			if 'a' in F:
-				metadata.add_field(Field(tag='592', indicators=[' ',' '],
-					subfields=['a', F['a'] + ': ' + F['t'], 'b', F['4']]
-				))
-			else:
-				metadata.add_field(Field(tag='592', indicators=[' ',' '],
-					subfields=['a', F['t'], 'b', F['4']]
-				))
+	#for F in metadata.get_fields('787'):
+	#	if 't' in F and '4' in F:
+	#		if 'a' in F:
+	#			metadata.add_field(Field(tag='592', indicators=[' ',' '],
+	#				subfields=['a', F['a'] + ': ' + F['t'], 'b', F['4']]
+	#			))
+	#		else:
+	#			metadata.add_field(Field(tag='592', indicators=[' ',' '],
+	#				subfields=['a', F['t'], 'b', F['4']]
+	#			))
 	# Citace
 
 	BROKEN=False
