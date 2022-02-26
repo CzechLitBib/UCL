@@ -275,6 +275,5 @@ Rebuild "default" index:
 http://localhost:8983/solr/biblio/select?q=*:*&spellcheck=true&spellcheck.build=true
 
 Rebuild "basicSpell" index:
-
 http://localhost:8983/solr/biblio/select?q=*:*&spellcheck.dictionary=basicSpell&spellcheck=true&spellcheck.build=true
 </pre>
