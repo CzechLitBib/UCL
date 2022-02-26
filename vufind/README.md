@@ -9,7 +9,6 @@ TODO
 -In: highlight
 -Diacritic sort order. MZK
 -Cover ? 002712500
--spell check: wget -O optimize.log 'http://localhost:8983/solr/biblio/select?q=*:*&spellcheck=true&spellcheck.build=true'
 -Nahled Retrobi:
  a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
  b] link 856
@@ -266,4 +265,16 @@ STATIC ROUTE
 <pre>
 php public/index.php generate staticroute SAM CLB
 (clear local cache)
+</pre>
+REBUILD SPELLCHECK
+<pre>
+Optimize index:
+http://localhost:8983/solr/biblio/update?optimize=true
+
+Rebuild "default" index:
+http://localhost:8983/solr/biblio/select?q=*:*&spellcheck=true&spellcheck.build=true
+
+Rebuild "basicSpell" index:
+
+http://localhost:8983/solr/biblio/select?q=*:*&spellcheck.dictionary=basicSpell&spellcheck=true&spellcheck.build=true
 </pre>
