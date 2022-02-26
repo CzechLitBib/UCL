@@ -9,7 +9,7 @@ TODO
 -In: highlight
 -Diacritic sort order. MZK
 -Cover ? 002712500
--spell check
+-spell check: wget -O optimize.log 'http://localhost:8983/solr/biblio/select?q=*:*&spellcheck=true&spellcheck.build=true'
 -Nahled Retrobi:
  a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
  b] link 856
