@@ -4,7 +4,6 @@ Vufind server howto.
 
 TODO
 <pre>
--Cookie consent: https://designsystem.gov.cz/#/komponenty/cookie-bar
 -Related facet 787at dot separator
 -In: highlight
 -Diacritic sort order. MZK
