@@ -4,11 +4,10 @@ Vufind server howto.
 
 TODO
 <pre>
--adv. search facet translation
+-Related facet 787at dot separator
 -In: highlight
 -Diacritic sort order. MZK
 -Cover ? 002712500
--spell check
 -Nahled Retrobi:
  a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
  b] link 856
@@ -79,16 +78,16 @@ server {
 }
 
 server {
-	listen 80;
+	#listen 80;
+	listen 443 ssl;
 
-	#listen 443 ssl;
-	#add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-	#add_header X-Frame-Options "DENY";
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+	add_header X-Frame-Options "DENY";
 	#add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 
 	#ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
 	#ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
-	#include /etc/letsencrypt/options-ssl-nginx.conf;
+	include /etc/letsencrypt/options-ssl-nginx.conf;
 
 	server_name xxx;
 
@@ -142,7 +141,6 @@ server {
 
 	location ~\.php$ {
 		#fastcgi_param VUFIND_ENV development;
-		#fastcgi_param APPLICATION_ENV development;
 		fastcgi_param SCRIPT_FILENAME /usr/local/vufind/public/index.php;
 		fastcgi_param VUFIND_LOCAL_DIR /usr/local/vufind/local/;
 		fastcgi_param VUFIND_HOME /usr/local/vufind/;
@@ -266,4 +264,15 @@ STATIC ROUTE
 <pre>
 php public/index.php generate staticroute SAM CLB
 (clear local cache)
+</pre>
+REBUILD SPELLCHECK
+<pre>
+Optimize index:
+http://localhost:8983/solr/biblio/update?optimize=true
+
+Rebuild "default" index:
+http://localhost:8983/solr/biblio/select?q=*:*&spellcheck=true&spellcheck.build=true
+
+Rebuild "basicSpell" index:
+http://localhost:8983/solr/biblio/select?q=*:*&spellcheck.dictionary=basicSpell&spellcheck=true&spellcheck.build=true
 </pre>

@@ -14,7 +14,7 @@
           <li><button id="ribbon-export" class="toolbar-btn btn-type-export" type="submit" name="export" value="1" title="<?=$this->transEscAttr('bookbag_export_selected')?>"<?php if ($this->formAttr): ?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Export')?></button></li>
         <?php endif; ?>
         <li><button id="ribbon-print" class="toolbar-btn btn-type-print" type="submit" name="print" value="1" title="<?=$this->transEscAttr('bookbag_print_selected')?>"<?php if ($this->formAttr): ?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Print')?></button></li>
-        <li><a target="_blank" href="<?=$this->url('sam')?>?lookfor=%22<?=urlencode($this->params->getDisplayQuery())?>%22&amp;type=AllFields"><button id="ribbon-charts" class="toolbar-btn btn-type-chart" type="button" name="chart" value="1" title="<?=$this->transEscAttr('Show Charts')?>"><?=$this->transEsc('Charts')?></button></a></li>
+        <li><a target="_blank" href="<?=$this->url('sam')?><?=$this->results->getUrlQuery()?>"><button id="ribbon-charts" class="toolbar-btn btn-type-chart" type="button" name="chart" value="1" title="<?=$this->transEscAttr('Show Charts')?>"><?=$this->transEsc('Charts')?></button></a></li>
         <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
           <li><button id="ribbon-save" class="toolbar-btn btn-type-save" type="submit" name="saveCart" value="1" title="<?=$this->transEscAttr('bookbag_save_selected')?>"<?php if ($this->formAttr): ?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>><?=$this->transEsc('Save')?></button></li>
         <?php endif; ?>
