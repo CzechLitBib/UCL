@@ -1287,7 +1287,7 @@ for record in records:
 						write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
 
 		# CPK
-		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2935900:
+		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2735900:
 			for F in metadata.get_fields('599'):
 				if 'a' in F and F['a'] == 'CLB-CPK': break
 			else:
