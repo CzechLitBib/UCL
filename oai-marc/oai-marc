@@ -1288,12 +1288,10 @@ for record in records:
 
 		# CPK
 		CPK=True
-		if '599'not in metadata: CPK=False
-		if '599' in metadata and 'a' not in metadata['599']: CPK=False
-		if '599' in metadata and 'a' in metadata['599']:
-			if metadata['599']['a'] != 'CLB-CPK': CPK=False
-		if not CPK:
-			write_error(header.identifier(), '599', SIF, '192', "Záznam neobsahuje podpole 599a s hodnotou 'CLB-CPK'.")
+		for F in metadata.get_fields('599'):
+			if 'a' in F and F['a'] == 'CLB-CPK': break
+		else:
+			write_error(header.identifier(), '599', SIF, '192', "Záznam neobsahuje žádné podpole 599a s hodnotou 'CLB-CPK'.")
 
 	COUNTER+=1
 
