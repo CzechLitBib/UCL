@@ -1,14 +1,15 @@
-#!/usr/bin/python
-#-*- coding: utf-8 -*-
+#!/usr/bin/python3
 #
-# Record daily monitor.
+# Record "daily" update monitor.
 #
 
-import smtplib,httplib,urllib,json,sys
-from datetime import datetime,timedelta
+import requests,smtplib
+
+from datetime import date,timedelta
 from email.mime.text import MIMEText
 
-DATA = {'fl':'id', 'q':'record_change_str_mv:' + (datetime.today() - timedelta(days=1)).strftime('%Y%m%d')}
+#DATA = {'fl':'id', 'q':'record_change_date:[' + (date.today() - timedelta(days=1)).isoformat() + ' TO ' + date.today().isoformat() + ']'}
+DATA = {'fl':'id', 'q':'record_change_date:[' + (date.today() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ') + ' TO ' + date.today().strftime('%Y-%m-%dT%H:%M:%SZ') + ']'}
 
 MAIL_SENDER='xxx'
 MAIL_TARGET='xxx'
@@ -38,12 +39,10 @@ def notify():
 			print('Sendmail error.')
 
 try:
-	con = httplib.HTTPConnection('vufind.ucl.cas.cz', '8080', timeout=10)
-	con.request('GET', '/solr/biblio/select?' + urllib.urlencode(DATA))
-	res = con.getresponse()
-	if res.status == 200:
-		rec = json.loads(res.read())
-		if rec['response']['numFound'] == 0: notify()
+	req = requests.get('http://localhost:8983/solr/biblio/select', params=DATA, timeout=10)
+	if req.status_code == 200:
+		res = req.json()
+		if res['response']['numFound'] == 0: notify()
 except:
 	print('Connection error.')
 
