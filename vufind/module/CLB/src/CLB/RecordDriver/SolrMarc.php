@@ -216,5 +216,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return isset($this->fields['processor_txt_mv']) ? $this->fields['processor_txt_mv'] : '';
 	}
 
+	public function CLB_getCypher() { // CYPHER
+		return isset($this->fields['cypher_txt_mv']) ? $this->fields['cypher_txt_mv'] : '';
+	}
+
+	public function CLB_getOriginal() { // ORIGINAL
+		return isset($this->fields['original_txt_mv']) ? $this->fields['original_txt_mv'] : '';
+	}
+
 }
 

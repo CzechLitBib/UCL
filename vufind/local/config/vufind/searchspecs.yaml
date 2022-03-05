@@ -1,8 +1,19 @@
 
+OriginalName:
+  DismaxFields:
+    - original_txt_mv
+  DismaxHandler: edismax
+
+CypherSignature:
+  DismaxFields:
+    - cypher_txt_mv
+  DismaxHandler: edismax
+
 SysNo:
   DismaxFields:
     - id
     - id2_str
+  DismaxHandler: edismax
 
 ConspectGroup:
   DismaxFields:
