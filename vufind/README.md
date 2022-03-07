@@ -4,6 +4,18 @@ Vufind server howto.
 
 TODO
 <pre>
+-Czech analyzer:
+https://solr.apache.org/guide/8_0/schema-api.html
+
+<fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.StopFilterFactory" words="lang/stopwords_cz.txt" ignoreCase="true"/>
+      <filter class="solr.CzechStemFilterFactory"/>
+    </analyzer>
+  </fieldType>
+
 -Related facet 787at dot separator
 -In: highlight
 -Diacritic sort order. MZK
