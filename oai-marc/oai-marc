@@ -980,19 +980,22 @@ for record in records:
 					write_error(header.identifier(), '245', SIF, '154', 'Odlišný počet [ a ] v poli 245c.')
 		# 245
 		if '245' in metadata:
-			if metadata['245'].indicator1 == '0':
-				if '700' not in metadata:
-					if 'Nepodepsáno.' not in [F.value() for F in metadata.get_fields('500')]:
-						BIO=False
-						for B in [F['a'] for F in metadata.get_fields('655') if 'a' in F]:
-							if B in (
-								'biografické poznámky',
-								'bibliografické poznámky',
-								'bio-bibliografické poznámky',
-								'biograficko-bibliografické poznámky'
-							): BIO=True
-						if not BIO:
-							write_error(header.identifier(), '245', SIF, '155', 'Chybný 1. indikátor pole 245c, nebo chybí pole 700, "Nepodepsáno." v 500, či nejde o bbp.')
+			if metadata['245'].indicator1 == '0' and '700' not in metadata:
+				for F in metadata.get_fields('500'):
+					if 'a' in F and F['a'] == 'Nepodepsáno.': break
+				else:
+					for F in metadata.get_fields('655'):
+						if 'a' in F and F['a'] in (
+							'biografické poznámky',
+							'bibliografické poznámky',
+							'bio-bibliografické poznámky',
+							'biograficko-bibliografické poznámky'
+						): break
+					else:
+						for F in metadata.get_fields('506'):
+							if '155' in F.get_subfields('a'): break
+						else:
+							write_error(header.identifier(), '245', SIF, '155', 'Chybný 1. indikátor pole 245.')
 		# 245c
 		GER=False
 		if '008' in metadata:
