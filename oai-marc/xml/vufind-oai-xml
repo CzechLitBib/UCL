@@ -97,6 +97,14 @@ for record in records:
 	else:
 		continue
 
+	# CLB / ECS / ECR filter
+	for F in metadata.get_fields('599'):
+		if 'a' in F and F['a'] == 'CLB-CPK': break
+	else:
+		for F in metadata.get_fields('964'):
+			if 'a' in F and F['a'] in ['ECS', 'ECR']: break
+		else: continue
+
 	# timestamp
 	timestamp = int(header.datestamp().timestamp())
 
