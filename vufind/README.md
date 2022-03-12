@@ -4,6 +4,7 @@ Vufind server howto.
 
 TODO
 <pre>
+-AWStats merge archive
 -Czech analyzer:
 https://solr.apache.org/guide/8_0/schema-api.html
 
