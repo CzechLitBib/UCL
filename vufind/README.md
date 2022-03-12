@@ -92,7 +92,7 @@ server {
 	listen 443 ssl;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-	add_header X-Frame-Options "DENY";
+	#add_header X-Frame-Options "DENY";
 	#add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 
 	#ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
