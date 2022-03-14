@@ -67,7 +67,7 @@ awstats fcgiwrap
 
 LogFile="/var/log/nginx/access.log"
 SiteDomain="xxx"
-DNSLookup=0
+DNSLookup=1
 
 # INSTALL
 
