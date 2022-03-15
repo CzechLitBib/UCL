@@ -103,6 +103,15 @@ server {
 
 	server_name xxx;
 
+	# SOLR
+	location ~ ^/solr {
+		allow xxx/24;
+		allow 127.0.0.1;
+		deny all;
+		proxy_pass http://127.0.0.1:8983;
+		access_log off;
+	}
+
         # SAM
 	location /SAM {
 		proxy_pass https://xxx/solr/;
