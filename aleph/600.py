@@ -5,7 +5,7 @@ import sys,re
 from pymarc import marcxml
 
 DATA='ucla.xml'
-IN='600.csv'
+IN='in/600.csv'
 OUT='600.aleph'
 
 aleph = open(OUT,'w')
@@ -36,10 +36,7 @@ def aleph_write(record, field):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
-			if F.indicator2 == '7':
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$2czenas' + '\n')
-			else:
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '\n')
+			aleph.write(IDENT + ' ' + F.tag + '17' + ' L ' + MAP[V] + '$$2czenas' + '\n')
 		else:
 			for i in range(0, int(len(F.subfields)/2)):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]

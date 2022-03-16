@@ -5,7 +5,7 @@ import sys,re
 from pymarc import marcxml
 
 DATA='ucla.xml'
-IN='100+700.csv'
+IN='in/100+700.csv'
 OUT='100+700.aleph'
 
 aleph = open(OUT,'w')
@@ -36,10 +36,7 @@ def aleph_write_700(record):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
-			if '$$7' in MAP[V]:
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V].replace('$$7', '$$4aut$$7') + '\n')
-			else:
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
+			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
 		else:
 			for i in range(0, int(len(F.subfields)/2)):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]
@@ -51,18 +48,12 @@ def aleph_write_100(record):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
-			if '$$7' in MAP[V]:
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V].replace('$$7', '$$4aut$$7') + '\n')
-			else:
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
+			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
 		elif '4' not in F:
 			for i in range(0, int(len(F.subfields)/2)):
 				if F.subfields[i*2] == 'x' and F.subfields[i*2 + 1] == 'OPRAVA UCL': continue# remove 'x' OPRAVA UCL
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]
-			if '$$7' in SUB:
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + SUB.replace('$$7','$$4aut$$7') + '\n')
-			else:
-				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + SUB + '$$4aut' + '\n')
+			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + SUB + '$$4aut' + '\n')
 		else:
 			for i in range(0, int(len(F.subfields)/2)):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]
