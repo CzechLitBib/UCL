@@ -4,6 +4,20 @@ Vufind server howto.
 
 TODO
 <pre>
+-SAM /en/ link.
+-AWStats archive URL
+-Czech analyzer:
+https://solr.apache.org/guide/8_0/schema-api.html
+
+<fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.StopFilterFactory" words="lang/stopwords_cz.txt" ignoreCase="true"/>
+      <filter class="solr.CzechStemFilterFactory"/>
+    </analyzer>
+  </fieldType>
+
 -Related facet 787at dot separator
 -In: highlight
 -Diacritic sort order. MZK
@@ -53,7 +67,7 @@ awstats fcgiwrap
 
 LogFile="/var/log/nginx/access.log"
 SiteDomain="xxx"
-DNSLookup=0
+DNSLookup=1
 
 # INSTALL
 
@@ -80,7 +94,7 @@ server {
 	listen 443 ssl;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-	add_header X-Frame-Options "DENY";
+	#add_header X-Frame-Options "DENY";
 	#add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 
 	#ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
@@ -88,6 +102,15 @@ server {
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 
 	server_name xxx;
+
+	# SOLR
+	location ~ ^/solr {
+		allow xxx/24;
+		allow 127.0.0.1;
+		deny all;
+		proxy_pass http://127.0.0.1:8983;
+		access_log off;
+	}
 
         # SAM
 	location /SAM {
