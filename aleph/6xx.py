@@ -44,7 +44,7 @@ def get_value(field):
 	return ' '.join(data)
 
 def aleph_write(record, field):
-	with open(field + '.aleph', 'w') as f:
+	with open(field + '.aleph', 'a') as f:
 		IDENT = record['001'].value()
 		for F in record.get_fields(field):
 			V = get_value(F)
