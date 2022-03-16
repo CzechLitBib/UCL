@@ -50,7 +50,10 @@ def aleph_write(record, field):
 			V = get_value(F)
 			SUB=''
 			if V in MAP[field]:
-				f.write(IDENT + ' ' + F.tag + MAP[field][V][1] + ' L ' + MAP[field][V][0] + '$$2czenas' + '\n')
+				if MAP[field][V][1][-1:] == '7':
+					f.write(IDENT + ' ' + F.tag + MAP[field][V][1] + ' L ' + MAP[field][V][0] + '$$2czenas' + '\n')
+				else:
+					f.write(IDENT + ' ' + F.tag + MAP[field][V][1] + ' L ' + MAP[field][V][0] + '\n')
 			else:
 				for i in range(0, int(len(F.subfields)/2)):
 					SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]
