@@ -5,7 +5,7 @@ import sys
 from pymarc import marcxml
 
 DATA='ucla.xml'
-IN='500.in'
+IN='in/500.in'
 OUT='500.aleph'
 SIGNED=[]
 

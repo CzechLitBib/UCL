@@ -8,9 +8,16 @@ DATA='ucla.xml'
 
 SIX = ['610','611','648','650','651','655']
 
-IN='in/*_fix.csv'
-
 spec = open('special.csv','w')
+
+CNT = {
+	'610':0,
+	'611':0,
+	'648':0,
+	'650':0,
+	'651':0,
+	'655':0
+}
 
 MAP={}
 for F in SIX:
@@ -29,7 +36,7 @@ for F in SIX:
 							spec.write(F + '|' + '|'.join(data) + '\n')
 					else:
 						if F == data[3].strip()[:3]: # exclude spec.
-							MAP[F][data[1]] = [data[2], data[3].strip()[3:], data[3].strip()[:3]]
+							MAP[F][data[1]] = [data[2], data[3].strip()[3:]]
 						else:
 							spec.write(F + '|' + '|'.join(data) + '\n')
 			else:
@@ -44,6 +51,7 @@ def get_value(field):
 	return ' '.join(data)
 
 def aleph_write(record, field):
+	global CNT
 	with open(field + '.aleph', 'a') as f:
 		IDENT = record['001'].value()
 		for F in record.get_fields(field):
@@ -54,6 +62,7 @@ def aleph_write(record, field):
 					f.write(IDENT + ' ' + F.tag + MAP[field][V][1] + ' L ' + MAP[field][V][0] + '$$2czenas' + '\n')
 				else:
 					f.write(IDENT + ' ' + F.tag + MAP[field][V][1] + ' L ' + MAP[field][V][0] + '\n')
+				CNT[field]+=1
 			else:
 				for i in range(0, int(len(F.subfields)/2)):
 					SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]
@@ -67,4 +76,6 @@ def validate(record):
 				break
 
 marcxml.map_xml(validate, DATA)
+
+print(CNT)
 

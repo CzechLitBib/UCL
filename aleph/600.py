@@ -12,6 +12,8 @@ aleph = open(OUT,'w')
 
 MAP={}
 
+COUNT=0
+
 with open(IN, 'r') as f:
 	for line in f.read().splitlines():
 		data = line.split('|')
@@ -31,12 +33,14 @@ def get_value(field):
 	return ' '.join(data)
 
 def aleph_write(record, field):
+	global COUNT
 	IDENT = record['001'].value()
 	for F in record.get_fields(field):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
 			aleph.write(IDENT + ' ' + F.tag + '17' + ' L ' + MAP[V] + '$$2czenas' + '\n')
+			COUNT+=1
 		else:
 			for i in range(0, int(len(F.subfields)/2)):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]
@@ -51,4 +55,6 @@ def validate(record):
 marcxml.map_xml(validate, DATA)
 
 aleph.close()
+
+print(str(COUNT))
 

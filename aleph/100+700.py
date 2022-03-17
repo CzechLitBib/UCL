@@ -12,6 +12,9 @@ aleph = open(OUT,'w')
 
 MAP={}
 
+COUNT_100=0
+COUNT_700=0
+
 with open(IN, 'r') as f:
 	for line in f.read().splitlines():
 		data = line.split('|')
@@ -31,24 +34,28 @@ def get_value(field):
 	return ' '.join(data)
 
 def aleph_write_700(record):
+	global COUNT_700
 	IDENT = record['001'].value()
 	for F in record.get_fields('700'):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
 			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
+			COUNT_700+=1
 		else:
 			for i in range(0, int(len(F.subfields)/2)):
 				SUB+='$$' + F.subfields[i*2] + F.subfields[i*2 + 1]
 			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + SUB + '\n')
 
 def aleph_write_100(record):
+	global COUNT_100
 	IDENT = record['001'].value()
 	for F in record.get_fields('100'):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
 			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
+			COUNT_100+=1
 		elif '4' not in F:
 			for i in range(0, int(len(F.subfields)/2)):
 				if F.subfields[i*2] == 'x' and F.subfields[i*2 + 1] == 'OPRAVA UCL': continue# remove 'x' OPRAVA UCL
@@ -74,4 +81,7 @@ def validate(record):
 marcxml.map_xml(validate, DATA)
 
 aleph.close()
+
+print("100: " + str(COUNT_100))
+print("700: " + str(COUNT_700))
 
