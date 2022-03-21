@@ -238,7 +238,7 @@ mode = ils-none
 TUNE
 <pre>
 /etc/crontab:
-*/15 *  * * *   root    /usr/bin/awstats -config=xxx -update > /var/log/awstats.log 2>&1 &
+*/15 *  * * *   root    /usr/bin/awstats -config=xxx -update >> /var/log/awstats.log 2>&1 &
 15 *	* * *	root	/root/vufind-update.sh >> /var/log/vufind-update.log 2>&1 &
 00 5	* * *	root	/root/vufind-monitor.py > /dev/null 2>&1 &
 30 6	* * *	root	find /tmp/vufind_sessions/&ast; -mtime +5 -exec rm {} \; > /dev/null &
