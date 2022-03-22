@@ -33,6 +33,14 @@ def get_value(field):
 			data.append(sub[1].strip())
 	return ' '.join(data)
 
+def get_four(field):
+	data = []
+	for sub in field:
+		if sub[0] == '4':
+			data.append('$$4' + sub[1].strip())
+	return ''.join(data)
+
+
 def aleph_write_700(record):
 	global COUNT_700
 	IDENT = record['001'].value()
@@ -40,7 +48,12 @@ def aleph_write_700(record):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
-			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
+			if '4' in F:
+				FOUR = get_four(F)
+				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + FOUR + '\n')
+				if FOUR != '$$4aut': print("AUT: " + IDENT)
+			else:
+				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
 			COUNT_700+=1
 		else:
 			for i in range(0, int(len(F.subfields)/2)):
@@ -54,7 +67,12 @@ def aleph_write_100(record):
 		V = get_value(F)
 		SUB=''
 		if V in MAP:
-			aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
+			if '4' in F:
+				FOUR = get_four(F)
+				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + get_four(F) + '\n')
+				if FOUR != '$$4aut': print("AUT: " + IDENT)
+			else:
+				aleph.write(IDENT + ' ' + F.tag + F.indicator1 + F.indicator2 + ' L ' + MAP[V] + '$$4aut' + '\n')
 			COUNT_100+=1
 		elif '4' not in F:
 			for i in range(0, int(len(F.subfields)/2)):
