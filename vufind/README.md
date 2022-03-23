@@ -69,6 +69,17 @@ LogFile="/var/log/nginx/access.log"
 SiteDomain="xxx"
 DNSLookup=1
 
+/etc/awstats/awstats.archive.conf:
+
+Include "/etc/awstats/awstats.conf.local"
+LogFormat=4
+DirData="/var/lib/awstats/archive"
+DirIcons="/awstats-icon"
+
+/var/lib/awstasts/archive:
+awstats012020.archive.txt
+...
+
 # INSTALL
 
 /etc/nginx/sites-enabled/default:
@@ -128,6 +139,8 @@ server {
 
 	# AWSTATS
 	location /awstats-icon {
+		allow x.x.x.x/24;
+		deny all;
 		alias /usr/share/awstats/icon/;
 		access_log off;
 	}
