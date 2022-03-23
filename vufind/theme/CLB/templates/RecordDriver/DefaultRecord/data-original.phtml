@@ -1,0 +1,5 @@
+<div class="original-line" property="keywords">
+<?php $i=0; foreach ($data as $original): ?>
+	<a title="<?=$this->escapeHtmlAttr($original)?>" href="<?=$this->record($this->driver)->getLink('original', $original)?>" rel="nofollow"><?=trim($this->escapeHtml($original))?></a>
+	<?php endforeach; ?>
+</div>

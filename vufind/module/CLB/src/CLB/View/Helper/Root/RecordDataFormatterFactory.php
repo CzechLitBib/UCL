@@ -60,7 +60,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setLine('Statement of Responsibility','CLB_getResponsibility');
 		$spec->setMultiLine('Authors', 'getDeduplicatedAuthors', $this->getAuthorFunction());
 		$spec->setLine('Cypher/signature','CLB_getCypher');
-		$spec->setLine('Original Name','CLB_getOriginal');
+		$spec->setTemplateLine('Original Name','CLB_getOriginal', 'data-original.phtml');
 		$spec->setLine('Format', 'getFormats', 'RecordHelper',['helperMethod' => 'getFormatList']);
 		$spec->setLine(
 			'Language', 'getLanguages', null,
