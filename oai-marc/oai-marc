@@ -972,12 +972,12 @@ for record in records:
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if len(re.findall('\[', F['r'])) != len(re.findall('\]', F['r'])):
-					write_error(header.identifier(), '505', SIF, '153', 'Odlišný počet [ a ] v poli 505r.')
+					write_error(header.identifier(), '505', SIF, '153', 'Odlišný počet hranatých závorek v podpoli 505r.')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if len(re.findall('\[', metadata['245']['c'])) != len(re.findall('\]', metadata['245']['c'])):
-					write_error(header.identifier(), '245', SIF, '154', 'Odlišný počet [ a ] v poli 245c.')
+					write_error(header.identifier(), '245', SIF, '154', 'Odlišný počet hranatých závorek v podpoli 245c.')
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0' and '700' not in metadata:
