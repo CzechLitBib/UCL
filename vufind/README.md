@@ -64,16 +64,20 @@ certbot certonly --standalone -d xxx
 awstats fcgiwrap
 
 /etc/awstats/awstats.conf.local:
-
 LogFile="/var/log/nginx/access.log"
 SiteDomain="xxx"
 DNSLookup=1
 
 /etc/awstats/awstats.archive.conf:
-
 Include "/etc/awstats/awstats.conf.local"
 LogFormat=4
 DirData="/var/lib/awstats/archive"
+DirIcons="/awstats-icon"
+
+/etc/awstats/awstats.vufind.conf:
+Include "/etc/awstats/awstats.conf.local"
+LogFormat=4
+DirData="/var/lib/awstats"
 DirIcons="/awstats-icon"
 
 /var/lib/awstasts/archive:
