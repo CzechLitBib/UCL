@@ -145,9 +145,10 @@ server {
 		access_log off;
 	}
 
-	location /awstats/ {
+	location /awstats {
 		allow x.x.x.x/24;
 		deny all;
+		rewrite ^/awstats$ $scheme://$server_name/awstats/?config=vufind;
 		proxy_pass http://127.0.0.1:42;
 		access_log off;
 	}
