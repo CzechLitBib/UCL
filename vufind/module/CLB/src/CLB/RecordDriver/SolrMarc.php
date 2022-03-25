@@ -98,6 +98,17 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return $data;
 	}
 
+	public function CLB_getRelations() {// RELATIONS
+		$data = [];
+		$relators = $this->CLB_getSubfields('994', ['a', 'b']);
+		foreach($relators as $relator) {
+			if(isset($relator['a']) and isset($relator['b'])) {
+				$data[] = [$relator['a'] => $relator['b']];
+			}
+		}
+		return $data;
+	}
+
 	public function CLB_getInfo() {// INFO
 		$data = [];
 	

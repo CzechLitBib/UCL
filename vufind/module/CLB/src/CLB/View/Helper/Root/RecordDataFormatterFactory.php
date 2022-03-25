@@ -84,6 +84,7 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Actual Excerption', 'CLB_getActualExcerption', 'data-excerption.phtml');
 		$spec->setTemplateLine('Finished Excerption', 'CLB_getFinishedExcerption', 'data-excerption.phtml');
 		$spec->setLine('Citation','CLB_getCitation');
+		$spec->setTemplateLine('Relations', 'CLB_getRelations', 'data-relations.phtml');
 		return $spec->getArray();
 	}
 
