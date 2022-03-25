@@ -13,10 +13,13 @@ from oaipmh.metadata import MetadataRegistry
 
 OAI_URL='https://aleph.lib.cas.cz/OAI'
 OAI_SET='UCLA'
+
 DB='/usr/local/bin/api/vufind.db'
 RRD='/usr/local/bin/api/vufind.rrd'
 PLOT='/usr/local/bin/api/static/oai_plot.png'
+
 DELETES='/usr/local/bin/api/templates/deletes.txt'
+LKRS='/usr/local/bin/api/lkrs.txt'
 
 # DEF -------------------
 
@@ -80,9 +83,7 @@ except:
 
 # MAIN -------------------
 
-BATCH,DEL=[],[]
-
-deletes = open(DELETES, 'w')
+BATCH,DEL,LKR=[],[],{}
 
 for record in records:
 
@@ -91,7 +92,6 @@ for record in records:
 
 	# write / skip deleted records
 	if header.isDeleted():
-		deletes.write(re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '\n')
 		DEL.append(header.identifier())
 		continue
 
@@ -120,6 +120,10 @@ for record in records:
 
 	# Drop 022
 	if metadata.leader[7] != 's': metadata.remove_fields('022')
+
+	# LKR
+	for F in metadata.get_fields('994'):
+		if 'a' in F and 'b' in F and F['a'] == 'UP': LKR[F['b']] = ident
 
 	# Webarchiv
 	for F in metadata.get_fields('856'):
@@ -399,6 +403,16 @@ for record in records:
 
 	BATCH.append((ident, timestamp, json, xml, marc))
 
+# UPDATE DELETES
+with open(DELETES, 'w') as deletes:
+        for SYSNO in DEL:
+                deletes.write(SYSNO + '\n')
+
+# UPDATE LKRS
+with open(LKRS, 'w') as lkrs:
+        for SYSNO in LKR:
+                lkrs.write(SYSNO + '|' + LKR[SYSNO] + '\n')
+
 # UPDATE RRD
 DS1,DS2='U','U'
 if BATCH: DS1 = str(len(BATCH))
@@ -451,6 +465,5 @@ con.close()
 
 # EXIT -------------------
 
-deletes.close()
 sys.exit(0)
 
