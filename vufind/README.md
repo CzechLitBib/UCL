@@ -58,6 +58,10 @@ openjdk-11-jre-headless
 certbot python3-certbot-nginx
 
 certbot certonly --standalone -d xxx
+/etc/letsencrypt/cli.ini:
+deploy-hook = systemctl reload nginx
+/etc/letsencrypt/options-ssl-nginx.conf:
+https://github.com/certbot/certbot/blob/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf
 
 # AWSTATS
 
