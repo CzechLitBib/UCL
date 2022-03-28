@@ -103,7 +103,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		$relators = $this->CLB_getSubfields('994', ['a', 'b']);
 		foreach($relators as $relator) {
 			if(isset($relator['a']) and isset($relator['b'])) {
-				$data[] = [$relator['a'] => $relator['b']];
+				if (in_array($relator['a'], array('UP','DN','PAR'))) {
+					$data[] = [$relator['a'] => $relator['b']];
+				}
 			}
 		}
 		return $data;
