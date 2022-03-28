@@ -1,0 +1,18 @@
+<div class="relations-line" property="keywords">
+<?php $dn=array(); foreach ($data as $relations): ?>
+	<?php $i=0; foreach ($relations as $direction => $record): ?>
+		<?php if ($direction == 'UP'): ?>
+			<a title="<?=$this->transEsc('relations_up')?>" href="<?=$this->url('record') . $record?>" rel="nofollow"><?=$this->transEsc('relations_up')?></a></br>
+		<?php endif; ?>
+		<?php if ($direction == 'DN'): ?>
+			<?php array_push($dn, 'id[]=Solr|' . $record); ?>
+		<?php endif; ?>
+		<?php if ($direction == 'PAR'): ?>
+			<a title="<?=$this->transEsc('relations_par')?>" href="<?=$this->url('record') . $record?>" rel="nofollow"><?=$this->transEsc('relations_par')?></a></br>
+		<?php endif; ?>
+	<?php endforeach; ?>
+<?php endforeach; ?>
+<?php if (!empty($dn)): ?>
+	<a title="<?=$this->transEsc('relations_dn')?>" href="<?=$this->url('records-home')?>?<?php echo implode('&', $dn);?>" rel="nofollow"><?=$this->transEsc('relations_dn')?></a></br>
+<?php endif; ?>
+</div>

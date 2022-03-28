@@ -58,16 +58,35 @@ openjdk-11-jre-headless
 certbot python3-certbot-nginx
 
 certbot certonly --standalone -d xxx
+/etc/letsencrypt/cli.ini:
+deploy-hook = systemctl reload nginx
+/etc/letsencrypt/options-ssl-nginx.conf:
+https://github.com/certbot/certbot/blob/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf
 
 # AWSTATS
 
 awstats fcgiwrap
 
 /etc/awstats/awstats.conf.local:
-
 LogFile="/var/log/nginx/access.log"
 SiteDomain="xxx"
 DNSLookup=1
+
+/etc/awstats/awstats.archive.conf:
+Include "/etc/awstats/awstats.conf.local"
+LogFormat=4
+DirData="/var/lib/awstats/archive"
+DirIcons="/awstats-icon"
+
+/etc/awstats/awstats.vufind.conf:
+Include "/etc/awstats/awstats.conf.local"
+LogFormat=4
+DirData="/var/lib/awstats"
+DirIcons="/awstats-icon"
+
+/var/lib/awstasts/archive:
+awstats012020.archive.txt
+...
 
 # INSTALL
 
@@ -128,13 +147,16 @@ server {
 
 	# AWSTATS
 	location /awstats-icon {
+		allow x.x.x.x/24;
+		deny all;
 		alias /usr/share/awstats/icon/;
 		access_log off;
 	}
 
-	location /awstats/ {
+	location /awstats {
 		allow x.x.x.x/24;
 		deny all;
+		rewrite ^/awstats$ $scheme://$server_name/awstats/?config=vufind;
 		proxy_pass http://127.0.0.1:42;
 		access_log off;
 	}
@@ -238,7 +260,7 @@ mode = ils-none
 TUNE
 <pre>
 /etc/crontab:
-*/15 *  * * *   root    /usr/bin/awstats -config=xxx -update > /var/log/awstats.log 2>&1 &
+*/15 *  * * *   root    /usr/bin/awstats -config=xxx -update >> /var/log/awstats.log 2>&1 &
 15 *	* * *	root	/root/vufind-update.sh >> /var/log/vufind-update.log 2>&1 &
 00 5	* * *	root	/root/vufind-monitor.py > /dev/null 2>&1 &
 30 6	* * *	root	find /tmp/vufind_sessions/&ast; -mtime +5 -exec rm {} \; > /dev/null &
