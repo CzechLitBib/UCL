@@ -31,7 +31,11 @@ wget -O TERENA_SSL_CA_3.crt https://pki.cesnet.cz/certs/TERENA_SSL_CA_3.pem
 update-ca-certificates
 
 apt-get install certbot
-certbot certonly -d xxx
+certbot certonly --standalone -d xxx
+/etc/letsencrypt/cli.ini:
+deploy-hook = systemctl reload nginx
+/etc/letsencrypt/options-ssl-nginx.conf:
+https://github.com/certbot/certbot/blob/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf
 
 # GIT
 
