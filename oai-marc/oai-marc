@@ -1296,6 +1296,11 @@ for record in records:
 			else:
 				write_error(header.identifier(), '599', SIF, '192', "Záznam neobsahuje žádné podpole 599a s hodnotou 'CLB-CPK'.")
 
+		# LKR
+		for F in metadata.get_fields('994'):
+			if 'b' in F and not re.match('^\d{9}$', F['b']):
+				write_error(header.identifier(), '994', SIF, '193', "Podpole LKR-b obsahuje neplatné systémové číslo.")
+
 	COUNTER+=1
 
 # EXIT -------------------
