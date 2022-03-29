@@ -53,6 +53,14 @@ node-less
 
 openjdk-11-jre-headless
 
+# PYMARC
+
+python3-setuptools
+
+pymarc-4.0.0.tar.gz
+
+filed.py.patch (https://github.com/KyomaHooin/UCL/blob/master/oai-marc/patch/field.py.patch)
+
 # CERTBOT
 
 certbot python3-certbot-nginx
