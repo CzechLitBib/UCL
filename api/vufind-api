@@ -84,7 +84,15 @@ class GetDeletes(Resource):
 			return make_response(render_template('/deletes.txt'), 200, headers)
 		except:
 			return '', 204
-				
+
+class GetLkrs(Resource):
+	def get(self):
+		headers = {'Content-Type': 'text/plain'}
+		try:
+			return make_response(render_template('/lkrs.txt'), 200, headers)
+		except:
+			return '', 204
+
 class GetRecord(Resource):
 	def get(self):
 		prefix = 'json'
@@ -101,7 +109,7 @@ class GetRecord(Resource):
 			return data[prefix]
 		else:
 			return '', 204
-			
+
 class ListRecords(Resource):
 	def get(self):
 		prefix = 'json'
@@ -146,6 +154,7 @@ class ListIdentifiers(Resource):
 api.add_resource(API, '/api/')
 api.add_resource(GetRecord, '/api/GetRecord')
 api.add_resource(GetDeletes, '/api/GetDeletes')
+api.add_resource(GetLkrs, '/api/GetLkrs')
 api.add_resource(ListRecords, '/api/ListRecords')
 api.add_resource(ListIdentifiers, '/api/ListIdentifiers')
 
