@@ -64,11 +64,15 @@ https://xxx/public.php/webdav/ /home/xxx davfs rw,user 0 0
 
 # MARC
 
+(pymarc-4.0.0)
+
 field.patch
 
 # OAI
 
 apt-get install python3-lxml python3-six
+
+(pyoai-2.5.0)
 
 pyoai.patch
 
