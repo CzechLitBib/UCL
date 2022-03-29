@@ -24,13 +24,13 @@ rm "$FILE" 2>/dev/null
 
 # LKR
 
-#FILE="/root/LKR.mrc"
+FILE="/root/LKR.mrc"
 
-#/root/bin/vufind-lkr.py "$FILE"
+/root/bin/vufind-lkr.py "$FILE"
 
-#[ -s "$FILE" ] && /usr/local/vufind/import-marc.sh "$FILE"
+[ -s "$FILE" ] && /usr/local/vufind/import-marc.sh "$FILE"
 
-#rm "$FILE" 2>/dev/null
+rm "$FILE" 2>/dev/null
 
 # DELETE
 
