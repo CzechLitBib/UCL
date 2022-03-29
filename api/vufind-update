@@ -123,7 +123,7 @@ for record in records:
 
 	# LKR
 	for F in metadata.get_fields('994'):
-		if 'a' in F and 'b' in F and F['a'] == 'UP': LKR[F['b']] = ident
+		if 'a' in F and 'b' in F and F['a'] == 'UP': LKR[ident] = F['b']
 
 	# Webarchiv
 	for F in metadata.get_fields('856'):
