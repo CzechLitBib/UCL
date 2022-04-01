@@ -16,7 +16,7 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 # OAI
 
 oai-marc \
-	--set UCLA \
+	--set UCLO \
 	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
 	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
 	--check \

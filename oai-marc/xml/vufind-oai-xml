@@ -12,7 +12,7 @@ from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
 
 OAI_URL='https://aleph.lib.cas.cz/OAI'
-OAI_SET='UCLA'
+OAI_SET='UCLO'
 DELETES='deletes.txt'
 
 # DEF -------------------

@@ -14,17 +14,6 @@ UNTIL="$(date -u '+%Y-%m-%d %H:00:00')"
 
 vufind-update --from "$FROM" --until "$UNTIL"
 
-# SOLR
-
-API="http://localhost:5000/api/ListRecords?from=$FROM&until=$UNTIL"
-SOLR='http://localhost:8983/solr/core/update'
-
-SOLRMARC='/opt/solrmarc/solrmarc_core_3.4.jar'
-SOLRJ='/opt/solr-8.10.0/dist/solrj-lib'
-
-wget -O - --header='Accept:application/octet-stream' "$API" |
-java -jar "$SOLRMARC" IndexDriver -config index.properties -solrj "$SOLRJ" -u "$SOLR"
-
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 
 exit 0
