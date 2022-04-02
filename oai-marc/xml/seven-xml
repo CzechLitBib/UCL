@@ -37,6 +37,11 @@ def validate(record):
 	else:
 		return
 
+	for F in record.get_fields('599'):
+		if 'a' in F and F['a'] == 'CLB-CPK': break
+	else:
+		return
+
 	for tag, value, seven in [(f.tag, get_value(f), f['7']) for f in record.fields]:
 		if tag != '653' and re.match('(1..|6..|700|710|711|730)', tag):
 			# update tag-list
