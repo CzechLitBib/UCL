@@ -46,13 +46,18 @@ def convert(record):
 	else:
 		return
 
-	# CLB / ECS / ECR filter
-	for F in metadata.get_fields('599'):
-		if 'a' in F and F['a'] == 'CLB-CPK': break
-		else:
-			for F in metadata.get_fields('964'):
-				if 'a' in F and F['a'] in ['ECS', 'ECR']: break
-			else: return
+	# CLB-CPK filter
+	#for F in metadata.get_fields('599'):
+	#	if 'a' in F and F['a'] == 'CLB-CPK': break
+	#	else:
+	#		for F in metadata.get_fields('964'):
+	#			if 'a' in F and F['a'] in ['ECS', 'ECR']: break
+	#		else: return
+
+	# ECR /ECS filter
+	for F in metadata.get_fields('964'):
+		if 'a' in F and F['a'] in ['ECS', 'ECR']: break
+	else: return
 
 	# LDR dup
 	metadata.remove_fields('LDR')# Leader duplicate (Aleph)
@@ -345,7 +350,7 @@ def convert(record):
 
 # MAIN -------------------
 
-writer = MARCWriter(open('vufind.mrc', 'wb'))
+writer = MARCWriter(open('ECS.mrc', 'wb'))
 
 marcxml.map_xml(convert, DATA)
 
