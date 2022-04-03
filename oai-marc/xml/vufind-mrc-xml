@@ -47,17 +47,12 @@ def convert(record):
 		return
 
 	# CLB-CPK filter
-	#for F in metadata.get_fields('599'):
-	#	if 'a' in F and F['a'] == 'CLB-CPK': break
-	#	else:
-	#		for F in metadata.get_fields('964'):
-	#			if 'a' in F and F['a'] in ['ECS', 'ECR']: break
-	#		else: return
-
-	# ECR /ECS filter
-	for F in metadata.get_fields('964'):
-		if 'a' in F and F['a'] in ['ECS', 'ECR']: break
-	else: return
+	for F in metadata.get_fields('599'):
+		if 'a' in F and F['a'] == 'CLB-CPK': break
+		else:
+			for F in metadata.get_fields('964'):
+				if 'a' in F and F['a'] in ['ECS', 'ECR']: break
+			else: return
 
 	# LDR dup
 	metadata.remove_fields('LDR')# Leader duplicate (Aleph)
