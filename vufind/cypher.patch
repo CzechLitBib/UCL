@@ -3,14 +3,13 @@ marc_local:
 
 #cypher_txt_mv = 593x
 
-signature_facet_str_mv = 594a (x?)
-signature_search_str_mv = 594x
+signature_str_mv = 594x
 
 searspec.yaml:
 
 Signature:
   DismaxFields:
-    - signature_search_str_mv
+    - signature_str_mv
   DismaxHandler: edismax
 
 searches.ini:
@@ -23,7 +22,7 @@ Signature           = Signature
 facets.ini:
 
 author_facet       = Author
-signature_facet_str_mv = Signature
+signature_str_mv = Signature
 
 cs.ini:
 
