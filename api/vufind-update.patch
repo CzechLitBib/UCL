@@ -25,7 +25,7 @@
  		metadata.add_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
  
 +	# 594
-+	if '700' in metadata and '245' in metadata and 'c' in metadata['245']:
++	if '245' in metadata and 'c' in metadata['245']:
 +		AUT = []
 +		for F in metadata.get_fields('100','700'):
 +			if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
@@ -38,21 +38,21 @@
 +				if re.match('<<\[.*\]>>', LH): LH = 'Nepodepsáno.'# [] tag
 +				if LH == '<<>>': LH = name_invert(AUT[0]['a'])# <<>> tag
 +				SUB=['x', re.sub('<<([^<>]*)>>', '\\1', LH)]
-+				SUB+=AUT[0].get_subfields()
++				SUB+=AUT[0].subfields
 +				metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
 +				AUT=AUT[1:]# shift
 +				if len(LHT) == len(AUT): break# break
 +		if len(LHT) == 0 and len(AUT) > 0 and '594' not in metadata:# no tag
 +			if len(AUT) == 1 and AUT[0].tag == '100':
 +				SUB = ['x', metadata['245']['c'].strip('.')]
-+				SUB += AUT[0].get_subfields()
++				SUB += AUT[0].subfields
 +				metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
 +			else:
 +				LHT = re.findall('[^,]*\[[^\[\]]*\][^,]*', metadata['245']['c'])
 +				if len(LHT) <= len(AUT):# overflow
 +					for LH in LHT:
-+						SUB=LH.strip(' .')
-+						SUB += AUT[0].get_subfields()
++						SUB=['x', LH.strip(' .')]
++						SUB += AUT[0].subfields
 +						metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
 +						AUT=AUT[1:]# shift
 +
