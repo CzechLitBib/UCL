@@ -33,7 +33,7 @@
 +		LHT = re.findall('<<[^<>]*>>', metadata['245']['c'])
 +		for F in metadata.get_fields('505'):
 +			if 'r' in F: LHT+=re.findall('<<[^<]*>>', F['r'])
-+		if len(LHT) > 0 and len(LHT) < len(AUT) and '594' not in metadata:# tag
++		if len(LHT) > 0 and len(LHT) <= len(AUT) and '594' not in metadata:# tag
 +			for LH in LHT:
 +				if re.match('<<\[.*\]>>', LH): LH = 'Nepodepsáno.'# [] tag
 +				if LH == '<<>>': LH = name_invert(AUT[0]['a'])# <<>> tag
@@ -41,7 +41,6 @@
 +				SUB+=AUT[0].subfields
 +				metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
 +				AUT=AUT[1:]# shift
-+				if len(LHT) == len(AUT): break# break
 +		if len(LHT) == 0 and len(AUT) > 0 and '594' not in metadata:# no tag
 +			if len(AUT) == 1 and AUT[0].tag == '100':
 +				SUB = ['x', metadata['245']['c'].strip('.')]
