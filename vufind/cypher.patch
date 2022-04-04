@@ -1,0 +1,34 @@
+
+marc_local:
+
+#cypher_txt_mv = 593x
+
+signature_facet_str_mv = 594a (x?)
+signature_search_str_mv = 594x
+
+searspec.yaml:
+
+Signature:
+  DismaxFields:
+    - signature_search_str_mv
+  DismaxHandler: edismax
+
+searches.ini:
+
+[Advanced_Searches]
+
+;CypherSignature     = Cypher/signature
+Signature           = Signature
+
+facets.ini:
+
+author_facet       = Author
+signature_facet_str_mv = Signature
+
+cs.ini:
+
+# SEARCH
+Signature = "Šifra/podpis"
+#Cypher/signature = "Šifra/podpis"
+
+CLEAR CACHE
