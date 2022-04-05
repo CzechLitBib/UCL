@@ -162,8 +162,8 @@ for record in records:
 		LHT = False
 		SUB = F.subfields
 		for i in range(0, len(SUB)):
-			if re.findall('<<[^<]*>>', SUB[i]):
-				SUB[i] = re.sub('<<([^<]*)>>', '\\1', SUB[i])
+			if re.findall('<<[^<>]*>>', SUB[i]):
+				SUB[i] = re.sub('<<([^<>]*)>>', '\\1', SUB[i])
 				LHT = True
 		if LHT:
 			F.subfields = SUB
@@ -196,9 +196,9 @@ for record in records:
 	#		metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])
 
 	if '245' in metadata and 'c' in metadata['245']:
-		LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
+		LHT = re.findall('<<[^<>]*>>', metadata['245']['c'])
 		if LHT:
-			metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])	
+			metadata['245']['c'] = re.sub('<<([^<>]*)>>', '\\1', metadata['245']['c'])	
 		for LH in LHT:
 			SUB = re.findall('<<([^>[]+)', LH)
 			if SUB:
