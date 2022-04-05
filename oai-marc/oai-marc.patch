@@ -1,6 +1,6 @@
 --- oai-marc	2022-03-28 11:14:26.877390116 +0200
-+++ oai-marc.594	2022-04-03 14:59:50.109485652 +0200
-@@ -1261,33 +1261,32 @@
++++ oai-marc.594	2022-04-05 18:34:20.889018863 +0200
+@@ -1261,33 +1261,31 @@
  		#			write_error(header.identifier(), '245', SIF, '189', 'Chybí popis vedlejší role v 245c.')
  
  		# << >> TAG count
@@ -29,7 +29,6 @@
 +			if BRACKET > 0:
 +				FC = 0
 +				for F in metadata.get_fields('100','700'):
-+					#if metadata.leader[7] == 'm':
 +					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
 +					FC+=1
 +				if FC != BRACKET:
@@ -52,3 +51,26 @@
  
  		# CPK
  		if int(re.sub('^.*-(\d+)$', '\\1', header.identifier())) >= 2735900:
+@@ -1301,6 +1299,22 @@
+ 			if 'b' in F and not re.match('^\d{9}$', F['b']):
+ 				write_error(header.identifier(), '994', SIF, '193', "Podpole LKR-b obsahuje neplatné systémové číslo.")
+ 
++		# 954
++		for F in metadata.get_fields('594'):
++			for F2 in metadata.get_fields('100','700'):
++				if F2.tag == '700' and len(F2.get_subfields('4')) == 1 and F2['4'] in ['aqt','ctb']: continue
++				if F.subfields[2:] == F2.subfields: break
++			else:
++				write_error(header.identifier(), '594', SIF, '194', "Pole 954 se neshoduje.")
++			if not metadata.get_fields('100','110','111','700','710','711'):
++				for F3 in metadata.get_fields('500'):
++					if 'a' in F3 and F3['a'] == 'Nepodepsáno.': break
++				else:
++					write_error(header.identifier(), '594', SIF, '195', "Neplatné pole 954.")
++			if 'a' and F and 'y' in F:
++				if F['a'] != F['y']:
++					write_error(header.identifier(), '594', SIF, '196', "Podpole 954a a podpole 954y se neshoduje.")
++
+ 	COUNTER+=1
+ 
+ # EXIT -------------------
