@@ -96,6 +96,10 @@ DirIcons="/awstats-icon"
 awstats012020.archive.txt
 ...
 
+/etc/cron.d/awstats:
+#*/10 * * * * www-data [ -x /usr/share/awstats/tools/update.sh ] && /usr/share/awstats/tools/update.sh
+#10 03 * * * www-data [ -x /usr/share/awstats/tools/buildstatic.sh ] && /usr/share/awstats/tools/buildstatic.sh
+
 # INSTALL
 
 /etc/nginx/sites-enabled/default:
