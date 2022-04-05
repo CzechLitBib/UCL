@@ -3,13 +3,14 @@ marc_local:
 
 #cypher_txt_mv = 593x
 
-signature_str_mv = 594x
+signature_str_mv = 594x, first
+signature_txt_mv = 594x, first
 
 searspec.yaml:
 
 Signature:
   DismaxFields:
-    - signature_str_mv
+    - signature_txt_mv
   DismaxHandler: edismax
 
 searches.ini:
