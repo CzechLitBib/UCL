@@ -221,8 +221,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return '';
 	}
 
-	public function CLB_getMoreInfo() { // INFO
-		return isset($this->fields['more_info_str_mv']) ? $this->fields['more_info_str_mv'] : [];
+	public function CLB_getMDT() { // MDT
+		return isset($this->fields['mdt_str_mv']) ? $this->fields['mdt_str_mv'] : [];
 	}
 
 	public function CLB_getConspectGroup() { // CONSPEKT

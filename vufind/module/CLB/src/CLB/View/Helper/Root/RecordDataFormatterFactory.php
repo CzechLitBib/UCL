@@ -105,8 +105,8 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	public function getDefaultDescriptionSpecs()
 	{
 		$spec = new SpecBuilder();
-		$spec->setLine('Conspectus', 'CLB_getMoreInfo');
-		$spec->setLine('MDT', 'CLB_getConspectGroup');
+		$spec->setLine('Conspectus', 'CLB_getConspectGroup');
+		$spec->setLine('MDT', 'CLB_getMDT');
 		$spec->setLine('Item Description', 'getGeneralNotes');
 		$spec->setLine('Physical Description', 'getPhysicalDescriptions');
 		$spec->setLine('Publication Frequency', 'getPublicationFrequency');
