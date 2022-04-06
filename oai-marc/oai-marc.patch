@@ -59,7 +59,8 @@
 +		for F in metadata.get_fields('594'):
 +			for F2 in metadata.get_fields('100','700'):
 +				if F2.tag == '700' and len(F2.get_subfields('4')) == 1 and F2['4'] in ['aqt','ctb']: continue
-+				if F.subfields[0] == 'x' and F.subfields[2:] == F2.subfields: break
++				if len(F.subfields) >= 2:
++					if F.subfields[0] == 'x' and F.subfields[2:] == F2.subfields: break
 +			else:
 +				write_error(header.identifier(), '594', SIF, '194', "Pole 954 se neshoduje.")
 +			if not metadata.get_fields('100','110','111','700','710','711'):
@@ -69,7 +70,7 @@
 +					write_error(header.identifier(), '594', SIF, '195', "Neplatné pole 954.")
 +			if 'a' and F and 'y' in F:
 +				if F['a'] != F['y']:
-+					write_error(header.identifier(), '594', SIF, '196', "Podpole 954a a podpole 954y se neshoduje.")
++					write_error(header.identifier(), '594', SIF, '196', "Podpole 954a a 954y se neshoduje.")
 +
  	COUNTER+=1
  
