@@ -1,0 +1,5 @@
+<div id="authcontainer">
+    <?php $this->auth()->getManager()->setAuthMethod('MultiAuth') ?>
+    <?=$this->auth()->getLogin() ?>
+</div>
+<?php $this->auth()->getManager()->setAuthMethod('ChoiceAuth') ?>
