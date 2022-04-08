@@ -5,9 +5,18 @@ https://github.com/adwhit/flask-leaflet-demo/blob/master/static/demo.js
 
 # INSTALL
 
-python3-flask
-python3-folium
-python3-plotly
-python3-flaskext.wtf
+apt-get install python3-flask python3-flaskext.wtf python3-folium python3-plotly
 
-#
+CSS/JS
+
+wget https://github.com/twbs/bootstrap/releases/download/v5.1.3/bootstrap-5.1.3-dist.zip
+
+/css/bootstrap.min.css
+/js/bootstrap.min.js
+
+
+#LEAFLET
+
+wget https://leafletjs-cdn.s3.amazonaws.com/content/leaflet/v1.7.1/leaflet.zip
+
+
