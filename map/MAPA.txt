@@ -6,7 +6,7 @@ https://github.com/adwhit/flask-leaflet-demo/blob/master/static/demo.js
 
 # INSTALL
 
-apt-get install python3-flask python3-folium python3-plotly
+apt-get install python3-flask python3-plotly
 
 CSS/JS
 
@@ -26,7 +26,7 @@ wget https://leafletjs-cdn.s3.amazonaws.com/content/leaflet/v1.7.1/leaflet.zip
 # NGINX
 
 	# MAP
-	location /map {
+	location ~ /map {
 		proxy_pass http://localhost:5000;
 	}
 

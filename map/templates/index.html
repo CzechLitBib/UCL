@@ -14,8 +14,26 @@
 		<div class="row">
 			<div class="col"></div>
 			<div class="col-md-10">
-				<div class="p-4 bg-light border rounded-3">
-					<h2>VuFind - Mapový modul</h2>
+				<div class="p-3 bg-light border rounded-3">
+					<h2><u>VuFind - Mapový modul</u></h2>
+	<!-- FORM -->
+	<form action="/map/q" class="row p-3">
+		<label for="cuntry_str_mv" class="col-auto col-form-label-sm">Země:</label>
+		<div class="col-auto">
+			<select class="form-select form-select-sm" placeholder="Země" name="country_str_mv">
+				<option selected value=""></option>
+				<option value="Czech Republic">Česká Republika</option>
+				<option value="United States">Spojené Státy</option>
+			</select>
+		</div>
+		<label for="year_str_mv" class="col-auto col-form-label-sm">Rok:</label>
+		<div class="col-auto">
+		<input type="number" class="form-control form-control-sm" name="year_str_mv" placeholder="1945" min="1945" max="2022">
+		</div>
+		<div class="col-auto">
+		<button type="submit" class="btn btn-sm btn-danger">Zobrazit</button>
+		</div>
+	</form>
 					<!-- MAPA -->
 					<div id="map"></div>
 				</div>
