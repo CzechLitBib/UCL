@@ -1,4 +1,13 @@
-#map {
-	height: 400px;
-	width: 500px;
+/* Custom Map CSS */
+
+body {
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #a7011d;
 }
+
+#map {
+	height: 300px;
+	width: 100%;
+}
+

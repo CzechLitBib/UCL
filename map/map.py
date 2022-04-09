@@ -4,6 +4,9 @@ import json
 
 from flask import Flask,render_template
 
+#from wtforms import Form, StringField, SubmitField
+#from wtforms.validators import DataRequired
+
 # INIT
 
 app = Flask(__name__)
@@ -21,6 +24,6 @@ def db():
 
 # MAIN
 if __name__ == '__main__':
-	#app.config['TEMPLATES_AUTO_RELOAD'] = True
+	app.config['TEMPLATES_AUTO_RELOAD'] = True
 	#app.run(debug=False)
 	app.run()
