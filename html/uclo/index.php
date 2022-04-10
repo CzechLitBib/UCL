@@ -26,7 +26,7 @@ if($_SESSION['group'] !== 'admin') {
 </head>
 <body>
 <div align="center">
-<table><tr><td><img src="/sova.png"></td><td> UCLA / Statistika podpole 7.</td></tr>
+<table><tr><td><img src="/sova.png"></td><td> UCLO / Statistika podpole 7.</td></tr>
 </table>
 <p><hr style="border-top: 0px; border-bottom:1px solid black;" width="500"></p>
 
@@ -52,7 +52,7 @@ $no_seven = 0;
 $seven = 0;
 
 if (!empty($tags)) {
-	echo '<p><u>Poslední záznam</u>: 03.01.2022</p>';
+	echo '<p><u>Poslední záznam</u>: 30.03.2022</p>';
 	echo "<table width='500' style='border-collapse: collapse;' border='1px'>"
 	. "<tr><td></td><td colspan='4' align='center'><b>Podpole 7</b></td>"
 	. "<td colspan='4' align='center'><b>Bez podpole 7</b></td></tr>";

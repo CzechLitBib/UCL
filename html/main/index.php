@@ -33,7 +33,7 @@ if(empty($_SESSION['auth'])) {
 <tr><td id="icon"><img src="/dir.png"/></td><td id="link"><a href="/nkp">NKP</a></td></tr>
 <tr><td id="icon"><img src="/dir.png"/></td><td id="link"><a href="/kat">KAT</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/clo">CLO</a></td></tr>
-<tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/ucla">UCLA</a></td></tr>
+<tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/uclo">UCLO</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/error">Chybové kódy</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/form">Formulář</a></td></tr>
 <tr><td id="icon"><img src="/link.png"/></td><td id="link"><a href="/form-data">Formulář - Data</a></td></tr>
