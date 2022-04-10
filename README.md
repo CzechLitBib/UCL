@@ -3,11 +3,6 @@ DESCRIPTION
 
 Library support software.
 
-TODO
-<pre>
-- Web Framework + font
-</pre>
-
 FILE
 <pre>
       api/ - Vufind REST API.
