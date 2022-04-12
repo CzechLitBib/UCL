@@ -22,6 +22,16 @@ wget -O "$FILE" --header='Accept:application/octet-stream' "$URL"
 
 rm "$FILE" 2>/dev/null
 
+# LKR
+
+FILE="/root/LKR.mrc"
+
+/root/bin/vufind-lkr.py "$FILE"
+
+[ -s "$FILE" ] && /usr/local/vufind/import-marc.sh "$FILE"
+
+rm "$FILE" 2>/dev/null
+
 # DELETE
 
 FILE="/root/deletes.txt"

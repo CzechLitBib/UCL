@@ -7,47 +7,68 @@ import requests,sys,io
 
 from pymarc import marcxml,Field,Record,MARCWriter
 
-LKRS='TEST.csv'
+VUFIND='https://xxx'
+DEVEL='https://xxx'
 
-# INIT -------------------
+# ARG -------------------
 
-writer = MARCWriter(open('LKR.mrc', 'wb'))
+if len(sys.argv) != 2:
+	print("LKR Usage: vufind-lkr.py [filepath]")
+	sys.exit(1)
 
-session = requests.Session()
+# LKR -------------------
 
 LKR={}
-with open(LKRS, 'r') as f:
-	for line in f.read().splitlines():
-		DN=line.split('|')[0] 
-		UP=line.split('|')[2] 
-		if UP not in LKR:
-			LKR[UP] = [DN]
-		else:
-			LKR[UP].append(DN)
+try:
+	req = requests.get(DEVEL + '/api/GetLkrs', timeout=10)
+	if req.status_code == 200:
+		for line in req.text.splitlines():
+			DN=line.split('|')[0] 
+			UP=line.split('|')[1] 
+			if UP not in LKR:
+				LKR[UP] = [DN]
+			else:
+				LKR[UP].append(DN)
+except:
+	print("LKR: API error.")
+	sys.exit(1)
 
-# MAIN -------------------
+# VUFIND -------------------
+
+try:
+	writer = MARCWriter(open(sys.argv[1], 'wb'))
+except:
+	print("LKR: Invalid file path.")
+	sys.exit(1)
+
+session = requests.Session()
 
 for UP in LKR:
 	# VUFIND
 	try:
-		req = session.get('https://vufind.ucl.cas.cz/Record/' + UP + '/Export', params={'style':'MARCXML'}, timeout=10)
+		req = session.get(VUFIND + '/Record/' + UP + '/Export', params={'style':'MARCXML'}, timeout=10)
 		if req.status_code == 200:
 			handler = marcxml.XmlHandler()
 			marcxml.parse_xml(io.StringIO(req.text), handler)
 			metadata = handler.records[0]
+		else:
+			print("LKR: Record error.")
+			continue
 	except:
-		print(ident + ': Vufind connection error.')
+		print("LKR: Vufind error.")
 		continue
-	
+
 	# LKR
 	MATCH=False
 	for DN in LKR[UP]:
 		for F in metadata.get_fields('994'):
 			if 'a' in F and 'b' in F and F['a'] == 'DN':
-				if F['b'] == DN: break
+				if F['b'] == DN:
+					break
 		else:
-			MATCH=True # will write
+			MATCH=True
 			metadata.add_field(Field(tag='994', indicators=[' ',' '], subfields=['a', 'DN', 'b', DN]))
+
 	if not MATCH: continue
 
 	# RE-ORDER
@@ -63,6 +84,8 @@ for UP in LKR:
 
 # EXIT -------------------
 
+session.close()
 writer.close()
+
 sys.exit(0)
 

@@ -144,11 +144,37 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	}
 
 	public function CLB_getActualExcerption() { // ACTUAL EXCERPTION
-		return $this->CLB_getSubfields('912', ['q', 'r', 'm', 'n', 'z']);
+		$data = [];
+		$fields = $this->getMarcReader()->getFields('912');
+		foreach($fields as $fd) {
+			if ($fd['i1'] == '1') {
+				$batch = [];
+				foreach ($fd['subfields'] as $subfield) {
+					if (in_array( $subfield['code'], array('q', 'r', 'm', 'n', 'z'))) {
+						$batch[$subfield['code']] = $subfield['data'];
+					}
+				}
+				$data[] = $batch;
+			}
+		}
+		return $data;
 	}
 
 	public function CLB_getFinishedExcerption() { // FINISHED EXCERPTION
-		return $this->CLB_getSubfields('913', ['q', 'r', 'm', 'n', 'z']);
+		$data = [];
+		$fields = $this->getMarcReader()->getFields('912');
+		foreach($fields as $fd) {
+			if ($fd['i1'] == '2') {
+				$batch = [];
+				foreach ($fd['subfields'] as $subfield) {
+					if (in_array( $subfield['code'], array('q', 'r', 'm', 'n', 'z'))) {
+						$batch[$subfield['code']] = $subfield['data'];
+					}
+				}
+				$data[] = $batch;
+			}
+		}
+		return $data;
 	}
 
 	public function CLB_getAnnotation(bool $full = True) { // ANNOTATION
@@ -195,8 +221,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return '';
 	}
 
-	public function CLB_getMoreInfo() { // INFO
-		return isset($this->fields['more_info_str_mv']) ? $this->fields['more_info_str_mv'] : [];
+	public function CLB_getMDT() { // MDT
+		return isset($this->fields['mdt_str_mv']) ? $this->fields['mdt_str_mv'] : [];
 	}
 
 	public function CLB_getConspectGroup() { // CONSPEKT

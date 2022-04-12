@@ -53,6 +53,14 @@ node-less
 
 openjdk-11-jre-headless
 
+# PYMARC
+
+python3-setuptools
+
+pymarc-4.0.0.tar.gz
+
+filed.py.patch (https://github.com/KyomaHooin/UCL/blob/master/oai-marc/patch/field.py.patch)
+
 # CERTBOT
 
 certbot python3-certbot-nginx
@@ -87,6 +95,10 @@ DirIcons="/awstats-icon"
 /var/lib/awstasts/archive:
 awstats012020.archive.txt
 ...
+
+/etc/cron.d/awstats:
+#*/10 * * * * www-data [ -x /usr/share/awstats/tools/update.sh ] && /usr/share/awstats/tools/update.sh
+#10 03 * * * www-data [ -x /usr/share/awstats/tools/buildstatic.sh ] && /usr/share/awstats/tools/buildstatic.sh
 
 # INSTALL
 
@@ -261,8 +273,8 @@ TUNE
 <pre>
 /etc/crontab:
 */15 *  * * *   root    /usr/bin/awstats -config=xxx -update >> /var/log/awstats.log 2>&1 &
-15 *	* * *	root	/root/vufind-update.sh >> /var/log/vufind-update.log 2>&1 &
-00 5	* * *	root	/root/vufind-monitor.py > /dev/null 2>&1 &
+15 *	* * *	root	/root/bin/vufind-update.sh >> /var/log/vufind-update.log 2>&1 &
+00 5	* * *	root	/root/bin/vufind-monitor.py > /dev/null 2>&1 &
 30 6	* * *	root	find /tmp/vufind_sessions/&ast; -mtime +5 -exec rm {} \; > /dev/null &
 
 touch /var/log/vufind.log
