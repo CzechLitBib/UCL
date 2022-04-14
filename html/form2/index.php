@@ -9,12 +9,13 @@
 	<!-- Custom styles for this template -->
 </head>
 <body class="bg-light">
-<div class="container">
+<div class="container-md">
 <main>
-<div class="row py-4">
-	<div class="col-8">
-		<div><img src="logo3.png" alt="ČLB logo" width="209"/></div>
-		<div class="p-4"><h3>Návrhy podkladů pro zpracování v ČLB</h3></div>
+<div class="row py-4 justify-content-center">
+	<div class="col-md-8">
+
+<div class="text-center"><img src="logo3.png" alt="ČLB logo" width="209"/></div>
+<div class="p-4 text-center"><h3>Návrhy podkladů pro zpracování v ČLB</h3></div>
 
 <div class="card">
 <div class="card-body">
@@ -23,22 +24,22 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 </div>
 
 <form>
-<div class="form-check form-check-inline">
-	<input class="form-check-input" type="radio" name="article" id="article" value="article" checked>
-	<label class="form-check-label" for="exampleRadios1">Clanek</label>
+
+<div class="text-center gap-4">
+<div class="btn-group my-4" role="group" aria-label="Basic radio toggle button group">
+	<input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+	<label class="btn btn-primary" for="btnradio1">Článek</label>
+	<input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+	<label class="btn btn-info" for="btnradio2">Část knihy</label>
+	<input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+	<label class="btn btn-info" for="btnradio3">Kniha</label>
 </div>
-<div class="form-check form-check-inline">
-	<input class="form-check-input" type="radio" name="chapter" id="chapter" value="chpater">
-	<label class="form-check-label" for="exampleRadios1">Cast knihy</label>
 </div>
-<div class="form-check form-check-inline">
-	<input class="form-check-input" type="radio" name="article" id="book" value="book">
-	<label class="form-check-label" for="exampleRadios1">Kniha</label>
-</div>
+
 <h4>Plný text</h4>
 <p>Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
 
-<div class="form-floating">
+<div class="form-floating my-2">
 	<input type="text" class="form-control" id="link" value=""><label for="link">Odkaz</label>
 </div>
 
@@ -48,21 +49,23 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 	<input type="file" class="form-control" id="pdf">
 </div>
 
-<div class="alert alert-warning" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.</div>
-
-<div class="form-check form-switch">
-  <input class="form-check-input" type="checkbox" role="switch" id="agreed">
-  <label class="form-check-label" for="agreed">Ne</label>
+<div class="alert alert-warning my-2" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
+	<div class="form-check form-switch p-2 float-end">
+		<input class="form-check-input" type="checkbox" role="switch" id="agreed">
+		<label class="form-check-label" for="agreed">Ne</label>
+	</div>
 </div>
 
 <div class="form-floating">
 	<input type="email" class="form-control" id="email" value=""><label for="email">Emailová adresa</label>
-	<div id="help" class="form-text">Nikdy neposkytujeme email tretim stranam.</div>
+	<div id="help" class="form-text text-end">Nikdy neposkytujeme email třetím stranám.</div>
 </div>
 
+<div class="mb-2">
 <div class="form-floating">
   <textarea class="form-control" id="note" style="height: 100px"></textarea>
   <label for="floatingTextarea">Poznámka</label>
+</div>
 </div>
 
 <p>K bibliografickému záznamu daného dokumentu je možno přidat i odkaz na plný text. Ten bude k záznamu připojen, pokud:
@@ -72,42 +75,48 @@ a) je daný dokument zpřístupněn prostřednictvím veřejně dostupného repo
 b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektronické verzi, souhlasí se zveřejněním a následně tuto skutečnost potvrdí prostřednictvím kontaktního emailu.
 </p>
 
+<hr/>
+
 <h4>Údaje o dokumentu</h4>
 
 <p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
 
-<div class="form-floating">
+<div class="form-floating my-2">
 	<input type="text" class="form-control" id="author" value=""><label for="author">Autor</label>
 </div>
-<div class="form-floating">
+<div class="form-floating my-2">
 	<input type="text" class="form-control" id="name" value=""><label for="name">Název</label>
 </div>
-<div class="form-floating">
+<div class="form-floating my-2">
 	<input type="text" class="form-control" id="source" value=""><label for="source">Zdrojový dokument</label>
 </div>
-<div class="form-floating">
+<div class="form-floating my-2">
 	<input type="text" class="form-control" id="quote" value=""><label for="quote">Citace</label>
 </div>
 
-<img src="validation.php" alt="Validation">
-
-<div class="form-group">
-	<input type="text" class="form-control" id="code">
-	<div id="help" class="form-text">Vyplňte kontrolní kód.</div>
+<div class="row my-4 justify-content-center">
+	<div class="col-auto align-self-center">
+		<div class="bg-warning"><img src="validation.php" alt="Validation"></div>
+	</div>
+	<div class="col-3">
+		<div class="form-floating">
+			<input type="text" class="form-control" id="code" value=""><label for="code">Kontrolní kód</label>
+		</div>
+	</div>
 </div>
 
-<button type="submit" class="btn btn-primary">Odeslat</button>
-
+<div class="d-grid col-4 mx-auto my-4">
+	<button type="submit" class="btn btn-primary">Odeslat</button>
+</div>
 </form>
 <hr/>
 
 </div>
 </div>
 
-
 </main>
 
-<footer class="text-muted text-small">
+<footer class="text-muted text-small text-center">
 	<p>&copy; 2021-<?php echo date('Y');?> ČLB</p>
 	<ul class="list-inline">
 		<li class="list-inline-item"><a href="#">Soukromí</a></li>
