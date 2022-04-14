@@ -262,6 +262,10 @@ for record in records:
 			SIF = ''
 			write_error(header.identifier(), 'SIF', SIF, '000', 'Chybí pole SIF.')
 		for TAG in ('001', '003', '005', '008', '040', '245', '520', '655', '910', '964', 'OWN'):
+			if TAG in ['520','964'] and metadata.leader[7] == 'm':# library skip
+				for F in metadata.get_fields('599'):
+					if 'a' in F and F['a'] == 'xbibl': break
+				else: continue
 			if TAG not in metadata:
 				write_error(header.identifier(), TAG, SIF, '001', 'Chybí pole ' + TAG + '.')
 		if 'KAT' not in metadata and 'CAT' not in metadata:
