@@ -1298,7 +1298,8 @@ for record in records:
 			for F in metadata.get_fields('599'):
 				if 'a' in F and F['a'] == 'CLB-CPK': break
 			else:
-				write_error(header.identifier(), '599', SIF, '192', "Záznam neobsahuje žádné podpole 599a s hodnotou 'CLB-CPK'.")
+				if 'IST' not in metadata:# library skip
+					write_error(header.identifier(), '599', SIF, '192', "Záznam neobsahuje žádné podpole 599a s hodnotou 'CLB-CPK'.")
 
 		# LKR
 		for F in metadata.get_fields('994'):
