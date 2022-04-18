@@ -25,14 +25,14 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 
 <form type="post" action="/form2">
 
-<div class="row my-4 justify-content-center">
-	<div class="d-flex col-8 bg-warning">
+<div class="row my-4">
+	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
 		<input type="radio" class="btn-check" name="btnradio" id="article" checked>
-		<label class="btn btn-outline-primary" for="article">Článek</label>
+		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
 		<input type="radio" class="btn-check" name="btnradio" id="chapter">
-		<label class="btn btn-outline-primary" for="chapter">Část knihy</label>
+		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
 		<input type="radio" class="btn-check" name="btnradio" id="book">
-		<label class="btn btn-outline-primary" for="book">Kniha</label>
+		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
 	</div>
 </div>
 
@@ -114,17 +114,17 @@ b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektro
 
 <div class="row my-4 justify-content-center">
 	<div class="col-auto align-self-center">
-		<div class="bg-warning"><img src="validation.php" alt="Validation"></div>
+		<img src="validation.php" alt="Validation">
 	</div>
 	<div class="col-3">
 		<div class="form-floating">
-			<input type="text" class="form-control" id="code" value=""><label for="code">Kontrolní kód</label>
+			<input type="text" class="form-control text-nowrap" id="code" value=""><label for="code">Kontrolní kód</label>
 		</div>
 	</div>
 </div>
 
 <div class="d-grid col-4 mx-auto my-4">
-	<button type="submit" class="btn btn-primary">Odeslat</button>
+	<button type="submit" class="btn btn-danger">Odeslat</button>
 </div>
 </form>
 <hr/>
