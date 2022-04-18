@@ -23,17 +23,17 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 </div>
 </div>
 
-<form>
+<form type="post" action="/form2">
 
-<div class="text-center gap-4">
-<div class="btn-group my-4" role="group" aria-label="Basic radio toggle button group">
-	<input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-	<label class="btn btn-primary" for="btnradio1">Článek</label>
-	<input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-	<label class="btn btn-info" for="btnradio2">Část knihy</label>
-	<input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-	<label class="btn btn-info" for="btnradio3">Kniha</label>
-</div>
+<div class="row my-4 justify-content-center">
+	<div class="d-flex col-8 bg-warning">
+		<input type="radio" class="btn-check" name="btnradio" id="article" checked>
+		<label class="btn btn-outline-primary" for="article">Článek</label>
+		<input type="radio" class="btn-check" name="btnradio" id="chapter">
+		<label class="btn btn-outline-primary" for="chapter">Část knihy</label>
+		<input type="radio" class="btn-check" name="btnradio" id="book">
+		<label class="btn btn-outline-primary" for="book">Kniha</label>
+	</div>
 </div>
 
 <h4>Plný text</h4>
@@ -77,7 +77,16 @@ b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektro
 
 <hr/>
 
-<h4>Údaje o dokumentu</h4>
+<h4 class="mt-4">Text</h4>
+
+<div class="form-floating my-2">
+	<input type="text" class="form-control" id="text-author" value=""><label for="author">Autor</label>
+</div>
+<div class="form-floating my-2">
+	<input type="text" class="form-control" id="text-name" value=""><label for="name">Název</label>
+</div>
+
+<h4 class="mt-4">Údaje o dokumentu</h4>
 
 <p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
 
@@ -88,10 +97,19 @@ b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektro
 	<input type="text" class="form-control" id="name" value=""><label for="name">Název</label>
 </div>
 <div class="form-floating my-2">
+	<input type="text" class="form-control" id="place" value=""><label for="name">Místo</label>
+</div>
+<div class="form-floating my-2">
+	<input type="text" class="form-control" id="publisher" value=""><label for="name">Nakladatelství</label>
+</div>
+<div class="form-floating my-2">
+	<input type="text" class="form-control" id="year" value=""><label for="name">Rok</label>
+</div>
+<div class="form-floating my-2">
 	<input type="text" class="form-control" id="source" value=""><label for="source">Zdrojový dokument</label>
 </div>
 <div class="form-floating my-2">
-	<input type="text" class="form-control" id="quote" value=""><label for="quote">Citace</label>
+	<input type="text" class="form-control" id="quote" value=""><label for="quote">Bibliografická citace</label>
 </div>
 
 <div class="row my-4 justify-content-center">
