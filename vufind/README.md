@@ -4,10 +4,8 @@ Vufind server howto.
 
 TODO
 <pre>
--SAM /en/ link.
 -Czech analyzer:
 https://solr.apache.org/guide/8_0/schema-api.html
-
 &lt;fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100"&gt;
     &lt;analyzer&gt;
       &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
@@ -16,7 +14,6 @@ https://solr.apache.org/guide/8_0/schema-api.html
       &lt;filter class="solr.CzechStemFilterFactory"/&gt;
     &lt;/analyzer&gt;
   &lt;/fieldType&gt;
-
 -Cover ? 002712500
 -Nahled Retrobi:
  a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
@@ -148,8 +145,8 @@ server {
 	}
 
         # SAM
-	location /SAM {
-		proxy_pass https://xxx/solr/;
+	location ~ /SAM/(.*) {
+		proxy_pass https://xxx/solr/$1$is_args$args;
 	}
 	location /css {
 		proxy_pass https://xxx/css/;
