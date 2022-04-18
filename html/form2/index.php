@@ -15,7 +15,7 @@
 	<div class="col-md-8">
 
 <div class="text-center"><img src="logo3.png" alt="ČLB logo" width="209"/></div>
-<div class="p-4 text-center"><h3>Návrhy podkladů pro zpracování v ČLB</h3></div>
+<div class="p-4 text-center"><h2>Návrhy podkladů pro zpracování v ČLB</h2></div>
 
 <div class="card mb-3">
 <div class="card-body">
@@ -25,15 +25,15 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 
 <h4>Formát</h4>
 
-<form type="post" action="/form2">
+<form method="post" action="/form2">
 
 <div class="row my-4">
 	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
-		<input type="radio" class="btn-check" name="btnradio" id="article" checked>
+		<input type="radio" class="btn-check" name="format" id="article" checked>
 		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
-		<input type="radio" class="btn-check" name="btnradio" id="chapter">
+		<input type="radio" class="btn-check" name="format" id="chapter">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
-		<input type="radio" class="btn-check" name="btnradio" id="book">
+		<input type="radio" class="btn-check" name="format" id="book">
 		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
 	</div>
 </div>
@@ -52,9 +52,9 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 </div>
 
 <div class="alert alert-warning my-2" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
-	<div class="form-check form-switch p-2 float-end">
-		<input class="form-check-input" type="checkbox" role="switch" id="agreed">
-		<label class="form-check-label" for="agreed">Ne</label>
+	<div class="form-check form-switch p-2 float-md-end">
+		<input class="form-check-input" type="checkbox" role="switch" id="agreed" onclick="yesno();">
+		<label class="form-check-label" for="agreed" id="agreed-label">Ne</label>
 	</div>
 </div>
 
@@ -120,7 +120,7 @@ b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektro
 	</div>
 	<div class="col-4 col-sm-3">
 		<div class="form-floating">
-			<input type="text" class="form-control" id="code" value=""><label class="text-nowrap" for="code">Kontrolní kód</label>
+			<input type="text" class="form-control" id="code" value="" required><label class="text-nowrap" for="code">Kontrolní kód</label>
 		</div>
 	</div>
 </div>
@@ -147,7 +147,7 @@ b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektro
 
 </div>
 
-<script src="form-validation.js"></script>
+<script src="form.js"></script>
 <script src="bootstrap.min.js"></script>
 
 </body>
