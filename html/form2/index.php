@@ -17,11 +17,13 @@
 <div class="text-center"><img src="logo3.png" alt="ČLB logo" width="209"/></div>
 <div class="p-4 text-center"><h3>Návrhy podkladů pro zpracování v ČLB</h3></div>
 
-<div class="card">
+<div class="card mb-3">
 <div class="card-body">
 Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp. Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat. Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
 </div>
 </div>
+
+<h4>Formát</h4>
 
 <form type="post" action="/form2">
 
@@ -113,12 +115,12 @@ b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektro
 </div>
 
 <div class="row my-4 justify-content-center">
-	<div class="col-auto align-self-center">
+	<div class="col-4 col-sm-2 d-flex align-items-center justify-content-center">
 		<img src="validation.php" alt="Validation">
 	</div>
-	<div class="col-3">
+	<div class="col-4 col-sm-3">
 		<div class="form-floating">
-			<input type="text" class="form-control text-nowrap" id="code" value=""><label for="code">Kontrolní kód</label>
+			<input type="text" class="form-control" id="code" value=""><label class="text-nowrap" for="code">Kontrolní kód</label>
 		</div>
 	</div>
 </div>

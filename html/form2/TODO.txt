@@ -1,4 +1,0 @@
-
-- captcha responsive
-- PHP
-

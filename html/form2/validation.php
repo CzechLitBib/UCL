@@ -9,16 +9,16 @@ $secret = '';
 $abc = '0123456789';
 
 // image
-$im = imagecreate(130, 40);
+$im = imagecreate(130, 45);
 $pastel = imagecolorallocate($im, 210, 210, 210);
 $black = imagecolorallocate($im, 0, 0, 0);
 
-imagerectangle($im, 0, 0, 129, 39, $black);
+imagerectangle($im, 0, 0, 129, 44, $black);
 
 for($i=0; $i < 5; $i++) {
 	$ran = rand(0, 4);
 	$secret .= $abc[rand(0, strlen($abc)-1)];
-	imagettftext($im, 22+$ran, 0, 15+(20*$i), 30, $black, 'font', $secret[$i]);
+	imagettftext($im, 22+$ran, 0, 15+(20*$i), 34, $black, 'font', $secret[$i]);
 }
 
 // code
