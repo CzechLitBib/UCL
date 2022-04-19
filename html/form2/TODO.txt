@@ -1,7 +1,0 @@
-
-- favicon.ico
-- switch text shift
-- captcha validation
-- PHP post
-- backend
-
