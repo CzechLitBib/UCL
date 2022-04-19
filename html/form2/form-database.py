@@ -10,7 +10,7 @@ DB='form.db'
 con = sqlite3.connect(DB)
 cur = con.cursor()
 
-cur.execute("CREATE TABLE data (id TEXT, type TEXT, text_author TEXT, text_name TEXT, author TEXT, name TEXT, place TEXT, publisher TEXT, year TEXT, source TEXT, quote TEXT, note TEXT, link TEXT, email TEXT, public TEXT, valid INTEGER);")
+cur.execute("CREATE TABLE data (id TEXT, valid INTEGER, type TEXT, public INTEGER, link TEXT, email TEXT, note TEXT, text_author TEXT, text_name TEXT, author TEXT, name TEXT, place TEXT, publisher TEXT, year TEXT, source TEXT, quote TEXT);")
 
 cur.execute("CREATE TABLE file (id TEXT, name TEXT, binary BLOB);")
 

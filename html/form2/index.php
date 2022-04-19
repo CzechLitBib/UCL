@@ -22,29 +22,29 @@ if ($valid) {
 	if (!$db) {
 		$error = 'Chyba čtení databáze.';
 	} else {
-		if ($_POST['type'] == 'article') {
-			$query = $db->exec("
-				INSERT INTO data (id,type,text_author,text_name,author,name,place,publisher,year,source,quote,note,link,email,public,valid)"
-				. "VALUES ('"
-				. $id . "','"
-				. $_POST['type'] . "','"
-				. str_replace("'", '_', $_POST['text-author']) . "','"
-				. str_replace("'", '_', $_POST['text-name']) . "','"
-				. str_replace("'", '_', $_POST['author']) . "','"
-				. str_replace("'", '_', $_POST['name']) . "','"
-				. str_replace("'", '_', $_POST['place']) . "','"
-				. str_replace("'", '_', $_POST['publisher']) . "','"
-				. str_replace("'", '_', $_POST['year']) . "','"
-				. str_replace("'", '_', $_POST['source']) . "','"
-				. str_replace("'", '_', $_POST['quote']) . "','"
-				. str_replace("'", '_', $_POST['note']) . "','"
-				. str_replace("'", '_', $_POST['link']) . "','"
-				. str_replace("'", '_', $_POST['email']) . "','"
-				. str_replace("'", '_', $_POST['public']) . "',"
-				. '0' . ");"
-			);
-			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
-		}
+		$public = 0;
+		if (isset($_POST['public'])) { $public = 1; }
+			
+		$query = $db->exec("
+			INSERT INTO data (id,valid,type,public,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote)"
+			. " VALUES ('" . $id . "',0,'" . $_POST['type'] . "'," . $public . ",'" 
+			. str_replace("'", '_', $_POST['link']) . "','"
+			. str_replace("'", '_', $_POST['email']) . "','"
+			. str_replace("'", '_', $_POST['note']) . "','"
+			. str_replace("'", '_', $_POST['text-author']) . "','"
+			. str_replace("'", '_', $_POST['text-name']) . "','"
+			. str_replace("'", '_', $_POST['author']) . "','"
+			. str_replace("'", '_', $_POST['name']) . "','"
+			. str_replace("'", '_', $_POST['place']) . "','"
+			. str_replace("'", '_', $_POST['publisher']) . "','"
+			. str_replace("'", '_', $_POST['year']) . "','"
+			. str_replace("'", '_', $_POST['source']) . "','"
+			. str_replace("'", '_', $_POST['quote']) . "'"
+			. ");"
+		);
+		if (!$query) { $error = 'Chyba zápisu do databáze.'; }
+
+		# FILE
 		if (isset($_FILES['file'])) {
 			if ($_FILES['file']['error'] == 0) {
 				$finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -67,11 +67,11 @@ if ($valid) {
 	if (!$error) {
 
 		$headers="MIME-Version: 1.0\r\n";
-		$headers.="From: UCL Vyvoj <".$from.">\r\n";
-		$headers.="Reply-To: ".$from."\r\n";
+		$headers.="From: UCL Vyvoj <" . $from . ">\r\n";
+		$headers.="Reply-To: " . $from . "\r\n";
 		$headers.="Content-type: text/html; charset=utf-8\r\n";
 
-		$subject="=?utf-8?B?".base64_encode("ČLB - Návrhy podkladů")."?=";
+		$subject="=?utf-8?B?" . base64_encode("ČLB - Návrhy podkladů") . "?=";
 
 		$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>Prostřednictvím formuláře ';
 		
@@ -83,7 +83,7 @@ if ($valid) {
 			<br><br>--------------------------------<br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
 			</body></html>';
 
-		mail($target, $subject, $text, $headers, '-f '.$from);
+		mail($target, $subject, $text, $headers, '-f '. $from);
 	}
 }
 
@@ -121,15 +121,15 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 
 <h4>Formát</h4>
 
-<form method="post" action="/form2">
+<form method="post" action="." enctype="multipart/form-data">
 
 <div class="row my-4">
 	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
-		<input type="radio" class="btn-check" name="format" id="article" onclick="format_load();" checked>
+		<input type="radio" class="btn-check" id="article" name="format" value="article" onclick="format_load();" checked>
 		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
-		<input type="radio" class="btn-check" name="format" id="chapter" onclick="format_load();" >
+		<input type="radio" class="btn-check" id="chapter" name="format" value="chapter" onclick="format_load();" >
 		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
-		<input type="radio" class="btn-check" name="format" id="book" onclick="format_load();">
+		<input type="radio" class="btn-check" id="book" name="format" value="book" onclick="format_load();">
 		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
 	</div>
 </div>
@@ -138,31 +138,31 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 <p>Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
 
 <div class="form-floating my-2">
-	<input type="text" class="form-control" id="link" value=""><label for="link">Odkaz</label>
+	<input type="text" class="form-control" id="link" name="link" value="<?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="link">Odkaz</label>
 </div>
 
 <div class="form-group">
 	<label for="pdf" class="form-label">Elektronická verze</label>
 	<span class="badge bg-warning text-dark">PDF &lt; 5MB</span>
-	<input type="file" class="form-control" id="pdf">
+	<input type="file" class="form-control" id="pdf" name="file">
 </div>
 
 <div class="alert alert-warning my-2" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
-	<div class="form-check form-switch p-2 float-md-end">
-		<input class="form-check-input" type="checkbox" role="switch" id="public" onclick="yesno();">
-		<label class="form-check-label" for="public" id="agreed-label">Ne</label>
+	<div class="form-check form-switch p-2 float-end">
+		<input class="form-check-input" id="public" name="public" type="checkbox" value="1" role="switch" onclick="yesno();">
+		<label class="form-check-label" for="public" id="public-label">Ne</label>
 	</div>
 </div>
 
 <div class="form-floating">
-	<input type="email" class="form-control" id="email" value=""><label for="email">Emailová adresa</label>
+	<input type="email" class="form-control" id="email" name="email" value="<?php if (!$valid and isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="email">Emailová adresa</label>
 	<div id="help" class="form-text text-end">Nikdy neposkytujeme Váš email třetím stranám.</div>
 </div>
 
 <div class="mb-2">
 <div class="form-floating">
-  <textarea class="form-control" id="note" style="height: 100px"></textarea>
-  <label for="note">Poznámka</label>
+	<textarea class="form-control" id="note" name="note" style="height: 100px"><?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?></textarea>
+	<label for="note">Poznámka</label>
 </div>
 </div>
 
@@ -174,10 +174,10 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 <div id="chapter-block">
 	<h4 class="mt-4">Text</h4>
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-author" value=""><label for="author">Autor</label>
+		<input type="text" class="form-control" id="text-author" name="text-author" value="<?php if (!$valid and isset($_POST['text-author'])) { echo htmlspecialchars($_POST['text-author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-author">Autor</label>
 	</div>
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-name" value=""><label for="name">Název</label>
+		<input type="text" class="form-control" id="text-name" name="text-name" value="<?php if (!$valid and isset($_POST['text-name'])) { echo htmlspecialchars($_POST['text-name'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-name">Název</label>
 	</div>
 
 	<h4 class="mt-4">Zdrojový dokument</h4>
@@ -190,30 +190,30 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 </div>
 
 <div class="form-floating my-2">
-	<input type="text" class="form-control" id="author" value=""><label for="author">Autor</label>
+	<input type="text" class="form-control" id="author" name="author" value="<?php if (!$valid and isset($_POST['author'])) { echo htmlspecialchars($_POST['author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="author">Autor</label>
 </div>
 <div class="form-floating my-2">
-	<input type="text" class="form-control" id="name" value=""><label for="name">Název</label>
+	<input type="text" class="form-control" id="name" name="name" value="<?php if (!$valid and isset($_POST['name'])) { echo htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="name">Název</label>
 </div>
 
 <div id="chapter-book-block">
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="place" value=""><label for="name">Místo</label>
+		<input type="text" class="form-control" id="place" name="place" value="<?php if (!$valid and isset($_POST['place'])) { echo htmlspecialchars($_POST['place'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="place">Místo</label>
 	</div>
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="publisher" value=""><label for="name">Nakladatelství</label>
+		<input type="text" class="form-control" id="publisher" name="publisher" value="<?php if (!$valid and isset($_POST['publisher'])) { echo htmlspecialchars($_POST['publisher'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="publisher">Nakladatelství</label>
 	</div>
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="year" value=""><label for="name">Rok</label>
+		<input type="text" class="form-control" id="year" name="year" value="<?php if (!$valid and isset($_POST['year'])) { echo htmlspecialchars($_POST['year'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="year">Rok</label>
 	</div>
 </div>
 
 <div id="article-block">
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="source" value=""><label for="source">Zdrojový dokument</label>
+		<input type="text" class="form-control" id="source" name="source" value="<?php if (!$valid and isset($_POST['source'])) { echo htmlspecialchars($_POST['source'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="source">Zdrojový dokument</label>
 	</div>
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="quote" value=""><label for="quote">Bibliografická citace</label>
+		<input type="text" class="form-control" id="quote" name="quote" value="<?php if (!$valid and isset($_POST['quote'])) { echo htmlspecialchars($_POST['quote'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="quote">Bibliografická citace</label>
 	</div>
 </div>
 
@@ -223,7 +223,7 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 	</div>
 	<div class="col-4 col-sm-3">
 		<div class="form-floating">
-			<input type="text" class="form-control" id="code" value="" required><label class="text-nowrap" for="code">Kontrolní kód</label>
+			<input type="text" class="form-control" id="code" name="code" value="" required><label class="text-nowrap" for="code">Kontrolní kód</label>
 		</div>
 	</div>
 </div>
@@ -232,6 +232,7 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 	<button type="submit" class="btn btn-danger">Odeslat</button>
 </div>
 </form>
+
 <hr/>
 
 </div>
@@ -244,7 +245,7 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 	<ul class="list-inline">
 		<li class="list-inline-item"><a class="link-danger" target="_blank" href="https://clb.ucl.cas.cz/ochrana-osobnich-udaju/">Soukromí</a></li>
 		<li class="list-inline-item"><a class="link-danger" href="#">Nahoru</a></li>
-		<li class="list-inline-item"><a class="link-danger" href="mailto:clb@ucl.cas.cz?subject=Formulář">Kontakt</a></li>
+		<li class="list-inline-item"><a class="link-danger" href="mailto:clb@ucl.cas.cz?subject=ČLB - Návrhy podkladů">Kontakt</a></li>
 	</ul>
 </footer>
 
@@ -252,6 +253,20 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 
 <script src="form.js"></script>
 <script src="bootstrap.min.js"></script>
+
+<?php
+
+if (isset($_POST['code'])) {
+        if ($error) {
+		echo '<div class="alert alert-warning" role="alert">' . $error . '</div>';
+        } elseif ($valid) {
+		echo '<div class="alert alert-warning" role="alert">Hotovo. Děkujeme!</div>';
+        } else {
+		echo '<div class="alert alert-warning" role="alert">Neplatný kontrolní kód.</div>';
+        }
+}
+
+?>
 
 </body>
 </html>

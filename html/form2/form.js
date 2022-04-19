@@ -1,9 +1,4 @@
 
-chapter-block
-article-book-block
-chapter-book-block
-article-block
-
 // Customize selection 
 function on_load() {
 	document.getElementById("article-block").style.display = "block";
@@ -31,15 +26,15 @@ function format_load() {
 }
 
 // Toggle button
-function yesno(thecheckbox, thelabel) {
+function yesno() {
     
-    var checkboxvar = document.getElementById('agreed');
-    var labelvar = document.getElementById('agreed-label');
-    if (!checkboxvar.checked) {
-        labelvar.innerHTML = "Ne";
+    var checkbox = document.getElementById('public');
+    var label = document.getElementById('public-label');
+    if (!checkbox.checked) {
+        label.innerHTML = "Ne";
     }
     else {
-        labelvar.innerHTML = "Ano";
+        label.innerHTML = "Ano";
     }
 }
 
