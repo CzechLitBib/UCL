@@ -1,3 +1,94 @@
+<?php
+
+session_start();
+
+$id = uniqid();
+
+$error = '';
+
+$from= 'xxx';
+$target = 'xxx';
+$server = 'xxx';
+
+$valid=False;
+if (isset($_POST['code']) and isset($_SESSION['secret'])) {
+	if ($_SESSION['secret'] == $_POST['code'])  { $valid=True; }
+}
+
+if ($valid) {
+
+	# SQL
+	$db = new SQLite3('form.db');
+	if (!$db) {
+		$error = 'Chyba čtení databáze.';
+	} else {
+		if ($_POST['type'] == 'article') {
+			$query = $db->exec("
+				INSERT INTO data (id,type,text_author,text_name,author,name,place,publisher,year,source,quote,note,link,email,public,valid)"
+				. "VALUES ('"
+				. $id . "','"
+				. $_POST['type'] . "','"
+				. str_replace("'", '_', $_POST['text-author']) . "','"
+				. str_replace("'", '_', $_POST['text-name']) . "','"
+				. str_replace("'", '_', $_POST['author']) . "','"
+				. str_replace("'", '_', $_POST['name']) . "','"
+				. str_replace("'", '_', $_POST['place']) . "','"
+				. str_replace("'", '_', $_POST['publisher']) . "','"
+				. str_replace("'", '_', $_POST['year']) . "','"
+				. str_replace("'", '_', $_POST['source']) . "','"
+				. str_replace("'", '_', $_POST['quote']) . "','"
+				. str_replace("'", '_', $_POST['note']) . "','"
+				. str_replace("'", '_', $_POST['link']) . "','"
+				. str_replace("'", '_', $_POST['email']) . "','"
+				. str_replace("'", '_', $_POST['public']) . "',"
+				. '0' . ");"
+			);
+			if (!$query) { $error = 'Chyba zápisu do databáze.'; }
+		}
+		if (isset($_FILES['file'])) {
+			if ($_FILES['file']['error'] == 0) {
+				$finfo = new finfo(FILEINFO_MIME_TYPE);
+				$ftype = $finfo->file($_FILES['file']['tmp_name']);
+				if ($ftype == 'application/pdf') {
+					# escape dot, space, slash and quote
+					$fn = preg_replace("/^\.+| |\/|'|\.+$/", '_', $_FILES['file']['name']);
+					move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . $fn);
+					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
+					if (!$query) { $error = 'Chyba zápisu do databáze.'; }
+				} else {
+					$error = 'Chyba formátu souboru.';
+				}
+			}
+		}
+		$db->close();
+	}
+
+	# NOTIFY
+	if (!$error) {
+
+		$headers="MIME-Version: 1.0\r\n";
+		$headers.="From: UCL Vyvoj <".$from.">\r\n";
+		$headers.="Reply-To: ".$from."\r\n";
+		$headers.="Content-type: text/html; charset=utf-8\r\n";
+
+		$subject="=?utf-8?B?".base64_encode("ČLB - Návrhy podkladů")."?=";
+
+		$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>Prostřednictvím formuláře ';
+		
+		if ($_POST['type'] == 'article') { $text.='byl zaslán nový článek.'; }
+		if ($_POST['type'] == 'chapter') { $text.='byla zaslána nová kapitola v knize.'; }
+		if ($_POST['type'] == 'book') { $text.='byla zaslána nová kniha.'; }
+
+		$text.='<br><br><a target="_blank" href="https://vyvoj.ucl.cas.cz/form-data/">https://vyvoj.ucl.cas.cz/form-data/<a>
+			<br><br>--------------------------------<br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
+			</body></html>';
+
+		mail($target, $subject, $text, $headers, '-f '.$from);
+	}
+}
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -6,15 +97,20 @@
 	<title>ČLB - Návrhy podkladů</title>
 	<link href="bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
-	<!-- Custom styles for this template -->
+	<link rel="apple-touch-icon" href="favicon/apple-touch-icon.png" sizes="180x180">
+	<link rel="icon" href="favicon/favicon-32x32.png" sizes="32x32" type="image/png">
+	<link rel="icon" href="favicon/favicon-16x16.png" sizes="16x16" type="image/png">
+	<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#7952b3">
+	<!-- Custom styles -->
+
 </head>
-<body class="bg-light">
+<body class="bg-light" onload="on_load();">
 <div class="container-md">
 <main>
 <div class="row py-4 justify-content-center">
 	<div class="col-md-8">
 
-<div class="text-center"><img src="logo3.png" alt="ČLB logo" width="209"/></div>
+<div class="text-center"><img src="logo.png" alt="ČLB logo" width="209"/></div>
 <div class="p-4 text-center"><h2>Návrhy podkladů pro zpracování v ČLB</h2></div>
 
 <div class="card mb-3">
@@ -29,11 +125,11 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 
 <div class="row my-4">
 	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
-		<input type="radio" class="btn-check" name="format" id="article" checked>
+		<input type="radio" class="btn-check" name="format" id="article" onclick="format_load();" checked>
 		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
-		<input type="radio" class="btn-check" name="format" id="chapter">
+		<input type="radio" class="btn-check" name="format" id="chapter" onclick="format_load();" >
 		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
-		<input type="radio" class="btn-check" name="format" id="book">
+		<input type="radio" class="btn-check" name="format" id="book" onclick="format_load();">
 		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
 	</div>
 </div>
@@ -46,51 +142,52 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 </div>
 
 <div class="form-group">
-	<label for="pdf" class="form-label">Elektronická verze</h4></label>
+	<label for="pdf" class="form-label">Elektronická verze</label>
 	<span class="badge bg-warning text-dark">PDF &lt; 5MB</span>
 	<input type="file" class="form-control" id="pdf">
 </div>
 
 <div class="alert alert-warning my-2" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
 	<div class="form-check form-switch p-2 float-md-end">
-		<input class="form-check-input" type="checkbox" role="switch" id="agreed" onclick="yesno();">
-		<label class="form-check-label" for="agreed" id="agreed-label">Ne</label>
+		<input class="form-check-input" type="checkbox" role="switch" id="public" onclick="yesno();">
+		<label class="form-check-label" for="public" id="agreed-label">Ne</label>
 	</div>
 </div>
 
 <div class="form-floating">
 	<input type="email" class="form-control" id="email" value=""><label for="email">Emailová adresa</label>
-	<div id="help" class="form-text text-end">Nikdy neposkytujeme email třetím stranám.</div>
+	<div id="help" class="form-text text-end">Nikdy neposkytujeme Váš email třetím stranám.</div>
 </div>
 
 <div class="mb-2">
 <div class="form-floating">
   <textarea class="form-control" id="note" style="height: 100px"></textarea>
-  <label for="floatingTextarea">Poznámka</label>
+  <label for="note">Poznámka</label>
 </div>
 </div>
 
-<p>K bibliografickému záznamu daného dokumentu je možno přidat i odkaz na plný text. Ten bude k záznamu připojen, pokud:
-
-a) je daný dokument zpřístupněn prostřednictvím veřejně dostupného repozitáře s perzistentním odkazem (např. repozitáře výzkumných institucí a univerzit atp.).
-
-b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektronické verzi, souhlasí se zveřejněním a následně tuto skutečnost potvrdí prostřednictvím kontaktního emailu.
+<p>K bibliografickému záznamu daného dokumentu je možno přidat i odkaz na plný text. Ten bude k záznamu připojen, pokud: a) je daný dokument zpřístupněn prostřednictvím veřejně dostupného repozitáře s perzistentním odkazem (např. repozitáře výzkumných institucí a univerzit atp.). b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektronické verzi, souhlasí se zveřejněním a následně tuto skutečnost potvrdí prostřednictvím kontaktního emailu.
 </p>
 
 <hr/>
 
-<h4 class="mt-4">Text</h4>
+<div id="chapter-block">
+	<h4 class="mt-4">Text</h4>
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="text-author" value=""><label for="author">Autor</label>
+	</div>
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="text-name" value=""><label for="name">Název</label>
+	</div>
 
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="text-author" value=""><label for="author">Autor</label>
+	<h4 class="mt-4">Zdrojový dokument</h4>
 </div>
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="text-name" value=""><label for="name">Název</label>
+
+<div id="article-book-block">
+	<h4 class="mt-4">Údaje o dokumentu</h4>
+
+	<p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
 </div>
-
-<h4 class="mt-4">Údaje o dokumentu</h4>
-
-<p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
 
 <div class="form-floating my-2">
 	<input type="text" class="form-control" id="author" value=""><label for="author">Autor</label>
@@ -98,20 +195,26 @@ b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektro
 <div class="form-floating my-2">
 	<input type="text" class="form-control" id="name" value=""><label for="name">Název</label>
 </div>
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="place" value=""><label for="name">Místo</label>
+
+<div id="chapter-book-block">
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="place" value=""><label for="name">Místo</label>
+	</div>
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="publisher" value=""><label for="name">Nakladatelství</label>
+	</div>
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="year" value=""><label for="name">Rok</label>
+	</div>
 </div>
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="publisher" value=""><label for="name">Nakladatelství</label>
-</div>
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="year" value=""><label for="name">Rok</label>
-</div>
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="source" value=""><label for="source">Zdrojový dokument</label>
-</div>
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="quote" value=""><label for="quote">Bibliografická citace</label>
+
+<div id="article-block">
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="source" value=""><label for="source">Zdrojový dokument</label>
+	</div>
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="quote" value=""><label for="quote">Bibliografická citace</label>
+	</div>
 </div>
 
 <div class="row my-4 justify-content-center">
