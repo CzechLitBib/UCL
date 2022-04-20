@@ -118,8 +118,7 @@ if (!empty($_POST)) {
 <form method="post" action="." enctype="multipart/form-data">
 
 <table><tr><td>
-<input type="radio" name="index" value="ucla" checked><label>UCLA</label>
-<input type="radio" name="index" value="uclo"><label>UCLO</label>
+<input type="radio" name="index" value="uclo" checked><label>UCLO</label>
 <input type="radio" name="index" value="uclec"><label>UCLEC</label>
 </td></tr></table>
 
@@ -177,7 +176,7 @@ $subfield = [
 	'710' => array('4'),
 	'711' => array('4'),
 	'773' => array('a','t','x','n','b','d','h','k','g','q','z','y','9'),
-	'787' => array('i','a','t','n','b','d','h','k','g','z','y','9')
+	'787' => array('i','a','t','n','b','d','h','k','g','z','y','4')
 ];
 
 echo '<table width="500">';
