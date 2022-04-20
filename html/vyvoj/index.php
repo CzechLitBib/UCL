@@ -37,8 +37,6 @@
 
 </main>
 
-<link rel="stylesheet" href="/vyvoj/bootstrap.min.js"/>
-
 </body>
 </html>
 
