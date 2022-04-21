@@ -1,4 +1,0 @@
-
-- switch text shift
-- error notification
-
