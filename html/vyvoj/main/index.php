@@ -6,42 +6,125 @@
 	<title>ČLB - Vývoj</title>
 	<link href="../bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
-	<link rel="apple-touch-icon" href="favicon/apple-touch-icon.png" sizes="180x180">
-	<link rel="icon" href="favicon/favicon-32x32.png" sizes="32x32" type="image/png">
-	<link rel="icon" href="favicon/favicon-16x16.png" sizes="16x16" type="image/png">
-	<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#7952b3">
+	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">
+	<link rel="icon" href="../favicon/favicon-32x32.png" sizes="32x32" type="image/png">
+	<link rel="icon" href="../favicon/favicon-16x16.png" sizes="16x16" type="image/png">
+	<link rel="mask-icon" href="../favicon/safari-pinned-tab.svg" color="#7952b3">
 	<!-- Custom styles -->
 
 </head>
 
-<body style="min-height: 75rem; padding-top: 4.5rem;">
-    
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-danger">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Fixed navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav me-auto mb-2 mb-md-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-      </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-    </div>
-  </div>
-</nav>
+<body>
+<!--body style="min-height: 75rem; padding-top: 4.5rem;">-->
 
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc3545;">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="#">
+		<img src="../logo.png" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			</ul>
+			<form class="d-flex">
+			<img class="d-inline-block align-text-center mx-2" src="../icons/person.svg" alt="User" width="32" height="32"> 
+			</form>
+		</div>
+	</div>
+</nav>
+   
 <main class="container">
-  <div class="bg-light p-5 rounded">
-    <h1>Navbar example</h1>
-    <p class="lead">This example is a quick exercise to illustrate how fixed to top navbar works. As you scroll, it will remain fixed to the top of your browser’s viewport.</p>
-    <a class="btn btn-lg btn-primary" href="/docs/5.1/components/navbar/" role="button">View navbar docs &raquo;</a>
-  </div>
+<div class="container px-4 py-2" id="icon-grid">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
+
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+ <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+ <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+ <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+ <div class="col d-flex align-items-start">
+	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/person.svg" alt="User" width="32" height="32"> 
+        <div>
+          <h4 class="fw-bold mb-0">Featured title</h4>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+
+</div>
+</div>
 </main>
 
 <script src="../bootstrap.min.js"></script>
