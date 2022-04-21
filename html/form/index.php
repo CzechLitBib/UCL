@@ -95,14 +95,13 @@ if ($valid) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>ČLB - Návrhy podkladů</title>
-	<link href="bootstrap.min.css" rel="stylesheet">
+	<link href="custom.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="favicon/apple-touch-icon.png" sizes="180x180">
 	<link rel="icon" href="favicon/favicon-32x32.png" sizes="32x32" type="image/png">
 	<link rel="icon" href="favicon/favicon-16x16.png" sizes="16x16" type="image/png">
 	<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#7952b3">
 	<!-- Custom styles -->
-
 </head>
 <body class="bg-light" onload="on_load();">
 <div class="container-md">
@@ -147,11 +146,13 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 	<input type="file" class="form-control" id="pdf" name="file">
 </div>
 
-<div class="alert alert-warning my-2" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
-	<div class="form-check form-switch p-2 float-end">
+<div class="alert alert-warning my-2 pb-5" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
+	<!--<div class="form-check form-switch p-2 float-end">-->
+	<div class="mb-0">
+	<div class="form-switch mt-1 p-2 float-end">
 		<input class="form-check-input" id="public" name="public" type="checkbox" value="1" role="switch" onclick="yesno();">
 		<label class="form-check-label" for="public" id="public-label">Ne</label>
-	</div>
+	</div></div>
 </div>
 
 <div class="form-floating">
