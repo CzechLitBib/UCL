@@ -18,7 +18,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc3545;">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="/vyvoj/">
-		<img src="{{ url_for('static', filename='logo.png') }}" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj #API</a>
+		<img src="{{ url_for('static', filename='logo.png') }}" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj # API</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -56,7 +56,7 @@
 	</div>
 </div>
 
-<div class="card">
+<div class="card my-4">
 	<div class="card-header bg-dark">
 		<div class="row">
 			<div class="col">
@@ -65,9 +65,9 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<p class="card-text">Hlavička dotazu upřesňující formát odpovědi..</p>
+		<p class="card-text">Paramter HTTP hlavičky Accept určuje formát odpovědi.</p>
 		<h5 class="card-title">Accept: application/json</h5>
-		<div class="alert alert-warning" role="alert">MARC-JSON <b>(default)</b></div>
+		<div class="alert alert-warning" role="alert">MARC-JSON <b>(výchozí)</b></div> 
 		<h5 class="card-title">Accept: application/marcxml</h5>
 		<div class="alert alert-warning" role="alert">Response: MARC-XML</div>
 		<h5 class="card-title">Accept: application/octet-stream </h5>
@@ -76,7 +76,7 @@
 </div>
 
 
-<div class="card">
+<div class="card my-4">
 	<div class="card-header bg-dark">
 		<div class="row">
 			<div class="col">
@@ -89,7 +89,7 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<p class="card-text">Vrací UP záznamy pole LKR ve formatu - zdrojový záznam|nadřazený záznam -.</p>
+		<p class="card-text">Požadavek vrátí UP záznamy pole LKR jako prostý text ve tvaru "Zdrojové ID|Nadřazené ID záznamu".</p>
 	</div>
 </div>
 
@@ -106,7 +106,7 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<p class="card-text">Požadavek vrací záznamy se příznakem "smazáno" v OAI hlavičče ve formatu "SysNo".</p>
+		<p class="card-text">Požadavek vrátí záznamy s příznakem "smazáno" v hlavičče protokolu OAI jako prostý text ve formatu "ID".</p>
 </div>
 </div>
 
@@ -123,8 +123,7 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<p class="card-text">Požadavek vrací celý záznam na základě indentifikátoru. Formát výstupu je určený paremetrem Accept v hlavičče.</p>
-		<h5 class="card-title">Dotaz</h5>
+		<p class="card-text">Požadavek vrátí celý záznam na základě jeho identifikátoru. Formát výstupu je určený hlavičkou.</p>
 		<div class="alert alert-warning" role="alert">
 		/api/GetRecord?identifier=&lt;000000000-999999999&gt;</br>
 		</div>
@@ -144,8 +143,7 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<p class="card-text">Požadavek vrací seznam záznamů na základě časového rozsahu. Frormát je určený parametrem Accept v hlavičče.</p>
-		<h5 class="card-title">Dotaz</h5>
+		<p class="card-text">Požadavek vrátí seznam záznamů na základě časového rozsahu. Formát výstupu je určený hlavičkou.</p>
 		<div class="alert alert-warning" role="alert">
 		/api/ListRecords?from=&lt;iso8601_utc_datetime&gt;&until=&lt;iso8601_utc_datetime&gt;</br>
 		</div>
@@ -165,8 +163,7 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<p class="card-text">Požadavek vrací seznam identifikátorů na základě časového rozsahu ve formátu JSON.</p>
-		<h5 class="card-title">Dotaz</h5>
+		<p class="card-text">Požadavek vrátí seznam identifikátorů na základě časového rozsahu ve formátu JSON.</p>
 		<div class="alert alert-warning" role="alert">
 		/api/ListIdentifiers?from=&lt;iso8601_utc_datetime&gt;&until=&lt;iso8601_utc_datetime&gt;</br>
 		</div>
