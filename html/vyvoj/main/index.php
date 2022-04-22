@@ -14,8 +14,7 @@
 
 </head>
 
-<body>
-<!--body style="min-height: 75rem; padding-top: 4.5rem;">-->
+<body class="bg-light">
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc3545;">
 	<div class="container-fluid">
@@ -130,7 +129,7 @@
         </div>
       </div>
  <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="api/">
+	<a class="stretched-link" href="/api/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/server.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
