@@ -47,7 +47,6 @@
 		<div class="col">
 		<h5 class="card-title">Chybí pole SIF</h5>
 		<p class="card-text">Záznam neobsahuje žádné pole SIF.</p>
-		<a id="000"></a>
 		</div>
 		</div>
 	</div>
