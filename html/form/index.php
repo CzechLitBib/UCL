@@ -242,7 +242,7 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 </main>
 
 <footer class="text-muted text-small text-center">
-	<p>&copy; 2021-<?php echo date('Y');?> ČLB</p>
+	<p>&copy; 2021-<?php echo date('Y');?> ČLB AV ČR</p>
 	<ul class="list-inline">
 		<li class="list-inline-item"><a class="link-danger" target="_blank" href="https://clb.ucl.cas.cz/ochrana-osobnich-udaju/">Soukromí</a></li>
 		<li class="list-inline-item"><a class="link-danger" href="#">Nahoru</a></li>

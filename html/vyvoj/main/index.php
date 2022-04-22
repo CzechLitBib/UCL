@@ -25,6 +25,13 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+<nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Library</li>
+  </ol>
+</nav>
+
 			</ul>
 			<span clas="navbar-text">Username</span>
 			<form class="d-flex align-items-center">
@@ -39,7 +46,7 @@
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
 
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="daily/">
+	<a class="stretched-link" href="/vyvoj/daily/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/calendar-date.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -48,7 +55,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="weekly/">
+	<a class="stretched-link" href="/vyvoj/weekly/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/calendar-week.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -57,7 +64,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="seven/">
+	<a class="stretched-link" href="/vyvoj/seven/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/calendar-month.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -66,7 +73,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="nkp/">
+	<a class="stretched-link" href="/vyvoj/nkp/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/calendar-month.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -75,7 +82,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="kat/">
+	<a class="stretched-link" href="/vyvoj/kat/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/calendar-month.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -84,7 +91,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="clo/">
+	<a class="stretched-link" href="/vyvoj/clo/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -93,7 +100,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="uclo/">
+	<a class="stretched-link" href="/vyvoj/uclo/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -102,7 +109,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="error/">
+	<a class="stretched-link" href="/vyvoj/error/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/exclamation-triangle.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -120,7 +127,7 @@
         </div>
       </div>
  <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="form-data/">
+	<a class="stretched-link" href="/vyvoj/form-data/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/folder.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
@@ -138,7 +145,7 @@
         </div>
       </div>
  <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="aleph/">
+	<a class="stretched-link" href="/vyvoj/aleph/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/search.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
