@@ -133,12 +133,12 @@
         </div>
       </div>
  <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="/api/">
+	<a class="stretched-link" href="/api2/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/server.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>
           <h4 class="fw-bold mb-0">Vufind API</h4>
-          <p>Aktulaní stahování a popis rozhraní.</p>
+          <p>Aktuální stahování a popis rozhraní.</p>
         </div>
       </div>
  <div class="col d-flex align-items-start position-relative">
@@ -147,7 +147,7 @@
 	</a>
         <div>
           <h4 class="fw-bold mb-0">Aleph Solr</h4>
-          <p>Rychlé vyhedávací rozhraní pro UCLO set.</p>
+          <p>Rychlé vyhledávací rozhraní pro UCLO set.</p>
         </div>
       </div>
 
