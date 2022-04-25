@@ -75,7 +75,7 @@
         </div>
       </div>
       <div class="col d-flex align-items-start position-relative">
-	<a class="stretched-link" href="/vyvoj/kat/">
+	<a class="stretched-link" href="/vyvoj/cat/">
 	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/calendar-month.svg" alt="User" width="32" height="32"> 
 	</a>
         <div>

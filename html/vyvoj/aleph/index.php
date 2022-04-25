@@ -19,16 +19,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc3545;">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="/vyvoj/main">
-		<img src="../logo.png" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj</a>
+		<img src="../logo.png" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj # Aleph</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-<li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Domů</a></li>
-<li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Daily</a></li>
-
 			</ul>
 			<span clas="navbar-text">Username</span>
 			<form class="d-flex align-items-center">
@@ -40,53 +36,73 @@
    
 <main class="container">
 <div class="container px-4 py-2" id="icon-grid">
-<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 py-5 bg-info">
 
-<div class="col d-flex align-items-start">
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">1</label>
-</div>
-</div>
-
-<div class="col d-flex align-items-start">
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">1</label>
-</div>
-</div>
-<div class="col d-flex align-items-start">
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">1</label>
-</div>
-</div>
-<div class="col d-flex align-items-start">
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">1</label>
-</div>
-</div>
-<div class="col d-flex align-items-start">
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">1</label>
-</div>
-</div>
-<div class="col d-flex align-items-start">
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">1</label>
-</div>
-</div>
-<div class="col d-flex align-items-start">
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">1</label>
-</div>
+<div class="row my-4 justify-content-center">
+	<div class="col-md-6">
+		<div class="d-grid gap-2 d-sm-flex">
+			<input type="radio" class="btn-check" id="uclo" name="core" value="UCLO" checked>
+			<label class="btn btn-outline-danger w-100" for="uclo">UCLO</label>
+			<input type="radio" class="btn-check" id="clo" name="core" value="CLO">
+			<label class="btn btn-outline-danger text-nowrap w-100" for="clo">CLO</label>
+		</div>
+	</div>
 </div>
 
+<div class="row my-4 justify-content-center">
+	<div class="col-6">
+		<div class="form-floating">
+			<input type="text" class="form-control" id="q" name="q" value=""><label for="q">Podmínka</label>
+	</div>
+	<div class="col">
+		<button type="button" class="btn btn-warning">+</button>
+	</div>
 </div>
+
+
+<div class="row my-4 justify-content-center">
+	<div class="col-md-2">
+	<div class="d-grid gap-2 d-sm-flex">
+		<input type="radio" class="btn-check" id="or" name="op" value="UCLO" checked>
+		<label class="btn btn-outline-danger w-100" for="or">OR</label>
+		<input type="radio" class="btn-check" id="and" name="op" value="CLO">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="and">AND</label>
+	</div>
+	</div>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-6">
+ <div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">LDR</label>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">001</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">003</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">005</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">008</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">015</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">020</label>
+</div>
+</div>
+</div>
+
+
 </div>
 </main>
 
