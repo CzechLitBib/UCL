@@ -25,10 +25,6 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-<li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Domů</a></li>
-<li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Daily</a></li>
-
 			</ul>
 			<span clas="navbar-text">Username</span>
 			<form class="d-flex align-items-center">
