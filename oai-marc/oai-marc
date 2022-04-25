@@ -253,6 +253,10 @@ for record in records:
 			if 'a' in F:
 				if 'BATCH' in F['a']: BOT=True
 		if BOT: continue
+	
+		# SKIP LIBRARY ------------------
+
+		if 'IST' in metadata: continue
 
 		# TEST TAG ------------------
 
