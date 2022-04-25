@@ -1,3 +1,30 @@
+<?php
+
+session_start();
+
+$_SESSION['page'] = 'weekly';
+
+if(empty($_SESSION['auth'])) {
+	header('Location: /vyvoj');
+	exit();
+}
+
+if($_SESSION['group'] !== 'admin') {
+        $_SESSION['error'] = True;
+        header('Location: /vyvoj/main/');
+        exit();
+}
+
+if(!isset($_SESSION['weekly'])) { $_SESSION['weekly'] = Null; }
+
+if (!empty($_POST['date'])) {
+        $_SESSION['weekly'] = $_POST['date'];
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit();
+}
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -18,7 +45,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc3545;">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="#">
+		<a class="navbar-brand" href="/vyvoj/main">
 		<img src="../logo.png" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj # Weekly</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -26,7 +53,7 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 			</ul>
-			<span clas="navbar-text">Username</span>
+			<span clas="navbar-text"><b><?php echo $_SESSION['username'];?></b></span>
 			<form class="d-flex align-items-center">
 			<img class="d-inline-block align-text-center mx-2" src="../icons/person-fill.svg" alt="User" width="32" height="32"> 
 			</form>
@@ -38,47 +65,70 @@
 <div class="row my-4 justify-content-center">
 <div class="col col-md-8">
 
-<form class="mb-4">
+<form class="mb-4" method="post" action="." enctype="multipart/form-data">
 	<div class="row justify-content-center">
 		<div class="col col-5">
-			<input type="date" class="form-control" name="date" value="2022-04-21" min="2020-03-02" max="2022-04-21" step="7">
+
+<?php
+
+if (date('D') == 'Tue') {
+	$default = date("Y-m-d", strtotime("Tuesday"));
+} else {
+	$default = date("Y-m-d", strtotime("last Tuesday"));
+}
+
+if (!empty($_SESSION['weekly'])){ $default = $_SESSION['weekly']; }
+	echo '<input class="form-control" type="date" name="date" value="' . $default . '" max="' . date("Y-m-d", strtotime("Tuesday")) . '" step="7">';
+?>
+
 		</div>
 		<div class="col col-2">
-			<button class="btn btn-warning opacity-75" type="submit">Zobrazit</button>
+			<button class="btn btn-danger" type="submit">Zobrazit</button>
 		</div>
 	</div>
 </form>
 
-<table class="table table-striped">
-  <thead class="table-success">
-    <tr>
-      <th scope="col">SysNo</th>
-      <th scope="col">SIF</th>
-      <th scope="col">Kód</th>
-      <th scope="col">Popis</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">002746587	</th>
-      <td>er</td>
-      <td>096</td>
-      <td>Neplatný prefix, chybný 2. indikátor v poli 245.</td>
-    </tr>
-    <tr>
-      <th scope="row">002746587</th>
-      <td>er</td>
-      <td>162</td>
-      <td>Možný chybný zápis 245c, 1.indikátor je 1, začíná na malé písmeno.</td>
-    </tr>
-    <tr>
-      <th scope="row">002746586</th>
-      <td>er</td>
-      <td>108</td>
-      <td>Nesoulad mezi daty v poli 008 a 264.</td>
-    </tr>
-  </tbody>
-</table>
+<?php
+
+if (!empty($_SESSION['weekly'])){
+	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_SESSION['weekly'])) {
+
+		$file = 'data/'
+		. date("Y-m-d", strtotime($_SESSION['weekly']) - 8*24*3600) . '_'
+		. date("Y-m-d", strtotime($_SESSION['weekly']) - 2*24*3600) . '.csv';
+
+		if (file_exists($file)) {
+			$csv = array();
+			$row = 0;
+			if (($handle = fopen($file, 'r')) !== FALSE) {
+				while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+					$num = count($data);
+					for ($c=0;  $c < $num; $c++) {
+						$csv[$row][] = $data[$c];
+					}
+					$row++;
+				}
+				fclose($handle);
+			}
+
+			echo '<table class="table table-striped"><thead><tr>';
+			echo '<th class="text-center" scope="col">SysNo</th><th scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr></thead><tbody>';
+
+			array_multisort(array_column($csv,0), SORT_DESC, SORT_NUMERIC, $csv);
+			foreach($csv as $row) {
+				echo '<tr><th scope="row"><a class="text-dark text-decoration-none" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' . $row[0] . '&local_base=AV&format=001"><b>' . $row[0] . '</b></a></th>';
+				echo '<td>' . $row[1] . '</td>';
+				echo '<td><a class="text-dark text-decoration-none" href="/vyvoj/error/#' . $row[2] . '"><b>' . $row[2] . '</b></a></td>';
+				echo '<td>' . $row[3] . '</td></tr>';
+			}
+			echo '</tbody></table>';
+		} else {
+			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+		}
+	}
+}
+
+?>
 
 </div>
 </div>

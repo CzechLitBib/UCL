@@ -5,7 +5,7 @@ session_start();
 $_SESSION['page'] = 'main';
 
 if(empty($_SESSION['auth'])) {
-        header('Location: /vyvoj');
+        header('Location: /vyvoj/main');
         exit();
 }
 
@@ -161,8 +161,7 @@ if(empty($_SESSION['auth'])) {
       </div>
 
 </div>
-</div>
-</main>
+<div class="row">
 
 <?php
 
@@ -173,6 +172,11 @@ if(!empty($_SESSION['error'])) {
 }
 
 ?>
+
+
+</div>
+</div>
+</main>
 
 <script src="../bootstrap.min.js"></script>
 
