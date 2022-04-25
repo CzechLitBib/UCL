@@ -1,3 +1,16 @@
+<?php
+
+session_start();
+
+$_SESSION['page'] = 'main';
+
+if(empty($_SESSION['auth'])) {
+        header('Location: /vyvoj');
+        exit();
+}
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -26,7 +39,7 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 			</ul>
-			<span clas="navbar-text">Username</span>
+			<span clas="navbar-text"><b><?php echo $_SESSION['username'];?></b></span>
 			<form class="d-flex align-items-center">
 			<img class="d-inline-block align-text-center mx-2" src="../icons/person-fill.svg" alt="User" width="32" height="32"> 
 			</form>
@@ -150,6 +163,16 @@
 </div>
 </div>
 </main>
+
+<?php
+
+if(!empty($_SESSION['error'])) {
+	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Nedostatečné oprávnění.<button type="button" class=
+"btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+	$_SESSION['error'] = False;
+}
+
+?>
 
 <script src="../bootstrap.min.js"></script>
 

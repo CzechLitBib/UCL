@@ -1,3 +1,42 @@
+<?php
+
+session_start();
+
+# logged in redirect
+if (!empty($_SESSION['auth']) and isset($_SESSION['page'])) {
+	header('Location: ' . $_SESSION['page']);
+	exit();
+}
+
+$_SESSION['auth'] = False;
+$_SESSION['group'] = 'user';
+$_SESSION['username'] = '';
+
+$admin = ['xxx'];
+$nkp   = ['xxx'];
+$form  = ['xxx'];
+$solr  = ['xxx'];
+
+if (!isset($_SESSION['error'])) { $_SESSION['error'] = False; }
+
+$authorized = False;
+
+if (isset($_POST['name']) and isset($_POST['pass'])) {
+	
+	$ldap_dn = 'xxx';
+	$ldap_conn = ldap_connect('xxx');
+
+	ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+	ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap_conn, LDAP_OPT_NETWORK_TIMEOUT, 10);
+
+	$ldap_bind = @ldap_bind($ldap_conn, $ldap_dn, $_POST['pass']);
+
+	if ($ldap_bind) { $authorized = True; }
+}
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -11,11 +50,33 @@
 	<link rel="icon" href="favicon/favicon-16x16.png" sizes="16x16" type="image/png">
 	<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#7952b3">
 	<!-- Custom styles -->
-
 </head>
 
 <body class="bg-light text-center">
 <main class="w-100 m-auto" style="max-width:330px; padding-top:35px;">
+
+<?php
+
+if (isset($_POST['name']) and isset($_POST['pass'])) {
+        if (!$authorized) {
+		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Přihlášení selhalo.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        } else {
+                $_SESSION['auth'] = True;
+                $_SESSION['username'] = $_POST['name'];
+
+                if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
+                if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'form'; }
+                if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
+                if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
+
+                if(empty($_SESSION['page'])) { $_SESSION['page'] = '/vyvoj/main/'; }// default page
+
+                header('Location: ' . $_SESSION['page']);
+                exit();
+        }
+}
+
+?>
 
 <img src="/vyvoj/logo.png" alt="ČLB logo" width="209"/>
 
@@ -23,7 +84,7 @@
 
 <form action="." method="post">
 	<div class="form-floating mt-4 mb-1">
-		<input type="text" class="form-control" id="user" name="user" required autofocus>
+		<input type="text" class="form-control" id="user" name="name" required autofocus>
 		<label for="user">Uživatelské jméno</label>
 	</div>
 	<div class="form-floating mb-4">
@@ -36,6 +97,7 @@
 <p class="my-4 text-muted">&copy; 2021–<?php echo date("Y"); ?></p>
 
 </main>
+<script src="bootstrap.min.js"></script>
 
 </body>
 </html>
