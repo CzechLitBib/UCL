@@ -112,12 +112,12 @@ if (!empty($_SESSION['weekly'])){
 			}
 
 			echo '<table class="table table-striped"><thead><tr>';
-			echo '<th class="text-center" scope="col">SysNo</th><th scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr></thead><tbody>';
+			echo '<th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr></thead><tbody>';
 
 			array_multisort(array_column($csv,0), SORT_DESC, SORT_NUMERIC, $csv);
 			foreach($csv as $row) {
-				echo '<tr><th scope="row"><a class="text-dark text-decoration-none" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' . $row[0] . '&local_base=AV&format=001"><b>' . $row[0] . '</b></a></th>';
-				echo '<td>' . $row[1] . '</td>';
+				echo '<tr><th class="text-center"><a class="text-dark text-decoration-none" target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' . $row[0] . '&local_base=AV&format=001"><b>' . $row[0] . '</b></a></th>';
+				echo '<td class="text-center">' . $row[1] . '</td>';
 				echo '<td><a class="text-dark text-decoration-none" href="/vyvoj/error/#' . $row[2] . '"><b>' . $row[2] . '</b></a></td>';
 				echo '<td>' . $row[3] . '</td></tr>';
 			}
