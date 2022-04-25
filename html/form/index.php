@@ -108,6 +108,19 @@ if ($valid) {
 <main>
 <div class="row py-4 justify-content-center">
 	<div class="col-md-8">
+<?php
+
+if (isset($_POST['code'])) {
+        if ($error) {
+		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">' . $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        } elseif ($valid) {
+		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Hotovo. Děkujeme!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        } else {
+		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Neplatný kontrolní kód.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        }
+}
+
+?>
 
 <div class="text-center"><img src="logo.png" alt="ČLB logo" width="209"/></div>
 <div class="p-4 text-center"><h2>Návrhy podkladů pro zpracování v ČLB</h2></div>
@@ -147,7 +160,6 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 </div>
 
 <div class="alert alert-warning my-2 pb-5" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
-	<!--<div class="form-check form-switch p-2 float-end">-->
 	<div class="mb-0">
 	<div class="form-switch mt-1 p-2 float-end">
 		<input class="form-check-input" id="public" name="public" type="checkbox" value="1" role="switch" onclick="yesno();">
@@ -254,20 +266,6 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 
 <script src="form.js"></script>
 <script src="bootstrap.min.js"></script>
-
-<?php
-
-if (isset($_POST['code'])) {
-        if ($error) {
-		echo '<div class="alert alert-warning" role="alert">' . $error . '</div>';
-        } elseif ($valid) {
-		echo '<div class="alert alert-warning" role="alert">Hotovo. Děkujeme!</div>';
-        } else {
-		echo '<div class="alert alert-warning" role="alert">Neplatný kontrolní kód.</div>';
-        }
-}
-
-?>
 
 </body>
 </html>
