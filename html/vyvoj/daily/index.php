@@ -104,7 +104,7 @@ if (!empty($_SESSION['daily'])){
                                 fclose($handle);
                         }
 		
-			echo '<table class="table table-striped">';
+			echo '<table class="table">';
 			echo '<thead class=""><tr><th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr>';
 			echo '</thead><tbody>';
 

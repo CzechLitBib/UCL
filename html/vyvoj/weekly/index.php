@@ -111,7 +111,7 @@ if (!empty($_SESSION['weekly'])){
 				fclose($handle);
 			}
 
-			echo '<table class="table table-striped"><thead><tr>';
+			echo '<table class="table"><thead><tr>';
 			echo '<th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr></thead><tbody>';
 
 			array_multisort(array_column($csv,0), SORT_DESC, SORT_NUMERIC, $csv);
