@@ -1,3 +1,33 @@
+<?php
+
+session_start();
+
+$_SESSION['page'] = 'nkp';
+
+if(empty($_SESSION['auth'])) {
+	header('Location: /vyvoj');
+	exit();
+}
+
+if(!in_array($_SESSION['group'], array('admin','nkp'))) {
+	$_SESSION['error'] = True;
+	header('Location: /vyvoj/main/');
+	exit();
+}
+
+
+if(!isset($_SESSION['nkp_month'])) { $_SESSION['nkp_month'] = Null; }
+if(!isset($_SESSION['nkp_year'])) { $_SESSION['nkp_year'] = Null; }
+
+if (!empty($_POST['month']) and !empty($_POST['year'])) {
+        $_SESSION['nkp_month'] = $_POST['month'];
+        $_SESSION['nkp_year'] = $_POST['year'];
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit();
+}
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -18,7 +48,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc3545;">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="/vyvoj/">
+		<a class="navbar-brand" href="/vyvoj/main">
 		<img src="../logo.png" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj # NKP</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -26,7 +56,7 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 			</ul>
-			<span clas="navbar-text">Username</span>
+			<span clas="navbar-text"><b><?php echo $_SESSION['username'];?></b></span>
 			<form class="d-flex align-items-center">
 			<img class="d-inline-block align-text-center mx-2" src="../icons/person-fill.svg" alt="User" width="32" height="32"> 
 			</form>
@@ -38,192 +68,209 @@
 <div class="row my-4 justify-content-center">
 <div class="col col-md-8">
 
-<form class="mb-4">
+<form class="mb-4"  method="post" action="." enctype="multipart/form-data">
 	<div class="row justify-content-center">
 		<div class="col col-5">
-<div class="form-floating">
-  <select class="form-select" id="floatingselect" aria-label="floating label select example">
-    <option selected>Leden</option>
-    <option value="1">Únor</option>
-    <option value="2">Březen</option>
-  </select>
-  <label for="floatingselect">Měsíc</label>
-</div>
+			<div class="form-floating">
+			<select class="form-select" id="floatingselect" name="month" aria-label="floating label select example">
+
+<?php
+
+$month_map = [
+	'01' => 'Leden',
+	'02' => 'Únor',
+	'03' => 'Březen',
+	'04' => 'Duben',
+	'05' => 'Květen',
+	'06' => 'Červen',
+	'07' => 'Červenec',
+	'08' => 'Srpen',
+	'09' => 'Září',
+	'10' => 'Říjen',
+	'11' => 'Listopad',
+	'12' => 'Prosinec',
+];
+
+foreach($month_map as $m => $mon) {
+	if ($mon == $_SESSION['nkp_month']) {
+		echo "<option selected>" . $mon . "</option>";
+	} elseif (empty($_SESSION['nkp_month']) and $m == date('m', strtotime("-1 month"))) {
+		echo "<option selected>" . $mon . "</option>";
+	} else {
+		echo "<option>" . $mon  . "</option>";
+	}
+}
+
+?>
+
+			</select>
+			<label for="floatingselect">Měsíc</label>
+		</div>
 		</div>
 		<div class="col col-5">
-<div class="form-floating">
-  <select class="form-select" id="floatingselect" aria-label="floating label select example">
-    <option selected>2022</option>
-    <option value="1">2021</option>
-    <option value="2">2020</option>
-    <option value="3">2019</option>
-  </select>
-  <label for="floatingselect">Rok</label>
-</div>
+			<div class="form-floating">
+			<select class="form-select" id="floatingselect" name="year" aria-label="floating label select example">
+
+<?php
+
+foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
+	if ($y == $_SESSION['nkp_year']) {
+		echo "<option selected>" . $y . "</option>";
+	} elseif (empty($_SESSION['nkp_year']) and $y == date('Y', strtotime("-1 month"))) {
+		echo "<option selected>" . $y . "</option>";
+	} else {
+		echo "<option>" . $y . "</option>";
+	}
+}
+
+?>
+	
+			</select>
+			<label for="floatingselect">Rok</label>
 		</div>
-		<div class="col col-2">
-			<button class="btn btn-warning opacity-75" type="submit">Zobrazit</button>
+		</div>
+		<div class="col col-2 align-self-center">
+			<button class="btn btn-danger" type="submit">Zobrazit</button>
 		</div>
 	</div>
 </form>
 
-<table class="table table-striped caption-top text-center">
-   <caption>Záznamy založené ve zvoleném datu</caption>
-  <thead class="table-light">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col" colspan="4">Podpole 7</th>
-      <th scope="col" colspan="4">Bez podpole 7</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row" class="align-middle">100</th>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/100/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/100/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-    </tr>
+<?php
 
-    <tr>
-      <th scope="row" class="align-middle">110</th>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/110/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/110/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-    </tr>
- </tbody>
+function getLines($file)
+{
+	$f = fopen($file, 'rb');
+	$lines = 0;
+	while (!feof($f)) {
+		$lines += substr_count(fread($f, 8192), "\n");
+	}
+	fclose($f);
+	return $lines;
+}
 
-<tfoot>
-   <tr>
-    <th scope="col" colspan="3" class="text-start">Celkem</th>
-    <th scope="col">12168</th>
-    <th scope="col">91%</th>
-    <th scope="col" colspan="2"></th>
-    <th scope="col">12168</th>
-    <th scope="col">9%</th>
-   </tr>
-</tfoot>
-</table>
+if (!empty($_SESSION['nkp_month']) and !empty($_SESSION['nkp_year'])) {
+	if (preg_match('/\d{2}/', array_search($_SESSION['nkp_month'], $month_map)) and preg_match('/\d{4}/', $_SESSION['nkp_year'])) {
+	
+		$dir =  'data/' . $_SESSION['nkp_year'] . '/' . array_search($_SESSION['nkp_month'],$month_map);
 
-<table class="table table-striped caption-top text-center">
-   <caption>Záznamy založené před zvoleným datem</caption>
-  <thead class="table-light">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col" colspan="4">Podpole 7</th>
-      <th scope="col" colspan="4">Bez podpole 7</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row" class="align-middle">100</th>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/100/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/100/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-    </tr>
+		# NEW
 
-    <tr>
-      <th scope="row" class="align-middle">110</th>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/110/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/110/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-    </tr>
- </tbody>
+		$new = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.(?!old).*/', $var); } );
+		$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $new));
+		$no_seven = 0;
+		$seven = 0;
 
-<tfoot>
-   <tr>
-    <th scope="col" colspan="3" class="text-start">Celkem</th>
-    <th scope="col">12168</th>
-    <th scope="col">91%</th>
-    <th scope="col" colspan="2"></th>
-    <th scope="col">12168</th>
-    <th scope="col">9%</th>
-   </tr>
-</tfoot>
-</table>
+		if (!empty($tags)) {
+
+			echo '<table class="table table-sm caption-top text-center"><caption>Záznamy založené ve zvoleném datu</caption>';
+			echo '<thead class="table-light"><tr><th scope="col">#</th><th scope="col" colspan="4">Podpole 7</th>';
+			echo '<th scope="col" colspan="4">Bez podpole 7</th></tr></thead><tbody>';
+
+			foreach ($tags as $tag)	{
+				$has_seven = 0;
+				$has_no_seven = 0;
+				if(in_array($tag . '.7.csv', $new)) {
+					$has_seven = getLines($dir . '/' . $tag . '.7.csv');
+					$seven += $has_seven;
+				}
+				if(in_array($tag . '.csv', $new)) {
+					$has_no_seven = getLines($dir . '/' . $tag . '.csv');
+					$no_seven += $has_no_seven;
+				}
+				if (!empty($has_seven)) {
+
+					echo'<tr><th scope="row" class="align-middle">' . $tag . '</th>'
+					. '<td><a href="' . $dir  . '/' . $tag .  '.7.csv">'
+					. '<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="CSV" width="24" height="24"></a></td>'
+					. '<td><a href="/vyvoj/seven/data/' . $tag . '/"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="STAT" width="24" height="24"></a></td>'
+					. '<td>' . $has_seven . '</td>'
+					. '<td>'. round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
+				} else {
+					echo'<tr><th scope="row" class="align-middle">' . $tag . '</th><td colspan="3"></td><td>0%</td>';
+				}
+				if (!empty($has_no_seven)) {
+					echo '<td><a href="' . $dir  . '/' . $tag .  '.csv">'
+					. '<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="CSV" width="24" height="24"></a></td>'
+					. '<td><a href="/vyvoj/seven/data/' . $tag . '/"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="STAT" width="24" height="24"></a></td>'
+					. '<td>' . $has_no_seven . '</td>'
+					. '<td>'. round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
+				} else {
+					echo'<td colspan="3"></td><td>0%</td></tr>';
+				}
+			}
+			
+			echo '</tbody><tfoot><tr><th scope="col" colspan="3" class="text-start">Celkem</th>'
+			. '<th scope="col">' . $seven . '</th>'
+			. '<th scope="col">' . round($seven/($seven + $no_seven)*100) . '%</th>'
+			. '<th scope="col" colspan="2"></th>'
+			. '<th scope="col">' . $no_seven . '</th>'
+			. '<th scope="col">' . round($no_seven/($seven + $no_seven)*100) .  '%</th></tr>'
+			. '</tfoot></table>';
+		}
+
+		# OLD	
+
+		$old = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.old.*/', $var); } );
+		$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $old));
+		$no_seven = 0;
+		$seven = 0;
+
+		if (!empty($tags)) {
+
+			echo '<table class="table table-sm caption-top text-center"><caption>Záznamy založené před zvoleným datem</caption>';
+			echo '<thead class="table-light"><tr><th scope="col">#</th><th scope="col" colspan="4">Podpole 7</th>';
+			echo '<th scope="col" colspan="4">Bez podpole 7</th></tr></thead><tbody>';
+
+			foreach ($tags as $tag)	{
+				$has_seven = 0;
+				$has_no_seven = 0;
+				if(in_array($tag . '.old.7.csv', $old)) {
+					$has_seven = getLines($dir . '/' . $tag . '.old.7.csv');
+					$seven += $has_seven;
+				}
+				if(in_array($tag . '.old.csv', $old)) {
+					$has_no_seven = getLines($dir . '/' . $tag . '.old.csv');
+					$no_seven += $has_no_seven;
+				}
+				if (!empty($has_seven)) {
+
+					echo'<tr><th scope="row" class="align-middle">' . $tag . '</th>'
+					. '<td><a href="' . $dir  . '/' . $tag .  '.old.7.csv">'
+					. '<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="CSV" width="24" height="24"></a></td>'
+					. '<td><a href="/vyvoj/seven/data/' . $tag . '/"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="STAT" width="24" height="24"></a></td>'
+					. '<td>' . $has_seven . '</td>'
+					. '<td>'. round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
+				} else {
+					echo'<tr><th scope="row" class="align-middle">' . $tag . '</th><td colspan="3"></td><td>0%</td>';
+				}
+				if (!empty($has_no_seven)) {
+					echo '<td><a href="' . $dir  . '/' . $tag .  '.old.csv">'
+					. '<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="CSV" width="24" height="24"></a></td>'
+					. '<td><a href="/vyvoj/seven/data/' . $tag . '/"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="STAT" width="24" height="24"></a></td>'
+					. '<td>' . $has_no_seven . '</td>'
+					. '<td>'. round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
+				} else {
+					echo'<td colspan="3"></td><td>0%</td></tr>';
+				}
+			}
+			
+			echo '</tbody><tfoot><tr><th scope="col" colspan="3" class="text-start">Celkem</th>'
+			. '<th scope="col">' . $seven . '</th>'
+			. '<th scope="col">' . round($seven/($seven + $no_seven)*100) . '%</th>'
+			. '<th scope="col" colspan="2"></th>'
+			. '<th scope="col">' . $no_seven . '</th>'
+			. '<th scope="col">' . round($no_seven/($seven + $no_seven)*100) .  '%</th></tr>'
+			. '</tfoot></table>';
+		}
+
+		if (empty($new) and empty($old)) {
+			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+		}
+
+	}
+}		
+
+?>
 
 
 </div>

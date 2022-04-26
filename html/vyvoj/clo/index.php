@@ -1,3 +1,22 @@
+<?php
+
+session_start();
+
+$_SESSION['page'] = 'clo';
+
+if(empty($_SESSION['auth'])) {
+	header('Location: /vyvoj');
+	exit();
+}
+
+if($_SESSION['group'] !== 'admin') {
+        $_SESSION['error'] = True;
+        header('Location: /vyvoj/main/');
+        exit();
+}
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -18,7 +37,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc3545;">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="/vyvoj/">
+		<a class="navbar-brand" href="/vyvoj/main">
 		<img src="../logo.png" alt="ČLB" width="60" height="35" class="d-inline-block align-text-center">Vývoj # CLO</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -38,84 +57,79 @@
 <div class="row my-4 justify-content-center">
 <div class="col col-md-8">
 
-<table class="table table-striped caption-top text-center">
-   <caption>Poslední záznam: <b>27.11.2020</b></caption>
-  <thead class="table-light">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col" colspan="4">Podpole 7</th>
-      <th scope="col" colspan="4">Bez podpole 7</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row" class="align-middle">100</th>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/100/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/100/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-    </tr>
+<?php
 
-    <tr>
-      <th scope="row" class="align-middle">110</th>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/110/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-      <td>
-      <a href="">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>
-      <a href="/vyvoj/seven/110/">
-	<img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="User" width="24" height="24">
-      </a>
-      </td>
-      <td>958</td>
-      <td>78%</td>
-    </tr>
- </tbody>
+function getLines($file)
+{
+	$f = fopen($file, 'rb');
+	$lines = 0;
+	while (!feof($f)) {
+		$lines += substr_count(fread($f, 8192), "\n");
+	}
+	fclose($f);
+	return $lines;
+}
 
-<tfoot>
-   <tr>
-    <th scope="col" colspan="3" class="text-start">Celkem</th>
-    <th scope="col">12168</th>
-    <th scope="col">91%</th>
-    <th scope="col" colspan="2"></th>
-    <th scope="col">12168</th>
-    <th scope="col">9%</th>
-   </tr>
-</tfoot>
-</table>
+$dir = 'data';
+
+$files = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.*/', $var); } );
+$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $files));
+
+$no_seven = 0;
+$seven = 0;
+
+if (!empty($tags)) {
+
+	echo '<table class="table table-sm caption-top text-center"><caption>Poslední záznam: <b>27.11.2020</b></caption>'
+	. '<thead class="table-light"><tr><th scope="col">#</th><th scope="col" colspan="4">Podpole 7</th>'
+	. '<th scope="col" colspan="4">Bez podpole 7</th></tr></thead><tbody>';
+
+	foreach ($tags as $tag)	{
+
+		$has_seven = 0;
+		$has_no_seven = 0;
+
+		if(in_array($tag . '.7.csv', $files)) {
+			$has_seven = getLines($dir . '/' . $tag . '.7.csv');
+			$seven += $has_seven;
+		}
+		if(in_array($tag . '.csv', $files)) {
+			$has_no_seven = getLines($dir . '/' . $tag . '.csv');
+			$no_seven += $has_no_seven;
+		}
+
+		if (!empty($has_seven)) {
+			echo '<tr><th scope="row" class="align-middle">' . $tag . '</th>'
+			. '<td><a href="' . $dir . '/' . $tag . '.7.csv"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="CSV" width="24" height="24"></a></td>'
+			. '<td><a href="/vyvoj/seven/data/' . $tag  . '"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="STAT" width="24" height="24"></a></td>'
+			. '<td>' . $has_seven . '</td>'
+			. '<td>' . round($has_seven/($has_seven + $has_no_seven)*100) . '%</td>';
+		} else {
+			echo '<tr><th class="align-middle">' . $tag . '</th><td colspan="3"></td><td>0%</td>';
+		}
+
+		if (!empty($has_no_seven)) {
+			echo '<td><a href="' . $dir . '/' . $tag . '.csv"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/file-earmark-binary.svg" alt="CSV" width="24" height="24"></a></td>'
+			. '<td><a href="/vyvoj/seven/data/' . $tag  . '"><img class="bi text-muted flex-shrink-0 me-3" src="../icons/bar-chart.svg" alt="STAT" width="24" height="24"></a></td>'
+			. '<td>' . $has_no_seven . '</td>'
+			. '<td>' . round($has_no_seven/($has_seven + $has_no_seven)*100) . '%</td></tr>';
+
+		} else {
+			echo '<td colspan="3"></td><td>0%</td></tr>';
+		}
+	}
+
+	echo '</tbody><tfoot><tr><th scope="col" colspan="3" class="text-start">Celkem</th>'
+	. '<th scope="col">' . $seven . '</th>'
+	. '<th scope="col">' . round($seven/($seven + $no_seven)*100) . '%</th>'
+	. '<th scope="col" colspan="2"></th>'
+	. '<th scope="col">' . $no_seven . '</th>'
+	. '<th scope="col">' . round($no_seven/($seven + $no_seven)*100) . '%</th></tr>'
+	. '</tfoot></table>';
+}
+
+?>
+
 
 </div>
 </div>

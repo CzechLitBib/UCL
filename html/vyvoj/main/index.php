@@ -5,7 +5,7 @@ session_start();
 $_SESSION['page'] = 'main';
 
 if(empty($_SESSION['auth'])) {
-        header('Location: /vyvoj/main');
+        header('Location: /vyvoj');
         exit();
 }
 
