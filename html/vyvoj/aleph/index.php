@@ -275,10 +275,10 @@ foreach($subfield as $field=>$subs) {
 				<input type="text" class="form-control" id="q" name="rows" value="10"><label for="q">Počet řádků</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="csv-separator" value=";"><label for="q">Oddělovač polí.</label>
+				<input type="text" class="form-control" id="q" name="csv-separator" value=";"><label for="q">Oddělovač polí</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="csv-mv-separator" value="#"><label for="q">Oddělovač hodnot.</label>
+				<input type="text" class="form-control" id="q" name="csv-mv-separator" value="#"><label for="q">Oddělovač hodnot</label>
 			</div>
                 </div>
         </div>

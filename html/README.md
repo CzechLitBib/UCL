@@ -2,12 +2,30 @@ DESCRIPTION
 
 PHP7 frontend.
 
+TODO
+<pre>
+7/NKP - Stat.
+FORM - SVG logo, switch shift+color.
+F-DATA - pagiantion+color, DB date, switch+color.
+ALEPH - checkbox color.
+</pre>
+
 INSTALL
 <pre>
 apt-get install nginx php7.3 php7.3-fpm php7.3-cli php7-gd php7-ldap php7-json php7.3-sqlite3
 
 mkdir -p /var/www/html/.well-known/acme-challenge
 chown -R www-data:www-data /var/www/html/.well-known
+</pre>
+SASS
+<pre>
+wget https://github.com/sass/dart-sass/releases/download/1.50.1/dart-sass-1.50.1-linux-x64.tar.gz
+wget https://github.com/twbs/bootstrap/archive/v5.1.3.zip
+
+/custom/bootstrap/*.scss
+/custom/scss/custom.scss
+
+sass --style=compressed custom.scss custom.css
 </pre>
 PHP
 <pre>
