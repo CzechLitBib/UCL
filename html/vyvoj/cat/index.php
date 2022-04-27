@@ -72,7 +72,7 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 	<div class="row gx-3 justify-content-md-center">
 		<div class="col col-md-3">
 			<div class="form-floating">
-			<select class="form-select" id="floatingselect" name="month" aria-label="floating label select example">
+				<select class="form-select" id="floatingselect" name="month" aria-label="floating label select example">
 
 <?php
 
@@ -103,13 +103,13 @@ foreach($month_map as $m => $mon) {
 
 ?>
 
-			</select>
-			<label for="floatingselect">Měsíc</label>
-		</div>
+				</select>
+				<label for="floatingselect">Měsíc</label>
+			</div>
 		</div>
 		<div class="col col-md-3">
 			<div class="form-floating">
-			<select class="form-select" id="floatingselect" name="year" aria-label="floating label select example">
+				<select class="form-select" id="floatingselect" name="year" aria-label="floating label select example">
 
 <?php
 
@@ -125,15 +125,17 @@ foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
 
 ?>
 	
-			</select>
-			<label for="floatingselect">Rok</label>
-		</div>
+				</select>
+				<label for="floatingselect">Rok</label>
+			</div>
 		</div>
 		<div class="d-grid col col-md-2 align-self-center">
 			<button class="btn btn-danger" type="submit">Zobrazit</button>
 		</div>
 	</div>
 </form>
+
+</div>
 
 <?php
 
@@ -167,16 +169,13 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
 			}
 			echo '</tbody></table>';
 		} else {
-			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+			echo '<div class="col col-md-8"><div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div></div>';
 		}
 	}
 }
 
 ?>
 
-
-</div>
-</div>
 </main>
 
 <script src="../bootstrap.min.js"></script>
