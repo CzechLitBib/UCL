@@ -33,14 +33,15 @@
 		</div>
 	</div>
 </nav>
-   
+
 <main class="container">
-<div class="container p-2" id="icon-grid">
+<div class="row my-4 justify-content-center">
+<div class="col col-md-6">
 
 <form>
 
 <div class="row mt-4 justify-content-center">
-	<div class="col-md-5">
+	<div class="col-md-8">
 		<div class="d-grid gap-2 d-sm-flex">
 			<input type="radio" class="btn-check" id="uclo" name="core" value="UCLO" checked>
 			<label class="btn btn-outline-danger w-100" for="uclo">UCLO</label>
@@ -51,7 +52,7 @@
 </div>
 
 <div class="row mt-3 justify-content-center">
-	<div class="col col-md-6">
+	<div class="col col-md">
 		<div class="form-floating">
 			<input type="text" class="form-control" id="q" name="q" value=""><label for="q">Podmínka</label>
 		</div>
@@ -59,205 +60,82 @@
 </div>
 
 <div class="row mt-3 gx-2 justify-content-center">
-	<div class="col-4 col-md-1">
+	<div class="col-4 col-md-2">
 		<input type="radio" class="btn-check" id="or" name="op" value="UCLO" checked>
 		<label class="btn btn-outline-danger w-100" for="or">OR</label>
 	</div>
-	<div class="col-4 col-md-1">
+	<div class="col-4 col-md-2">
 		<input type="radio" class="btn-check" id="and" name="op" value="CLO">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="and">AND</label>
 	</div>
 </div>
 
-<div class="row justify-content-center">
-<div class="col-6">
-<h4>Pole</h4>
- <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">LDR</label>
+<h4 class="my-2">Pole</h4>
+
+<div class="row row-cols-sm-5 mx-2 my-3">
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">001</label>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">003</label>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">005</label>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">008</label>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">015</label>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">020</label>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
- <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">LDR</label>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">001</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">003</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">005</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">008</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">015</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">020</label>
-</div>
-</div>
+<div class="col-2 col-md-2">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
+	</div>
 </div>
 
-
-<div class="row justify-content-center">
-<div class="col-6">
-<h4>Podpole</h4>
- <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">LDR</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">001</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">003</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">005</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">008</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">015</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">020</label>
-</div>
- <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">LDR</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">001</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">003</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">005</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">008</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">015</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">020</label>
-</div>
-</div>
 </div>
 
-<div class="row justify-content-center">
-<div class="col-6">
-<h4>Special</h4>
- <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">LDR</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">001</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">003</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">005</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">008</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">015</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">020</label>
-</div>
- <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">LDR</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">001</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">003</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">005</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">008</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">015</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-  <label class="form-check-label" for="inlineCheckbox1">020</label>
-</div>
-</div>
-</div>
+<h4 class="my-2">Podpole</h4>
+
+<h4 class="my-2">Ostatní</h4>
 
 <div class="row my-4 justify-content-center">
-        <div class="col-md-6">
+        <div class="col">
                 <div class="d-grid gap-2 d-sm-flex">
 			<div class="form-floating">
 				<input type="text" class="form-control" id="q" name="q" value="10"><label for="q">Počet řádků</label>
@@ -272,12 +150,13 @@
         </div>
 </div>
 
-<div class="d-grid col-3 mx-auto my-2">
+<div class="d-grid col-md-4 mx-auto my-4">
 	<button type="submit" class="btn btn-danger">Odeslat</button>
 </div>
 
 </form>
 
+</div>
 </div>
 </main>
 
