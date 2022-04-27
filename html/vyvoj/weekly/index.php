@@ -63,11 +63,11 @@ if (!empty($_POST['date'])) {
    
 <main class="container">
 <div class="row my-4 justify-content-center">
-<div class="col col-md-8">
+<div class="col col-md-8 my-2">
 
 <form class="mb-4" method="post" action="." enctype="multipart/form-data">
-	<div class="row justify-content-center">
-		<div class="col col-5">
+	<div class="row gx-3 justify-content-md-center">
+		<div class="col-8 col-md-4">
 
 <?php
 
@@ -82,7 +82,7 @@ if (!empty($_SESSION['weekly'])){ $default = $_SESSION['weekly']; }
 ?>
 
 		</div>
-		<div class="col col-2">
+		<div class="d-grid col col-md-2">
 			<button class="btn btn-danger" type="submit">Zobrazit</button>
 		</div>
 	</div>

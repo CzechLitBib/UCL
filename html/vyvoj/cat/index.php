@@ -69,8 +69,8 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 <div class="col col-md-8">
 
 <form class="mb-4"  method="post" action="." enctype="multipart/form-data">
-	<div class="row justify-content-center">
-		<div class="col col-5">
+	<div class="row gx-3 justify-content-md-center">
+		<div class="col col-md-3">
 			<div class="form-floating">
 			<select class="form-select" id="floatingselect" name="month" aria-label="floating label select example">
 
@@ -107,7 +107,7 @@ foreach($month_map as $m => $mon) {
 			<label for="floatingselect">Měsíc</label>
 		</div>
 		</div>
-		<div class="col col-5">
+		<div class="col col-md-3">
 			<div class="form-floating">
 			<select class="form-select" id="floatingselect" name="year" aria-label="floating label select example">
 
@@ -129,7 +129,7 @@ foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
 			<label for="floatingselect">Rok</label>
 		</div>
 		</div>
-		<div class="col col-2 align-self-center">
+		<div class="d-grid col col-md-2 align-self-center">
 			<button class="btn btn-danger" type="submit">Zobrazit</button>
 		</div>
 	</div>
