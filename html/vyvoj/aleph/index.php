@@ -35,12 +35,12 @@
 </nav>
    
 <main class="container">
-<div class="container px-4 py-2" id="icon-grid">
+<div class="container p-2" id="icon-grid">
 
 <form>
 
-<div class="row my-4 justify-content-center">
-	<div class="col-md-6">
+<div class="row mt-4 justify-content-center">
+	<div class="col-md-5">
 		<div class="d-grid gap-2 d-sm-flex">
 			<input type="radio" class="btn-check" id="uclo" name="core" value="UCLO" checked>
 			<label class="btn btn-outline-danger w-100" for="uclo">UCLO</label>
@@ -50,21 +50,22 @@
 	</div>
 </div>
 
-<div class="row my-4 justify-content-center">
-	<div class="col-6">
+<div class="row mt-3 justify-content-center">
+	<div class="col col-md-6">
 		<div class="form-floating">
 			<input type="text" class="form-control" id="q" name="q" value=""><label for="q">Podmínka</label>
+		</div>
 	</div>
 </div>
 
-<div class="row my-4 justify-content-center">
-	<div class="col-md-2">
-	<div class="d-grid gap-2 d-sm-flex">
+<div class="row mt-3 gx-2 justify-content-center">
+	<div class="col-4 col-md-1">
 		<input type="radio" class="btn-check" id="or" name="op" value="UCLO" checked>
 		<label class="btn btn-outline-danger w-100" for="or">OR</label>
+	</div>
+	<div class="col-4 col-md-1">
 		<input type="radio" class="btn-check" id="and" name="op" value="CLO">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="and">AND</label>
-	</div>
 	</div>
 </div>
 
@@ -259,13 +260,13 @@
         <div class="col-md-6">
                 <div class="d-grid gap-2 d-sm-flex">
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="q" value=""><label for="q">Počet řádků</label>
+				<input type="text" class="form-control" id="q" name="q" value="10"><label for="q">Počet řádků</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="q" value=""><label for="q">Oddělovač polí.</label>
+				<input type="text" class="form-control" id="q" name="q" value=";"><label for="q">Oddělovač polí.</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="q" value=""><label for="q">Oddělovač hodnot.</label>
+				<input type="text" class="form-control" id="q" name="q" value="#"><label for="q">Oddělovač hodnot.</label>
 			</div>
                 </div>
         </div>
