@@ -99,6 +99,8 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 
 </main>
 
+<script src="bootstrap.min.js"></script>
+
 </body>
 </html>
 

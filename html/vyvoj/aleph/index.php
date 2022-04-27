@@ -1,3 +1,91 @@
+<?php
+
+session_start();
+
+$_SESSION['page'] = 'aleph';
+
+if(empty($_SESSION['auth'])) {
+	header('Location: /vyvoj');
+	exit();
+}
+
+if(!in_array($_SESSION['group'], array('admin','form','nkp','solr'))) {
+	$_SESSION['error'] = True;
+	header('Location: /vyvoj/main/');
+	exit();
+}
+
+$error=False;
+
+if (!empty($_POST)) {
+
+	$url='http://localhost:8983/solr/' . $_POST['index'] . '/select';
+
+	$wt='wt=' . $_POST['wt'];
+
+	$csv_separator='csv.separator=' . urlencode(';');
+	if (!empty($_POST['csv-separator'])) { $csv_separator='csv.separator=' . urlencode($_POST['csv-separator']); }
+	$csv_mv_separator='csv.mv.separator=' . urlencode('#');
+	if (!empty($_POST['csv-mv-separator'])) { $csv_mv_separator='csv.mv.separator=' . urlencode($_POST['csv-mv-separator']); }
+
+	$q_op='q.op=' . $_POST['op'];
+
+	$fl='fl=id';
+	$select=array();
+	$default=array('index','op','rows','csv-separator','csv-mv-separator','wt');
+	foreach($_POST as $key=>$val) {
+		if (!in_array($key, $default)) {
+			if (strpos($key, 'query') === false) {
+				array_push($select, $key) ;
+			}
+		}	
+	}
+	if (!empty($select)) { $fl=$fl . urlencode(',' . implode(',', $select)); }
+
+	$q='q=';
+	$query=array();
+	foreach($_POST as $key=>$val) {
+		if (strpos($key, 'query') !== false) {
+			if (!empty($val)) {
+				array_push($query, $val);
+			}
+		}
+	}
+	if (!empty($query)) {
+		$q.=urlencode(implode(' ' . $q_op  . ' ', $query));
+	} else { $q.=urlencode('*:*'); }
+	
+	$rows='rows=10';
+	if (!empty($_POST['rows'])) {
+		if (intval($_POST['rows']) > 0) { $rows='rows=' . strval(intval($_POST['rows'])); }
+	} else { $rows='rows=1000000'; }
+
+	$params=array($csv_separator, $csv_mv_separator, $fl, $q_op, $q, $rows, $wt);
+
+	$request=$url . '?' . implode('&', $params);
+
+	//print($request);
+	//exit();	
+
+	$context = stream_context_create(array('http'=>array('method'=>'GET')));
+
+	$fp = fopen($request, 'r', false, $context);
+
+	if ($fp != false) {
+	
+		header('Content-type: application/octet-stream; charset=UTF-8');
+		header('Content-disposition: attachment;filename=' . $_POST['index'] . '-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
+		while(!feof($fp)) {
+			$buffer = fread($fp, 2048);
+			print $buffer;
+		}
+		fclose($fp);
+		exit();
+	} else { $error=True; }
+}
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -38,7 +126,11 @@
 <div class="row my-4 justify-content-center">
 <div class="col col-md-6">
 
-<form>
+<form method="post" action="." enctype="multipart/form-data">
+
+<?php
+	if($error) { echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Neplatný dotaz.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'; }
+?>
 
 <div class="row mt-4 justify-content-center">
 	<div class="col-md-8">
@@ -71,69 +163,108 @@
 </div>
 
 <h4 class="my-2">Pole</h4>
-
 <div class="row row-cols-sm-5 mx-2 my-3">
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
-<div class="col-2 col-md-2">
-	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR</label>
-	</div>
-</div>
+
+<?php
+
+$field = [
+	'Pole' => array('LDR','001','003','005','008','015','020','022','035','040','041','044','072','080','100','110','111','130',
+	'245','246','250','260','264','300','336','337','338','490','500','505','506','520','599','600','610','611','630','648','650',
+	'651','653','655','700','710','711','730','773','787','830','856','910','928','961','964','990','994','LKR','OWN','CAT','SYS',
+	'SIF','STA','ZAZ','ZAR')
+];
+
+foreach($field as $name=>$tags) {
+	foreach($tags as $t) {
+		echo '<div class="col-3 col-md-2"><div class="form-check">'
+		. '<input class="form-check-input" type="checkbox" id="' . $t . '" name="field_' . $t . '" value="1">'
+		. '<label class="form-check-label" for="'. $t . '">' . $t . '</label>'
+		. '</div></div>';
+	}
+}
+
+?>
 
 </div>
 
 <h4 class="my-2">Podpole</h4>
+<div class="row row-cols-sm-5 mx-2 my-3">
+
+<?php
+
+$subfield = [
+	'100' => array('4'),
+	'110' => array('4'),
+	'111' => array('4'),
+	'245' => array('a','b','c','n','p'),
+	'505' => array('t','r','g'),
+	'700' => array('4'),
+	'710' => array('4'),
+	'711' => array('4'),
+	'773' => array('a','t','x','n','b','d','h','k','g','q','z','y','9'),
+	'787' => array('i','a','t','n','b','d','h','k','g','z','y','4')
+];
+
+foreach($subfield as $field=>$subs) {
+	foreach($subs as $s) {
+		echo '<div class="col-3 col-md-2"><div class="form-check">'
+		. '<input class="form-check-input" type="checkbox" id="' . $field . '-' . $s . '" name="subfield_'.$field . '-' . $s . '" value="1">'
+		. '<label class="form-check-label" for="'. $field . '-' . $s . '">' . $field . '-' . $s . '</label>'
+		. '</div></div>';
+	}
+}
+
+?>
+
+</div>
 
 <h4 class="my-2">Ostatní</h4>
+<div class="row row-cols-sm-5 mx-2 my-3">
+<div class="col-3 col-md-3">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">LDR-8</label>
+	</div>
+</div>
+<div class="col-3 col-md-3">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">008-16</label>
+	</div>
+</div>
+<div class="col-3 col-md-3">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">008-7</label>
+	</div>
+</div>
+<div class="col-3 col-md-3">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">008-811</label>
+	</div>
+</div>
+<div class="col-3 col-md-3">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">008-815</label>
+	</div>
+</div>
+<div class="col-3 col-md-3">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">008-1618</label>
+	</div>
+</div>
+<div class="col-3 col-md-3">
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<label class="form-check-label" for="inlineCheckbox1">0083638</label>
+	</div>
+</div>
+</div>
 
+<h4 class="my-2">Výstup</h4>
 <div class="row my-4 justify-content-center">
         <div class="col">
                 <div class="d-grid gap-2 d-sm-flex">
