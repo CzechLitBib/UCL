@@ -135,10 +135,10 @@ if (!empty($_POST)) {
 <div class="row mt-4 justify-content-center">
 	<div class="col-md-8">
 		<div class="d-grid gap-2 d-sm-flex">
-			<input type="radio" class="btn-check" id="uclo" name="core" value="UCLO" checked>
+			<input type="radio" class="btn-check" id="uclo" name="index" value="uclo" checked>
 			<label class="btn btn-outline-danger w-100" for="uclo">UCLO</label>
-			<input type="radio" class="btn-check" id="clo" name="core" value="CLO">
-			<label class="btn btn-outline-danger text-nowrap w-100" for="clo">CLO</label>
+			<input type="radio" class="btn-check" id="uclec" name="index" value="uclec">
+			<label class="btn btn-outline-danger text-nowrap w-100" for="uclec">UCLEC</label>
 		</div>
 	</div>
 </div>
@@ -146,18 +146,18 @@ if (!empty($_POST)) {
 <div class="row mt-3 justify-content-center">
 	<div class="col col-md">
 		<div class="form-floating">
-			<input type="text" class="form-control" id="q" name="q" value=""><label for="q">Podmínka</label>
+			<input type="text" class="form-control" id="q" name="query0" value=""><label for="q">Podmínka</label>
 		</div>
 	</div>
 </div>
 
 <div class="row mt-3 gx-2 justify-content-center">
 	<div class="col-4 col-md-2">
-		<input type="radio" class="btn-check" id="or" name="op" value="UCLO" checked>
+		<input type="radio" class="btn-check" id="or" name="op" value="OR" checked>
 		<label class="btn btn-outline-danger w-100" for="or">OR</label>
 	</div>
 	<div class="col-4 col-md-2">
-		<input type="radio" class="btn-check" id="and" name="op" value="CLO">
+		<input type="radio" class="btn-check" id="and" name="op" value="AND">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="and">AND</label>
 	</div>
 </div>
@@ -187,6 +187,7 @@ foreach($field as $name=>$tags) {
 
 </div>
 
+<hr/>
 <h4 class="my-2">Podpole</h4>
 <div class="row row-cols-sm-5 mx-2 my-3">
 
@@ -218,6 +219,7 @@ foreach($subfield as $field=>$subs) {
 
 </div>
 
+<hr/>
 <h4 class="my-2">Ostatní</h4>
 <div class="row row-cols-sm-5 mx-2 my-3">
 <div class="col-3 col-md-3">
@@ -264,23 +266,38 @@ foreach($subfield as $field=>$subs) {
 </div>
 </div>
 
+<hr/>
 <h4 class="my-2">Výstup</h4>
 <div class="row my-4 justify-content-center">
         <div class="col">
                 <div class="d-grid gap-2 d-sm-flex">
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="q" value="10"><label for="q">Počet řádků</label>
+				<input type="text" class="form-control" id="q" name="rows" value="10"><label for="q">Počet řádků</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="q" value=";"><label for="q">Oddělovač polí.</label>
+				<input type="text" class="form-control" id="q" name="csv-separator" value=";"><label for="q">Oddělovač polí.</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="q" value="#"><label for="q">Oddělovač hodnot.</label>
+				<input type="text" class="form-control" id="q" name="csv-mv-separator" value="#"><label for="q">Oddělovač hodnot.</label>
 			</div>
                 </div>
         </div>
 </div>
 
+<div class="row mt-4 justify-content-center">
+	<div class="col-md-8">
+		<div class="d-grid gap-2 d-sm-flex">
+			<input type="radio" class="btn-check" id="csv" name="wt" value="csv" checked>
+			<label class="btn btn-outline-danger w-100" for="csv">CSV</label>
+			<input type="radio" class="btn-check" id="json" name="wt" value="json">
+			<label class="btn btn-outline-danger text-nowrap w-100" for="json">JSON</label>
+			<input type="radio" class="btn-check" id="xml" name="wt" value="xml">
+			<label class="btn btn-outline-danger text-nowrap w-100" for="xml">XML</label>
+		</div>
+	</div>
+</div>
+
+<hr/>
 <div class="d-grid col-md-4 mx-auto my-4">
 	<button type="submit" class="btn btn-danger">Odeslat</button>
 </div>
