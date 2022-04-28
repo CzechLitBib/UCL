@@ -146,7 +146,7 @@ if (!empty($_POST)) {
 <div class="row mt-3 justify-content-center">
 	<div class="col col-md">
 		<div class="form-floating">
-			<input type="text" class="form-control" id="q" name="query0" value=""><label for="q">Podmínka</label>
+			<input type="text" class="form-control" id="q" name="query0" value="<?php if (isset($_POST['query0'])) { echo htmlspecialchars($_POST['query0'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="q">Podmínka</label>
 		</div>
 	</div>
 </div>
