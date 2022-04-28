@@ -4,6 +4,8 @@ PHP7 frontend.
 
 TODO
 <pre>
+
+-Code cleanup.
 INPUT - Focus border color.
 MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
