@@ -4,7 +4,7 @@ PHP7 frontend.
 
 TODO
 <pre>
-
+-Nginx errors.
 -Code cleanup.
 MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
