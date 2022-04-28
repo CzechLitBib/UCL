@@ -6,10 +6,9 @@ TODO
 <pre>
 
 -Code cleanup.
-INPUT - Focus border color.
 MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
-F-DATA - pagiantion+color, DB date, switch+color.
+F-DATA - pagiantion+color, DB date, switch align + off color.
 </pre>
 
 INSTALL
