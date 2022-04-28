@@ -3,6 +3,10 @@ DESCRIPTION
 
 MARC-XML / OAI-PMH toolkit.
 
+TODO
+
+seven-xml - Do not drom empty stat.
+
 INSTALL
 <pre>
 # EXTRA

@@ -4,10 +4,10 @@ PHP7 frontend.
 
 TODO
 <pre>
-7/NKP - Stat.
+INPUT - Focus border color.
+MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
 F-DATA - pagiantion+color, DB date, switch+color.
-ALEPH - checkbox color.
 </pre>
 
 INSTALL
