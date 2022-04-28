@@ -75,7 +75,7 @@ api.representations['application/ocetet-stream'] = output_raw
 class API(Resource):
 	def get(self):
 		headers = {'Content-Type': 'text/html'}
-		return make_response(render_template('/help.html'), 200, headers)
+		return make_response(render_template('/api.html'), 200, headers)
 
 class GetDeletes(Resource):
 	def get(self):
