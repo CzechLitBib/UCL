@@ -8,7 +8,7 @@ TODO
 -Code cleanup.
 MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
-F-DATA - pagiantion+color, DB date, switch align + off color.
+F-DATA - pagiantion+color, switch off color.
 </pre>
 
 INSTALL

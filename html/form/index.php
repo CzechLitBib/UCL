@@ -26,8 +26,8 @@ if ($valid) {
 		if (isset($_POST['public'])) { $public = 1; }
 			
 		$query = $db->exec("
-			INSERT INTO data (id,valid,type,public,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote)"
-			. " VALUES ('" . $id . "',0,'" . $_POST['type'] . "'," . $public . ",'" 
+			INSERT INTO data (id,valid,format,public,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote)"
+			. " VALUES ('" . $id . "',0,'" . $_POST['format'] . "'," . $public . ",'" 
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
@@ -137,11 +137,11 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 
 <div class="row my-4">
 	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
-		<input type="radio" class="btn-check" id="article" name="format" value="article" onclick="format_load();" checked>
+		<input type="radio" class="btn-check" id="article" name="format" value="článek" onclick="format_load();" checked>
 		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
-		<input type="radio" class="btn-check" id="chapter" name="format" value="chapter" onclick="format_load();" >
+		<input type="radio" class="btn-check" id="chapter" name="format" value="část knihy" onclick="format_load();" >
 		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
-		<input type="radio" class="btn-check" id="book" name="format" value="book" onclick="format_load();">
+		<input type="radio" class="btn-check" id="book" name="format" value="kniha" onclick="format_load();">
 		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
 	</div>
 </div>
