@@ -8,7 +8,10 @@
 /* Danger CVG icons hover */
 
 .bi-file-earmark-binary:hover, .bi-file-earmark-binary:focus,
-.bi-bar-chart:hover, .bi-bar-chart:focus
+.bi-bar-chart:hover, .bi-bar-chart:focus,
+.bi-filetype-pdf:hover, .bi-filetype-pdf:focus,
+.bi-filetype-csv:hover, .bi-filetype-scv:focus,
+.bi-arrow-up-right-square:hover, .bi-arrow-up-right-square:focus
 {
   color: #dc3545;
 }
@@ -24,9 +27,22 @@
  border-color: #dc3545;
 }
 
+/* Danger switch
+
+.form-switch .form-check-input:checked {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='white'/></svg>");
+}
+
+.form-switch .form-check-input:focus {
+ background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='pink'/%3e%3c/svg%3e")
+}
+
+*/
+
 /* Danger forms */
 
-.form-control:focus
+.form-control:focus,
+.form-select:focus
 {
   border-color: #dc3545;
   box-shadow:0 0 0 .25rem rgba(220,53,69,.25);
