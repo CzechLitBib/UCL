@@ -41,10 +41,11 @@ if (!$db) {
 	$result = $db->query("SELECT id,label,text FROM error");
         
 	while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
-		echo '<div class="card my-2"><div class="card-body"><div class="row"><div class="col-2 col-md-1">';
-		echo '<h5 class="card-title text-danger text-nowrap" id="' . $res['id'] . '">' . $res['id'] . '</h5>';
-		echo '</div><div class="col"><h5 class="card-title">' . $res['label'] . '</h5>';
-		echo '<p class="card-text">' . $res['text'] . '</p></div></div></div></div>';
+		echo '<div class="card my-2"><div class="card-body"><div class="row"><div class="col-2 col-md-1">'
+		. '<h5 class="card-title text-danger text-nowrap">' . $res['id'] . '</h5>'
+		. '</div><div class="col"><h5 class="card-title">' . $res['label'] . '</h5>'
+		. '<p class="card-text">' . $res['text'] . '</p></div></div></div></div>';
+		echo '<a class="anchor" id="' . $res['id'] . '"></a>';
         }
         
 	$db->close();
