@@ -156,7 +156,7 @@ if(empty($_SESSION['auth'])) {
 	</a>
         <div>
           <h4 class="fw-bold mb-0">Aleph Solr</h4>
-          <p>Rychlé vyhledávací rozhraní pro UCLO set.</p>
+          <p>Rychlé vyhledávací rozhraní pro Aleph set.</p>
         </div>
       </div>
 
