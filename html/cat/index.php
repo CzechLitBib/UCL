@@ -65,7 +65,7 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 </nav>
    
 <main class="container">
-<div class="row my-4 justify-content-center">
+<div class="row mt-4 justify-content-center">
 <div class="col col-md-8">
 
 <form class="mb-4"  method="post" action="." enctype="multipart/form-data">
@@ -136,6 +136,9 @@ foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
 </form>
 
 </div>
+</div>
+<div class="row mb-4 justify-content-center">
+<div class="col">
 
 <?php
 
@@ -169,12 +172,14 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
 			}
 			echo '</tbody></table>';
 		} else {
-			echo '<div class="col col-md-8"><div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div></div>';
+			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 		}
 	}
 }
 
 ?>
+</div>
+</div>
 
 </main>
 
