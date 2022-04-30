@@ -9,16 +9,16 @@ from pymarc import marcxml,MARCReader
 
 # VAR -------------------
 
-XML='ucla.xml'
-#MARC='CLO.mrc'
-DATA='/var/www/html/uclo/data'
-#DATA='/var/www/html/clo/data'
+#XML='ucla.xml'
+MARC='CLO.mrc'
+#DATA='/var/www/html/uclo/data'
+DATA='/var/www/html/clo/data'
 
 TAGLIST = []
 
 # INIT -------------------
 
-#reader = MARCReader(file(MARC))
+reader = MARCReader(open(MARC,'rb'))
 
 # DEF -------------------
 
@@ -37,10 +37,10 @@ def validate(record):
 	else:
 		return
 
-	for F in record.get_fields('599'):
-		if 'a' in F and F['a'] == 'CLB-CPK': break
-	else:
-		return
+	#for F in record.get_fields('599'):
+	#	if 'a' in F and F['a'] == 'CLB-CPK': break
+	#else:
+	#	return
 
 	for tag, value, seven in [(f.tag, get_value(f), f['7']) for f in record.fields]:
 		if tag != '653' and re.match('(1..|6..|700|710|711|730)', tag):
@@ -62,12 +62,12 @@ def validate(record):
 
 # MAIN -------------------
 
-marcxml.map_xml(validate, XML)
+#marcxml.map_xml(validate, XML)
 
-#for rec in reader:
-#	validate(rec)
-#
-#reader.close()
+for rec in reader:
+	validate(rec)
+
+reader.close()
 
 for TAG in sorted(TAGLIST):
 
