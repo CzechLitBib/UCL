@@ -76,8 +76,6 @@ for TAG in sorted(TAGLIST):
 	DB = {}
 	SORT = {}
 
-	sort_csv = open(DATA + '/' + TAG + '.stat.csv', 'a')
-
 	if os.path.exists(DATA + '/' + TAG + '.csv'):
 		with open(DATA + '/' + TAG + '.csv', 'r') as f:
 			for line in f:
@@ -88,8 +86,8 @@ for TAG in sorted(TAGLIST):
 	for value in DB: SORT[value] = len(DB[value])
 
 	for value in sorted(SORT, key=SORT.get, reverse=True):
-		sort_csv.write(str(SORT[value]) + '||' + value + '\n')
-	sort_csv.close()
+		with open(DATA + '/' + TAG + '.stat.csv', 'a') as sort_csv:
+			sort_csv.write(str(SORT[value]) + '||' + value + '\n')
 
 	# SEVEN
 
@@ -108,6 +106,6 @@ for TAG in sorted(TAGLIST):
 	for value in DB: SORT[value] = len(DB[value])
 
 	for value in sorted(SORT, key=SORT.get, reverse=True):
-		sort_csv.write(str(SORT[value]) + '||' + value + '\n')
-	sort_csv.close()
+		with open(DATA + '/' + TAG + '.7.stat.csv', 'a') as sort_csv:
+			sort_csv.write(str(SORT[value]) + '||' + value + '\n')
 
