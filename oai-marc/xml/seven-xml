@@ -11,7 +11,7 @@ from pymarc import marcxml,MARCReader
 
 XML='ucla.xml'
 #MARC='CLO.mrc'
-DATA='/var/www/html/ucla/data'
+DATA='/var/www/html/uclo/data'
 #DATA='/var/www/html/clo/data'
 
 TAGLIST = []
@@ -104,7 +104,9 @@ for TAG in sorted(TAGLIST):
 				value,aleph = line.split('||')
 				if value not in DB: DB[value] = []
 				DB[value].append(aleph.strip())
-	# gen stat
+
+	for value in DB: SORT[value] = len(DB[value])
+
 	for value in sorted(SORT, key=SORT.get, reverse=True):
 		sort_csv.write(str(SORT[value]) + '||' + value + '\n')
 	sort_csv.close()
