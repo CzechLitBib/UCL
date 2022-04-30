@@ -93,8 +93,6 @@ for TAG in sorted(TAGLIST):
 
 	DB = {}
 	SORT = {}
-
-	sort_csv = open(DATA + '/' + TAG + '.7.stat.csv', 'a')
 	
 	if os.path.exists(DATA + '/' + TAG + '.7.csv'):
 		with open(DATA + '/' + TAG + '.7.csv', 'r') as f:
