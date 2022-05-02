@@ -59,22 +59,22 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 <?php
 
 if (isset($_POST['name']) and isset($_POST['pass'])) {
-        if (!$authorized) {
+	if (!$authorized) {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Přihlášení selhalo.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-        } else {
-                $_SESSION['auth'] = True;
-                $_SESSION['username'] = $_POST['name'];
+	} else {
+		$_SESSION['auth'] = True;
+		$_SESSION['username'] = $_POST['name'];
 
-                if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
-                if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'form'; }
-                if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
-                if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
+		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
+		if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'form'; }
+		if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
+		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
 
-                if(empty($_SESSION['page'])) { $_SESSION['page'] = '/main/'; }// default page
+		if(empty($_SESSION['page'])) { $_SESSION['page'] = '/main/'; }// default page
 
-                header('Location: ' . $_SESSION['page']);
-                exit();
-        }
+		header('Location: ' . $_SESSION['page']);
+		exit();
+	}
 }
 
 ?>

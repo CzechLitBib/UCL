@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+#
+# Convert Aleph 500 format to MARC21/XML
+#
+# FORMAT: NNNNNNNNN TTTII L DATA
+#
+
+import sys
+
+from pymarc import Field,MARCWriter,XMLWriter
+from pymarc.record import Record
+
+# INIT
+
+if len(sys.argv) != 3:
+	print("Usage: aleph2marc [source] [marcxml|marc21]")
+	sys.exit(1)
+
+if sys.argv[2] not in ['marcxml','marc21']:
+	print("Invalid target format.")
+	sys.exit(1)
+	
+try:
+	src = open(sys.argv[1],'rb')
+	src.close()
+except:
+	print("Failed to open source.")
+	sys.exit(1)
+
+# MAIN
+
+CNT=0
+
+with open(sys.argv[1],'rb') as f:
+	for line in f.readlines():
+		
+		# Decode UTF-8 BOM/ strip CRLF
+		line = line.decode('utf-8-sig').strip()
+		# Split line
+		ID = line[0:9]
+		TAG = line[10:13]
+		IND1 = line[13]
+		IND2 = line[14]
+		CONTROL = line[15:18]
+		DATA = line[18:]
+		SUB = []
+		if DATA[:2] == '$$':
+			for sub in DATA.split('$$')[1:]:
+				SUB.append(sub[0])
+				SUB.append(sub[1:])
+
+		CNT+=1
+		if CNT == 20: sys.exit(1)
+
