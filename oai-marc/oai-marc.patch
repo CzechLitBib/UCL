@@ -24,7 +24,7 @@
 +			BRACKET = len(re.findall('<<[^<>]*>>', metadata['245']['c']))
 +			for F in metadata.get_fields('505'):
 +				if 'r' in F: BRACKET += len(re.findall('<<[^<>]*>>', F['r']))
-+			for F in metadata.get_fields('593'):
++			for F in metadata.get_fields('594'):
 +				if 'x' in F: BRACKET += 1
 +			if BRACKET > 0:
 +				FC = 0
@@ -46,7 +46,7 @@
 -					if not (T == '<<>>' or '[=' in T or T[2].isupper()):
 -						write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
 +					if T != '<<>>' and T[2].islower():
-+						 if not re.match('.*' + T + '[^<>]+\[=.*', metadata['245']['c'])):
++						 if not re.match('.*' + T + '[^<>]+\[=.*', metadata['245']['c']):
 +							write_error(header.identifier(), '245', SIF, '191', 'Neplatný tag v podpoli 245c.')
  
  		# CPK
