@@ -2,7 +2,7 @@
 /* Black CVG icons */
 
 .bi {
-  color: #212529;
+	color: #212529;
 }
 
 /* Danger CVG icons hover */
@@ -13,18 +13,18 @@
 .bi-filetype-csv:hover, .bi-filetype-scv:focus,
 .bi-arrow-up-right-square:hover, .bi-arrow-up-right-square:focus
 {
-  color: #dc3545;
+	color: #dc3545;
 }
 
 /* Black pagination text */ 
 
 .page-link {
- color: #212529;
+	color: #212529;
 }
 
 .page-item.active .page-link {
- background-color: #dc3545;
- border-color: #dc3545;
+	background-color: #dc3545;
+	border-color: #dc3545;
 }
 
 /* Danger switch
@@ -51,21 +51,21 @@
 /* Danger checkbox */
 
 .form-check-input:focus {
- border-color: #dc3545;
- box-shadow:0 0 0 .25rem rgba(220,53,69,.25);
+	border-color: #dc3545;
+	box-shadow:0 0 0 .25rem rgba(220,53,69,.25);
 }
 
 .form-check-input:checked {
- background-color:#dc3545;
- border-color:#dc3545;
+	background-color:#dc3545;
+	border-color:#dc3545;
 }
 
 /* anchor */
 
 a.anchor {
-    display: block;
-    position: relative;
-    top: -150px;
-    visibility: hidden;
+	display: block;
+	position: relative;
+	top: -170px;
+	visibility: hidden;
 }
 
