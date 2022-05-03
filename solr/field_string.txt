@@ -9,6 +9,5 @@ field_111
 field_130
 field_245
 field_990
-field_994
 field_OWN
 field_ZAZ
