@@ -65,7 +65,6 @@ with open(sys.argv[1],'rb') as f:
 		# Record
 		if '001' in record:
 			if record['001'].value() != 'clo' + ID:
-				#print(record)
 				writer.write(record)
 				record = Record()
 		# LDR
@@ -83,5 +82,6 @@ with open(sys.argv[1],'rb') as f:
 
 		CNT+=1
 
+writer.write(record)# EOF record
 writer.close()
 
