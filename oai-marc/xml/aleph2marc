@@ -1,25 +1,21 @@
 #!/usr/bin/python3
 #
-# Convert Aleph 500 format to MARC21/XML
+# Convert Aleph 500 format to MARC21
 #
 # FORMAT: NNNNNNNNN TTTII L DATA
 #
 
-import sys
+import sys,re
 
 from pymarc import Field,MARCWriter,XMLWriter
 from pymarc.record import Record
 
 # INIT
 
-if len(sys.argv) != 3:
-	print("Usage: aleph2marc [source] [marcxml|marc21]")
+if len(sys.argv) != 2:
+	print("Usage: aleph2marc [source]")
 	sys.exit(1)
 
-if sys.argv[2] not in ['marcxml','marc21']:
-	print("Invalid target format.")
-	sys.exit(1)
-	
 try:
 	src = open(sys.argv[1],'rb')
 	src.close()
@@ -29,26 +25,63 @@ except:
 
 # MAIN
 
-CNT=0
+CNT=1
+
+writer = MARCWriter(open('CLO2.mrc', 'wb'))
 
 with open(sys.argv[1],'rb') as f:
+
+	record = Record()
+
 	for line in f.readlines():
-		
+	
 		# Decode UTF-8 BOM/ strip CRLF
 		line = line.decode('utf-8-sig').strip()
 		# Split line
-		ID = line[0:9]
-		TAG = line[10:13]
-		IND1 = line[13]
-		IND2 = line[14]
-		CONTROL = line[15:18]
-		DATA = line[18:]
-		SUB = []
-		if DATA[:2] == '$$':
-			for sub in DATA.split('$$')[1:]:
-				SUB.append(sub[0])
-				SUB.append(sub[1:])
+		if re.match('[0-9]{9} ...[ 01]{2} L .*', line):
+			ID = line[0:9]
+			TAG = line[10:13]
+			IND1 = line[13]
+			IND2 = line[14]
+			CONTROL = line[15:18]
+			DATA = line[18:]
+			SUB = []
+			if TAG not in ['001','003','005','006','007','008','FMT','VER','LDR']:
+				if DATA[:2] == '$$':
+					for sub in DATA.split('$$')[1:]:
+						if len(sub) < 2:
+							print("Broken subfield: " + str(CNT))
+							continue
+						SUB.append(sub[0])
+						SUB.append(sub[1:])
+				else:
+					print("Broken field: " + str(CNT))
+					CNT+=1
+					continue
+		else:
+			print("Broken line: " + str(CNT))
+			CNT+=1
+			continue
+		# Record
+		if '001' in record:
+			if record['001'].value() != 'clo' + ID:
+				#print(record)
+				writer.write(record)
+				record = Record()
+		# LDR
+		if TAG == 'LDR':
+			record.leader = DATA.replace('-',' ')
+		# Control field
+		elif TAG in ['001','003','005','006','007','008','FMT','VER']:
+			if TAG == '008': DATA=DATA.replace('-',' ')
+			field = Field(tag = TAG, data=DATA)
+			record.add_ordered_field(field)
+		elif SUB:
+		# Field
+			field = Field(tag = TAG, indicators = [IND1, IND2], subfields = SUB)
+			record.add_ordered_field(field)
 
 		CNT+=1
-		if CNT == 20: sys.exit(1)
+
+writer.close()
 
