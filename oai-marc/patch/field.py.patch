@@ -4,7 +4,7 @@
          # assume controlfields are numeric only; replicates ruby-marc behavior
          if self.tag < '010' and self.tag.isdigit():
              self.data = data
-+	elif self.tag in ['FMT']:
++	elif self.tag in ['FMT','VER']:
 +            self.data = data
          else:
              self.indicators = indicators
@@ -13,7 +13,7 @@
          Returns true or false if the field is considered a control field.
          Control fields lack indicators and subfields.
          """
-+	if self.tag in ['FMT']: return True
++	if self.tag in ['FMT','VER']: return True
 +
          if self.tag < '010' and self.tag.isdigit():
              return True
