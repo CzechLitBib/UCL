@@ -109,8 +109,9 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	{
 		$spec = new SpecBuilder();
 		$spec->setTemplateLine('Use for', 'getUseFor','data-usefor.phtml');
-		$spec->setTemplateLine('Birth', 'CLB_getBirth','data-birth.phtml');
-		$spec->setTemplateLine('Death', 'CLB_getDeath','data-death.phtml');
+		$spec->setLine('Birth', 'CLB_getBirth');
+		$spec->setLine('Death', 'CLB_getDeath');
+		$spec->setLine('Bio', 'CLB_getBio');
 		return $spec->getArray();
 	}
 

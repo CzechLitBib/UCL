@@ -16,8 +16,8 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 
 		if (isset($this->fields['birth_place'])) { $place = $this->fields['birth_place']; }
 
-		if (!empty($date) or !($empty($place)) {
-			return trim('*' . $date . ' ' . $place);
+		if (!empty($date) or !empty($place)) {
+			return trim('* ' . $date . ' ' . $place);
 		}
 
 		return '';
@@ -34,11 +34,15 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 
 		if (isset($this->fields['death_place'])) { $place = $this->fields['death_place']; }
 
-		if (!empty($date) or !($empty($place)) {
-			return trim('*' . $date . ' ' . $place);
+		if (!empty($date) or !empty($place)) {
+			return trim('† ' . $date . ' ' . $place);
 		}
 
 		return '';
+	}
+
+	public function CLB_getBio() { // BIO
+		return $this->getFieldArray('678', ['a']);
 	}
 
 }

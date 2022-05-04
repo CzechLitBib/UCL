@@ -5,13 +5,14 @@
 /root/bin/vufind-auth-update.sh
 
 /usr/local/vufind/themes/CLB/templates/RecordDriver/SolrAuthDefault/result-list.phtml
+/usr/local/vufind/themes/CLB/templates/RecordDriver/SolrAuthDefault/data*.phtml
 
 php public/index.php generate/extendclass VuFind\\RecordDriver\\SolrAuthMarc CLB
 
-/usr/local/vufind/module/CLB/config/module.config.php
 /usr/local/vufind/module/CLB/src/RecordDriver/SolrAuthMarc.php
-
 /usr/local/vufind/module/CLB/src/CLB/View/Helper/Root/RecordDataFormatterFactory.php
+
+(reload nginx)
 
 /usr/local/vufind/local/config/vufind/authority.ini
 
