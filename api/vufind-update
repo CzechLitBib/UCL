@@ -34,11 +34,18 @@ def MarcXML(xml):
 	marcxml.parse_xml(io.StringIO(tostring(xml).decode('utf-8')), handler)
 	return handler.records[0]
 
+def name_invert(s,ID):
+	if len(s.split(',')) == 2:
+		return s.split(',')[1].strip() + ' ' + s.split(',')[0].strip() 
+	else:
+		print(ID, '#Multiple comma.')
+	return s
+
 def name_to_upper(s,ID):
 	if len(s.split(',')) == 2:
 		return s.split(',')[0].strip().upper() + ', ' + s.split(',')[1].strip() 
 	else:
-		if '[=' in s: print(ID, '#Multiple comma.')
+		print(ID, '#Multiple comma.')
 	return s
 
 def word_to_upper(s):
@@ -157,6 +164,37 @@ for record in records:
 	if MBK:
 		metadata.add_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
 
+	# 594
+	if '245' in metadata and 'c' in metadata['245']:
+		AUT = []
+		for F in metadata.get_fields('100','700'):
+			if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+			AUT.append(F)
+		LHT = re.findall('<<[^<>]*>>', metadata['245']['c'])
+		for F in metadata.get_fields('505'):
+			if 'r' in F: LHT+=re.findall('<<[^<]*>>', F['r'])
+		if len(LHT) > 0 and len(LHT) <= len(AUT) and '594' not in metadata:# tag
+			for LH in LHT:
+				if re.match('<<\[.*\]>>', LH): LH = 'Nepodepsáno.'# [] tag
+				if LH == '<<>>': LH = name_invert(AUT[0]['a'], ident)# <<>> tag
+				SUB=['x', re.sub('<<([^<>]*)>>', '\\1', LH)]
+				SUB+=AUT[0].subfields
+				metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
+				AUT=AUT[1:]# shift
+		if len(LHT) == 0 and len(AUT) > 0 and '594' not in metadata:# no tag
+			if len(AUT) == 1 and AUT[0].tag == '100':
+				SUB = ['x', metadata['245']['c'].strip('.')]
+				SUB += AUT[0].subfields
+				metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
+			else:
+				LHT = re.findall('[^,]*\[[^\[\]]*\][^,]*', metadata['245']['c'])
+				if len(LHT) <= len(AUT):# overflow
+					for LH in LHT:
+						SUB=['x', LH.strip(' .')]
+						SUB += AUT[0].subfields
+						metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
+						AUT=AUT[1:]# shift
+
 	# 100/505/600/700 remove << >>
 	for F in metadata.get_fields('100', '505', '600', '700'):
 		LHT = False
@@ -168,43 +206,11 @@ for record in records:
 		if LHT:
 			F.subfields = SUB
 	
-	# 593
-	#if '593' not in metadata:
-	#	if '700' in metadata and '245' in metadata and 'c' in metadata['245']:
-	#		for F in metadata.get_fields('506'):
-	#			if '190' in F.get_subfields('a') or '191' in F.get_subfields('a'): break
-	#		else:
-	#			AUT = metadata.get_fields('100','700')
-	#			LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
-	#			for F in metadata.get_fields('505'):
-	#				if 'r' in F: LHT+=re.findall('<<[^<]*>>', F['r'])
-	#			if len(LHT) > 0 and len(LHT) <= len(AUT):
-	#				for LH in LHT:
-	#					O,B,C,SUB='Nepodepsáno.','','',[]
-	#					if '<<>>' not in LH: O=re.sub('<<([^<]*)>>', '\\1', LH)#O
-	#					SUB+=['o', O]
-	#					if 'a' in AUT[0]: SUB+=['a', AUT[0]['a']]#A
-	#					B=' '.join(AUT[0].get_subfields('b', 'c', 'd', 'g', 'x', 'q', 'j')[0::2])#B
-	#					if B: SUB+=['b', B]
-	#					if '7' in AUT[0]: SUB+=['c', AUT[0]['7']]#C
-	#					metadata.add_field(Field(tag='593', indicators=[' ',' '], subfields=SUB))
-	#					AUT=AUT[1:]
 	# 245c remove <<>>
-	#if '245' in metadata and 'c' in metadata['245']:
-	#	LHT = re.findall('<<[^<]*>>', metadata['245']['c'])
-	#	if LHT:
-	#		metadata['245']['c'] = re.sub('<<([^<]*)>>', '\\1', metadata['245']['c'])
-
 	if '245' in metadata and 'c' in metadata['245']:
 		LHT = re.findall('<<[^<>]*>>', metadata['245']['c'])
 		if LHT:
 			metadata['245']['c'] = re.sub('<<([^<>]*)>>', '\\1', metadata['245']['c'])	
-		for LH in LHT:
-			SUB = re.findall('<<([^>[]+)', LH)
-			if SUB:
-				metadata.add_field(Field(tag='593', indicators=[' ',' '],
-					subfields=['a', SUB[0].strip()]
-				))
 
 	# 592
 	#if '630' in metadata and 'a' in metadata['630']:
@@ -222,8 +228,8 @@ for record in records:
 	#			metadata.add_field(Field(tag='592', indicators=[' ',' '],
 	#				subfields=['a', F['t'], 'b', F['4']]
 	#			))
-	# Citace
 
+	# QUOTE
 	BROKEN=False
 	
 	#BASE
