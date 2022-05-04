@@ -70,6 +70,8 @@ with open(sys.argv[1],'rb') as f:
 		# LDR
 		if TAG == 'LDR':
 			record.leader = DATA.replace('-',' ')
+		# POS
+		if TAG == 'POS': continue
 		# Control field
 		elif TAG in ['001','003','005','006','007','008','FMT','VER']:
 			if TAG == '008': DATA=DATA.replace('-',' ')
