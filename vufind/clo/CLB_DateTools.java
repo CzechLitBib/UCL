@@ -35,7 +35,6 @@ public class CLB_DateTools
 {
     private DateTimeFormatter marc005date = DateTimeFormatter.ofPattern("yyyyMMddHHmmss.S");
     private DateTimeFormatter marc008date = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private DateTimeFormatter marc046date = DateTimeFormatter.ofPattern("yyyyMMdd");
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");//TODO: regular ISO_INSTANT
 
     private String normalize005Date(String input)
@@ -77,10 +76,15 @@ public class CLB_DateTools
 
     private String normalize046Date(String input)
     {
+	if (input.length() == 4) {
+		return String.format("%-8s", input).replace(' ', '0');/* right pad with zero */
+	} else {
+		return String.format("%8s", input).replace(' ', '0');/* left pad with zero */
+	}
 
-	String date;
+	/*String date;
 
-	date = String.format("%8s", input).replace(' ','0');/* left pad with zero */
+	date = String.format("%8s", input).replace(' ','0'); left pad with zero
 
         LocalDateTime retVal;
        	try {
@@ -88,7 +92,7 @@ public class CLB_DateTools
         } catch(java.lang.StringIndexOutOfBoundsException | java.time.format.DateTimeParseException e) {
             retVal = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         }
-        return retVal.format(formatter);
+        return retVal.format(formatter); */
     }
 
     /**
@@ -97,18 +101,21 @@ public class CLB_DateTools
      * @return Birth date.
      */
     public String CLB_getBirthDate(Record record) {
-     
-        List<VariableField> list046 = record.getVariableFields("046");
-        if (list046 != null && !list046.isEmpty()) {
-           DataField first;
-           first = (DataField) list046.get(0);
-           List<Subfield> subfields = first.getSubfields('f');
-           if (subfields != null && !subfields.isEmpty()) {
-              return normalize046Date(subfields.get(0).getData());
-           }
+    
+        List<VariableField> fields = record.getVariableFields("046");
+        Iterator<VariableField> fieldsIter = fields.iterator();
+        if (fields != null) {
+            DataField field;
+            while(fieldsIter.hasNext()) {
+                field = (DataField) fieldsIter.next();
+                List<Subfield> subfields = field.getSubfields('f');
+                if (subfields != null && !subfields.isEmpty()) {
+                    return normalize046Date(subfields.get(0).getData());
+                }
+            }
         }
 
-        return LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).format(formatter);
+        return "0";
     }
 
     /**
@@ -118,17 +125,20 @@ public class CLB_DateTools
      */
     public String CLB_getDeathDate(Record record) {
      
-        List<VariableField> list046 = record.getVariableFields("046");
-        if (list046 != null && !list046.isEmpty()) {
-           DataField first;
-           first = (DataField) list046.get(0);
-           List<Subfield> subfields = first.getSubfields('g');
-           if (subfields != null && !subfields.isEmpty()) {
-              return normalize046Date(subfields.get(0).getData());
-           }
+        List<VariableField> fields = record.getVariableFields("046");
+        Iterator<VariableField> fieldsIter = fields.iterator();
+        if (fields != null) {
+            DataField field;
+            while(fieldsIter.hasNext()) {
+                field = (DataField) fieldsIter.next();
+                List<Subfield> subfields = field.getSubfields('g');
+                if (subfields != null && !subfields.isEmpty()) {
+                    return normalize046Date(subfields.get(0).getData());
+                }
+            }
         }
 
-        return LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).format(formatter);
+        return "0";
     }
 
     /**
