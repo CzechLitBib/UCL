@@ -22,7 +22,9 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$helper->setDefaults('techdata', [$this, 'getDefaultTechDataSpecs']);
 
 		// Authority
+		$helper->setDefaults('auth-core', [$this, 'getDefaultAuthCoreSpecs']);
 		$helper->setDefaults('search-auth-info', [$this, 'getDefaultSearchAuthInfoSpecs']);
+
 		return $helper;
 	}
 
@@ -88,6 +90,13 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 		$spec->setTemplateLine('Finished Excerption', 'CLB_getFinishedExcerption', 'data-excerption.phtml');
 		$spec->setLine('Citation','CLB_getCitation');
 		$spec->setTemplateLine('Relations', 'CLB_getRelations', 'data-relations.phtml');
+		return $spec->getArray();
+	}
+
+	// AUTH CORE
+	public function getDefaultAuthCoreSpecs()
+	{
+		$spec = new SpecBuilder();
 		return $spec->getArray();
 	}
 

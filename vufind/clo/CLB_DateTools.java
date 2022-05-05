@@ -115,7 +115,7 @@ public class CLB_DateTools
             }
         }
 
-        return "0";
+        return "00000000";
     }
 
     /**
@@ -138,7 +138,7 @@ public class CLB_DateTools
             }
         }
 
-        return "0";
+        return "00000000";
     }
 
     /**

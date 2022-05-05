@@ -3,6 +3,16 @@
 # on the workings of this file, see the comments in searchspecs.yaml.
 #-----------------------------------------------------------------------------------
 
+AuthBirthPlace:
+  DismaxFields:
+    - birth_place
+  DismaxHandler: edismax
+
+AuthDeathPlace:
+  DismaxFields:
+    - death_place
+  DismaxHandler: edismax
+
 AuthBirth:
   DismaxFields:
     - birth_date_str
