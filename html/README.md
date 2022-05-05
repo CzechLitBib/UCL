@@ -7,7 +7,8 @@ TODO
 -Navbar + logout.
 -Nginx errors(scandir).
 -Code cleanup.
-MAIN - SVG hover.
+D/W - hover color.
+NAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
 F-DATA - pagiantion+color, switch off color.
 </pre>
