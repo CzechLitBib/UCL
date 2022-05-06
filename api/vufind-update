@@ -38,14 +38,14 @@ def name_invert(s,ID):
 	if len(s.split(',')) == 2:
 		return s.split(',')[1].strip() + ' ' + s.split(',')[0].strip() 
 	else:
-		print(ID, '#Multiple comma.')
+		print(ID, '#invert: Multiple comma.')
 	return s
 
 def name_to_upper(s,ID):
 	if len(s.split(',')) == 2:
 		return s.split(',')[0].strip().upper() + ', ' + s.split(',')[1].strip() 
 	else:
-		print(ID, '#Multiple comma.')
+		print(ID, '#upper: Multiple comma.')
 	return s
 
 def word_to_upper(s):
