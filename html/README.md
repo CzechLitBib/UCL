@@ -6,7 +6,7 @@ TODO
 <pre>
 -Nginx errors(scandir).
 -Code cleanup.
-DAILY/WEEKY - Link hover color.
+CAT - Download.
 MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
 F-DATA - pagiantion+color, switch off color.

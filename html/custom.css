@@ -69,3 +69,14 @@ a.anchor {
 	visibility: hidden;
 }
 
+/* external link */
+
+.external-link:hover {
+	color: #dc3545;
+}
+
+.external-link {
+	color: #212529;
+	text-decoration: none;
+}
+
