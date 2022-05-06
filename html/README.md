@@ -4,11 +4,10 @@ PHP7 frontend.
 
 TODO
 <pre>
--Navbar + logout.
 -Nginx errors(scandir).
 -Code cleanup.
-D/W - hover color.
-NAIN - SVG hover.
+DAILY/WEEKY - Link hover color.
+MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
 F-DATA - pagiantion+color, switch off color.
 </pre>
