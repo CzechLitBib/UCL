@@ -7,7 +7,6 @@ TODO
 -Nginx errors(scandir).
 -Code cleanup.
 CAT - Download.
-MAIN - SVG hover.
 FORM - SVG logo, switch shift+color.
 F-DATA - pagiantion+color, switch off color.
 </pre>
