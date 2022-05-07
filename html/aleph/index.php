@@ -223,44 +223,44 @@ foreach($subfield as $field=>$subs) {
 <div class="row row-cols-sm-5 mx-2 my-3">
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_LDR-8" value="1">
 		<label class="form-check-label" for="inlineCheckbox1">LDR-8</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-16" value="1">
 		<label class="form-check-label" for="inlineCheckbox1">008-16</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-7" value="1">
 		<label class="form-check-label" for="inlineCheckbox1">008-7</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name=local_008-811" value="1">
 		<label class="form-check-label" for="inlineCheckbox1">008-811</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-815" value="1">
 		<label class="form-check-label" for="inlineCheckbox1">008-815</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-1618" value="1">
 		<label class="form-check-label" for="inlineCheckbox1">008-1618</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-		<label class="form-check-label" for="inlineCheckbox1">0083638</label>
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-3638" value="1">
+		<label class="form-check-label" for="inlineCheckbox1">008-3638</label>
 	</div>
 </div>
 </div>
