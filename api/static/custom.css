@@ -1,9 +1,5 @@
 
 .bi{
- color: black;
+ color: #212529;
 }
 
-.bi:hover,
-.bi:focus {
-  color: #a7011d;
-}
