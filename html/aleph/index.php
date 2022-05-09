@@ -241,7 +241,7 @@ foreach($subfield as $field=>$subs) {
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name=local_008-811" value="1">
+		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-811" value="1">
 		<label class="form-check-label" for="inlineCheckbox1">008-811</label>
 	</div>
 </div>
