@@ -32,6 +32,16 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 
 	$ldap_bind = @ldap_bind($ldap_conn, $ldap_dn, $_POST['pass']);
 
+	if (!$ldap_bind) {//fall-back
+		$ldap_conn2 = ldap_connect('xxx');
+
+		ldap_set_option($ldap_conn2, LDAP_OPT_PROTOCOL_VERSION, 3);
+		ldap_set_option($ldap_conn2, LDAP_OPT_REFERRALS, 0);
+		ldap_set_option($ldap_conn2, LDAP_OPT_NETWORK_TIMEOUT, 10);
+
+		$ldap_bind = @ldap_bind($ldap_conn2, $ldap_dn, $_POST['pass']);
+	}
+
 	if ($ldap_bind) { $authorized = True; }
 }
 
