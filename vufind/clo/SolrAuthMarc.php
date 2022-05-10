@@ -57,5 +57,45 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 		return $this->getFieldArray('678', ['a']);
 	}
 
+	public function CLB_getUccupation() { // OCCUPATION
+		return isset($this->fields['occupation']) ? $this->fields['occupation'] : [];
+	}
+
+	public function CLB_getActivity() { // ACTIVITY
+		return isset($this->fields['field_of_activity']) ? $this->fields['field_of_activity'] : [];
+	}
+
+	public function CLB_getAssocGroup() { // ASSOCIATED GROUP
+		return isset($this->fields['associated_group_str_mv']) ? $this->fields['associated_group_str_mv'] : [];
+	}
+
+	public function CLB_getHonorific() { // HONORIFIC
+		return isset($this->fields['honorific_str_mv']) ? $this->fields['honorific_str_mv'] : [];
+	}
+
+	public function CLB_getGender() { // GENDER
+		return isset($this->fields['gender']) ? $this->fields['gender'] : [];
+	}
+
+	public function CLB_getLanguageFrom() { // LANGUAGE FROM
+		return isset($this->fields['language_from_str_mv']) ? $this->fields['language_from_str_mv'] : [];
+	}
+
+	public function CLB_getLanguageTo() { // LANGUAGE TO
+		return isset($this->fields['language_from_to_mv']) ? $this->fields['language_from_to_mv'] : [];
+	}
+
+	public function CLB_getRelatedPlace() { // RELALED PLACE
+		return isset($this->fields['related_place']) ? $this->fields['related_place'] : [];
+	}
+
+	public function CLB_getCountry() { // COUNTRY
+		return isset($this->fields['country']) ? $this->fields['country'] : [];
+	}
+
+	public function CLB_getNote() { // COUNTRY
+		return isset($this->fields['note_txt_mv']) ? $this->fields['note_txt_mv'] : [];
+	}
+
 }
 

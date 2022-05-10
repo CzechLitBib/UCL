@@ -97,6 +97,17 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	public function getDefaultAuthCoreSpecs()
 	{
 		$spec = new SpecBuilder();
+		$spec->setTemplateLine('Use for', 'getUseFor', 'data-usefor.phtml');
+		$spec->setLine('Occupation', 'CLB_getOccupation');
+		$spec->setTemplateLine('Field of activity', 'CLB_getActivity', 'data-activity.phtml');
+		$spec->setLine('Associated Group', 'CLB_getAssocGroup');
+		$spec->setLine('Honorific', 'CLB_getHonorific');
+		$spec->setLine('Gender', 'CLB_getGender');
+		$spec->setLine('Translation from', 'CLB_getLanguageFrom');
+		$spec->setLine('Translation to', 'CLB_getLanguageTo');
+		$spec->setLine('Other associated place', 'CLB_getRelatedPLace');
+		$spec->setLine('Country', 'CLB_getCountry');
+		$spec->setLine('Note', 'CLB_getNote');
 		return $spec->getArray();
 	}
 
