@@ -4,23 +4,16 @@ Vufind server howto.
 
 TODO
 <pre>
--SAM /en/ link.
--AWStats archive URL
 -Czech analyzer:
 https://solr.apache.org/guide/8_0/schema-api.html
-
-<fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100">
-    <analyzer>
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-      <filter class="solr.StopFilterFactory" words="lang/stopwords_cz.txt" ignoreCase="true"/>
-      <filter class="solr.CzechStemFilterFactory"/>
-    </analyzer>
-  </fieldType>
-
--Related facet 787at dot separator
--In: highlight
--Diacritic sort order. MZK
+&lt;fieldType name="text_cz" class="solr.TextField" positionIncrementGap="100"&gt;
+    &lt;analyzer&gt;
+      &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+      &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
+      &lt;filter class="solr.StopFilterFactory" words="lang/stopwords_cz.txt" ignoreCase="true"/&gt;
+      &lt;filter class="solr.CzechStemFilterFactory"/&gt;
+    &lt;/analyzer&gt;
+  &lt;/fieldType&gt;
 -Cover ? 002712500
 -Nahled Retrobi:
  a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
@@ -100,6 +93,14 @@ awstats012020.archive.txt
 #*/10 * * * * www-data [ -x /usr/share/awstats/tools/update.sh ] && /usr/share/awstats/tools/update.sh
 #10 03 * * * www-data [ -x /usr/share/awstats/tools/buildstatic.sh ] && /usr/share/awstats/tools/buildstatic.sh
 
+/etc/logrotate.d/httpd-prerotate/awstats:
+#!/bin/sh
+#UPDATE_SCRIPT=/usr/share/awstats/tools/update.sh
+#if [ -x $UPDATE_SCRIPT ]
+#then
+#  su -s /bin/sh -l -c $UPDATE_SCRIPT www-data
+#fi
+
 # INSTALL
 
 /etc/nginx/sites-enabled/default:
@@ -144,8 +145,8 @@ server {
 	}
 
         # SAM
-	location /SAM {
-		proxy_pass https://xxx/solr/;
+	location ~ /SAM/(.*) {
+		proxy_pass https://xxx/solr/$1$is_args$args;
 	}
 	location /css {
 		proxy_pass https://xxx/css/;

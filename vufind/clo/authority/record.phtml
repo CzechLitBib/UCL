@@ -1,0 +1,41 @@
+
+<?php
+ // $this->layout()->breadcrumbs = true;
+  $this->layout()->searchClassId = 'SolrAuth';
+  // Pick a tab to display -- Details if available, otherwise first option (if any):
+//  $tab = $this->tabs['Details'] ?? current($this->tabs) ?? null;
+
+?>
+
+<div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
+  <div class="auth-body">
+
+    <h3 property="name"><?=$this->escapeHtml($this->driver->getTitle())?></h3>
+    <?php foreach ($this->driver->tryMethod('getFullTitlesAltScript', [], []) as $altTitle): ?>
+      <div class="title-alt">
+        <?=$this->escapeHtml($altTitle)?>
+      </div>
+    <?php endforeach; ?>
+
+    <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
+    <?php if ($summary): ?>
+      <p><?=$summary?></p>
+    <?php endif; ?>
+
+    <?php /* Display Main Details */ ?>
+    <?php
+      $formatter = $this->recordDataFormatter();
+      $coreFields = $formatter->getData($driver, $formatter->getDefaults('auth-core'));
+    ?>
+    <?php if (!empty($coreFields)): ?>
+      <table class="table table-striped">
+        <caption class="sr-only"><?=$this->transEsc('Authority Details')?></caption>
+        <?php foreach ($coreFields as $current): ?>
+          <tr><th><?=$this->transEsc($current['label'])?>:</th><td><?=$current['value']?></td></tr>
+        <?php endforeach; ?>
+      </table>
+    <?php endif; ?>
+    <?php /* End Main Details */ ?>
+  </div>
+</div>
+

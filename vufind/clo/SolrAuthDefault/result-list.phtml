@@ -1,0 +1,29 @@
+<?php
+	$heading = $this->driver->getTitle();
+	if (empty($heading)) {
+		$heading = $this->translate('Heading unavailable.');
+	}
+	
+	$birth = $useFor = $this->driver->CLB_getBirth();
+
+?>
+
+<div class="media">
+	<div class="media-body">
+		<a href="<?=$this->url('authority-record')?>?id=<?=urlencode($this->driver->getUniqueId())?>" class="title"><?=$this->escapeHtml($heading)?></a>
+
+	<div></div>
+
+<?php
+	$formatter = $this->recordDataFormatter();
+	$infoAuthFields = $formatter->getData($driver, $formatter->getDefaults('search-auth-info'));
+?>
+<?php if (!empty($infoAuthFields)): ?>
+	<?php foreach ($infoAuthFields as $current): ?>
+		<strong><?=$this->transEsc($current['label'])?>:</strong> <?=$current['value']?><br />
+	<?php endforeach; ?>
+<?php endif; ?>
+
+	</div>
+</div>
+

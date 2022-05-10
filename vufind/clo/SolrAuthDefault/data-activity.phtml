@@ -1,0 +1,5 @@
+<?php foreach ($data as $activity): ?>
+  <div class="activity-line" property="keywords">
+      <a title="<?=$this->escapeHtmlAttr($activity)?>" href="<?=$this->record($this->driver)->getLink('activity', $activity)?>" rel="nofollow"><?=trim($this->escapeHtml($activity))?></a>
+  </div>
+<?php endforeach; ?>
