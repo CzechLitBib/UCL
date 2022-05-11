@@ -103,6 +103,9 @@ awstats012020.archive.txt
 
 # INSTALL
 
+/etc/ngixnx/nginx.conf:
+server_tokens off;
+
 /etc/nginx/sites-enabled/default:
 
 server {
