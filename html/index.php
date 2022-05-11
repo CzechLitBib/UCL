@@ -100,7 +100,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 	</div>
 	<div class="form-floating mb-4">
 		<input type="password" class="form-control" id="secret" name="pass" required>
-		<label for="pass">Heslo</label>
+		<label for="secret">Heslo</label>
 	</div>
 	<button class="btn btn-lg btn-danger w-100" type="submit">Přihlásit</button>
 </form>

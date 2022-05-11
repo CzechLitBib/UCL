@@ -258,7 +258,7 @@ Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pr
 	<ul class="list-inline">
 		<li class="list-inline-item"><a class="link-danger" target="_blank" href="https://clb.ucl.cas.cz/ochrana-osobnich-udaju/">Soukromí</a></li>
 		<li class="list-inline-item"><a class="link-danger" href="#">Nahoru</a></li>
-		<li class="list-inline-item"><a class="link-danger" href="mailto:clb@ucl.cas.cz?subject=ČLB - Návrhy podkladů">Kontakt</a></li>
+		<li class="list-inline-item"><a class="link-danger" href="mailto:clb@ucl.cas.cz?subject=ČLB%20-%20Návrhy%20podkladů">Kontakt</a></li>
 	</ul>
 </footer>
 

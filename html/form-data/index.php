@@ -118,7 +118,7 @@ if (!$db) { $error = 'Chyba databáze.'; }
 					echo '<td></td>';
 				}# PDF
 				echo '<td><div class="form-switch">'
-				. '<input class="form-check-input" type="checkbox" role="switch" id="processed" value="'
+				. '<input class="form-check-input" type="checkbox" role="switch" value="'
 				. $row[1]  . '" aria-label="processed"></div></td></tr>';# VALID
 
 				#if (end($row)) {

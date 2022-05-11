@@ -223,44 +223,44 @@ foreach($subfield as $field=>$subs) {
 <div class="row row-cols-sm-5 mx-2 my-3">
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_LDR-8" value="1">
-		<label class="form-check-label" for="inlineCheckbox1">LDR-8</label>
+		<input class="form-check-input" type="checkbox" id="local_LDR-8" name="local_LDR-8" value="1">
+		<label class="form-check-label" for="local_LDR-8">LDR-8</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-16" value="1">
-		<label class="form-check-label" for="inlineCheckbox1">008-16</label>
+		<input class="form-check-input" type="checkbox" id="local_008-16" name="local_008-16" value="1">
+		<label class="form-check-label" for="local_008-16">008-16</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-7" value="1">
-		<label class="form-check-label" for="inlineCheckbox1">008-7</label>
+		<input class="form-check-input" type="checkbox" id="local_008-7" name="local_008-7" value="1">
+		<label class="form-check-label" for="local_008-7">008-7</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-811" value="1">
-		<label class="form-check-label" for="inlineCheckbox1">008-811</label>
+		<input class="form-check-input" type="checkbox" id="local_008-811" name="local_008-811" value="1">
+		<label class="form-check-label" for="local_008-811">008-811</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-815" value="1">
-		<label class="form-check-label" for="inlineCheckbox1">008-815</label>
+		<input class="form-check-input" type="checkbox" id="local_008-815" name="local_008-815" value="1">
+		<label class="form-check-label" for="local_008-815">008-815</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-1618" value="1">
-		<label class="form-check-label" for="inlineCheckbox1">008-1618</label>
+		<input class="form-check-input" type="checkbox" id="local_008-1618" name="local_008-1618" value="1">
+		<label class="form-check-label" for="local_008-1618">008-1618</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="local_008-3638" value="1">
-		<label class="form-check-label" for="inlineCheckbox1">008-3638</label>
+		<input class="form-check-input" type="checkbox" id="local_008-3638" name="local_008-3638" value="1">
+		<label class="form-check-label" for="local_008-3638">008-3638</label>
 	</div>
 </div>
 </div>
@@ -271,13 +271,13 @@ foreach($subfield as $field=>$subs) {
         <div class="col">
                 <div class="d-grid gap-2 d-sm-flex">
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="rows" value="10"><label for="q">Počet řádků</label>
+				<input type="text" class="form-control" id="rows" name="rows" value="10"><label for="rows">Počet řádků</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="csv-separator" value=";"><label for="q">Oddělovač polí</label>
+				<input type="text" class="form-control" id="csv-separator" name="csv-separator" value=";"><label for="csv-separator">Oddělovač polí</label>
 			</div>
 			<div class="form-floating">
-				<input type="text" class="form-control" id="q" name="csv-mv-separator" value="#"><label for="q">Oddělovač hodnot</label>
+				<input type="text" class="form-control" id="csv-mv-separator" name="csv-mv-separator" value="#"><label for="csv-mv-separator">Oddělovač hodnot</label>
 			</div>
                 </div>
         </div>

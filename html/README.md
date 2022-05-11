@@ -5,7 +5,6 @@ PHP7 frontend.
 TODO
 <pre>
 -Nginx errors(scandir).
--Code cleanup.
 CAT - Download.
 FORM - SVG logo, switch shift+color.
 F-DATA - pagiantion+color, switch off color.
@@ -96,7 +95,7 @@ server {
 	}
 
 	# PHP - form data + db
-	location ~ ^/form/(data|db) {
+	location ~ ^/form/(data|from.db) {
 		allow xxx/24;
 		allow 127.0.0.1;
 		deny all;
