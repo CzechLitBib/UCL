@@ -312,7 +312,9 @@ rm -rf $VUFIND_HOME/solr/vufind/biblio/index $VUFIND_HOME/solr/vufind/spell*
 </pre>
 ALPHA
 <pre>
+rm -r /usr/local/vufind/solr/vufind/alphabetical_browse/
 ./index-alphabetic-browse.sh
+systemctl restart solr
 </pre>
 STATIC ROUTE
 <pre>
