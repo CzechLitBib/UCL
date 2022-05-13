@@ -1273,6 +1273,8 @@ for record in records:
 			BRACKET = len(re.findall('<<[^<>]*>>', metadata['245']['c']))
 			for F in metadata.get_fields('505'):
 				if 'r' in F: BRACKET += len(re.findall('<<[^<>]*>>', F['r']))
+			for F in metadata.get_fields('506'):
+				if 'a' in F and re.match('<<\d+>>', F['a']): BRACKET += int(re.sub('<<(\d+)>>', '\\1', F['a']))
 			for F in metadata.get_fields('594'):
 				if 'x' in F: BRACKET += 1
 			if BRACKET > 0:
