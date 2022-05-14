@@ -11,16 +11,27 @@
   <div class="auth-body">
 
     <h3 property="name"><?=$this->escapeHtml($this->driver->getTitle())?></h3>
+
+    <?php $birth = $this->driver->CLB_getBirth(); $birth = isset($birth) ? $this->escapeHtml($birth) : false; ?>
+    <?php if ($birth): ?>
+      <p><?=$birth?></p>
+    <?php endif; ?>
+
+    <?php $death = $this->driver->CLB_getDeath(); $death = isset($death) ? $this->escapeHtml($death) : false; ?>
+    <?php if ($death): ?>
+      <p><?=$death?></p>
+    <?php endif; ?>
+
+    <?php $bio = $this->driver->CLB_getBio(); $bio = isset($bio[0]) ? $this->escapeHtml($bio[0]) : false; ?>
+    <?php if ($bio): ?>
+      <p><?=$bio?></p>
+    <?php endif; ?>
+
     <?php foreach ($this->driver->tryMethod('getFullTitlesAltScript', [], []) as $altTitle): ?>
       <div class="title-alt">
         <?=$this->escapeHtml($altTitle)?>
       </div>
     <?php endforeach; ?>
-
-    <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
-    <?php if ($summary): ?>
-      <p><?=$summary?></p>
-    <?php endif; ?>
 
     <?php /* Display Main Details */ ?>
     <?php
