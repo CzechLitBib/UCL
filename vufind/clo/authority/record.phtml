@@ -3,7 +3,7 @@
  // $this->layout()->breadcrumbs = true;
   $this->layout()->searchClassId = 'SolrAuth';
   // Pick a tab to display -- Details if available, otherwise first option (if any):
-//  $tab = $this->tabs['Details'] ?? current($this->tabs) ?? null;
+  $metadata = $this->tabs['Details'] ?? current($this->tabs) ?? null;
 
 ?>
 
@@ -36,6 +36,44 @@
       </table>
     <?php endif; ?>
     <?php /* End Main Details */ ?>
+
+<?php if (count($this->tabs) > 0): ?>
+      <a name="tabnav"></a>
+      <div class="record-tabs">
+        <ul class="nav nav-tabs">
+          <?php foreach ($this->tabs as $tab => $obj): ?>
+            <?php
+              $desc = $obj->getDescription();
+              $tabName = preg_replace("/\W/", "-", strtolower($tab));
+              $tabClasses = [ 'record-tab', $tabName ];
+              if (0 === strcasecmp($this->activeTab, $tab)) {
+                if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
+                  $tabClasses[] = 'active';
+                }
+                $tabClasses[] = 'initiallyActive';
+                $activeTabObj = $obj;
+              }
+              if (!$obj->isVisible()) { $tabClasses[] = 'hidden'; }
+              if (!$obj->supportsAjax()) { $tabClasses[] = 'noajax'; }
+            ?>
+		<li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>">
+              <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore>
+                <?=$this->transEsc($desc)?>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+
+	<div class="tab-content">
+          <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
+            <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab">
+		<?=empty($metadata) ? $this->transEsc('no_description') :  $this->record($this->driver)->getTab($metadata)?>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+<?php endif; ?>
+
   </div>
 </div>
 
