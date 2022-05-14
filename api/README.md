@@ -7,7 +7,7 @@ INSTALL
 <pre>
 apt-get install python3-flask python3-flask-restful python3-rrdtool
 
-cp api /usr/locail/bin
+cp -r api /usr/local/bin/
 ln -s /usr/local/bin/api/vufind-update /usr/local/bin/vufind-update
 cp /usr/local/bin/api/vufind-api.service /etc/systemd/system/
 
