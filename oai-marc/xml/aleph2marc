@@ -70,19 +70,15 @@ with open(sys.argv[1],'rb') as f:
 		# LDR
 		if TAG == 'LDR':
 			record.leader = DATA.replace('-',' ')
-		# POS
-		if TAG == 'POS': continue
-		# FMT -> 990
-		if TAG == 'FMT':
-			record.add_field(Field(tag='990', indicators=[' ',' '], subfields=['a', DATA]))
-			continue
-		# Control field
-		elif TAG in ['001','003','005','006','007','008','FMT','VER']:
+		# SKIP
+		if TAG in ['FMT','KON','POS','VER']: continue
+		# CONTROL
+		elif TAG in ['001','003','005','006','007','008']:
 			if TAG == '008': DATA=DATA.replace('-',' ')
 			field = Field(tag = TAG, data=DATA)
 			record.add_ordered_field(field)
 		elif SUB:
-		# Field
+		#  FIELD
 			field = Field(tag = TAG, indicators = [IND1, IND2], subfields = SUB)
 			record.add_ordered_field(field)
 
