@@ -256,7 +256,11 @@ for record in records:
 	
 		# SKIP LIBRARY ------------------
 
+		XEDICE=False
 		if 'IST' in metadata: continue
+		for F in metadata.get_fields('599'):
+			if 'a' in F and F['a'] == 'xedice': XEDICE=True
+		if XEDICE: continue
 
 		# TEST TAG ------------------
 
