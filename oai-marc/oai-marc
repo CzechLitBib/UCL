@@ -1322,7 +1322,7 @@ for record in records:
 				if len(F.subfields) >= 2:
 					if F.subfields[0] == 'x' and F.subfields[2:] == F2.subfields: break
 			else:
-				write_error(header.identifier(), '594', SIF, '194', "Pole 954 se neshoduje.")
+				write_error(header.identifier(), '594', SIF, '194', "Pole 594 se neshoduje.")
 			if not metadata.get_fields('100','110','111','700','710','711'):
 				for F3 in metadata.get_fields('500'):
 					if 'a' in F3 and F3['a'] == 'Nepodepsáno.': break
