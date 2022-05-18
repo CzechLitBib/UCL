@@ -1,0 +1,5 @@
+<?php foreach ($data as $associated): ?>
+  <div class="associated-group-line" property="keywords">
+      <a title="<?=$this->escapeHtmlAttr($associated)?>" href="<?=$this->record($this->driver)->getLink('associated-group', $associated)?>" rel="nofollow"><?=trim($this->escapeHtml($associated))?></a>
+  </div>
+<?php endforeach; ?>

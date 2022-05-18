@@ -1,0 +1,5 @@
+<?php foreach ($data as $occupation): ?>
+  <div class="occupation-line" property="keywords">
+      <a title="<?=$this->escapeHtmlAttr($occupation)?>" href="<?=$this->record($this->driver)->getLink('occupation', $occupation)?>" rel="nofollow"><?=trim($this->escapeHtml($occupation))?></a>
+  </div>
+<?php endforeach; ?>

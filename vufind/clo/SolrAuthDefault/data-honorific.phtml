@@ -1,0 +1,5 @@
+<?php foreach ($data as $honor): ?>
+  <div class="honorific-line" property="keywords">
+      <a title="<?=$this->escapeHtmlAttr($honor)?>" href="<?=$this->record($this->driver)->getLink('honorific', $honor)?>" rel="nofollow"><?=trim($this->escapeHtml($honor))?></a>
+  </div>
+<?php endforeach; ?>

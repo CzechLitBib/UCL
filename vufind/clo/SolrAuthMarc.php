@@ -57,7 +57,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 		return $this->getFieldArray('678', ['a']);
 	}
 
-	public function CLB_getUccupation() { // OCCUPATION
+	public function CLB_getOccupation() { // OCCUPATION
 		return isset($this->fields['occupation']) ? $this->fields['occupation'] : [];
 	}
 
@@ -82,10 +82,10 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 	}
 
 	public function CLB_getLanguageTo() { // LANGUAGE TO
-		return isset($this->fields['language_from_to_mv']) ? $this->fields['language_from_to_mv'] : [];
+		return isset($this->fields['language_to_str_mv']) ? $this->fields['language_to_str_mv'] : [];
 	}
 
-	public function CLB_getRelatedPlace() { // RELALED PLACE
+	public function CLB_getRelatedPlace() { // RELATED PLACE
 		return isset($this->fields['related_place']) ? $this->fields['related_place'] : [];
 	}
 
