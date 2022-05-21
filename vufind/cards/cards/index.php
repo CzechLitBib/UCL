@@ -1,3 +1,44 @@
+<?php
+
+include('solr.php');
+
+$q='';
+
+$options = array
+(
+	'secure' => SOLR_SECURE,
+	'hostname' => SOLR_SERVER_HOSTNAME,
+	'port' => SOLR_SERVER_PORT,
+	'path' => SOLR_PATH,
+);
+
+$client = new SolrClient($options);
+$query = new SolrQuery();
+
+# q
+if (isset($_GET['lookfor'])) { $q=$_GET['lookfor']; }
+$query->setQuery($q);
+# fq
+if (isset($_GET['filter'])) {
+	foreach ($_GET['filter'] as $fq) {
+		$query->addFilterQuery($fq);
+	}
+}
+
+# start
+$query->setStart(0);
+# rows
+$query->setRows(SOLR_QUERY_LIMIT);
+# fl
+$query->addField('id');
+
+$query_response = $client->query($query);
+$response = $query_response->getResponse();
+
+print_r($response);
+
+?>
+
 <!doctype html>
 <html lang="cs">
 <head>
@@ -23,10 +64,10 @@
 <div class="card my-2">
 	<div class="card-body">
 		<div class="row"><div class="col text-end">
-			<a class="external-link" target="_blank" href="http://vufind2-dev.ucl.cas.cz/Record/002748068"><b>002748068</b></a>
+			<a class="external-link" target="_blank" href="/Record/002748068"><b>002748068</b></a>
 		</div></div>
 		<div class="row">
-			<a class="external-color my-4" target="_blank" href="http://vufind2-dev.ucl.cas.cz/Search/Results?lookfor=HEJDOV%C3%81%2C+Irena&type=Author&limit=20">
+			<a class="external-color my-4" target="_blank" href="/Results?lookfor=HEJDOV%C3%81%2C+Irena&type=Author&limit=20">
 				<h5 class="card-title"><b>HEJDOVÁ</b>, Irena</h5>
 			</a>
 			
