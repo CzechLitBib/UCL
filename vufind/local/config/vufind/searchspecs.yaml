@@ -20,9 +20,9 @@ ConspectGroup:
     - conspect_group_str_mv
   DismaxHandler: edismax
 
-MDT:
+ConspectResource:
   DismaxFields:
-    - mdt_str_mv
+    - more_info_str_mv
   DismaxHandler: edismax
 
 ActualExcerption:
