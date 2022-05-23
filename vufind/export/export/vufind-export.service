@@ -1,0 +1,13 @@
+[Unit]
+Description=Vufind Export service
+After=network.target auditd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/uwsgi --uid www-data --uwsgi-socket 127.0.0.1:9000 --plugin python39 --wsgi-file vufind-export --master --processes 4 --threads 2 --callable app
+WorkingDirectory=/var/www/html/export
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

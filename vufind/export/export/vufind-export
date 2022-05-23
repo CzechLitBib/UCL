@@ -1,0 +1,76 @@
+#!/usr/bin/python3
+#
+# Vufind - Export module
+#
+
+from flask import Flask,make_response,g,render_template,request,abort
+
+# VAR -------------------------
+
+# INIT -------------------------
+
+app = Flask(__name__)
+
+# DATABASE -------------------------
+
+def get_db():
+	db = getattr(g, '_database', None)
+	if db is None:
+		db = g._database = sqlite3.connect(DB)
+	db.row_factory = sqlite3.Row
+	return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+	db = getattr(g, '_database', None)
+	if db is not None:
+		db.close()
+
+def query_db(query, args=(), one=False):
+	cur = get_db().execute(query, args)
+	rv = cur.fetchall()
+	cur.close()
+	return (rv[0] if rv else None) if one else rv
+
+# CONTENT -------------------------
+
+# ROUTING -------------------------
+
+@app.route('/export/')
+def index():
+	headers = {'Content-Type': 'text/html'}
+	return make_response(render_template('/export.html'), 200, headers)
+	#headers = {'Content-Type': 'text/plain'}
+	#return make_response(render_template('/deletes.txt'), 200, headers)
+	#return '', 204
+	#headers = {'Content-Type': 'text/plain'}
+	#return make_response(render_template('/lkrs.txt'), 200, headers)
+	#return '', 204
+	#ident = request.args.get('identifier')
+	#return abort(400, "Missing 'identifier' argument.")
+	#if request.headers.get('Accept') == 'application/marcxml': prefix='xml'
+	#if request.headers.get('Accept') == 'application/octet-stream': prefix='marc'
+	#return abort(400, "Invalid identifier: <000000000-999999999>.")
+	#return XML_HEAD + data[prefix] + XML_FOOT
+	#return data[prefix]
+	#return '', 204
+	#if request.headers.get('Accept') == 'application/marcxml': prefix='xml'
+	#if request.headers.get('Accept') == 'application/octet-stream': prefix='marc'
+	#iso8601_from = request.args.get('from')
+	#iso8601_until = request.args.get('until')
+	#return abort(400, "Invalid 'from' argument: <iso8601_datetime>.")
+	#return abort(400, "Invalid 'until' argument: <iso8601_datetime>.")
+	#return b''.join([row[prefix] for row in data])
+	#return '[' + ','.join([row[prefix] for row in data]) + ']'
+	#return '', 204
+	#return abort(400, "Invalid 'from' argument: <iso8601_datetime>.")
+	#return abort(400, "Invalid 'until' argument: <iso8601_datetime>.")
+	#return json.dumps([row['ident'] for row in data])
+	#return '', 204
+
+# MAIN -------------------------
+
+if __name__ == '__main__':
+	app.config['TEMPLATES_AUTO_RELOAD'] = True
+	app.run(debug=False, port=9000)
+
