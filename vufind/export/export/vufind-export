@@ -36,7 +36,7 @@ def query_db(query, args=(), one=False):
 
 # ROUTING -------------------------
 
-@app.route('/export/')
+@app.route('/export')
 def index():
 	headers = {'Content-Type': 'text/html'}
 	return make_response(render_template('/export.html'), 200, headers)
@@ -71,6 +71,6 @@ def index():
 # MAIN -------------------------
 
 if __name__ == '__main__':
-	#app.config['TEMPLATES_AUTO_RELOAD'] = True
+	app.config['TEMPLATES_AUTO_RELOAD'] = True
 	app.run(debug=False, port=9000)
 
