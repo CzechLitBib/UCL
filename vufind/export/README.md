@@ -1,3 +1,10 @@
+TODO
+<pre>
+- layout
+- uwsgi systemd reload
+- core python
+</pre>
+
 INSTALL
 <pre>
 apt-get install uwsgi python-flask
