@@ -1,6 +1,5 @@
 TODO
 <pre>
-- uwsgi systemd reload
 - core python
 </pre>
 
