@@ -26,7 +26,7 @@
 </nav>
 
 <main class="container">
-<form type="post" action="/export" enctype="multipart/form-data">
+<form method="post" action="/export" name="type-form" enctype="multipart/form-data">
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 my-3 my-md-2 gy-3 gy-md-5">
 
 <div class="col">
@@ -38,7 +38,7 @@
 			<h4 class="fw-bold">TXT</h4>Popis formatu bude tady nekde.
 		</div>
 		<div class="col-3 col-md-6 h-25 text-center d-grid mx-auto">
-			<button class="btn btn-danger btn-sm" type="submit" value="txt">Uložit</button>
+			<button class="btn btn-danger btn-sm" type="submit" name="type" value="txt">Uložit</button>
 		</div>
 	</div>
 </div>

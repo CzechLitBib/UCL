@@ -1,5 +1,6 @@
 TODO
 <pre>
+- escape/hash QUERY_STRING
 - core python
 </pre>
 

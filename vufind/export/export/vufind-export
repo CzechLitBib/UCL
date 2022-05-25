@@ -32,13 +32,15 @@ def get_txt(data):
 
 # ROUTING -------------------------
 
-@app.route('/export', methods=['GET','POST'])
+@app.route('/export', methods=['POST','GET'])
 def index():
 	print(request)
+	print(request.get_data())
+	print(request.args.get)
 	print(request.args)
 	print(request.data)
-	#print(request.query_string)
-	#print(request.full_path)
+	print(request.query_string)
+	print(request.full_path)
 	#Q = request.args.get('lookfor')
 	#FQ = request.args.getlist('filter[]')
 	#print(parse_qs(urlparse(request.args.get('lookfor')).query))
