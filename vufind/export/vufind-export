@@ -26,7 +26,10 @@ def solr_query(query,filter_query,format_type):
 	# fq
 	for fq in filter_query: ret += '&fq=' + fq
 	# q
-	ret += '&q=' + query
+	if query:
+		ret += '&q=' + query
+	else: 
+		ret += '&q=*:*'
 	# fl
 	ret += '&fl=fullrecord'
 	# rows
