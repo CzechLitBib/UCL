@@ -1,0 +1,91 @@
+#!/usr/bin/python3
+#
+# Vufind - Export module
+#
+
+import requests,json,io
+
+from flask import Flask,request,send_file,make_response
+from datetime import datetime
+from pymarc import marcxml
+
+# VAR -------------------------
+
+SOLR='http://localhost:8983/solr/biblio/select'
+LIMIT='1'
+
+# INIT -------------------------
+
+app = Flask(__name__)
+session = requests.Session()
+
+# SOLR -------------------------
+
+def solr_query(query,filter_query,format_type):
+	ret = SOLR + '?'
+	# fq
+	for fq in filter_query: ret += '&fq=' + fq
+	# q
+	ret += '&q=' + query
+	# fl
+	ret += '&fl=fullrecord'
+	# rows
+	ret += '&rows=' + LIMIT
+	return ret
+
+def get_solr(query):
+	req = session.get(query)
+	if req and req.status_code == 200: return req.json()
+	return ''
+
+# CONTENT -------------------------
+
+def get_payload(data,format_type):
+	#for rec in data['response']['docs']:
+	return io.BytesIO(b'Boo!')
+
+# ROUTING -------------------------
+
+@app.route('/export', methods=['POST'])
+def export():
+	format_type = request.form['format']
+	query = request.args.get('lookfor')
+	filter_query = request.args.getlist('filter[]')
+
+	# SOLR
+	data = get_solr(solr_query(query, filter_query, format_type))
+	# PAYLOAD
+	payload = get_payload(data,format_type)
+	# FN
+	if format_type == 'txt':
+		file_type = 'txt'
+		content_type = 'text/plain'
+	if format_type == 'json':
+		file_type = 'json'
+		content_type = 'application/json'
+	if format_type == 'marcxml':
+		file_type = 'xml'
+		content_type = 'application/xml'
+	if format_type == 'marc21':
+		file_type = 'mrc'
+		content_type = 'application/octet-stream'
+	if format_type == 'pdf':
+		file_type = 'pdf'
+		content_type = 'application/pdf'
+	if format_type == 'docx':
+		file_type = 'docx'
+		content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+	
+	# RESPONSE
+	file_name = 'vufind-'+ datetime.now().strftime('%Y%m%d%H%M%S') + '.' + file_type
+	response = make_response(send_file(payload, as_attachment=True, attachment_filename=file_name))
+	response.headers['Content-Type'] = content_type
+
+	return response
+
+# MAIN -------------------------
+
+if __name__ == '__main__':
+	app.config['TEMPLATES_AUTO_RELOAD'] = True
+	app.run(debug=False, port=9000)
+
