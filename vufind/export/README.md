@@ -13,8 +13,8 @@ systemctl start vufind-export
 	# EXPORT
 	location /export {
 		include uwsgi_params;
-		uwsgi_pass 127.0.0.1:9000;
-		#proxy_pass http://127.0.0.1:9000;
+		uwsgi_pass 127.0.0.1:5001;
+		#proxy_pass http://127.0.0.1:5001;
 	}
 
 </pre>
