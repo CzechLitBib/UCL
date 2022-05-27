@@ -1,0 +1,5 @@
+<?php foreach ($data as $to): ?>
+  <div class="translated-to-line" property="keywords">
+      <a title="<?=$this->escapeHtmlAttr($to)?>" href="<?=$this->record($this->driver)->getLink('translated-to', $to)?>" rel="nofollow"><?=trim($this->escapeHtml($to))?></a>
+  </div>
+<?php endforeach; ?>

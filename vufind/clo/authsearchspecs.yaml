@@ -1,7 +1,57 @@
 ---
 # This file contains search specifications used by the authority module; for details
 # on the workings of this file, see the comments in searchspecs.yaml.
-#-----------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------
+
+AuthNote:
+  DismaxFields:
+    - note_txt_mv
+  DismaxHandler: edismax
+
+AuthRelatedPlace:
+  DismaxFields:
+    - related_place
+  DismaxHandler: edismax
+
+AuthCountry:
+  DismaxFields:
+    - country
+  DismaxHandler: edismax
+
+AuthLanguageTo:
+  DismaxFields:
+    - language_to_str_mv
+  DismaxHandler: edismax
+
+AuthLanguageFrom:
+  DismaxFields:
+    - language_from_str_mv
+  DismaxHandler: edismax
+
+AuthGender:
+  DismaxFields:
+    - gender
+  DismaxHandler: edismax
+
+AuthHonorific:
+  DismaxFields:
+    - honorific_str_mv
+  DismaxHandler: edismax
+
+AuthAssociatedGroup:
+  DismaxFields:
+    - associated_group_str_mv
+  DismaxHandler: edismax
+
+AuthActivity:
+  DismaxFields:
+    - field_of_activity
+  DismaxHandler: edismax
+
+AuthOccupation:
+  DismaxFields:
+    - occupation
+  DismaxHandler: edismax
 
 AuthBirthPlace:
   DismaxFields:

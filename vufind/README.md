@@ -103,6 +103,9 @@ awstats012020.archive.txt
 
 # INSTALL
 
+/etc/ngixnx/nginx.conf:
+server_tokens off;
+
 /etc/nginx/sites-enabled/default:
 
 server {
@@ -309,7 +312,9 @@ rm -rf $VUFIND_HOME/solr/vufind/biblio/index $VUFIND_HOME/solr/vufind/spell*
 </pre>
 ALPHA
 <pre>
+rm -r /usr/local/vufind/solr/vufind/alphabetical_browse/
 ./index-alphabetic-browse.sh
+systemctl restart solr
 </pre>
 STATIC ROUTE
 <pre>

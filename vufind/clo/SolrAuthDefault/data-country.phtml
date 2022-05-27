@@ -1,0 +1,5 @@
+<?php foreach ($data as $country): ?>
+  <div class="country-line" property="keywords">
+      <a title="<?=$this->escapeHtmlAttr($country)?>" href="<?=$this->record($this->driver)->getLink('country', $country)?>" rel="nofollow"><?=trim($this->escapeHtml($country))?></a>
+  </div>
+<?php endforeach; ?>

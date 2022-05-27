@@ -1,0 +1,5 @@
+<?php foreach ($data as $related): ?>
+  <div class="related-place-line" property="keywords">
+      <a title="<?=$this->escapeHtmlAttr($related)?>" href="<?=$this->record($this->driver)->getLink('related-place', $related)?>" rel="nofollow"><?=trim($this->escapeHtml($related))?></a>
+  </div>
+<?php endforeach; ?>

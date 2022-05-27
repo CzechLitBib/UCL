@@ -98,15 +98,15 @@ class RecordDataFormatterFactory extends \VuFind\View\Helper\Root\RecordDataForm
 	{
 		$spec = new SpecBuilder();
 		$spec->setTemplateLine('Use for', 'getUseFor', 'data-usefor.phtml');
-		$spec->setLine('Occupation', 'CLB_getOccupation');
+		$spec->setTemplateLine('Occupation', 'CLB_getOccupation', 'data-occupation.phtml');
 		$spec->setTemplateLine('Field of activity', 'CLB_getActivity', 'data-activity.phtml');
-		$spec->setLine('Associated Group', 'CLB_getAssocGroup');
-		$spec->setLine('Honorific', 'CLB_getHonorific');
-		$spec->setLine('Gender', 'CLB_getGender');
-		$spec->setLine('Translation from', 'CLB_getLanguageFrom');
-		$spec->setLine('Translation to', 'CLB_getLanguageTo');
-		$spec->setLine('Other associated place', 'CLB_getRelatedPLace');
-		$spec->setLine('Country', 'CLB_getCountry');
+		$spec->setTemplateLine('Associated Group', 'CLB_getAssocGroup','data-associated-group.phtml');
+		$spec->setTemplateLine('Honorific', 'CLB_getHonorific','data-honorific.phtml');
+		$spec->setTemplateLine('Gender', 'CLB_getGender','data-gender.phtml');
+		$spec->setTemplateLine('Translation from', 'CLB_getLanguageFrom','data-translated-from.phtml');
+		$spec->setTemplateLine('Translation to', 'CLB_getLanguageTo','data-translated-to.phtml');
+		$spec->setTemplateLine('Other associated place', 'CLB_getRelatedPlace','data-related-place.phtml');
+		$spec->setTemplateLine('Country', 'CLB_getCountry','data-country.phtml');
 		$spec->setLine('Note', 'CLB_getNote');
 		return $spec->getArray();
 	}

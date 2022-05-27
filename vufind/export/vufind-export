@@ -1,0 +1,161 @@
+#!/usr/bin/python3
+#
+# Vufind - Export module
+#
+
+import requests,json,io
+
+from flask import Flask,request,send_file,make_response
+from datetime import datetime
+
+# PDF
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.lib import pagesizes
+from reportlab.lib.utils import Image,ImageReader
+from reportlab.lib.colors import lightgrey
+from reportlab.platypus import SimpleDocTemplate,Paragraph, Spacer
+from reportlab.graphics import renderPDF
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+from svglib.svglib import svg2rlg
+
+# DOCX
+
+
+# VAR -------------------------
+
+SOLR='http://localhost:8983/solr/biblio/select'
+LOGO='/usr/local/bin/export/clb.svg'
+HEADER='Česká literární bibliografie'
+WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136)."
+FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
+ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
+LIMIT='1'
+
+# INIT -------------------------
+
+app = Flask(__name__)
+session = requests.Session()
+
+# SOLR -------------------------
+
+def solr_query(query,filter_query,format_type):
+	ret = SOLR + '?'
+	# fq
+	for fq in filter_query: ret += '&fq=' + fq
+	# q
+	if query:
+		ret += '&q=' + query
+	else: 
+		ret += '&q=*:*'
+	# fl
+	ret += '&fl=fullrecord'
+	# rows
+	ret += '&rows=' + LIMIT
+	return ret
+
+def get_solr(query):
+	req = session.get(query)
+	if req and req.status_code == 200: return req.json()
+	return ''
+
+# CONTENT -------------------------
+
+def scale(drawing, scale_factor):
+    sx = scale_factor
+    sy = scale_factor
+    drawing.width = drawing.minWidth() * sx
+    drawing.height = drawing.height * sy
+    drawing.scale(sx, sy)
+    return drawing
+
+def get_docx(data):
+	return io.BytesIO(b'Boo!')
+
+def get_pdf(data):
+	ret = io.BytesIO()
+	logo = svg2rlg(LOGO)
+	# init
+	pdf = Canvas(ret, pagesize=pagesizes.A4)
+	pdf.setTitle('ČLB - Vufind')
+	pdfmetrics.registerFont(TTFont('OpenSans-Regular', 'OpenSans-Regular.ttf'))
+	pdfmetrics.registerFont(TTFont('OpenSans-Bold', 'OpenSans-Bold.ttf'))
+	# header
+	renderPDF.draw(scale(logo, 1/16), pdf, 10, 820)
+	pdf.setFont('OpenSans-Bold', 10)
+	pdf.drawString(35, 820, HEADER)
+	pdf.setLineWidth(0)
+	pdf.setStrokeColor(lightgrey)
+	pdf.line(10, 810, 585, 810)
+	# data
+
+	# footer
+	pdf.setLineWidth(0)
+	pdf.setStrokeColor(lightgrey)
+	pdf.line(10, 25, 585, 25)
+	pdf.setFont('OpenSans-Regular', 8)
+	pdf.drawString(15, 10, ADDRESS)
+	# write
+	pdf.save()
+	ret.seek(0)
+	print('[*] PDF.')
+	return ret
+
+def get_payload(data,format_type):
+	#for rec in data['response']['docs']:
+	if format_type == 'docx':
+		return get_docx(data)
+	if format_type == 'pdf':
+		return get_pdf(data)
+	return io.BytesIO()
+
+# ROUTING -------------------------
+
+@app.route('/export', methods=['POST'])
+def export():
+	format_type = request.form['format']
+	query = request.args.get('lookfor')
+	filter_query = request.args.getlist('filter[]')
+
+	# SOLR
+	data = get_solr(solr_query(query, filter_query, format_type))
+	print('[*] Solr.')
+	# PAYLOAD
+	payload = get_payload(data,format_type)
+	print('[*] Payload.')
+	# FN
+	file_type='bin'
+	content_type = 'application/octet-stream'
+	#if format_type == 'txt':
+	#	file_type = 'txt'
+	#	content_type = 'text/plain'
+	#if format_type == 'json':
+	#	file_type = 'json'
+	#	content_type = 'application/json'
+	#if format_type == 'marcxml':
+	#	file_type = 'xml'
+	#	content_type = 'application/xml'
+	#if format_type == 'marc21':
+	#	file_type = 'mrc'
+	#	content_type = 'application/octet-stream'
+	if format_type == 'pdf':
+		file_type = 'pdf'
+		content_type = 'application/pdf'
+	if format_type == 'docx':
+		file_type = 'docx'
+		content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+	
+	# RESPONSE
+	file_name = 'vufind-'+ datetime.now().strftime('%Y%m%d%H%M%S') + '.' + file_type
+	response = make_response(send_file(payload, as_attachment=True, attachment_filename=file_name))
+	response.headers['Content-Type'] = content_type
+
+	return response
+
+# MAIN -------------------------
+
+if __name__ == '__main__':
+	app.config['TEMPLATES_AUTO_RELOAD'] = True
+	app.run(debug=False, port=5001)
+
