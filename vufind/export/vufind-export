@@ -7,11 +7,24 @@ import requests,json,io
 
 from flask import Flask,request,send_file,make_response
 from datetime import datetime
-from pymarc import marcxml
+
+# PDF
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.lib import pagesizes
+from reportlab.lib.utils import Image,ImageReader
+from svglib.svglib import svg2rlg
+
+# DOCX
+
 
 # VAR -------------------------
 
 SOLR='http://localhost:8983/solr/biblio/select'
+LOGO='/usr/local/bin/clb.svg'
+HEADER='České literární bibliografie'
+WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136)."
+FOOT='Činnost výzkumné infrastruktury Česká literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
+ADDRESS='Česká literární bibliografie (c) 2022 Email:clb@ucl.cas.cz, Adresa: Na Florenci, 1420/3, 110 00 Praha'
 LIMIT='1'
 
 # INIT -------------------------
@@ -43,9 +56,34 @@ def get_solr(query):
 
 # CONTENT -------------------------
 
+def get_docx(data):
+	return io.BytesIO(b'Boo!')
+
+def get_pdf(data):
+	ret = io.BytesIO()
+	OFFSET_TOP=0
+	OFFSET_LEFT=0
+	# init
+	pdf = Canvas(ret, pagesize=pagesizes.A4)
+	pdf.setTitle('ČLB - Vufind')
+	# header
+	pdf.drawImage(LOGO, 0, 0, 32, 32)
+	pdf.drawString(OFFSET_LEFT, OFFSET_TOP, HEADER)
+	# data
+	#for rec in data['response']['docs']:
+	# footer
+	pdf.drawString(OFFSET_LEFT, OFFSET_TOP, ADDRESS)
+	pdf.showPage()
+	pdf.save()
+	return ret
+
 def get_payload(data,format_type):
 	#for rec in data['response']['docs']:
-	return io.BytesIO(b'Boo!')
+	if format_type == 'docx':
+		return get_docx(data)
+	if format_type == 'pdf':
+		return get_pdf(data)
+	return io.BytesIO()
 
 # ROUTING -------------------------
 
@@ -60,18 +98,20 @@ def export():
 	# PAYLOAD
 	payload = get_payload(data,format_type)
 	# FN
-	if format_type == 'txt':
-		file_type = 'txt'
-		content_type = 'text/plain'
-	if format_type == 'json':
-		file_type = 'json'
-		content_type = 'application/json'
-	if format_type == 'marcxml':
-		file_type = 'xml'
-		content_type = 'application/xml'
-	if format_type == 'marc21':
-		file_type = 'mrc'
-		content_type = 'application/octet-stream'
+	file_type='bin'
+	content_type = 'application/octet-stream'
+	#if format_type == 'txt':
+	#	file_type = 'txt'
+	#	content_type = 'text/plain'
+	#if format_type == 'json':
+	#	file_type = 'json'
+	#	content_type = 'application/json'
+	#if format_type == 'marcxml':
+	#	file_type = 'xml'
+	#	content_type = 'application/xml'
+	#if format_type == 'marc21':
+	#	file_type = 'mrc'
+	#	content_type = 'application/octet-stream'
 	if format_type == 'pdf':
 		file_type = 'pdf'
 		content_type = 'application/pdf'

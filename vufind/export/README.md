@@ -1,9 +1,15 @@
 INSTALL
 <pre>
-apt-get install uwsgi python-flask pymarc-4.0.0 + field.py.patch
+apt-get install uwsgi python-flask python3-reportgen
 
-cp vufind-export /usr/local/bin
-chown solr:solr /usr/local/bin/vufind-export
+svglib-1.3.0
+python-docx-0.8.11
+#pymarc-4.0.0 + field.py.patch
+
+mkdir /usr/local/bin/export
+cp -p vufind-export /usr/local/bin/export
+cp -p clb.svg /usr/local/bin/export
+chown -Rsolr:solr /usr/local/bin/export
 cp vufind-export.service /etc/systemd/system/
 systemctl enable vufind-export
 systemctl start vufind-export
