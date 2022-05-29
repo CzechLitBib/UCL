@@ -1,6 +1,7 @@
 TODO
 <pre>
--PDF Flowable template
+-Paragraph styling.
+-Data loop.
 </pre>
 
 INSTALL
