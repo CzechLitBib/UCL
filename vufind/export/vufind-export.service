@@ -5,7 +5,7 @@ After=network.target auditd.service
 [Service]
 Type=simple
 ExecStart=/usr/bin/uwsgi --uid solr --uwsgi-socket 127.0.0.1:5001 --plugin python39 --wsgi-file vufind-export --master --processes 4 --threads 2 --callable app
-WorkingDirectory=/usr/local/bin/export
+WorkingDirectory=/usr/local/bin/export/
 Restart=on-failure
 KillSignal=SIGQUIT
 

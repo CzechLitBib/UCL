@@ -1,7 +1,3 @@
-TODO
-<pre>
--Cards fill.
-</pre>
 
 INSTALL
 <pre>

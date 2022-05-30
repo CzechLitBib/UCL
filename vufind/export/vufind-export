@@ -38,7 +38,7 @@ FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od 
 
 ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
 
-LIMIT='30'
+LIMIT='10000'
 
 # INIT -------------------------
 
@@ -69,6 +69,12 @@ def get_solr(query):
 
 # CONTENT -------------------------
 
+def name_to_upper(name):
+	name=name.strip(', ')
+	if len(name.split(',')) == 2:
+		return name.split(',')[0].strip().upper() + ', ' + name.split(',')[1].strip() 
+	return name
+
 def scale(drawing, scale_factor):
     sx = scale_factor
     sy = scale_factor
@@ -80,15 +86,37 @@ def scale(drawing, scale_factor):
 def get_card(record):
 	ret=[]
 	if 'info_resource_str_mv' in record:
-		ret.append(Paragraph('<para align="right">' + record['info_resource_str_mv'][0] + ', ' + record['id'] + '</para>'))
+		ret.append(Paragraph('<para align="right"><font name="OpenSans-Regular" size="8">' + record['info_resource_str_mv'][0] + ', ' + record['id'] + '</font></para>'))
 	else:
-		ret.append(Paragraph('<para align="right">' + record['id'] + '</para>'))
+		ret.append(Paragraph('<para align="right"><font name="OpenSans-Regular" size="8">' + record['id'] + '</font></para>'))
 	ret.append(Spacer(1,15))
 	if 'export_100a_str' in record:
-		ret.append(Paragraph('<font name="OpenSans-Bold">' + record['export_100a_str'] + '</font>'))
-	if 'export_100bc_str' in record:
-		ret.append(Paragraph('<font name="OpenSans-Bold">' + record['export_100bc_str'] + '</font>'))
-
+		ret.append(Paragraph('<font name="OpenSans-Bold">' + name_to_upper(record['export_100a_str']) + '</font>'))
+		if 'export_100bc_str' in record:
+			ret.append(Paragraph('<font name="OpenSans-Regular">' + record['export_100bc_str'] + '</font>'))
+		ret.append(Spacer(1,15))
+	if 'export_245_str' in record:
+		ret.append(Paragraph('<font name="OpenSans-Regular">' + record['export_245_str'] + '</font>'))
+	if 'export_260264_str_mv' in record:
+		ret.append(Paragraph('<font name="OpenSans-Regular">' + ' '.join(record['export_260264_str_mv']) + '</font>'))
+	if 'export_490_str_mv' in record:
+		ret.append(Paragraph('<font name="OpenSans-Regular">' + ' '.join(record['export_490_str_mv']) + '</font>'))
+	if 'article_resource_str_mv' in record:
+		if 'export_773g_str_mv' in record:
+			ret.append(Paragraph('<font name="OpenSans-Regular">In: ' +
+				' '.join(record['article_resource_str_mv']) +
+				'. ' +
+				' '.join(record['export_773g_str_mv']) +
+			'</font>'))
+		else:
+			ret.append(Paragraph('<font name="OpenSans-Regular">In: ' + ' '.join(record['article_resource_str_mv']) + '</font>'))
+	if 'export_520a_str_mv' in record:
+		ret.append(Paragraph('<font name="OpenSans-Regular">[' + ' '.join(record['export_520a_str_mv']) + ']</font>'))
+	if 'export_6xx_str_mv' in record:
+		ret.append(Paragraph('<font name="OpenSans-Regular">-&gt;' + ' '.join(record['export_6xx_str_mv']) + '</font>'))
+	if 'export_787_str_mv' in record:
+		for sub in record['export_787_str_mv']:
+			ret.append(Paragraph('<font name="OpenSans-Regular">-&gt;' + sub + '</font>'))
 	return ret
 
 def get_docx(data):
@@ -112,6 +140,7 @@ def get_pdf(data):
 	# data
 	frame = Frame(60, 40, 470, 750)
 	for record in data['response']['docs']:
+		#print(record)
 		data = [[[get_card(record)]]]
 		if frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf) == 0:
 			pdf.showPage()
@@ -134,7 +163,6 @@ def get_pdf(data):
 	return ret
 
 def get_payload(data,format_type):
-	#for rec in data['response']['docs']:
 	if format_type == 'docx':
 		return get_docx(data)
 	if format_type == 'pdf':
@@ -150,6 +178,7 @@ def export():
 	filter_query = request.args.getlist('filter[]')
 
 	# SOLR
+	#print(solr_query(query, filter_query, format_type))
 	data = get_solr(solr_query(query, filter_query, format_type))
 	print('[*] Solr.')
 	# PAYLOAD
