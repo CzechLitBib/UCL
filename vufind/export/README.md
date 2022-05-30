@@ -1,7 +1,6 @@
 TODO
 <pre>
--Paragraph styling.
--Data loop.
+-Cards fill.
 </pre>
 
 INSTALL
