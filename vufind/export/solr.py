@@ -11,7 +11,7 @@ SOLR='http://localhost:8983/solr/biblio/select'
 
 LIMIT='10000'
 
-FL = [
+FIELD_LIST = [
 	'id',
 	'export_100a_str',
 	'export_100bc_str',
@@ -34,16 +34,16 @@ session = requests.Session()
 
 def solr_query(query, filter_query):
 
-	fq,q,fl,rows='','q=*:*','fl=','rows='
+	fq,q,fl,rows=[],'q=*:*','fl=','rows='
 
-	for f in filter_query: fq += 'fq=' + f	# FQ
-	if query: q = 'q=' + query		# Q
-	fl = ','.join(FL)			# FL
-	'&rows=' + LIMIT			# ROWS
+	fq = '&'.join([ 'fq=' + f for f in filter_query ])	#FQ
+	if query: q = 'q=' + query				# Q
+	fl += ','.join(FIELD_LIST)				# FL
+	rows += LIMIT						# ROWS
 
-	return SOLR + '?' + '&'.join(fq, q, fl, rows)
+	return SOLR + '?' + '&'.join([fq, q, fl, rows])
 
-def get_solr(query):
+def solr_get(query):
 	req = session.get(query)
 	if req and req.status_code == 200: return req.json()
 	return ''

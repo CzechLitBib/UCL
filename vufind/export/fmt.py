@@ -3,6 +3,7 @@
 # Vufind - Export format module
 #
 
+from io import BytesIO
 from datetime import datetime
 
 # PDF
@@ -41,7 +42,7 @@ def scale(drawing, scale_factor):
     drawing.scale(sx, sy)
     return drawing
 
-def get_card(record):
+def card(record):
 	ret=[]
 	if 'info_resource_str_mv' in record:
 		ret.append(Paragraph('<para align="right"><font name="OpenSans-Regular" size="8">' + record['info_resource_str_mv'][0] + ', ' + record['id'] + '</font></para>'))
@@ -77,12 +78,10 @@ def get_card(record):
 			ret.append(Paragraph('<font name="OpenSans-Regular">-&gt;' + sub + '</font>'))
 	return ret
 
-def get_docx(data):
-	return io.BytesIO(b'Boo!')
-
-def get_pdf(data):
-	ret = io.BytesIO()
+def pdf(data):
+	ret = BytesIO()
 	logo = svg2rlg(LOGO)
+	arrow = svg2rlg(ARROW)
 	# init
 	pdf = Canvas(ret, pagesize=pagesizes.A4)
 	pdf.setTitle('ČLB - Vufind')
@@ -99,7 +98,7 @@ def get_pdf(data):
 	frame = Frame(60, 40, 470, 750)
 	for record in data['response']['docs']:
 		#print(record)
-		data = [[[get_card(record)]]]
+		data = [[[card(record)]]]
 		if frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf) == 0:
 			pdf.showPage()
 			pdf.setLineWidth(0)
@@ -120,6 +119,12 @@ def get_pdf(data):
 	print('[*] PDF.')
 	return ret
 
-def get_docx(data):
+def docx(data):
 	return io.BytesIO(b'Boo!')
+
+def fmt_get(data,format_type):
+	if format_type == 'docx':
+		return docx(data)
+	if format_type == 'pdf': return pdf(data)
+	return io.BytesIO()
 

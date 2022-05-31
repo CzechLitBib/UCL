@@ -3,8 +3,8 @@
 # Vufind - Export module
 #
 
-import requests,solr,fmt,io
-
+from solr import solr_query, solr_get
+from fmt import fmt_get
 from flask import Flask,request,send_file,make_response
 from datetime import datetime
 
@@ -21,10 +21,10 @@ def export():
 	filter_query = request.args.getlist('filter[]')
 
 	# SOLR
-	data = get_solr(solr_query(query, filter_query, format_type))
+	data = solr_get(solr_query(query, filter_query))
 	print('[*] Solr.')
 	# PAYLOAD
-	payload = get_payload(data,format_type)
+	payload = fmt_get(data, format_type)
 	print('[*] Payload.')
 	# FN
 	file_type='bin'
