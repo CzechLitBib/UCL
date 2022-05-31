@@ -1,8 +1,9 @@
+
 TODO
 <pre>
--PDF Flowable template
+ PDF mod.
+ DOCX mod init.
 </pre>
-
 INSTALL
 <pre>
 apt-get install uwsgi python-flask python3-reportgen
