@@ -23,7 +23,7 @@ LOGO='/usr/local/bin/export/logo.svg'
 ARROW='/usr/local/bin/export/arrow-right-short.svg'
 HEADER='Česká literární bibliografie'
 WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136)."
-FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
+FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v&nbsp;rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
 ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
 
 # DEF
@@ -145,7 +145,7 @@ def pdf(data):
 	frame = Frame(60, 40, 470, 760)
 	warn_style = ParagraphStyle('warn', fontName="OpenSans-Regular", fontSize=8, backColor=lightgrey, borderPadding=5)
 	frame.add(Paragraph(WARN, style=warn_style), pdf)
-	frame.add(Spacer(1,20), pdf)
+	frame.add(Spacer(1,15), pdf)
 	for record in data['response']['docs']:
 		data = [[[card(record)]]]
 		if frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf) == 0:
@@ -154,10 +154,10 @@ def pdf(data):
 			pdf.setStrokeColor(lightgrey)
 			frame = Frame(60, 40, 470, 750)
 			frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf)
-		frame.add(Spacer(1,20), pdf)
+		frame.add(Spacer(1,15), pdf)
 	# footer
-	frame = Frame(30, 18, 530, 36)
-	foot_style = ParagraphStyle('foot', fontName="OpenSans-Regular", fontSize=8, leading=8, backColor=lightgrey, borderPadding=3)
+	frame = Frame(30, 20, 530, 36)
+	foot_style = ParagraphStyle('foot', fontName="OpenSans-Regular", fontSize=8, leading=10, borderPadding=3)
 	frame.add(Paragraph(FOOT, style=foot_style), pdf)
 	pdf.setLineWidth(0)
 	pdf.setStrokeColor(lightgrey)

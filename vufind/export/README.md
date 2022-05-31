@@ -1,7 +1,7 @@
 
 TODO
 <pre>
- PDF: footer style, arrow, spacers </pre>
+ PDF: arrow, spacers </pre>
 </pre>
 INSTALL
 <pre>
