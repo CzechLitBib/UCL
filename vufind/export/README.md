@@ -1,4 +1,8 @@
 
+TODO
+<pre>
+ PDF: footer style, arrow, spacers </pre>
+</pre>
 INSTALL
 <pre>
 apt-get install uwsgi python-flask python3-reportgen

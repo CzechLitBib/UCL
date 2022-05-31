@@ -10,7 +10,7 @@ from datetime import datetime
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib import pagesizes
 from reportlab.lib.colors import lightgrey
-#from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Spacer,Paragraph,Table,Frame
 from reportlab.graphics import renderPDF
 from reportlab.pdfbase import pdfmetrics
@@ -45,37 +45,84 @@ def scale(drawing, scale_factor):
 def card(record):
 	ret=[]
 	if 'info_resource_str_mv' in record:
-		ret.append(Paragraph('<para align="right"><font name="OpenSans-Regular" size="8">' + record['info_resource_str_mv'][0] + ', ' + record['id'] + '</font></para>'))
+		ret.append(Paragraph(
+			'<para align="right"><font name="OpenSans-Regular" size="8">' +
+			record['info_resource_str_mv'][0] + ', ' +
+			record['id'] +
+			'</font></para>'
+		))
 	else:
-		ret.append(Paragraph('<para align="right"><font name="OpenSans-Regular" size="8">' + record['id'] + '</font></para>'))
+		ret.append(Paragraph(
+			'<para align="right"><font name="OpenSans-Regular" size="8">' +
+			record['id'] +
+			'</font></para>'
+		))
 	ret.append(Spacer(1,15))
 	if 'export_100a_str' in record:
-		ret.append(Paragraph('<font name="OpenSans-Bold">' + name_to_upper(record['export_100a_str']) + '</font>'))
+		ret.append(Paragraph(
+			'<font name="OpenSans-Bold">' +
+			name_to_upper(record['export_100a_str']) +
+			'</font>'
+		))
 		if 'export_100bc_str' in record:
-			ret.append(Paragraph('<font name="OpenSans-Regular">' + record['export_100bc_str'] + '</font>'))
+			ret.append(Paragraph(
+				'<font name="OpenSans-Regular">' +
+				record['export_100bc_str'] +
+				'</font>'
+			))
 		ret.append(Spacer(1,15))
 	if 'export_245_str' in record:
-		ret.append(Paragraph('<font name="OpenSans-Regular">' + record['export_245_str'] + '</font>'))
+		ret.append(Paragraph(
+			'<font name="OpenSans-Regular">' +
+			record['export_245_str'] +
+			'</font>'
+		))
 	if 'export_260264_str_mv' in record:
-		ret.append(Paragraph('<font name="OpenSans-Regular">' + ' '.join(record['export_260264_str_mv']) + '</font>'))
+		ret.append(Paragraph(
+			'<font name="OpenSans-Regular">' +
+			' '.join(record['export_260264_str_mv']) +
+			'</font>'
+		))
 	if 'export_490_str_mv' in record:
-		ret.append(Paragraph('<font name="OpenSans-Regular">' + ' '.join(record['export_490_str_mv']) + '</font>'))
+		ret.append(Paragraph(
+			'<font name="OpenSans-Regular">' +
+			' '.join(record['export_490_str_mv']) +
+			'</font>'
+		))
 	if 'article_resource_str_mv' in record:
 		if 'export_773g_str_mv' in record:
-			ret.append(Paragraph('<font name="OpenSans-Regular">In: ' +
+			ret.append(Paragraph(
+				'<font name="OpenSans-Regular">In: ' +
 				' '.join(record['article_resource_str_mv']) +
 				'. ' +
 				' '.join(record['export_773g_str_mv']) +
-			'</font>'))
+				'</font>'
+			))
 		else:
-			ret.append(Paragraph('<font name="OpenSans-Regular">In: ' + ' '.join(record['article_resource_str_mv']) + '</font>'))
+			ret.append(Paragraph(
+				'<font name="OpenSans-Regular">In: ' +
+				' '.join(record['article_resource_str_mv']) +
+				'</font>'
+			))
 	if 'export_520a_str_mv' in record:
-		ret.append(Paragraph('<font name="OpenSans-Regular">[' + ' '.join(record['export_520a_str_mv']) + ']</font>'))
+		ret.append(Paragraph(
+			'<font name="OpenSans-Regular">[' +
+			' '.join(record['export_520a_str_mv']) +
+			']</font>'
+		))
 	if 'export_6xx_str_mv' in record:
-		ret.append(Paragraph('<font name="OpenSans-Regular">-&gt;' + ' '.join(record['export_6xx_str_mv']) + '</font>'))
+		ret.append(Paragraph(
+			'<font name="OpenSans-Regular">-&gt;' +
+			' '.join(record['export_6xx_str_mv']) +
+			'</font>'
+		))
 	if 'export_787_str_mv' in record:
 		for sub in record['export_787_str_mv']:
-			ret.append(Paragraph('<font name="OpenSans-Regular">-&gt;' + sub + '</font>'))
+			ret.append(Paragraph(
+				'<font name="OpenSans-Regular">-&gt;' +
+				sub +
+				'</font>'
+			))
 	return ret
 
 def pdf(data):
@@ -95,9 +142,11 @@ def pdf(data):
 	pdf.setStrokeColor(lightgrey)
 	pdf.line(10, 810, 585, 810)
 	# data
-	frame = Frame(60, 40, 470, 750)
+	frame = Frame(60, 40, 470, 760)
+	warn_style = ParagraphStyle('warn', fontName="OpenSans-Regular", fontSize=8, backColor=lightgrey, borderPadding=5)
+	frame.add(Paragraph(WARN, style=warn_style), pdf)
+	frame.add(Spacer(1,20), pdf)
 	for record in data['response']['docs']:
-		#print(record)
 		data = [[[card(record)]]]
 		if frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf) == 0:
 			pdf.showPage()
@@ -106,13 +155,15 @@ def pdf(data):
 			frame = Frame(60, 40, 470, 750)
 			frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf)
 		frame.add(Spacer(1,20), pdf)
-
 	# footer
+	frame = Frame(30, 18, 530, 36)
+	foot_style = ParagraphStyle('foot', fontName="OpenSans-Regular", fontSize=8, leading=8, backColor=lightgrey, borderPadding=3)
+	frame.add(Paragraph(FOOT, style=foot_style), pdf)
 	pdf.setLineWidth(0)
 	pdf.setStrokeColor(lightgrey)
 	pdf.line(10, 25, 585, 25)
 	pdf.setFont('OpenSans-Regular', 8)
-	pdf.drawString(15, 10, ADDRESS)
+	pdf.drawString(140, 10, ADDRESS)
 	# write
 	pdf.save()
 	ret.seek(0)
