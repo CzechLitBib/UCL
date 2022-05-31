@@ -1,7 +1,8 @@
 
 TODO
 <pre>
- PDF: arrow, spacers </pre>
+ PDF mod.
+ DOCX mod init.
 </pre>
 INSTALL
 <pre>

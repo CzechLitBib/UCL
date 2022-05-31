@@ -20,11 +20,14 @@ from svglib.svglib import svg2rlg
 # VAR
 
 LOGO='/usr/local/bin/export/logo.svg'
-ARROW='/usr/local/bin/export/arrow-right-short.svg'
 HEADER='Česká literární bibliografie'
 WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136)."
 FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v&nbsp;rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
 ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
+
+# INIT
+
+logo = svg2rlg(LOGO)
 
 # DEF
 
@@ -77,6 +80,7 @@ def card(record):
 			record['export_245_str'] +
 			'</font>'
 		))
+		ret.append(Spacer(1,15))
 	if 'export_260264_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
@@ -104,31 +108,31 @@ def card(record):
 				' '.join(record['article_resource_str_mv']) +
 				'</font>'
 			))
+		ret.append(Spacer(1,15))
 	if 'export_520a_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">[' +
 			' '.join(record['export_520a_str_mv']) +
 			']</font>'
 		))
+		ret.append(Spacer(1,15))
 	if 'export_6xx_str_mv' in record:
 		ret.append(Paragraph(
-			'<font name="OpenSans-Regular">-&gt;' +
+			'<font name="OpenSans-Regular">' +
 			' '.join(record['export_6xx_str_mv']) +
-			'</font>'
+			'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 		))
 	if 'export_787_str_mv' in record:
 		for sub in record['export_787_str_mv']:
 			ret.append(Paragraph(
-				'<font name="OpenSans-Regular">-&gt;' +
+				'<font name="OpenSans-Regular">' +
 				sub +
-				'</font>'
+				'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 			))
 	return ret
 
 def pdf(data):
 	ret = BytesIO()
-	logo = svg2rlg(LOGO)
-	arrow = svg2rlg(ARROW)
 	# init
 	pdf = Canvas(ret, pagesize=pagesizes.A4)
 	pdf.setTitle('ČLB - Vufind')
