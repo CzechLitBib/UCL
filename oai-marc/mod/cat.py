@@ -9,9 +9,9 @@ from datetime import datetime,timedelta
 
 # VAR -------------------
 
-KAT_CODE='/usr/local/bin/code/kat.txt'
+KAT_CODE='/usr/local/bin/code/cat.txt'
 
-JSON='/var/www/html/kat/data/' + (datetime.today()-timedelta(days=1)).strftime('%Y/%m/') + 'data.json'
+JSON='/var/www/html/cat/data/' + (datetime.today()-timedelta(days=1)).strftime('%Y/%m/') + 'data.json'
 
 # DEF -------------------
 
