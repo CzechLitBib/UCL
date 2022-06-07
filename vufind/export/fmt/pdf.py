@@ -151,7 +151,7 @@ def pdf(data):
 	frame.add(Paragraph(WARN, style=warn_style), pdf)
 	frame.add(Spacer(1,15), pdf)
 	for record in data['response']['docs']:
-		data = [[[card(record)]]]
+		data = [[card(record)]]
 		if frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf) == 0:
 			pdf.showPage()
 			pdf.setLineWidth(0)
@@ -161,7 +161,7 @@ def pdf(data):
 		frame.add(Spacer(1,15), pdf)
 	# footer
 	frame = Frame(30, 20, 530, 36)
-	foot_style = ParagraphStyle('foot', fontName="OpenSans-Regular", fontSize=8, leading=10, borderPadding=3)
+	foot_style = ParagraphStyle('foot', fontName="OpenSans-Regular", fontSize=8)
 	frame.add(Paragraph(FOOT, style=foot_style), pdf)
 	pdf.setLineWidth(0)
 	pdf.setStrokeColor(lightgrey)
@@ -173,13 +173,4 @@ def pdf(data):
 	ret.seek(0)
 	print('[*] PDF.')
 	return ret
-
-def docx(data):
-	return io.BytesIO(b'Boo!')
-
-def fmt_get(data,format_type):
-	if format_type == 'docx':
-		return docx(data)
-	if format_type == 'pdf': return pdf(data)
-	return io.BytesIO()
 
