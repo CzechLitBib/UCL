@@ -1,6 +1,6 @@
 [Unit]
 Description=Vufind Export service
-After=network.target auditd.service
+After=network.target auditd.service solr.service
 
 [Service]
 Type=simple

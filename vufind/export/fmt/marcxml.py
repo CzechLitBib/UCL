@@ -4,7 +4,7 @@
 #
 
 from io import BytesIO
-from pymarc import marcxml,MARCReader,XMLWriter
+from pymarc import MARCReader,XMLWriter
 
 # MARCXML
 

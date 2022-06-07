@@ -4,7 +4,7 @@
 #
 
 from solr import solr,solr_query
-from fmt import pdf,docx,marcxml
+from fmt import pdf,docx,marcxml,marc21
 from flask import Flask,request,send_file,make_response
 from datetime import datetime
 
@@ -19,10 +19,8 @@ def export():
 	format_type = request.form['format']
 	query = request.args.get('lookfor')
 	filter_query = request.args.getlist('filter[]')
-	print(format_type)
 	# SOLR
 	data = solr(solr_query(query, filter_query, format_type))
-	print(solr_query(query, filter_query, format_type))
 	print('[*] Solr.')
 	# PAYLOAD
 	payload=''
@@ -38,9 +36,10 @@ def export():
 		payload = marcxml.buff(data)
 		file_type = 'xml'
 		content_type = 'application/xml'
-	#if format_type == 'marc21':
-	#	file_type = 'mrc'
-	#	content_type = 'application/octet-stream'
+	if format_type == 'marc21':
+		payload = marc21.buff(data)
+		file_type = 'mrc'
+		content_type = 'application/octet-stream'
 	if format_type == 'pdf':
 		payload = pdf.pdf(data)
 		file_type = 'pdf'
