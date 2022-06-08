@@ -9,7 +9,7 @@ from datetime import datetime
 #DOCX
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Inches
+from docx.shared import Inches, Cm
 from docx.oxml.shared import OxmlElement
 
 # VAR
@@ -38,8 +38,13 @@ def docx(data):
 	ret = BytesIO()
 	# init
 	doc = Document()
+	sections = doc.sections
+	for section in sections:
+		section.left_margin = Cm(1.5)
+		section.right_margin = Cm(1.5)
 	# head
-	#doc.add_picture(LOGO, width=Inches(1.0))
+	head = sections[0].header
+	head.text = HEADER
 	# data
 	for record in data['response']['docs']:
 		if 'info_resource_str_mv' in record:
@@ -47,7 +52,6 @@ def docx(data):
 		else:
 			par = doc.add_paragraph(record['id'])
 		par.paragraph_format.keep_with_next = True
-		par.paragraph_format.space_after = 10
 		par.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 		if 'export_100a_str' in record:
 			par = doc.add_paragraph()
@@ -55,44 +59,38 @@ def docx(data):
 			if 'export_100bc_str' in record:
 				par.add_run(name_to_upper(record['export_100bc_str']))
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 10
 		if 'export_245_str' in record:
 			par = doc.add_paragraph(record['export_245_str'])
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 10
 		if 'export_260264_str_mv' in record:
 			par = doc.add_paragraph(record['export_260264_str_mv'])
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 10
 		if 'export_490_str_mv' in record:
 			par = doc.add_paragraph(record['export_490_str_mv'])
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 10
 		if 'article_resource_str_mv' in record:
 			par = doc.add_paragraph()
-			par.add_run('In:' + ' '.join(record['article_resource_str_mv']))
+			par.add_run('In: ' + ' '.join(record['article_resource_str_mv']))
 			if 'export_773g_str_mv' in record:
 				par.add_run('. ' + ' '.join(record['export_773g_str_mv']))
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 10
 		if 'export_520a_str_mv' in record:
-			par = doc.add_paragraph(' '.join(record['export_520a_str_mv']))
+			par = doc.add_paragraph('[' + ' '.join(record['export_520a_str_mv']) + ']')
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 10
 		if 'export_6xx_str_mv' in record:
 			par = doc.add_paragraph(' '.join(record['export_6xx_str_mv']))
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 10
 		if 'export_787_str_mv' in record:
 			for sub in record['export_787_str_mv']:
 				par = doc.add_paragraph()
-				par.add_run('\u279c ').bold = True
+				par.add_run('\u279c ')
 				par.add_run(sub)
 				par.paragraph_format.keep_with_next = True
 				par.paragraph_format.space_after = 5
 		par = doc.add_paragraph()
-
 	# foot
+	foot = sections[-1].footer
+	foot.text = ADDRESS
 	#write
 	doc.save(ret)
 	ret.seek(0)
