@@ -53,9 +53,15 @@ server {
 	ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 
-	error_page 497 https://xxx;
+        error_page 403 /403.html;
+        error_page 404 /404.html;
 
 	client_max_body_size 5M;
+
+        # 403
+        location = /403.html {
+                allow all;
+        }
 
 	# Vufind API
 	location ~ ^/api {
