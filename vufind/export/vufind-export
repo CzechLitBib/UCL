@@ -5,33 +5,39 @@
 
 from solr import solr,solr_query
 from fmt import pdf,docx,marcxml,marc21
-from flask import Flask,request,send_file,make_response
+from flask import Flask,request,session,send_file,make_response,render_template
 from datetime import datetime
 
 # INIT
 
 app = Flask(__name__)
 
+app.secret_key = b'$^%^$%LMLKK<>?"{}__'
+
 # ROUTING
 
-@app.route('/export', methods=['POST'])
+@app.route('/export', methods=['GET','POST'])
 def export():
+	query,filter_query=None,None
+
+	# GET
+	if request.method == 'GET':
+		session['query'] = request.args.get('lookfor')
+		session['filter_query'] = request.args.getlist('filter[]')
+		headers = {'Content-Type': 'text/html'}
+		return make_response(render_template('/export.html'), 200, headers)
+
 	format_type = request.form['format']
-	query = request.args.get('lookfor')
-	filter_query = request.args.getlist('filter[]')
 	# SOLR
-	data = solr(solr_query(query, filter_query, format_type))
-	print('[*] Solr.')
+	data = solr(solr_query(session['query'], session['filter_query'], format_type))
+
 	# PAYLOAD
 	payload=''
 	file_type='bin'
 	content_type = 'application/octet-stream'
-	#if format_type == 'txt':
-	#	file_type = 'txt'
-	#	content_type = 'text/plain'
-	#if format_type == 'json':
-	#	file_type = 'json'
-	#	content_type = 'application/json'
+	if format_type == 'json':
+		file_type = 'json'
+		content_type = 'application/json'
 	if format_type == 'marcxml':
 		payload = marcxml.buff(data)
 		file_type = 'xml'
@@ -48,7 +54,7 @@ def export():
 		payload = docx.docx(data)
 		file_type = 'docx'
 		content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-	print('[*] Payload.')
+
 	# RESPONSE
 	file_name = 'vufind-'+ datetime.now().strftime('%Y%m%d%H%M%S') + '.' + file_type
 	response = make_response(send_file(payload, as_attachment=True, attachment_filename=file_name))
