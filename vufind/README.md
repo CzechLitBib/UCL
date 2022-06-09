@@ -14,11 +14,6 @@ https://solr.apache.org/guide/8_0/schema-api.html
       &lt;filter class="solr.CzechStemFilterFactory"/&gt;
     &lt;/analyzer&gt;
   &lt;/fieldType&gt;
--Cover ? 002712500
--Nahled Retrobi:
- a] core - image preview - https://atelier-tippman.cz/UCL/webCLB/v6/VuFind_detail_RETROBI.html
- b] link 856
- c] !520 => 989a.
 </pre>
 INSTALL
 <pre>
@@ -102,6 +97,8 @@ awstats012020.archive.txt
 #fi
 
 # INSTALL
+
+cp -r 4xx/ /usr/share/nginx/html/
 
 /etc/ngixnx/nginx.conf:
 server_tokens off;
