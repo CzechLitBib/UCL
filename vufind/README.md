@@ -138,6 +138,14 @@ server {
 
 	server_name xxx;
 
+	error_page 403 /4xx/403.html;
+	error_page 404 /4xx/404.html;
+
+	# 4xx
+	location ~ /4xx {
+		allow all;
+	}
+
 	# SOLR
 	location ~ ^/solr {
 		allow xxx/24;
