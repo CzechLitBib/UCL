@@ -9,7 +9,7 @@ import requests,io
 
 SOLR='http://localhost:8983/solr/biblio/select'
 
-LIMIT='10'
+LIMIT='5000'
 
 FIELD_LIST = [
 	'id',

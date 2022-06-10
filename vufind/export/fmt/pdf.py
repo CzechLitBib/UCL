@@ -171,6 +171,5 @@ def pdf(data):
 	# write
 	pdf.save()
 	ret.seek(0)
-	print('[*] PDF.')
 	return ret
 

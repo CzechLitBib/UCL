@@ -10,7 +10,7 @@ from datetime import datetime
 
 # INIT
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path="/export")
 
 app.secret_key = b'$^%^$%LMLKK<>?"{}__'
 

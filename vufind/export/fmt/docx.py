@@ -94,6 +94,5 @@ def docx(data):
 	#write
 	doc.save(ret)
 	ret.seek(0)
-	print('[*] DOCX.')
 	return ret
 
