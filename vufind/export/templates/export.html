@@ -17,12 +17,14 @@
 <body class="bg-light">
 
 <main class="container">
+<div class="row my-4 justify-content-center">
+<div class="col-8 col-md-4 my-4 text-center">
+<form method="post" action="/export" enctype="multipart/form-data">
+	<p>
+		<button onclick="progress()" name="format" value="pdf" class="btn btn-danger">PDF</button>
+	</p>
+</form>
 
-<div class="row my-4 bg-info">
-
-<div class="col-8 col-md-4 my-4 bg-secondary">
-
-	<button onclick="loadData('pdf')"  class="btn btn-danger">PDF</button>
 
 	<div hidden class="spinner-border text-danger" role="status" id="spinner">
 		<span class="visually-hidden">Loading...</span>

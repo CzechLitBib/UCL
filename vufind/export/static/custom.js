@@ -3,13 +3,19 @@
 
 const spinner = document.getElementById("spinner");
 
-function loadData(format) {
-	spinner.removeAttribute('hidden');
-	fetch('/export?format=' + format)
-	.then(response => response.json())
+async function check_status() {
+	return await fetch('/export?status',{
+		method:"GET",
+	})
+	.then(response => response)
 	.then(data => {
-		spinner.setAttribute('hidden', '');
 		console.log(data)
 	});
 }
 
+async function progress() {
+	spinner.removeAttribute('hidden');
+	const f = await this.check_status();
+	spinner.setAttribute('hidden', '');
+	console.log(f)
+}
