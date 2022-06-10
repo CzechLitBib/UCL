@@ -22,20 +22,20 @@ def export():
 
 	# GET
 	if request.method == 'GET':
-		if 'status' in request.args:
-			return 'ok', 200
+
+		# SESSION
 		session['query'] = request.args.get('lookfor')
 		session['filter_query'] = request.args.getlist('filter[]')
+
 		headers = {'Content-Type': 'text/html'}
 		return make_response(render_template('/export.html'), 200, headers)
 
 	# FORM 
-	format_type = request.form['format']
-
-	print("[*] Format: " + format_type)
+	format_type = request.data.decode('utf-8')
 
 	# SOLR
 	data = solr(solr_query(session['query'], session['filter_query'], format_type))
+
 	# PAYLOAD
 	payload=''
 	file_type='bin'
@@ -55,13 +55,10 @@ def export():
 		payload = pdf.pdf(data)
 		file_type = 'pdf'
 		content_type = 'application/pdf'
-		print("[*] Got PDF!")
 	if format_type == 'docx':
 		payload = docx.docx(data)
 		file_type = 'docx'
 		content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-
-	print("[*] Returining payload!")
 
 	# RESPONSE
 	file_name = 'vufind-'+ datetime.now().strftime('%Y%m%d%H%M%S') + '.' + file_type

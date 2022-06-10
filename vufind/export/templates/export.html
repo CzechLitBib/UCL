@@ -19,16 +19,13 @@
 <main class="container">
 <div class="row my-4 justify-content-center">
 <div class="col-8 col-md-4 my-4 text-center">
-<form method="post" action="/export" enctype="multipart/form-data">
-	<p>
-		<button onclick="progress()" name="format" value="pdf" class="btn btn-danger">PDF</button>
-	</p>
-</form>
 
+	<p><button onclick="download('docx')" name="format" value="docx" class="btn btn-danger">DOCX</button></p>
+	<p><button onclick="download('pdf')" name="format" value="pdf" class="btn btn-danger">PDF</button></p>
 
-	<div hidden class="spinner-border text-danger" role="status" id="spinner">
-		<span class="visually-hidden">Loading...</span>
-	</div>
+	<div hidden class="spinner-border text-danger" role="status" id="spinner"><span class="visually-hidden">Exportuji...</span></div>
+
+	<div hidden class="alert alert-warning" id="alert" role="alert">Export selhal.</div>
 </div>
 </div>
 </main>
