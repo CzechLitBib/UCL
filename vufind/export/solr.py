@@ -38,7 +38,7 @@ def solr_query(query, filter_query, format_type):
 
 	fq = '&'.join([ 'fq=' + f for f in filter_query ])	# FQ
 	if query: q = 'q=' + query				# Q
-	if format_type in ['marc21', 'marcxml']:		# FL
+	if format_type in ['marc21', 'marcxml', 'json']:	# FL
 		fl += 'id,fullrecord'
 	else:
 		fl += ','.join(FIELD_LIST)

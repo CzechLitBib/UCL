@@ -4,7 +4,7 @@
 #
 
 from solr import solr,solr_query
-from fmt import pdf,docx,marcxml,marc21
+from fmt import pdf,docx,marcxml,marc21,json
 from flask import Flask,request,session,send_file,make_response,render_template
 from datetime import datetime
 
@@ -41,6 +41,7 @@ def export():
 	file_type='bin'
 	content_type = 'application/octet-stream'
 	if format_type == 'json':
+		payload = json.buff(data)
 		file_type = 'json'
 		content_type = 'application/json'
 	if format_type == 'marcxml':

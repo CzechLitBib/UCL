@@ -27,7 +27,17 @@ async function payload(format) {
 		var url = window.URL.createObjectURL(blob);
 		var a = document.createElement('a');
 		a.href = url;
-		a.download = 'vufind-' + date() + '.' + format;
+		switch(format) {
+			case 'marcxml':
+				a.download = 'vufind-' + date() + '.xml';
+				break;
+			case 'marc21':
+				a.download = 'vufind-' + date() + '.mrc';
+				break;
+			default:
+				a.download = 'vufind-' + date() + '.' + format;
+				
+		}
 		document.body.appendChild(a);
 		a.click();
 		a.remove();

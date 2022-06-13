@@ -1,5 +1,10 @@
 
 .bi{
- color: #212529;
+	color: #212529;
+}
+
+.bi-x-lg:hover, .bi-x-lg:focus
+{
+	color: #dc3545;
 }
 
