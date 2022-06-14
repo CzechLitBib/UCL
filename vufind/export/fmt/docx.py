@@ -10,7 +10,8 @@ from datetime import datetime
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Cm
-from docx.oxml.shared import OxmlElement
+from docx.oxml.shared import OxmlElement, qn
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
 # VAR
 
@@ -34,6 +35,24 @@ def name_to_upper(name):
 		return n.split(',')[0].strip().upper() + ', ' + n.split(',')[1].strip() 
 	return n
 
+def hyperlink(par, text, url):
+	part = par.part# document.xml.rels => relation ID
+	rid = part.relate_to(url, RT.HYPERLINK, is_external=True)
+
+	hyperlink = OxmlElement('w:hyperlink')
+	hyperlink.set(qn('r:id'), rid, )
+
+	run = OxmlElement('w:r')
+	rpr = OxmlElement('w:rPr')
+
+	run.append(rpr)
+	run.text = text
+
+	hyperlink.append(run)
+	par._p.append(hyperlink)
+
+	return hyperlink
+
 def docx(data):
 	ret = BytesIO()
 	# init
@@ -47,10 +66,12 @@ def docx(data):
 	head.text = HEADER
 	# data
 	for record in data['response']['docs']:
+		par = doc.add_paragraph()
 		if 'info_resource_str_mv' in record:
-			par = doc.add_paragraph(record['info_resource_str_mv'][0] + ', ' + record['id'])
+			par.add_run(record['info_resource_str_mv'][0] + ', ')
+			hyperlink(par, record['id'], 'http://vufind2-dev.ucl.cas.cz/Record/' + record['id'])
 		else:
-			par = doc.add_paragraph(record['id'])
+			hyperlink(par, record['id'], 'http://vufind2-dev.ucl.cas.cz/Record/' + record['id'])
 		par.paragraph_format.keep_with_next = True
 		par.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 		if 'export_100a_str' in record:
@@ -78,7 +99,7 @@ def docx(data):
 			par = doc.add_paragraph('[' + ' '.join(record['export_520a_str_mv']) + ']')
 			par.paragraph_format.keep_with_next = True
 		if 'export_6xx_str_mv' in record:
-			par = doc.add_paragraph(' '.join(record['export_6xx_str_mv']))
+			par = doc.add_paragraph(';'.join(record['export_6xx_str_mv']))
 			par.paragraph_format.keep_with_next = True
 		if 'export_787_str_mv' in record:
 			for sub in record['export_787_str_mv']:

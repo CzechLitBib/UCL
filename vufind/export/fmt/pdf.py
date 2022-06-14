@@ -51,14 +51,14 @@ def card(record):
 		ret.append(Paragraph(
 			'<para align="right"><font name="OpenSans-Regular" size="8">' +
 			record['info_resource_str_mv'][0] + ', ' +
-			record['id'] +
-			'</font></para>'
+			'<link href="http://vufind2-dev.ucl.cas.cz/Record/' + record['id'] + '">' + record['id'] +
+			'</link></font></para>'
 		))
 	else:
 		ret.append(Paragraph(
 			'<para align="right"><font name="OpenSans-Regular" size="8">' +
-			record['id'] +
-			'</font></para>'
+			'<link href="http://vufind2-dev.ucl.cas.cz/Record/' + record['id'] + '">' + record['id'] +
+			'</link></font></para>'
 		))
 	ret.append(Spacer(1,15))
 	if 'export_100a_str' in record:
@@ -119,7 +119,7 @@ def card(record):
 	if 'export_6xx_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			' '.join(record['export_6xx_str_mv']) +
+			';'.join(record['export_6xx_str_mv']) +
 			'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 		))
 	if 'export_787_str_mv' in record:
