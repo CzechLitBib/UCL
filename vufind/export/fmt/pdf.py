@@ -119,7 +119,7 @@ def card(record):
 	if 'export_6xx_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			';'.join(record['export_6xx_str_mv']) +
+			'; '.join(record['export_6xx_str_mv']) +
 			'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 		))
 	if 'export_787_str_mv' in record:

@@ -99,7 +99,7 @@ def docx(data):
 			par = doc.add_paragraph('[' + ' '.join(record['export_520a_str_mv']) + ']')
 			par.paragraph_format.keep_with_next = True
 		if 'export_6xx_str_mv' in record:
-			par = doc.add_paragraph(';'.join(record['export_6xx_str_mv']))
+			par = doc.add_paragraph('; '.join(record['export_6xx_str_mv']))
 			par.paragraph_format.keep_with_next = True
 		if 'export_787_str_mv' in record:
 			for sub in record['export_787_str_mv']:
