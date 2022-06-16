@@ -5,8 +5,7 @@ const spinner = document.getElementById('spinner');
 const warn = document.getElementById('alert');
 const abort = document.getElementById('cancel');
 
-// abort controller
-let controller = new AbortController();
+let controller;// abort controller
 
 function cancel() {
 	controller.abort()
@@ -18,6 +17,7 @@ function date() {
 }
 
 async function payload(format) {
+	controller = new AbortController();
 	return await fetch('/export', {
 		signal: controller.signal,
 		method: 'POST',
