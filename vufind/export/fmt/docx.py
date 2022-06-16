@@ -33,6 +33,11 @@ RESOURCE = {
 
 # DEF
 
+def prep(text):
+	for prep in (' u ',' k ',' o ',' s ',' v ',' z ',' a ',' i '):
+		if prep in text: text = text.replace(prep, prep.rstrip() + '\u00a0')
+	return text
+
 def name_to_upper(name):
 	n = name.strip(', ')
 	if len(n.split(',')) == 2:
@@ -96,33 +101,35 @@ def docx(data, lang):
 				par.add_run(name_to_upper(record['export_100bc_str']))
 			par.paragraph_format.keep_with_next = True
 		if 'export_245_str' in record:
-			par = doc.add_paragraph(record['export_245_str'])
+			par = doc.add_paragraph(prep(record['export_245_str']))
 			par.paragraph_format.keep_with_next = True
 		if 'export_260264_str_mv' in record:
-			par = doc.add_paragraph(' '.join(record['export_260264_str_mv']))
+			par = doc.add_paragraph(prep(' '.join(record['export_260264_str_mv'])))
 			par.paragraph_format.keep_with_next = True
 		if 'export_490_str_mv' in record:
-			par = doc.add_paragraph('(' + ' '.join(record['export_490_str_mv']) + ')')
+			par = doc.add_paragraph('(' + prep(' '.join(record['export_490_str_mv'])) + ')')
 			par.paragraph_format.keep_with_next = True
 		if 'export_773tg_str_mv' in record:
-			par = doc.add_paragraph('In: ' + record['export_773tg_str_mv'][0])
+			par = doc.add_paragraph('In: ' + prep(record['export_773tg_str_mv'][0]))
 			par.paragraph_format.keep_with_next = True
+			par.paragraph_format.space_after = 5
 			for sub in record['export_773tg_str_mv'][1:]:
-				par = doc.add_paragraph(sub)
+				par = doc.add_paragraph(prep(sub))
 				par.paragraph_format.keep_with_next = True
 		if 'export_520a_str_mv' in record:
-			par = doc.add_paragraph('[' + ' '.join(record['export_520a_str_mv']) + ']')
+			par = doc.add_paragraph('[' + prep(' '.join(record['export_520a_str_mv'])) + ']')
 			par.paragraph_format.keep_with_next = True
 		if 'export_6xx_str_mv' in record:
 			par = doc.add_paragraph()
 			par.add_run('\u279c  ')
-			par.add_run('; '.join(record['export_6xx_str_mv']))
+			par.add_run(prep('; '.join(record['export_6xx_str_mv'])))
 			par.paragraph_format.keep_with_next = True
+			par.paragraph_format.space_after = 5
 		if 'export_787_str_mv' in record:
 			for sub in record['export_787_str_mv']:
 				par = doc.add_paragraph()
 				par.add_run('\u279c  ')
-				par.add_run(sub)
+				par.add_run(prep(sub))
 				par.paragraph_format.keep_with_next = True
 				par.paragraph_format.space_after = 5
 		par = doc.add_paragraph()

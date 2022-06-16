@@ -47,6 +47,11 @@ logo = svg2rlg(LOGO)
 
 # DEF
 
+def prep(text):
+	for prep in (' u ',' k ',' o ',' s ',' v ',' z ',' a ',' i '):
+		if prep in text: text = text.replace(prep, prep.rstrip() + '&nbsp;')
+	return text
+
 def name_to_upper(name):
 	n = name.strip(', ')
 	if len(n.split(',')) == 2:
@@ -94,49 +99,49 @@ def card(record, lang):
 	if 'export_245_str' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			record['export_245_str'] +
+			prep(record['export_245_str']) +
 			'</font>'
 		))
 		ret.append(Spacer(1,15))
 	if 'export_260264_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			' '.join(record['export_260264_str_mv']) +
+			prep(' '.join(record['export_260264_str_mv'])) +
 			'</font>'
 		))
 	if 'export_490_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">(' +
-			' '.join(record['export_490_str_mv']) +
+			prep(' '.join(record['export_490_str_mv'])) +
 			')</font>'
 		))
 	if 'export_773tg_str_mv' in record:
 		ret.append(Paragraph(
-			'<font name="OpenSans-Regular">In: ' +	record['export_773tg_str_mv'][0] + '</font>'
+			'<font name="OpenSans-Regular">In: ' +	prep(record['export_773tg_str_mv'][0]) + '</font>'
 		))
 		for sub in record['export_773tg_str_mv'][1:]:
 			ret.append(Paragraph(
-				'<font name="OpenSans-Regular">' + sub + '</font>'
+				'<font name="OpenSans-Regular">' + prep(sub) + '</font>'
 			))
 		ret.append(Spacer(1,15))
 	if 'export_520a_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">[' +
-			' '.join(record['export_520a_str_mv']) +
+			prep(' '.join(record['export_520a_str_mv'])) +
 			']</font>'
 		))
 		ret.append(Spacer(1,15))
 	if 'export_6xx_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			'; '.join(record['export_6xx_str_mv']) +
+			prep('; '.join(record['export_6xx_str_mv'])) +
 			'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 		))
 	if 'export_787_str_mv' in record:
 		for sub in record['export_787_str_mv']:
 			ret.append(Paragraph(
 				'<font name="OpenSans-Regular">' +
-				sub +
+				prep(sub) +
 				'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 			))
 	return ret
