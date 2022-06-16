@@ -62,8 +62,11 @@ def docx(data):
 		section.left_margin = Cm(1.5)
 		section.right_margin = Cm(1.5)
 	# head
-	head = sections[0].header
-	head.text = HEADER
+	#header = sections[0].header
+	#par = header.paragraphs[0]
+	#run = par.add_run()
+	#run.add_picture(LOGO,width=Inches(1.0))
+	#par.text = HEADER
 	# data
 	for record in data['response']['docs']:
 		par = doc.add_paragraph()
@@ -84,10 +87,10 @@ def docx(data):
 			par = doc.add_paragraph(record['export_245_str'])
 			par.paragraph_format.keep_with_next = True
 		if 'export_260264_str_mv' in record:
-			par = doc.add_paragraph(record['export_260264_str_mv'])
+			par = doc.add_paragraph(' '.join(record['export_260264_str_mv']))
 			par.paragraph_format.keep_with_next = True
 		if 'export_490_str_mv' in record:
-			par = doc.add_paragraph(record['export_490_str_mv'])
+			par = doc.add_paragraph('(' + ' '.join(record['export_490_str_mv']) + ')')
 			par.paragraph_format.keep_with_next = True
 		if 'article_resource_str_mv' in record:
 			par = doc.add_paragraph()
@@ -99,12 +102,14 @@ def docx(data):
 			par = doc.add_paragraph('[' + ' '.join(record['export_520a_str_mv']) + ']')
 			par.paragraph_format.keep_with_next = True
 		if 'export_6xx_str_mv' in record:
-			par = doc.add_paragraph('; '.join(record['export_6xx_str_mv']))
+			par = doc.add_paragraph()
+			par.add_run('\u279c  ')
+			par.add_run('; '.join(record['export_6xx_str_mv']))
 			par.paragraph_format.keep_with_next = True
 		if 'export_787_str_mv' in record:
 			for sub in record['export_787_str_mv']:
 				par = doc.add_paragraph()
-				par.add_run('\u279c ')
+				par.add_run('\u279c  ')
 				par.add_run(sub)
 				par.paragraph_format.keep_with_next = True
 				par.paragraph_format.space_after = 5

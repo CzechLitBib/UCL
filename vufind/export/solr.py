@@ -36,7 +36,7 @@ def solr_query(query, filter_query, format_type):
 
 	fq,q,fl,rows=[],'q=*:*','fl=','rows='
 
-	fq = '&'.join([ 'fq=' + f for f in filter_query ])	# FQ
+	fq = '&'.join(['fq=' + f.replace('"','') if 'year' in f else 'fq=' + f for f in filter_query]) # FQ
 	if query: q = 'q=' + query				# Q
 	if format_type in ['marc21', 'marcxml', 'json']:	# FL
 		fl += 'id,fullrecord'

@@ -89,9 +89,9 @@ def card(record):
 		))
 	if 'export_490_str_mv' in record:
 		ret.append(Paragraph(
-			'<font name="OpenSans-Regular">' +
+			'<font name="OpenSans-Regular">(' +
 			' '.join(record['export_490_str_mv']) +
-			'</font>'
+			')</font>'
 		))
 	if 'article_resource_str_mv' in record:
 		if 'export_773g_str_mv' in record:
