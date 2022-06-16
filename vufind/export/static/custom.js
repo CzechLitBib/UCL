@@ -3,6 +3,14 @@
 
 const spinner = document.getElementById('spinner');
 const warn = document.getElementById('alert');
+const abort = document.getElementById('cancel');
+
+// abort controller
+let controller = new AbortController();
+
+function cancel() {
+	controller.abort()
+}
 
 function date() {
 	var today = new Date();
@@ -11,6 +19,7 @@ function date() {
 
 async function payload(format) {
 	return await fetch('/export', {
+		signal: controller.signal,
 		method: 'POST',
 		headers: {
 			'Content-Type': 'text/plain',
@@ -52,10 +61,13 @@ async function payload(format) {
 async function download(format) {
 	warn.setAttribute('hidden', '');
 	spinner.removeAttribute('hidden');
+	abort.removeAttribute('hidden');
 
 	const download = await this.payload(format);
 
 	spinner.setAttribute('hidden', '');
+	abort.setAttribute('hidden', '');
+
 	if (!download) {
 		warn.removeAttribute('hidden');
 	}

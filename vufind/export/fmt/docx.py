@@ -7,6 +7,7 @@ from io import BytesIO
 from datetime import datetime
 
 #DOCX
+
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Cm
@@ -15,11 +16,20 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
 # VAR
 
-LOGO='/usr/local/bin/export/logo.png'
-HEADER='Česká literární bibliografie'
-WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136)."
-FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v&nbsp;rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
-ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
+RESOURCE = {
+	'Literary Samizdat Bibliography':'Bibliografie samizdatu',
+	'Literary Web Bibliography':'Bibliografie internetu',
+	'Literary Exile Bibliography':'Bibliografie exilu',
+	'Retrospective Bibliography (up to 1945)':'Retrospektivní bibliografie (do roku 1945)',
+	'Current Bibliography (after 1945)':'Současná bibliografie (po roce 1945)',
+	'ICL Catalogue':'Katalog UCL',
+	'Database of Processed Journals':'Databáze excerpovaných časopisů',
+	'Czech Literary Authorities Database':'České literární osobnosti',
+	'Polonica in Czech Samizdat':'Polonika v českém samizdatu',
+	'Database of Foreign Bohemica':'Databáze zahraničních bohemik',
+	'Book Series Database':'Databáze knižních edic',
+	'Czech Literature in Translation':'Databáze překladu české literatury'
+}
 
 # DEF
 
@@ -53,7 +63,7 @@ def hyperlink(par, text, url):
 
 	return hyperlink
 
-def docx(data):
+def docx(data, lang):
 	ret = BytesIO()
 	# init
 	doc = Document()
@@ -71,7 +81,9 @@ def docx(data):
 	for record in data['response']['docs']:
 		par = doc.add_paragraph()
 		if 'info_resource_str_mv' in record:
-			par.add_run(record['info_resource_str_mv'][0] + ', ')
+			resource = record['info_resource_str_mv'][0]
+			if lang == 'cs': resource = RESOURCE[record['info_resource_str_mv'][0]]
+			par.add_run(resource + ', ')
 			hyperlink(par, record['id'], 'http://vufind2-dev.ucl.cas.cz/Record/' + record['id'])
 		else:
 			hyperlink(par, record['id'], 'http://vufind2-dev.ucl.cas.cz/Record/' + record['id'])
@@ -115,8 +127,8 @@ def docx(data):
 				par.paragraph_format.space_after = 5
 		par = doc.add_paragraph()
 	# foot
-	foot = sections[-1].footer
-	foot.text = ADDRESS
+	#foot = sections[-1].footer
+	#foot.text = ADDRESS
 	#write
 	doc.save(ret)
 	ret.seek(0)

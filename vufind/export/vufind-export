@@ -10,14 +10,16 @@ from datetime import datetime
 
 # INIT
 
-app = Flask(__name__, static_folder='static', static_url_path="/export")
+app = Flask(__name__, static_folder='static', static_url_path="/export/static")
 
 app.secret_key = b'$^%^$%LMLKK<>?"{}__'
 
 # ROUTING
 
-@app.route('/export', methods=['GET','POST'])
-def export():
+#@app.route('/export/', defaults={'lang':'cs'}, methods=['GET','POST'])
+@app.route('/export/<lang>', methods=['GET','POST'])
+@app.route('/export', strict_slashes=False, methods=['GET','POST'])
+def export(lang='cs'):
 	query,filter_query=None,None
 
 	# GET
@@ -26,6 +28,7 @@ def export():
 		# SESSION
 		session['query'] = request.args.get('lookfor')
 		session['filter_query'] = request.args.getlist('filter[]')
+		session['lang'] = lang
 
 		headers = {'Content-Type': 'text/html'}
 		return make_response(render_template('/export.html'), 200, headers)
@@ -53,11 +56,11 @@ def export():
 		file_type = 'mrc'
 		content_type = 'application/octet-stream'
 	if format_type == 'pdf':
-		payload = pdf.pdf(data)
+		payload = pdf.pdf(data, session['lang'])
 		file_type = 'pdf'
 		content_type = 'application/pdf'
 	if format_type == 'docx':
-		payload = docx.docx(data)
+		payload = docx.docx(data, session['lang'])
 		file_type = 'docx'
 		content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
