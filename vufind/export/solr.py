@@ -19,9 +19,8 @@ FIELD_LIST = [
 	'export_260264_str_mv',
 	'export_490_str_mv',
 	'export_520a_str_mv',
-	'article_resource_str_mv',
 	'export_6xx_str_mv',
-	'export_773g_str_mv',
+	'export_773tg_str_mv',
 	'export_787_str_mv',
 	'info_resource_str_mv'
 ]

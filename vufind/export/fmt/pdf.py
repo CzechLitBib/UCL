@@ -110,20 +110,13 @@ def card(record, lang):
 			' '.join(record['export_490_str_mv']) +
 			')</font>'
 		))
-	if 'article_resource_str_mv' in record:
-		if 'export_773g_str_mv' in record:
+	if 'export_773tg_str_mv' in record:
+		ret.append(Paragraph(
+			'<font name="OpenSans-Regular">In: ' +	record['export_773tg_str_mv'][0] + '</font>'
+		))
+		for sub in record['export_773tg_str_mv'][1:]:
 			ret.append(Paragraph(
-				'<font name="OpenSans-Regular">In: ' +
-				' '.join(record['article_resource_str_mv']) +
-				'. ' +
-				' '.join(record['export_773g_str_mv']) +
-				'</font>'
-			))
-		else:
-			ret.append(Paragraph(
-				'<font name="OpenSans-Regular">In: ' +
-				' '.join(record['article_resource_str_mv']) +
-				'</font>'
+				'<font name="OpenSans-Regular">' + sub + '</font>'
 			))
 		ret.append(Spacer(1,15))
 	if 'export_520a_str_mv' in record:

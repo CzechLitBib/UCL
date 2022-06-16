@@ -104,12 +104,12 @@ def docx(data, lang):
 		if 'export_490_str_mv' in record:
 			par = doc.add_paragraph('(' + ' '.join(record['export_490_str_mv']) + ')')
 			par.paragraph_format.keep_with_next = True
-		if 'article_resource_str_mv' in record:
-			par = doc.add_paragraph()
-			par.add_run('In: ' + ' '.join(record['article_resource_str_mv']))
-			if 'export_773g_str_mv' in record:
-				par.add_run('. ' + ' '.join(record['export_773g_str_mv']))
+		if 'export_773tg_str_mv' in record:
+			par = doc.add_paragraph('In: ' + record['export_773tg_str_mv'][0])
 			par.paragraph_format.keep_with_next = True
+			for sub in record['export_773tg_str_mv'][1:]:
+				par = doc.add_paragraph(sub)
+				par.paragraph_format.keep_with_next = True
 		if 'export_520a_str_mv' in record:
 			par = doc.add_paragraph('[' + ' '.join(record['export_520a_str_mv']) + ']')
 			par.paragraph_format.keep_with_next = True
