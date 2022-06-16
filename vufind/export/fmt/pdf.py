@@ -1,12 +1,13 @@
 #!/usr/bin/python3
 #
-# Vufind - Export format module
+# Vufind - Export PDF format module
 #
 
 from io import BytesIO
 from datetime import datetime
 
 # PDF
+
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib import pagesizes
 from reportlab.lib.colors import lightgrey
@@ -25,11 +26,31 @@ WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje 
 FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v&nbsp;rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
 ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
 
+RESOURCE = {
+	'Literary Samizdat Bibliography':'Bibliografie samizdatu',
+	'Literary Web Bibliography':'Bibliografie internetu',
+	'Literary Exile Bibliography':'Bibliografie exilu',
+	'Retrospective Bibliography (up to 1945)':'Retrospektivní bibliografie (do roku 1945)',
+	'Current Bibliography (after 1945)':'Současná bibliografie (po roce 1945)',
+	'ICL Catalogue':'Katalog UCL',
+	'Database of Processed Journals':'Databáze excerpovaných časopisů',
+	'Czech Literary Authorities Database':'České literární osobnosti',
+	'Polonica in Czech Samizdat':'Polonika v českém samizdatu',
+	'Database of Foreign Bohemica':'Databáze zahraničních bohemik',
+	'Book Series Database':'Databáze knižních edic',
+	'Czech Literature in Translation':'Databáze překladu české literatury'
+}
+
 # INIT
 
 logo = svg2rlg(LOGO)
 
 # DEF
+
+def prep(text):
+	for prep in (' u ',' k ',' o ',' s ',' v ',' z ',' a ',' i '):
+		if prep in text: text = text.replace(prep, prep.rstrip() + '&nbsp;')
+	return text
 
 def name_to_upper(name):
 	n = name.strip(', ')
@@ -45,20 +66,21 @@ def scale(drawing, scale_factor):
     drawing.scale(sx, sy)
     return drawing
 
-def card(record):
+def card(record, lang):
 	ret=[]
 	if 'info_resource_str_mv' in record:
+		resource = record['info_resource_str_mv'][0]
+		if lang == 'cs': resource = RESOURCE[record['info_resource_str_mv'][0]]
 		ret.append(Paragraph(
 			'<para align="right"><font name="OpenSans-Regular" size="8">' +
-			record['info_resource_str_mv'][0] + ', ' +
-			record['id'] +
-			'</font></para>'
+			resource + ', ' + '<link href="http://vufind2-dev.ucl.cas.cz/Record/' + record['id'] + '">' + record['id'] +
+			'</link></font></para>'
 		))
 	else:
 		ret.append(Paragraph(
 			'<para align="right"><font name="OpenSans-Regular" size="8">' +
-			record['id'] +
-			'</font></para>'
+			'<link href="http://vufind2-dev.ucl.cas.cz/Record/' + record['id'] + '">' + record['id'] +
+			'</link></font></para>'
 		))
 	ret.append(Spacer(1,15))
 	if 'export_100a_str' in record:
@@ -77,61 +99,54 @@ def card(record):
 	if 'export_245_str' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			record['export_245_str'] +
+			prep(record['export_245_str']) +
 			'</font>'
 		))
 		ret.append(Spacer(1,15))
 	if 'export_260264_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			' '.join(record['export_260264_str_mv']) +
+			prep(' '.join(record['export_260264_str_mv'])) +
 			'</font>'
 		))
 	if 'export_490_str_mv' in record:
 		ret.append(Paragraph(
-			'<font name="OpenSans-Regular">' +
-			' '.join(record['export_490_str_mv']) +
-			'</font>'
+			'<font name="OpenSans-Regular">(' +
+			prep(' '.join(record['export_490_str_mv'])) +
+			')</font>'
 		))
-	if 'article_resource_str_mv' in record:
-		if 'export_773g_str_mv' in record:
+	if 'export_773tg_str_mv' in record:
+		ret.append(Paragraph(
+			'<font name="OpenSans-Regular">In: ' +	prep(record['export_773tg_str_mv'][0]) + '</font>'
+		))
+		for sub in record['export_773tg_str_mv'][1:]:
 			ret.append(Paragraph(
-				'<font name="OpenSans-Regular">In: ' +
-				' '.join(record['article_resource_str_mv']) +
-				'. ' +
-				' '.join(record['export_773g_str_mv']) +
-				'</font>'
-			))
-		else:
-			ret.append(Paragraph(
-				'<font name="OpenSans-Regular">In: ' +
-				' '.join(record['article_resource_str_mv']) +
-				'</font>'
+				'<font name="OpenSans-Regular">' + prep(sub) + '</font>'
 			))
 		ret.append(Spacer(1,15))
 	if 'export_520a_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">[' +
-			' '.join(record['export_520a_str_mv']) +
+			prep(' '.join(record['export_520a_str_mv'])) +
 			']</font>'
 		))
 		ret.append(Spacer(1,15))
 	if 'export_6xx_str_mv' in record:
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
-			' '.join(record['export_6xx_str_mv']) +
+			prep('; '.join(record['export_6xx_str_mv'])) +
 			'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 		))
 	if 'export_787_str_mv' in record:
 		for sub in record['export_787_str_mv']:
 			ret.append(Paragraph(
 				'<font name="OpenSans-Regular">' +
-				sub +
+				prep(sub) +
 				'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
 			))
 	return ret
 
-def pdf(data):
+def pdf(data, lang):
 	ret = BytesIO()
 	# init
 	pdf = Canvas(ret, pagesize=pagesizes.A4)
@@ -151,7 +166,7 @@ def pdf(data):
 	frame.add(Paragraph(WARN, style=warn_style), pdf)
 	frame.add(Spacer(1,15), pdf)
 	for record in data['response']['docs']:
-		data = [[[card(record)]]]
+		data = [[card(record, lang)]]
 		if frame.add(Table(data, style=[('BOX', (0,0), (0,0), 0, lightgrey)]), pdf) == 0:
 			pdf.showPage()
 			pdf.setLineWidth(0)
@@ -161,7 +176,7 @@ def pdf(data):
 		frame.add(Spacer(1,15), pdf)
 	# footer
 	frame = Frame(30, 20, 530, 36)
-	foot_style = ParagraphStyle('foot', fontName="OpenSans-Regular", fontSize=8, leading=10, borderPadding=3)
+	foot_style = ParagraphStyle('foot', fontName="OpenSans-Regular", fontSize=8)
 	frame.add(Paragraph(FOOT, style=foot_style), pdf)
 	pdf.setLineWidth(0)
 	pdf.setStrokeColor(lightgrey)
@@ -171,15 +186,5 @@ def pdf(data):
 	# write
 	pdf.save()
 	ret.seek(0)
-	print('[*] PDF.')
 	return ret
-
-def docx(data):
-	return io.BytesIO(b'Boo!')
-
-def fmt_get(data,format_type):
-	if format_type == 'docx':
-		return docx(data)
-	if format_type == 'pdf': return pdf(data)
-	return io.BytesIO()
 
