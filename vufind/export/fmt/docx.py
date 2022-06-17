@@ -16,6 +16,9 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
 # VAR
 
+WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136).'"
+ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
+
 RESOURCE = {
 	'Literary Samizdat Bibliography':'Bibliografie samizdatu',
 	'Literary Web Bibliography':'Bibliografie internetu',
@@ -77,6 +80,8 @@ def docx(data, lang):
 		section.left_margin = Cm(1.5)
 		section.right_margin = Cm(1.5)
 	# head
+	par = doc.add_paragraph(WARN)
+	par = doc.add_paragraph()
 	#header = sections[0].header
 	#par = header.paragraphs[0]
 	#run = par.add_run()
@@ -134,6 +139,8 @@ def docx(data, lang):
 				par.paragraph_format.space_after = 5
 		par = doc.add_paragraph()
 	# foot
+	#par = doc.add_paragraph(ADDRESS)
+	#par.alignment = WD_ALIGN_PARAGRAPH.CENTER
 	#foot = sections[-1].footer
 	#foot.text = ADDRESS
 	#write
