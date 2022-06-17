@@ -121,7 +121,7 @@ def docx(data, lang):
 			par.paragraph_format.keep_with_next = True
 		if 'export_6xx_str_mv' in record:
 			par = doc.add_paragraph()
-			par.add_run('\u279c  ')
+			par.add_run('\u2022  ')
 			par.add_run(prep('; '.join(record['export_6xx_str_mv'])))
 			par.paragraph_format.keep_with_next = True
 			par.paragraph_format.space_after = 5
