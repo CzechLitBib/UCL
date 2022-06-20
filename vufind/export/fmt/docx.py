@@ -117,8 +117,8 @@ def docx(data, lang):
 		if 'export_773tg_str_mv' in record:
 			par = doc.add_paragraph('In: ' + prep(record['export_773tg_str_mv'][0]))
 			par.paragraph_format.keep_with_next = True
-			par.paragraph_format.space_after = 5
 			for sub in record['export_773tg_str_mv'][1:]:
+				par.paragraph_format.space_after = 5
 				par = doc.add_paragraph(prep(sub))
 				par.paragraph_format.keep_with_next = True
 		if 'export_520a_str_mv' in record:
