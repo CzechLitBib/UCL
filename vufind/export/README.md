@@ -6,11 +6,13 @@ TODO
 </pre>
 INSTALL
 <pre>
-apt-get install uwsgi python-flask python3-reportgen
+apt-get install uwsgi uwsgi-plugin-python3 python-flask python3-reportgen
 
-svglib-1.3.0
+svglib-1.3.0:
+
+apt-get install python3-lxml python3-cssselect2 python3-tinycss2 python3-webencodings
+
 python-docx-0.8.11
-#pymarc-4.0.0 + field.py.patch
 
 mkdir /usr/local/bin/export
 cp -p vufind-export /usr/local/bin/export
