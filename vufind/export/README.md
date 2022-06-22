@@ -36,8 +36,5 @@ VUFIND
 <pre>
 php public/index.php generate staticroute export CLB
 
-cp content/export.phtml /usr/local/vufind/themes/CLB/templates/content/
-chown spravce:spravce /usr/local/vufind/themes/CLB/templates/content/export.phtml
-
 /usr/local/vufind/themes/CLB/templates/search/bulk-action-buttons.phtml
 </pre>
