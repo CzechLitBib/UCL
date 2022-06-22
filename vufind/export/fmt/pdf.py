@@ -21,8 +21,9 @@ from svglib.svglib import svg2rlg
 # VAR
 
 LOGO='/usr/local/bin/export/logo.svg'
+#BOOK='/usr/local/bin/export/book-open.svg'
 HEADER='Česká literární bibliografie'
-WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136)."
+WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136).'"
 FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v&nbsp;rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
 ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
 
@@ -44,6 +45,7 @@ RESOURCE = {
 # INIT
 
 logo = svg2rlg(LOGO)
+#book = svg2rlg(BOOK)
 
 # DEF
 
@@ -135,8 +137,9 @@ def card(record, lang):
 		ret.append(Paragraph(
 			'<font name="OpenSans-Regular">' +
 			prep('; '.join(record['export_6xx_str_mv'])) +
-			'</font>', style=ParagraphStyle('bullet', bulletText='\u279c')
+			'</font>', style=ParagraphStyle('bullet', bulletText='\u2022')
 		))
+		ret.append(Spacer(1,15))
 	if 'export_787_str_mv' in record:
 		for sub in record['export_787_str_mv']:
 			ret.append(Paragraph(

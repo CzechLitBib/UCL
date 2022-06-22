@@ -4,9 +4,9 @@ OriginalName:
     - original_txt_mv
   DismaxHandler: edismax
 
-CypherSignature:
+Signature:
   DismaxFields:
-    - cypher_txt_mv
+    - signature_txt_mv
   DismaxHandler: edismax
 
 SysNo:
@@ -20,9 +20,9 @@ ConspectGroup:
     - conspect_group_str_mv
   DismaxHandler: edismax
 
-ConspectResource:
+MDT:
   DismaxFields:
-    - more_info_str_mv
+    - mdt_str_mv
   DismaxHandler: edismax
 
 ActualExcerption:

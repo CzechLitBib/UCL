@@ -221,12 +221,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 		return '';
 	}
 
-	public function CLB_getMDT() { // MDT
-		return isset($this->fields['mdt_str_mv']) ? $this->fields['mdt_str_mv'] : [];
+	public function CLB_getConspectGroup() { // CONSPECT GROUP
+		return isset($this->fields['conspect_group_str_mv']) ? $this->fields['conspect_group_str_mv'] : [];
 	}
 
-	public function CLB_getConspectGroup() { // CONSPEKT
-		return isset($this->fields['conspect_group_str_mv']) ? $this->fields['conspect_group_str_mv'] : [];
+	public function CLB_getMDT() { // MDT
+		return isset($this->fields['mdt_str_mv']) ? $this->fields['mdt_str_mv'] : [];
 	}
 
 	public function CLB_getExcerptionPeriod() { // EXCERPTION PERIOD
