@@ -4,9 +4,9 @@ OriginalName:
     - original_txt_mv
   DismaxHandler: edismax
 
-CypherSignature:
+Signature:
   DismaxFields:
-    - cypher_txt_mv
+    - signature_txt_mv
   DismaxHandler: edismax
 
 SysNo:
