@@ -28,6 +28,7 @@ def export(lang='cs'):
 		# SESSION
 		session['query'] = request.args.get('lookfor')
 		session['filter_query'] = request.args.getlist('filter[]')
+		session['sort'] = request.args.get('sort')
 		session['lang'] = lang
 
 		headers = {'Content-Type': 'text/html'}
@@ -37,7 +38,7 @@ def export(lang='cs'):
 	format_type = request.data.decode('utf-8')
 
 	# SOLR
-	data = solr(solr_query(session['query'], session['filter_query'], format_type))
+	data = solr(solr_query(session['query'], session['filter_query'], session['sort'], format_type))
 
 	# PAYLOAD
 	payload=''
