@@ -3,11 +3,15 @@
   <?php $pubPlace = $field->getPlace(); if (!empty($pubPlace)): ?>
     <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
   <?php endif; ?>
-  <?php $pubName = $field->getName(); if (!empty($pubName)): ?>
-    <a property="name" href="<?=$this->record($this->driver)->getLink('publisher', $pubName)?>"><?=$this->escapeHtml($pubName)?></a>
+  <?php $pubName = $field->getName(); $pubDate = $field->getDate(); if (!empty($pubName)): ?>
+     <?php if (!empty($pubDate)): ?>
+        <a property="name" href="<?=$this->record($this->driver)->getLink('publisher', $pubName)?>"><?=$this->escapeHtml($pubName)?></a>,
+     <?php else: ?>
+        <a property="name" href="<?=$this->record($this->driver)->getLink('publisher', $pubName)?>"><?=$this->escapeHtml($pubName)?></a>
+     <?php endif; ?>
   <?php endif; ?>
   </span>
-  <?php $pubDate = $field->getDate(); if (!empty($pubDate)): ?>
-    <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
+  <?php if (!empty($pubDate)): ?>
+        <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
   <?php endif; ?>
 <?php endforeach; ?>
