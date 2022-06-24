@@ -16,6 +16,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
 # VAR
 
+VUFIND='https://vufind.ucl.cas.cz/Record/'
 WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136).'"
 ADDRESS='Česká literární bibliografie © ' + datetime.now().strftime('%Y') +  ' clb@ucl.cas.cz Na Florenci, 1420/3, 110 00 Praha'
 
@@ -94,9 +95,9 @@ def docx(data, lang):
 			resource = record['info_resource_str_mv'][0]
 			if lang == 'cs': resource = RESOURCE[record['info_resource_str_mv'][0]]
 			par.add_run(resource + ', ')
-			hyperlink(par, record['id'], 'http://vufind2-dev.ucl.cas.cz/Record/' + record['id'])
+			hyperlink(par, record['id'], VUFIND + record['id'])
 		else:
-			hyperlink(par, record['id'], 'http://vufind2-dev.ucl.cas.cz/Record/' + record['id'])
+			hyperlink(par, record['id'], VUFIND + record['id'])
 		par.paragraph_format.keep_with_next = True
 		par.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 		if 'export_100a_str' in record:
