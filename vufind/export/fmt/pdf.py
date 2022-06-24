@@ -39,7 +39,7 @@ RESOURCE = {
 	'Polonica in Czech Samizdat':'Polonika v českém samizdatu',
 	'Database of Foreign Bohemica':'Databáze zahraničních bohemik',
 	'Book Series Database':'Databáze knižních edic',
-	'Czech Literature in Translation':'Databáze překladu české literatury'
+	'Czech Literature in Translation':'Databáze překladů české literatury'
 }
 
 # INIT
