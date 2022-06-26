@@ -21,7 +21,7 @@ from svglib.svglib import svg2rlg
 # VAR
 
 LOGO='/usr/local/bin/export/logo.svg'
-#BOOK='/usr/local/bin/export/book-open.svg'
+VUFIND='https://vufind.ucl.cas.cz/Record/'
 HEADER='Česká literární bibliografie'
 WARN="Využitím zdrojů České literární bibliografie se uživatel zavazuje odkázat na její využití v každé publikaci, kvalifikační práci či jiném výstupu, a to následující formou: 'Při vzniku práce [knihy/studie/...] byly využity zdroje výzkumné infrastruktury Česká literární bibliografie – https://clb.ucl.cas.cz/ (kód ORJ: 90136).'"
 FOOT='Činnost výzkumné infrastruktury České literární bibliografie je od roku 2016 podporována Ministerstvem školství, mládeže a tělovýchovy v&nbsp;rámci aktivit na podporu výzkumných infrastruktur (kódy projektů LM2015059 a LM2018136).'
@@ -39,13 +39,12 @@ RESOURCE = {
 	'Polonica in Czech Samizdat':'Polonika v českém samizdatu',
 	'Database of Foreign Bohemica':'Databáze zahraničních bohemik',
 	'Book Series Database':'Databáze knižních edic',
-	'Czech Literature in Translation':'Databáze překladu české literatury'
+	'Czech Literature in Translation':'Databáze překladů české literatury'
 }
 
 # INIT
 
 logo = svg2rlg(LOGO)
-#book = svg2rlg(BOOK)
 
 # DEF
 
@@ -75,13 +74,13 @@ def card(record, lang):
 		if lang == 'cs': resource = RESOURCE[record['info_resource_str_mv'][0]]
 		ret.append(Paragraph(
 			'<para align="right"><font name="OpenSans-Regular" size="8">' +
-			resource + ', ' + '<link href="http://vufind2-dev.ucl.cas.cz/Record/' + record['id'] + '">' + record['id'] +
+			resource + ', ' + '<link href="' + VUFIND + record['id'] + '">' + record['id'] +
 			'</link></font></para>'
 		))
 	else:
 		ret.append(Paragraph(
 			'<para align="right"><font name="OpenSans-Regular" size="8">' +
-			'<link href="http://vufind2-dev.ucl.cas.cz/Record/' + record['id'] + '">' + record['id'] +
+			'<link href="' + VUFIND + record['id'] + '">' + record['id'] +
 			'</link></font></para>'
 		))
 	ret.append(Spacer(1,15))
