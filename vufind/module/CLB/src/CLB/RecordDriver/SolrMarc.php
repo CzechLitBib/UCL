@@ -101,10 +101,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 	public function CLB_getRelations() {// RELATIONS
 		$data = [];
 		$relators = $this->CLB_getSubfields('994', ['a', 'b']);
+		$relators2 = $this->CLB_getSubfields('LKR', ['a', 'b']);
 		foreach($relators as $relator) {
 			if(isset($relator['a']) and isset($relator['b'])) {
 				if (in_array($relator['a'], array('UP','DN','PAR'))) {
-					$data[] = [$relator['a'] => $relator['b']];
+					$data[] = [$relator['a'] => str_pad($relator['b'], 9, '0', STR_PAD_LEFT)];
+				}
+			}
+		}
+		foreach($relators2 as $relator) {
+			if(isset($relator['a']) and isset($relator['b'])) {
+				if (in_array($relator['a'], array('UP','DN','PAR'))) {
+					$data[] = [$relator['a'] => str_pad($relator['b'], 9, '0', STR_PAD_LEFT)];
 				}
 			}
 		}
