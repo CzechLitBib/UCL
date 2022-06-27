@@ -68,10 +68,10 @@ def validate(record):
 
 marcxml.map_xml(validate, XML)
 
-for rec in reader:
-	validate(rec)
+#for rec in reader:
+#	validate(rec)
 
-reader.close()
+#reader.close()
 
 for TAG in sorted(TAGLIST):
 
