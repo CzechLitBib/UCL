@@ -1,0 +1,10 @@
+
+.bi {
+	color: #212529;
+}
+
+.bi-clipboard:hover, .bi-clipboard:focus
+{
+	color: #dc3545;
+}
+
