@@ -105,7 +105,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 	<button class="btn btn-lg btn-danger w-100" type="submit">Přihlásit</button>
 </form>
 
-<p class="my-4 text-muted">&copy; 2021–<?php echo date("Y"); ?></p>
+<p class="my-4 text-muted">ČLB &copy; 2021–<?php echo date("Y"); ?></p>
 
 </main>
 
