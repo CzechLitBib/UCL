@@ -10,7 +10,7 @@
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
-mkdir -p "/var/www/html/kat/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
+mkdir -p "/var/www/html/cat/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
 mkdir -p "/var/www/html/nkp/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
 mkdir -p "/var/www/html/seven/data/$(date --date="$(date) -1 day" +'%Y/%m')" 2> /dev/null
 
