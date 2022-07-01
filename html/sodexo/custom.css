@@ -1,0 +1,10 @@
+
+.bi {
+	color: #212529;
+}
+
+.bi-gear-fill:hover, .bi-gear-fill:focus
+{
+	color: #0d6efd;
+}
+
