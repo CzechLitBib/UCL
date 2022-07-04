@@ -2,12 +2,13 @@
 
 session_start();
 
-$user = ['bruna', 'cernochova'];
+$user = ['xxx'];
 $auth = False;
 $year = date('Y');
+$error = '';
+$stored = False;
 
 # Data
-
 if (isset($_POST['sn']) and isset($_POST['n']) and isset($_POST['q'])) {
 	$db = new SQLite3('sodexo.db');
 	if (!$db) {
@@ -20,6 +21,7 @@ if (isset($_POST['sn']) and isset($_POST['n']) and isset($_POST['q'])) {
 		$query = $db->exec("INSERT INTO data (y, sn, n, q)" . " VALUES (" . $y . ",'" . $_POST['sn'] . "','" . $_POST['n'] . "'," . $q . ");");
 		if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 		$db->close();
+		$stored = True;
 	}
 }
 
@@ -48,9 +50,38 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		if ($ldap_bind) { $auth = True; }
 	}
 	if ($auth) {
-		echo 'Authorized.';
+
+		echo '<div class="container"><div class="row">'
+		. '<div class="col m-2 text-nowrap">'
+		. '<table class="table table-striped">'
+		. '<thead><tr class="text-center"><th>Jméno</th><th>Příjmení</th><th>Čerpáno</th></tr>'
+		. '</thead><tbody>';
+
+		$db = new SQLite3('sodexo.db');
+
+		if ($db) {
+			$result = $db->query("SELECT sn, n, q FROM data");
+		
+			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+				$yesno = $res['q'] ? 'Ano' : 'Ne';
+				echo '<tr><td class="text-center">' . $res['sn'] . '</td>'
+				. '<td class="text-center">' . $res['n'] . '</td>'
+				. '<td class="text-center">' . $yesno . '</td></tr>';
+			}
+			$db->close();
+		}
+
+		echo '</tbody></table>'
+		. '</div></div></div>';
+
 	} else {
-		echo 'Unauthorized.';
+		echo '<div class="container"><div class="row">'
+			.'<div class="col m-2 text-nowrap">'
+			. '<h5 class="modal-title" id="ModalLabel">Přístup zamítnut</h5>'
+			. '</div>'
+			. '<div class="col m-2 align-self-center">'
+			. '<button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>'
+			. '</div></div></div>';
 	}
 	exit();
 }
@@ -73,11 +104,29 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 </head>
 
 <body style="background-color: #dee2e6;">
-<main class="container">
+<main class="container mt-2">
 <form method="post" action="." enctype="multipart/form-data">
 
+<?php
+
+if($stored) {
+	if ($error) {
+		echo '<div class="row justify-content-center"><div class="col col-md-7 mt-2">'
+		. '<div class="alert alert-warning alert-dismissible fade show" role="alert">'
+		. $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+		. '</div></div></div>';
+	} else {
+		echo '<div class="row justify-content-center"><div class="col col-md-7 mt-2">'
+		. '<div class="alert alert-warning alert-dismissible fade show" role="alert">Uloženo.'
+		. '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+		. '</div></div></div>';
+	}
+}
+
+?>
+
 <div class="row justify-content-center">
-	<div class="col col-md-7 mt-4 mb-2">
+	<div class="col col-md-7 mb-2">
 		<div class="card shadow-sm">
 			<div class="card-header bg-primary"></div>
 		<div class="card-body p-md-4">
@@ -153,10 +202,13 @@ V případě zájmu o&nbsp;nahrání příspěvku za rok 2022 na Multi Pass kart
 </form>
 </main>
 
-<div class="modal fade" id="data" tabindex="-1" aria-labelledby="login" aria-hidden="true">
-	<div class="modal-dialog"><div class="modal-content" id="list"></div></div>
+<div class="modal" tabindex="-1" id="data">
+	<div class="modal-dialog modal-scrollable">
+		<div class="modal-content">
+			<div class="modal-body" id="list"></div>
+		</div>
+	</div>
 </div>
-
 
 <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="login" aria-hidden="true">
 	<div class="modal-dialog">
