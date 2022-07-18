@@ -164,7 +164,7 @@ if(empty($_SESSION['auth'])) {
 	</a>
 	<div>
 		<h4 class="fw-bold mb-0">Nastavení</h4>
-		<p>Nastavení kontrolních kódů.</p>
+		<p>Nastavení systému.</p>
 	</div>
 </div>
 </div>
