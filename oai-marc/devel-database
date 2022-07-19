@@ -1,0 +1,70 @@
+#!/usr/bin/python3
+#
+# Create Devel DB 
+#
+
+import sqlite3
+
+DB='devel.db'
+ERR='/var/www/html/error/error.db'
+
+con = sqlite3.connect(DB)
+cur = con.cursor()
+
+# error | user
+
+cur.execute("CREATE TABLE daily (timestamp INTEGER, code TEXT, user TEXT);")
+cur.execute("CREATE TABLE weekly (timestamp INTEGER, code TEXT, user TEXT);")
+cur.execute("CREATE TABLE error (code INTEGER, label TEXT, text TEXT);")
+cur.execute("CREATE TABLE country (code TEXT);")
+cur.execute("CREATE TABLE language (code TEXT);")
+cur.execute("CREATE TABLE role (code TEXT);")
+cur.execute("CREATE TABLE review (authority TEXT, name TEXT);")
+cur.execute("CREATE TABLE user (code TEXT, aleph TEXT, email TEXT);")
+
+cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
+cur.execute("CREATE INDEX 'weekly_timestamp' ON weekly (timestamp);")
+cur.execute("CREATE UNIQUE INDEX 'error_code' ON error (code);")
+cur.execute("CREATE UNIQUE INDEX 'country_code' ON country (code);")
+cur.execute("CREATE UNIQUE INDEX 'language_code' ON language (code);")
+cur.execute("CREATE UNIQUE INDEX 'role_code' ON role (code);")
+cur.execute("CREATE UNIQUE INDEX 'authority' ON review (authority);")
+cur.execute("CREATE UNIQUE INDEX 'user_code' ON user (code);")
+
+
+with open('/usr/local/bin/code/country.txt', 'r') as f:
+	for line in f:
+		cur.execute("INSERT INTO country VALUES (?);", (line.strip(),))
+
+with open('/usr/local/bin/code/lang.txt', 'r') as f:
+	for line in f:
+		cur.execute("INSERT INTO language VALUES (?);", (line.strip(),))
+
+with open('/usr/local/bin/code/role.txt', 'r') as f:
+	for line in f:
+		cur.execute("INSERT INTO role VALUES (?);", (line.strip(),))
+
+with open('/usr/local/bin/code/recenze.txt', 'r') as f:
+	for line in f:
+		name,aut = line.split('#')
+		cur.execute("INSERT INTO review VALUES (?,?);", (aut.strip(),name.strip()))
+
+with open('/usr/local/bin/code/sif.txt', 'r') as f:
+	for line in f:
+		sif,mail = line.split(':')
+		cur.execute("INSERT INTO user (code, email) VALUES (?,?) ON CONFLICT (code) DO UPDATE SET email=excluded.email;", (sif.strip(), mail.strip()))
+
+with open('/usr/local/bin/code/cat.txt', 'r') as f:
+	for line in f:
+		code,aleph = line.split('#')
+		cur.execute("INSERT INTO user (code, aleph) VALUES (?,?) ON CONFLICT (code) DO UPDATE SET aleph=excluded.aleph;", (code.strip().lower(), aleph.strip()))
+
+err_con= sqlite3.connect(ERR)
+err_cur = err_con.cursor()
+err_cur.execute("SELECT * from error;")
+cur.executemany("INSERT OR IGNORE INTO error (code, label, text) VALUES (?,?,?);", err_cur.fetchall())
+err_con.close()
+
+con.commit()
+con.close()
+
