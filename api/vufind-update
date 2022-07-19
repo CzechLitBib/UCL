@@ -242,7 +242,7 @@ for record in records:
 			NAME = metadata['100']['a']
 		CNT+=1
 	for F in metadata.get_fields('700'):
-		if '4' in F and F['4'] == 'aut':
+		if 'a' in F and '4' in F and F['4'] == 'aut':
 			if not NAME:
 				NAME = name_to_upper(F['a'].rstrip(','), ident)
 			else:

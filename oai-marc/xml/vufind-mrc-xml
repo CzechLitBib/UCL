@@ -7,7 +7,7 @@ import sys,re
 
 from pymarc import MARCWriter,Record,Field,marcxml
 
-DATA='ucla.xml'
+DATA='ucloall.xml'
 
 # DEF -------------------
 
@@ -77,6 +77,11 @@ def convert(record):
 	if 'FMT' in metadata and '990' not in metadata:
 		metadata.add_field(Field(tag='990', indicators=[' ',' '], subfields=['a', metadata['FMT'].value()]))
 		metadata.remove_fields('FMT')
+	
+	# Convert LKR to 994
+	#if 'LKR' in metadata and '994' not in metadata:
+	#	metadata.add_field(Field(tag='994', indicators=[' ',' '], subfields=['a', metadata['LKR'].value()]))
+	#	metadata.remove_fields('LKR')
 
 	# Webarchiv
 	for F in metadata.get_fields('856'):
@@ -188,7 +193,7 @@ def convert(record):
 			NAME = metadata['100']['a']
 		CNT+=1
 	for F in metadata.get_fields('700'):
-		if '4' in F and F['4'] == 'aut':
+		if 'a' in F and '4' in F and F['4'] == 'aut':
 			if not NAME:
 				NAME = name_to_upper(F['a'].rstrip(','), ident)
 			else:
@@ -354,7 +359,7 @@ def convert(record):
 
 # MAIN -------------------
 
-writer = MARCWriter(open('ucla.mrc', 'wb'))
+writer = MARCWriter(open('uclo.mrc', 'wb'))
 
 marcxml.map_xml(convert, DATA)
 
