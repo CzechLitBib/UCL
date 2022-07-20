@@ -15,6 +15,8 @@ if($_SESSION['username'] !== 'bruna') {
         exit();
 }
 
+$db = new SQLite3('devel.db');
+
 ?>
 
 <!doctype html>
@@ -56,106 +58,162 @@ if($_SESSION['username'] !== 'bruna') {
 <div class="row my-4 justify-content-center">
 <div class="col col-md-8 m-2">
 
+<?php 
+
+if (!$db) {
+	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Chyba databáze.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+} 
+
+?>
+
 <h3>Chybové zprávy</h3>
-
-	<table class="table my-4">
-	<thead>
-	<tr>
-		<th scope="col">Kód</th>
-		<th scope="col">Text</th>
-		<th scope="col">Popis</th>
-	</tr>
-	</thead>
-	<tbody>
-
-	<tr>
-
-<td class="align-middle">
-
-<input class="form-control text-center" id="errors" maxlength="3" type"text" value="000" size="2" list="booo">
-<datalist id="booo">
 
 <?php
 
-for ($i = 0; $i <= 200; $i++) {
-	echo '<option value="' . str_pad($i, 3, '0', STR_PAD_LEFT) . '">';
+if ($db) {
+
+	$error_code = '';
+	$error_label = '';
+	$error_text = '';
+
+	$query = $db->query("SELECT code,label,text FROM error limit 1;");
+
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		$error_code = $result['code'];
+		$error_label = $result['label'];
+		$error_text = $result['text'];
+        }
+	
 }
 
 ?>
-</datalist>
-
-</td>
-		<td class="align-middle"><textarea class="form-control" id="foo" name="bar">Chybný indikátor, v podpoli 'c'</textarea></td>
-		<td class="align-middle"><textarea class="form-control" id="note" name="note">Pole 773 neobsahuje podpole 'g' a zároveň obsah podpole 't' není součástí podpole 'g' předchozího pole 773, nebo podpole 't' obsahuje hodnotu 'příloha' a podpole 'g' předchozího pole 773 obsahuje hodnotu 'příl.', nebo podpole 't' nemá hodnotu '[samizdat]'.</textarea></td>
-		<td class="align-middle">
-
-<div class="row-3 mb-3">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
-</div>
-
-<div class="row-3 mt-3">
-
-<svg xmlns="http://www.w3.org/2000/svg" style="min-width: 24px;" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
-</div>
-
-</td>
-	</tr>
-
-	</tbody>
-	</table>
-
-<h3>Uživatelé</h3>
 
 <table class="table my-4">
 	<thead>
-	<tr>
-		<th scope="col">Kód</th>
-		<th scope="col">Aleph</th>
-		<th scope="col">E-mail</th>
-	</tr>
+		<tr>
+			<th scope="col">Kód</th>
+			<th scope="col">Text</th>
+			<th scope="col">Popis</th>
+		</tr>
 	</thead>
 	<tbody>
-
 	<tr>
+	<td class="align-middle">
+		<input class="form-control text-center" id="error-code" maxlength="3" type"text" value="<?php echo $error_code;?>" size="2" list="error-code-list">
+		<datalist id="error-code-list">
 
-<td class="align-middle">
+<?php
 
-<input class="form-control text-center" id="errors" maxlength="3" type"text" value="ag" size="2" list="fooo">
-<datalist id="fooo">
-<option value="ag">
-<option value="dm">
-<option value="dan">
-<option value="gr">
-<option value="nús">
-<option value="jch">
-<option value="js">
-<option value="ls">
-<option value="luv">
-</datalist>
+if ($db) {
 
-</td>
-		<td class="align-middle"><input type="text" class="form-control" id="foo" name="name" value="UCLAG"></td>
-		<td class="align-middle"><input type="email" class="form-control" id="note" name="note" value="tomas.okurka@email.cz"></td>
-		<td class="align-middle">
+	$query = $db->query("SELECT code FROM error;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo '<option value="' . $result['code'] . '">';
+        }
+}
 
-<div class="row-3 mb-3">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
-</div>
+?>
 
-<div class="row-3 mt-3">
+		</datalist>
 
-<svg xmlns="http://www.w3.org/2000/svg" style="min-width: 24px;" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
-</div>
-
-</td>
+	</td>
+	<td class="align-middle"><textarea class="form-control" id="error-label" name="error-label"><?php echo $error_label;?></textarea></td>
+	<td class="align-middle"><textarea class="form-control" id="error-text" name="error-text"><?php echo $error_text;?></textarea></td>
+	<td class="align-middle">
+		<div class="row-3 mb-3">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+		</div>
+		<div class="row-3 mt-3">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+		</div>
+	</td>
 	</tr>
+</tbody>
+</table>
 
-	</tbody>
-	</table>
+<h3>Uživatelé</h3>
+
+<?php
+
+if ($db) {
+
+	$user_code = '';
+	$user_aleph = '';
+	$user_email = '';
+
+	$query = $db->query("SELECT code,aleph,email FROM user limit 1;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		$user_code = $result['code'];
+		$user_aleph = $result['aleph'];
+		$user_email = $result['email'];
+        }
+	
+}
+
+?>
+
+<table class="table my-4">
+	<thead>
+		<tr>
+			<th scope="col">Kód</th>
+			<th scope="col">Aleph</th>
+			<th scope="col">E-mail</th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr>
+	<td class="align-middle">
+		<input class="form-control text-center" id="user-code" maxlength="3" type"text" value="<?php echo $user_code;?>" size="2" list="user-list">
+		<datalist id="user-list">
+
+<?php
+
+if ($db) {
+
+	$query = $db->query("SELECT code FROM user;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo '<option value="' . $result['code'] . '">';
+        }
+}
+
+?>
+
+		</datalist>
+	</td>
+	<td class="align-middle"><input type="text" class="form-control" id="aleph" name="aleph" value="<?php echo $user_aleph;?>"></td>
+	<td class="align-middle"><input type="email" class="form-control" id="email" name="email" value="<?php echo $user_email;?>"></td>
+	<td class="align-middle">
+		<div class="row-3 mb-3">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+		</div>
+		<div class="row-3 mt-3">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+		</div>
+	</td>
+	</tr>
+</tbody>
+</table>
 
 <h3>Recenze</h3>
 
-	<table class="table my-4">
+<?php
+
+if ($db) {
+
+	$review_authority = '';
+	$review_name = '';
+
+	$query = $db->query("SELECT authority,name FROM review limit 1;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		$review_authority = $result['authority'];
+		$review_name = $result['name'];
+        }
+	
+}
+
+?>
+
+<table class="table my-4">
 	<thead>
 	<tr>
 		<th scope="col">Kód</th>
@@ -163,35 +221,37 @@ for ($i = 0; $i <= 200; $i++) {
 	</tr>
 	</thead>
 	<tbody>
-
 	<tr>
+	<td class="align-middle">
+		<input class="form-control text-center" id="review-authority" type"text" value="<?php echo $review_authority;?>" size="15" list="review-list">
+		<datalist id="review-list">
 
-<td class="align-middle">
+<?php
 
-<input class="form-control text-center" id="errors" type"text" value="jn334543" size="15" list="hooo">
-<datalist id="hooo">
-<option value="jn1231312">
-<option value="aut23423432">
-</datalist>
+if ($db) {
 
-</td>
-		<td class="align-middle"><input type="text" class="form-control" id="foo" size="40" name="name" value="Thomas, Cook"></td>
-		<td class="align-middle">
+	$query = $db->query("SELECT authority FROM review;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo '<option value="' . $result['authority'] . '">';
+        }
+}
 
-<div class="row-3 mb-3">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
-</div>
+?>
 
-<div class="row-3 mt-3">
-
-<svg xmlns="http://www.w3.org/2000/svg" style="min-width: 24px;" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
-</div>
-
-</td>
+		</datalist>
+	</td>
+	<td class="align-middle"><input type="text" class="form-control" id="review-name" size="40" name="review-name" value="<?php echo $review_name;?>"></td>
+	<td class="align-middle">
+		<div class="row-3 mb-3">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+		</div>
+		<div class="row-3 mt-3">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+		</div>
+	</td>
 	</tr>
-
-	</tbody>
-	</table>
+</tbody>
+</table>
 
 <h3>Kódy</h3>
 
@@ -204,27 +264,62 @@ for ($i = 0; $i <= 200; $i++) {
 	</tr>
 	</thead>
 	<tbody>
-
 	<tr>
+	<td class="align-middle"><textarea class="form-control" id="coutry-code" name="coutry" rows="5">
+<?php
 
-<td class="align-middle"><textarea class="form-control">en cz au</textarea></td>
-<td class="align-middle"><textarea class="form-control">en cz au</textarea></td>
-<td class="align-middle"><textarea class="form-control">en cz au</textarea></td>
+if ($db) {
 
-<td class="align-middle">
+	$query = $db->query("SELECT code FROM country;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo $result['code'] . "\n";
+        }
+}
 
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+?>
+</textarea></td>
+	<td class="align-middle"><textarea class="form-control" id="language-code" name="language" rows="5">
+<?php
 
-</td>
+if ($db) {
+
+	$query = $db->query("SELECT code FROM language;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo $result['code'] . "\n";
+        }
+}
+
+?>
+</textarea></td>
+	<td class="align-middle"><textarea class="form-control"id="role-code" name="role" rows="5">
+<?php
+
+if ($db) {
+
+	$query = $db->query("SELECT code FROM role;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo $result['code'] . "\n";
+        }
+}
+
+?>
+</textarea></td>
+	<td class="align-middle">
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+	</td>
 	</tr>
-
-	</tbody>
-	</table>
-
+</tbody>
+</table>
 
 </div>
 </div>
 </main>
+
+<?php
+
+$db->close();
+
+?>
 
 <script src="../bootstrap.min.js"></script>
 
