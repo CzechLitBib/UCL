@@ -56,25 +56,12 @@ if($_SESSION['username'] !== 'bruna') {
 <div class="row my-4 justify-content-center">
 <div class="col col-md-8 m-2">
 
-<div class="row mt-2 justify-content-center">
-	<div class="col-md-8">
-		<div class="d-grid gap-2 d-sm-flex">
-			<input type="radio" class="btn-check" id="error" name="setup" value="error" checked>
-			<label class="btn btn-outline-danger text-nowrap w-100" for="error">Chybové zprávy</label>
-			<input type="radio" class="btn-check" id="code" name="setup" value="code">
-			<label class="btn btn-outline-danger text-nowrap w-100" for="code">Kódy</label>
-			<input type="radio" class="btn-check" id="review" name="setup" value="review">
-			<label class="btn btn-outline-danger text-nowrap w-100" for="review">Recenze</label>
-			<input type="radio" class="btn-check" id="user" name="setup" value="user">
-			<label class="btn btn-outline-danger text-nowrap w-100" for="user">Uživatelé</label>
-		</div>
-	</div>
-</div>
+<h3>Chybové zprávy</h3>
 
 	<table class="table my-4">
 	<thead>
 	<tr>
-		<th class="text-center" scope="col">Kód</th>
+		<th scope="col">Kód</th>
 		<th scope="col">Text</th>
 		<th scope="col">Popis</th>
 	</tr>
@@ -100,11 +87,140 @@ for ($i = 0; $i <= 200; $i++) {
 </td>
 		<td class="align-middle"><textarea class="form-control" id="foo" name="bar">Chybný indikátor, v podpoli 'c'</textarea></td>
 		<td class="align-middle"><textarea class="form-control" id="note" name="note">Pole 773 neobsahuje podpole 'g' a zároveň obsah podpole 't' není součástí podpole 'g' předchozího pole 773, nebo podpole 't' obsahuje hodnotu 'příloha' a podpole 'g' předchozího pole 773 obsahuje hodnotu 'příl.', nebo podpole 't' nemá hodnotu '[samizdat]'.</textarea></td>
-		<td class="align-middle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg></td>
+		<td class="align-middle">
+
+<div class="row-3 mb-3">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+</div>
+
+<div class="row-3 mt-3">
+
+<svg xmlns="http://www.w3.org/2000/svg" style="min-width: 24px;" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+</div>
+
+</td>
 	</tr>
 
 	</tbody>
 	</table>
+
+<h3>Uživatelé</h3>
+
+<table class="table my-4">
+	<thead>
+	<tr>
+		<th scope="col">Kód</th>
+		<th scope="col">Aleph</th>
+		<th scope="col">E-mail</th>
+	</tr>
+	</thead>
+	<tbody>
+
+	<tr>
+
+<td class="align-middle">
+
+<input class="form-control fw-bold text-center" id="errors" maxlength="3" type"text" value="ag" size="2" list="fooo">
+<datalist id="fooo">
+<option value="ag">
+<option value="dm">
+<option value="dan">
+<option value="gr">
+<option value="nús">
+<option value="jch">
+<option value="js">
+<option value="ls">
+<option value="luv">
+</datalist>
+
+</td>
+		<td class="align-middle"><input type="text" class="form-control" id="foo" name="name" value="UCLAG"></td>
+		<td class="align-middle"><input type="email" class="form-control" id="note" name="note" value="tomas.okurka@email.cz"></td>
+		<td class="align-middle">
+
+<div class="row-3 mb-3">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+</div>
+
+<div class="row-3 mt-3">
+
+<svg xmlns="http://www.w3.org/2000/svg" style="min-width: 24px;" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+</div>
+
+</td>
+	</tr>
+
+	</tbody>
+	</table>
+
+<h3>Recenze</h3>
+
+	<table class="table my-4">
+	<thead>
+	<tr>
+		<th scope="col">Kód</th>
+		<th scope="col">Jméno</th>
+	</tr>
+	</thead>
+	<tbody>
+
+	<tr>
+
+<td class="align-middle">
+
+<input class="form-control fw-bold text-center" id="errors" type"text" value="jn334543" size="15" list="hooo">
+<datalist id="hooo">
+<option value="jn1231312">
+<option value="aut23423432">
+</datalist>
+
+</td>
+		<td class="align-middle"><input type="text" class="form-control" id="foo" size="40" name="name" value="Thomas, Cook"></td>
+		<td class="align-middle">
+
+<div class="row-3 mb-3">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+</div>
+
+<div class="row-3 mt-3">
+
+<svg xmlns="http://www.w3.org/2000/svg" style="min-width: 24px;" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+</div>
+
+</td>
+	</tr>
+
+	</tbody>
+	</table>
+
+<h3>Kódy</h3>
+
+<table class="table my-4">
+	<thead>
+	<tr>
+		<th scope="col">Země</th>
+		<th scope="col">Jazyk</th>
+		<th scope="col">Role</th>
+	</tr>
+	</thead>
+	<tbody>
+
+	<tr>
+
+<td class="align-middle"><textarea class="form-control">en cz au</textarea></td>
+<td class="align-middle"><textarea class="form-control">en cz au</textarea></td>
+<td class="align-middle"><textarea class="form-control">en cz au</textarea></td>
+
+<td class="align-middle">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
+
+</td>
+	</tr>
+
+	</tbody>
+	</table>
+
 
 </div>
 </div>
