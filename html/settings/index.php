@@ -2,7 +2,7 @@
   
 session_start();
 
-$_SESSION['page'] = '/daily/';
+$_SESSION['page'] = '/settings/';
 
 if(empty($_SESSION['auth'])) {
         header('Location: /');
@@ -71,30 +71,37 @@ if($_SESSION['username'] !== 'bruna') {
 	</div>
 </div>
 
-	<table class="table table-bordered my-4">
+	<table class="table my-4">
 	<thead>
 	<tr>
-		<th class="text-center" scope="col">#</th>
+		<th class="text-center" scope="col">Kód</th>
 		<th scope="col">Text</th>
 		<th scope="col">Popis</th>
 	</tr>
 	</thead>
 	<tbody>
-	<tr>
-		<th class="text-center">000</th>
-		<td><textarea class="form-control" id="foo" name="bar">Chybný indikátor, v podpoli 'c'</textarea></td>
-		<td><textarea class="form-control" id="note" name="note">Pole 773 neobsahuje podpole 'g' a zároveň obsah podpole 't' není součástí podpole 'g' předchozího pole 773, nebo podpole 't' obsahuje hodnotu 'příloha' a podpole 'g' předchozího pole 773 obsahuje hodnotu 'příl.', nebo podpole 't' nemá hodnotu '[samizdat]'.</textarea></td>
-		<td class="align-middle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg></td>
-	</tr>
 
 	<tr>
-		<th class="text-center">000</th>
-		<td><textarea class="form-control" id="foo" name="bar">Chybný indikátor, v podpoli 'c'</textarea></td>
-		<td><textarea class="form-control" id="note" name="note">Pole 773 neobsahuje podpole 'g' a zároveň obsah podpole 't' není součástí podpole 'g' předchozího pole 773, nebo podpole 't' obsahuje hodnotu 'příloha' a podpole 'g' předchozího pole 773 obsahuje hodnotu 'příl.', nebo podpole 't' nemá hodnotu '[samizdat]'.</textarea></td>
+
+<td class="align-middle">
+
+<input class="form-control fw-bold text-center" id="errors" maxlength="3" type"text" value="000" size="2" list="booo">
+<datalist id="booo">
+
+<?php
+
+for ($i = 0; $i <= 200; $i++) {
+	echo '<option value="' . str_pad($i, 3, '0', STR_PAD_LEFT) . '">';
+}
+
+?>
+</datalist>
+
+</td>
+		<td class="align-middle"><textarea class="form-control" id="foo" name="bar">Chybný indikátor, v podpoli 'c'</textarea></td>
+		<td class="align-middle"><textarea class="form-control" id="note" name="note">Pole 773 neobsahuje podpole 'g' a zároveň obsah podpole 't' není součástí podpole 'g' předchozího pole 773, nebo podpole 't' obsahuje hodnotu 'příloha' a podpole 'g' předchozího pole 773 obsahuje hodnotu 'příl.', nebo podpole 't' nemá hodnotu '[samizdat]'.</textarea></td>
 		<td class="align-middle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg></td>
 	</tr>
-
-
 
 	</tbody>
 	</table>
