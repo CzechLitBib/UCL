@@ -72,7 +72,7 @@ if($_SESSION['username'] !== 'bruna') {
 
 <td class="align-middle">
 
-<input class="form-control fw-bold text-center" id="errors" maxlength="3" type"text" value="000" size="2" list="booo">
+<input class="form-control text-center" id="errors" maxlength="3" type"text" value="000" size="2" list="booo">
 <datalist id="booo">
 
 <?php
@@ -120,7 +120,7 @@ for ($i = 0; $i <= 200; $i++) {
 
 <td class="align-middle">
 
-<input class="form-control fw-bold text-center" id="errors" maxlength="3" type"text" value="ag" size="2" list="fooo">
+<input class="form-control text-center" id="errors" maxlength="3" type"text" value="ag" size="2" list="fooo">
 <datalist id="fooo">
 <option value="ag">
 <option value="dm">
@@ -168,7 +168,7 @@ for ($i = 0; $i <= 200; $i++) {
 
 <td class="align-middle">
 
-<input class="form-control fw-bold text-center" id="errors" type"text" value="jn334543" size="15" list="hooo">
+<input class="form-control text-center" id="errors" type"text" value="jn334543" size="15" list="hooo">
 <datalist id="hooo">
 <option value="jn1231312">
 <option value="aut23423432">

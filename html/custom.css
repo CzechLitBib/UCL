@@ -11,7 +11,9 @@
 .bi-bar-chart:hover, .bi-bar-chart:focus,
 .bi-filetype-pdf:hover, .bi-filetype-pdf:focus,
 .bi-filetype-csv:hover, .bi-filetype-scv:focus,
-.bi-arrow-up-right-square:hover, .bi-arrow-up-right-square:focus
+.bi-arrow-up-right-square:hover, .bi-arrow-up-right-square:focus,
+.bi-arrow-down-circle:hover, .bi-arrow-down-circle:focus,
+.bi-trash:hover, .bi-trash:focus
 {
 	color: #dc3545;
 }
