@@ -17,6 +17,18 @@ if($_SESSION['username'] !== 'bruna') {
 
 $db = new SQLite3('devel.db');
 
+if (isset($_POST)) {
+	print_r($_POST);
+	if (isset($_POST['error-delete']) and isset($_POST['error-code'])) {
+		$query = $db->exec("DELETE FROM error WHERE code = '000';");
+		if ($query) {
+			echo "Smazano.";
+		} else {
+			echo "Chyba.";
+		}
+	}
+}
+
 ?>
 
 <!doctype html>
@@ -126,7 +138,7 @@ if ($db) {
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="error_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-circle"viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>
 		</div>
 		<div class="row-3 mt-3">
-			<input type="submit" id="error-delete" name="error-delete" value="error-delete" hidden>
+			<input type="submit" id="error-delete" name="error-delete" value="1" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="error_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
 		</div>
 	</td>
