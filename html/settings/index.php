@@ -15,16 +15,33 @@ if($_SESSION['username'] !== 'bruna') {
         exit();
 }
 
+$error = '';
+
 $db = new SQLite3('devel.db');
 
-if (isset($_POST)) {
-	print_r($_POST);
-	if (isset($_POST['error-delete']) and isset($_POST['error-code'])) {
-		$query = $db->exec("DELETE FROM error WHERE code = '000';");
-		if ($query) {
-			echo "Smazano.";
-		} else {
-			echo "Chyba.";
+if (!$db) { $error = 'Chyba databáze.'; }
+
+# XHR POST
+
+# PHP POST
+
+if (isset($_POST)){
+	if (isset($_POST['error-code'])) {
+		if (isset($_POST['error-delete'])) {
+			$query = $db->exec("DELETE FROM error WHERE code = '" . $_POST['error-code'] . "';");
+			! $query ? $error = "Odstranění selhalo." : $error = "Hotovo."; 
+		}
+		if (isset($_POST['error-save'])) {
+			if (isset($_POST['error-label']) and isset($_POST['error-text'])) {
+				$query = $db->exec("INSERT INTO error (code, label, text) VALUES ('"
+					. $db->escapeString($_POST['error-code']) . "','"
+					. $db->escapeString($_POST['error-label']) . "','"
+					. $db->escapeString($_POST['error-text'])
+					. "') ON CONFLICT (code) DO UPDATE SET label=excluded.label, text=excluded.text;");
+				! $query ? $error = "Zápis selhal." : $error = "Hotovo."; 
+			} else {
+				$error = "Prázdný vstup."; 
+			}
 		}
 	}
 }
@@ -72,9 +89,9 @@ if (isset($_POST)) {
 
 <?php 
 
-if (!$db) {
-	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Chyba databáze.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-} 
+if (!empty($error)) {
+	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">'. $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+}
 
 ?>
 
