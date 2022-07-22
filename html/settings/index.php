@@ -52,13 +52,13 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 # PHP POST
 
 if (isset($_POST)){
-	if (isset($_POST['error-code'])) {
+	if (!empty($_POST['error-code'])) {
 		if (isset($_POST['error-delete'])) {
 			$query = $db->exec("DELETE FROM error WHERE code = '" . $_POST['error-code'] . "';");
 			! $query ? $error = "Odstranění chybového kódu selhalo." : $error = "Chybový kód odstraněn."; 
 		}
 		if (isset($_POST['error-save'])) {
-			if (isset($_POST['error-label']) and isset($_POST['error-text'])) {
+			if (!empty($_POST['error-label']) and !empty($_POST['error-text'])) {
 				$query = $db->exec("INSERT INTO error (code, label, text) VALUES ('"
 					. $db->escapeString($_POST['error-code']) . "','"
 					. $db->escapeString($_POST['error-label']) . "','"
@@ -71,13 +71,13 @@ if (isset($_POST)){
 		}
 	}
 
-	if (isset($_POST['user-code'])) {
+	if (!empty($_POST['user-code'])) {
 		if (isset($_POST['user-delete'])) {
 			$query = $db->exec("DELETE FROM user WHERE code = '" . $_POST['user-code'] . "';");
 			! $query ? $error = "Odstranění uživatele selhalo." : $error = "Uživatel ostraněn."; 
 		}
 		if (isset($_POST['user-save'])) {
-			if (isset($_POST['aleph']) and isset($_POST['email'])) {
+			if (!empty($_POST['aleph']) and !empty($_POST['email'])) {
 				$query = $db->exec("INSERT INTO user (code, aleph, email) VALUES ('"
 					. $db->escapeString($_POST['user-code']) . "','"
 					. $db->escapeString($_POST['aleph']) . "','"
@@ -90,13 +90,13 @@ if (isset($_POST)){
 		}
 	}
 
-	if (isset($_POST['review-authority'])) {
+	if (!empty($_POST['review-authority'])) {
 		if (isset($_POST['review-delete'])) {
 			$query = $db->exec("DELETE FROM review WHERE authority = '" . $_POST['review-authority'] . "';");
 			! $query ? $error = "Odstranění recenze selhalo." : $error = "Recenze odstraněna."; 
 		}
 		if (isset($_POST['review-save'])) {
-			if (isset($_POST['review-authority']) and isset($_POST['review-name'])) {
+			if (!empty($_POST['review-authority']) and !empty($_POST['review-name'])) {
 				$query = $db->exec("INSERT INTO review (authority, name) VALUES ('"
 					. $db->escapeString($_POST['review-authority']) . "','"
 					. $db->escapeString($_POST['review-name'])
@@ -108,7 +108,7 @@ if (isset($_POST)){
 		}
 	}
 
-	if (isset($_POST['country-code']) and isset($_POST['language-code']) and isset($_POST['role-code'])) {
+	if (!empty($_POST['country-code']) and !empty($_POST['language-code']) and !empty($_POST['role-code'])) {
 		if (isset($_POST['code-save'])) {
 			$country = explode("\n", trim($_POST['country-code']));
 			$query = $db->exec("DELETE FROM country;");
