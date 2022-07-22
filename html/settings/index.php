@@ -23,6 +23,32 @@ if (!$db) { $error = 'Chyba databáze.'; }
 
 # XHR POST
 
+if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
+	$req = json_decode(file_get_contents('php://input'), True);
+	$resp = [];
+	if ($req['type'] == 'error') {
+		$query = $db->querySingle("SELECT * FROM error WHERE code = '" . $req['data'] . "';", true);
+		if ($query) {
+			$resp['value'] = $query;
+		}
+	}
+	if ($req['type'] == 'user') {
+		$query = $db->querySingle("SELECT * FROM user WHERE code = '" . $req['data'] . "';", true);
+		if ($query) {
+			$resp['value'] = $query;
+		}
+	}
+	if ($req['type'] == 'review') {
+		$query = $db->querySingle("SELECT * FROM review WHERE authority = '" . $req['data'] . "';", true);
+		if ($query) {
+			$resp['value'] = $query;
+		}
+	}
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode($resp);
+	exit();
+}
+
 # PHP POST
 
 if (isset($_POST)){
@@ -41,6 +67,69 @@ if (isset($_POST)){
 				! $query ? $error = "Zápis selhal." : $error = "Hotovo."; 
 			} else {
 				$error = "Prázdný vstup."; 
+			}
+		}
+	}
+
+	if (isset($_POST['user-code'])) {
+		if (isset($_POST['user-delete'])) {
+			$query = $db->exec("DELETE FROM user WHERE code = '" . $_POST['user-code'] . "';");
+			! $query ? $error = "Odstranění selhalo." : $error = "Hotovo."; 
+		}
+		if (isset($_POST['user-save'])) {
+			if (isset($_POST['aleph']) and isset($_POST['email'])) {
+				$query = $db->exec("INSERT INTO user (code, aleph, email) VALUES ('"
+					. $db->escapeString($_POST['user-code']) . "','"
+					. $db->escapeString($_POST['aleph']) . "','"
+					. $db->escapeString($_POST['email'])
+					. "') ON CONFLICT (code) DO UPDATE SET aleph=excluded.aleph, email=excluded.email;");
+				! $query ? $error = "Zápis selhal." : $error = "Hotovo."; 
+			} else {
+				$error = "Prázdný vstup."; 
+			}
+		}
+	}
+
+	if (isset($_POST['review-authority'])) {
+		if (isset($_POST['review-delete'])) {
+			$query = $db->exec("DELETE FROM review WHERE authority = '" . $_POST['review-authority'] . "';");
+			! $query ? $error = "Odstranění selhalo." : $error = "Hotovo."; 
+		}
+		if (isset($_POST['review-save'])) {
+			if (isset($_POST['review-authority']) and isset($_POST['review-name'])) {
+				$query = $db->exec("INSERT INTO review (authority, name) VALUES ('"
+					. $db->escapeString($_POST['review-authority']) . "','"
+					. $db->escapeString($_POST['review-name'])
+					. "') ON CONFLICT (authority) DO UPDATE SET  name=excluded.name;");
+				! $query ? $error = "Zápis selhal." : $error = "Hotovo."; 
+			} else {
+				$error = "Prázdný vstup."; 
+			}
+		}
+	}
+
+	if (isset($_POST['country-code']) and isset($_POST['language-code']) and isset($_POST['role-code'])) {
+		if (isset($_POST['code-save'])) {
+			$country = explode("\n", trim($_POST['country-code']));
+			$query = $db->exec("DELETE FROM country;");
+			foreach ($country as $code) {
+				$query = $db->exec("INSERT INTO country (code) VALUES ('"
+					. $db->escapeString($code) . "') ON CONFLICT (code) DO NOTHING;");
+				! $query ? $error = "Zápis selhal." : $error = "Hotovo."; 
+			}
+			$language = explode("\n", trim($_POST['language-code']));
+			$query = $db->exec("DELETE FROM language;");
+			foreach ($language as $code) {
+				$query = $db->exec("INSERT INTO language (code) VALUES ('"
+					. $db->escapeString($code) . "') ON CONFLICT (code) DO NOTHING;");
+				! $query ? $error = "Zápis selhal." : $error = "Hotovo."; 
+			}
+			$role = explode("\n", trim($_POST['role-code']));
+			$query = $db->exec("DELETE FROM role;");
+			foreach ($role as $code) {
+				$query = $db->exec("INSERT INTO role (code) VALUES ('"
+					. $db->escapeString($code) . "') ON CONFLICT (code) DO NOTHING;");
+				! $query ? $error = "Zápis selhal." : $error = "Hotovo."; 
 			}
 		}
 	}
@@ -307,7 +396,7 @@ if ($db) {
 	</thead>
 	<tbody>
 	<tr>
-	<td class="align-middle"><textarea class="form-control" id="coutry-code" name="country" rows="5">
+	<td class="align-middle"><textarea class="form-control" id="country-code" name="country-code" rows="5">
 <?php
 
 if ($db) {
@@ -320,7 +409,7 @@ if ($db) {
 
 ?>
 </textarea></td>
-	<td class="align-middle"><textarea class="form-control" id="language-code" name="language" rows="5">
+	<td class="align-middle"><textarea class="form-control" id="language-code" name="language-code" rows="5">
 <?php
 
 if ($db) {
@@ -333,7 +422,7 @@ if ($db) {
 
 ?>
 </textarea></td>
-	<td class="align-middle"><textarea class="form-control"id="role-code" name="role" rows="5">
+	<td class="align-middle"><textarea class="form-control" id="role-code" name="role-code" rows="5">
 <?php
 
 if ($db) {
