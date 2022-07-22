@@ -74,10 +74,10 @@ if (isset($_POST)){
 	if (!empty($_POST['user-code'])) {
 		if (isset($_POST['user-delete'])) {
 			$query = $db->exec("DELETE FROM user WHERE code = '" . $_POST['user-code'] . "';");
-			! $query ? $error = "Odstranění uživatele selhalo." : $error = "Uživatel ostraněn."; 
+			! $query ? $error = "Odstranění uživatele selhalo." : $error = "Uživatel odstraněn."; 
 		}
 		if (isset($_POST['user-save'])) {
-			if (!empty($_POST['aleph']) and !empty($_POST['email'])) {
+			if (!(empty($_POST['aleph']) and empty($_POST['email']))) {
 				$query = $db->exec("INSERT INTO user (code, aleph, email) VALUES ('"
 					. $db->escapeString($_POST['user-code']) . "','"
 					. $db->escapeString($_POST['aleph']) . "','"

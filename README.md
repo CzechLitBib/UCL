@@ -3,6 +3,10 @@ DESCRIPTION
 
 Library support software.
 
+TODO
+
+- Rule 136 dup code.
+
 FILE
 <pre>
       api/ - Vufind REST API.
