@@ -55,7 +55,11 @@ if (isset($_POST)){
 	if (!empty($_POST['error-code'])) {
 		if (isset($_POST['error-delete'])) {
 			$query = $db->exec("DELETE FROM error WHERE code = '" . $_POST['error-code'] . "';");
-			! $query ? $error = "Odstranění chybového kódu selhalo." : $error = "Chybový kód odstraněn."; 
+			if(!$query) {
+				$error = "Odstranění chybového kódu " . $_POST['error-code'] . " selhalo.";
+			} else {
+				$error = "Chybový kód " . $_POST['error-code'] . " odstraněn."; 
+			}
 		}
 		if (isset($_POST['error-save'])) {
 			if (!empty($_POST['error-label']) and !empty($_POST['error-text'])) {
@@ -64,7 +68,11 @@ if (isset($_POST)){
 					. $db->escapeString($_POST['error-label']) . "','"
 					. $db->escapeString($_POST['error-text'])
 					. "') ON CONFLICT (code) DO UPDATE SET label=excluded.label, text=excluded.text;");
-				! $query ? $error = "Zápis chybové zprávy selhal." : $error = "Chybová zpráva uložena."; 
+				if (!$query) {
+					$error = "Zápis chybové zprávy " . $_POST['error-code'] . " selhal.";
+				} else {
+					$error = "Chybová zpráva " . $_POST['error-code'] . " uložena."; 
+				}
 			} else {
 				$error = "Prázdý vstup chybové zprávy."; 
 			}
@@ -74,7 +82,11 @@ if (isset($_POST)){
 	if (!empty($_POST['user-code'])) {
 		if (isset($_POST['user-delete'])) {
 			$query = $db->exec("DELETE FROM user WHERE code = '" . $_POST['user-code'] . "';");
-			! $query ? $error = "Odstranění uživatele selhalo." : $error = "Uživatel odstraněn."; 
+			if(!$query) {
+				 $error = "Odstranění uživatele " . $_POST['user-code'] . " selhalo.";
+			} else {
+				$error = "Uživatel " . $_POST['user-code'] . " odstraněn."; 
+			}
 		}
 		if (isset($_POST['user-save'])) {
 			if (!(empty($_POST['aleph']) and empty($_POST['email']))) {
@@ -83,7 +95,11 @@ if (isset($_POST)){
 					. $db->escapeString($_POST['aleph']) . "','"
 					. $db->escapeString($_POST['email'])
 					. "') ON CONFLICT (code) DO UPDATE SET aleph=excluded.aleph, email=excluded.email;");
-				! $query ? $error = "Zápis uživatele selhal." : $error = "Uživatel uložen."; 
+				if(!$query) {
+					$error = "Zápis uživatele " . $_POST['user-code'] . " selhal.";
+				} else {
+					$error = "Uživatel " . $_POST['user-code'] . " uložen."; 
+				}
 			} else {
 				$error = "Prázdný vstup uživatele."; 
 			}
@@ -93,7 +109,11 @@ if (isset($_POST)){
 	if (!empty($_POST['review-authority'])) {
 		if (isset($_POST['review-delete'])) {
 			$query = $db->exec("DELETE FROM review WHERE authority = '" . $_POST['review-authority'] . "';");
-			! $query ? $error = "Odstranění recenze selhalo." : $error = "Recenze odstraněna."; 
+			if(!$query) {
+				$error = "Odstranění recenze " . $_POST['review-authority'] . " selhalo.";
+			} else {
+				$error = "Recenze " . $_POST['review-authority'] . " odstraněna."; 
+			}
 		}
 		if (isset($_POST['review-save'])) {
 			if (!empty($_POST['review-authority']) and !empty($_POST['review-name'])) {
@@ -101,7 +121,11 @@ if (isset($_POST)){
 					. $db->escapeString($_POST['review-authority']) . "','"
 					. $db->escapeString($_POST['review-name'])
 					. "') ON CONFLICT (authority) DO UPDATE SET  name=excluded.name;");
-				! $query ? $error = "Zápis recenze selhal." : $error = "Recenze uložena."; 
+				if(!$query) {
+					$error = "Zápis recenze " . $_POST['review-authority'] . " selhal.";
+				} else {
+					$error = "Recenze " . $_POST['review-authority'] . " uložena."; 
+				}
 			} else {
 				$error = "Prázdný vstup recenze."; 
 			}
