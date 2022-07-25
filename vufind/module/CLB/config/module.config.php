@@ -53,6 +53,19 @@ return array (
           ),
         ),
       ),
+      'export' => 
+      array (
+        'type' => 'Laminas\\Router\\Http\\Literal',
+        'options' => 
+        array (
+          'route' => '/export',
+          'defaults' => 
+          array (
+            'controller' => 'export',
+            'action' => NULL,
+          ),
+        ),
+      ),
     ),
   ),
 );
