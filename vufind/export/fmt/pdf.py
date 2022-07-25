@@ -42,10 +42,6 @@ RESOURCE = {
 	'Czech Literature in Translation':'Databáze překladů české literatury'
 }
 
-# INIT
-
-logo = svg2rlg(LOGO)
-
 # DEF
 
 def prep(text):
@@ -156,7 +152,7 @@ def pdf(data, lang):
 	pdfmetrics.registerFont(TTFont('OpenSans-Regular', 'OpenSans-Regular.ttf'))
 	pdfmetrics.registerFont(TTFont('OpenSans-Bold', 'OpenSans-Bold.ttf'))
 	# header
-	renderPDF.draw(scale(logo, 1/16), pdf, 10, 820)
+	renderPDF.draw(logo, pdf, 10, 820)
 	pdf.setFont('OpenSans-Bold', 10)
 	pdf.drawString(35, 820, HEADER)
 	pdf.setLineWidth(0)
@@ -189,4 +185,7 @@ def pdf(data, lang):
 	pdf.save()
 	ret.seek(0)
 	return ret
+# INIT
+
+logo = scale(svg2rlg(LOGO), 1/16)
 

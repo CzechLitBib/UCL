@@ -16,7 +16,6 @@ app.secret_key = b'$^%^$%LMLKK<>?"{}__'
 
 # ROUTING
 
-#@app.route('/export/', defaults={'lang':'cs'}, methods=['GET','POST'])
 @app.route('/export/<lang>', methods=['GET','POST'])
 @app.route('/export', strict_slashes=False, methods=['GET','POST'])
 def export(lang='cs'):
