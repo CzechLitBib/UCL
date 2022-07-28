@@ -13,8 +13,8 @@ cur = con.cursor()
 
 # error | user
 
-cur.execute("CREATE TABLE daily (timestamp INTEGER, ident TEXT, code TEXT, user TEXT);")
-cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, code TEXT, user TEXT);")
+cur.execute("CREATE TABLE daily (date INTEGER, ident TEXT, user TEXT, code TEXT);")
+cur.execute("CREATE TABLE weekly (date INTEGER, ident TEXT, user TEXT, code TEXT);")
 cur.execute("CREATE TABLE error (code TEXT, label TEXT, text TEXT);")
 cur.execute("CREATE TABLE country (code TEXT);")
 cur.execute("CREATE TABLE language (code TEXT);")
@@ -22,8 +22,8 @@ cur.execute("CREATE TABLE role (code TEXT);")
 cur.execute("CREATE TABLE review (authority TEXT, name TEXT);")
 cur.execute("CREATE TABLE user (code TEXT, aleph TEXT, email TEXT);")
 
-cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
-cur.execute("CREATE INDEX 'weekly_timestamp' ON weekly (timestamp);")
+cur.execute("CREATE INDEX 'daily_date' ON daily (date);")
+cur.execute("CREATE INDEX 'weekly_date' ON weekly (date);")
 cur.execute("CREATE UNIQUE INDEX 'error_code' ON error (code);")
 cur.execute("CREATE UNIQUE INDEX 'country_code' ON country (code);")
 cur.execute("CREATE UNIQUE INDEX 'language_code' ON language (code);")

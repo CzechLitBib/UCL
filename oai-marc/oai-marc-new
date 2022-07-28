@@ -8,7 +8,7 @@
 import argparse,io,urllib.request,smtplib,sqlite3,sys,os,re
 
 from email.mime.text import MIMEText
-from datetime import datetime
+from datetime import datetime,timedelta
 from oaipmh.client import Client
 from oaipmh.metadata import MetadataRegistry
 from pymarc import marcxml
@@ -20,14 +20,11 @@ from lxml.etree import tostring
 
 URL='https://aleph.lib.cas.cz/OAI'
 ERROR_PAGE='https://vyvoj.ucl.cas.cz/error/#'
-DB='/var/www/html/data/devel.db'
+DB='/var/www/data/devel.db'
 
 MAIL_SENDER='xxx'
 MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
-
-COUNTER=0
-MATCH=0
 
 # DEF -------------------
 
@@ -60,48 +57,51 @@ def url_response(url):
 	except: pass
 	return 0
 
+def get_sql_list():
+
 def notify():
 	html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
 	html_footer =('<br>Prosíme o opravu.<br><br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
-	for sif in ERROR:
-		if sif in sif_code:# match email address
-			html_body=''
-			for aleph in ERROR[sif]:
-				for error in ERROR[sif][aleph]:
-					html_body+=(
-						'<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
-						aleph + '&local_base=AV&format=001">' + aleph + '</a> ' + ' [<a target="_blank" href="' +
-						ERROR_PAGE + error[0] + '">' + error[0] + '</a>] ' + error[1] + '<br>'
-					)
+	html_body=''
+	YST=(datetime.today()-timedelta(days=1)).strftime('%Y%m%d')
+	db.row_factory = lambda cursor, row: row
+	DATA = db.execute("SELECT ident,user,code FROM daily WHERE date = (?); ",(YST,)).fetchall()
+
+	print(DATA)
+	return
+
+	for aleph in ERROR[sif]:
+		for error in ERROR[sif][aleph]:
+			html_body+=(
+				'<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+				aleph + '&local_base=AV&format=001">' + aleph + '</a> ' + ' [<a target="_blank" href="' +
+				ERROR_PAGE + error[0] + '">' + error[0] + '</a>] ' + error[1] + '<br>'
+			)
 			msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
-			msg['Subject'] = 'Kontrolní zpráva'
-			msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-			msg['To'] = sif_code[sif]
+		msg['Subject'] = 'Kontrolní zpráva'
+		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+		msg['To'] = sif_code[sif]
+		try:
+			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+			s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
+			s.quit()
+		except:
 			try:
-				s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
 				s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
 				s.quit()
 			except:
-				try:
-					s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-					s.sendmail(MAIL_SENDER, sif_code[sif], msg.as_string())
-					s.quit()
-				except:
-					print('Sendmail error.')
+				print('Sendmail error.')
 
-def write_error(id,tag,sif,code,code_text):
-	aleph = re.sub('^.*-(\d+)$', '\\1', id)
-	SIF = sif.lower()
-	# error counter
-	global MATCH
-	MATCH+=1
-	# update errors
-	if SIF not in ERROR: ERROR[SIF] = {}
-	if aleph not in ERROR[SIF]: ERROR[SIF][aleph] = []
-	ERROR[SIF][aleph].append((code,code_text))
-	# write daily CSV
-	csv.write(aleph + ';' + sif + ';' + code + ';' + code_text + '\n')
+def write_error(sysno,sif,code):
+	SN = re.sub('^.*-(\d+)$', '\\1', sysno)
+	YST=(datetime.today()-timedelta(days=1)).strftime('%Y%m%d')
+	# write DB
+	if args.daily:
+		db.execute("INSERT INTO daily (date,ident,user,code) VALUES (?,?,?,?);",(YST,SN,code,sif.lower()))
+	if args.weekly:
+		db.execute("INSERT INTO weekly (date,ident,user,code) VALUES (?,?,?,?);",(YST,SN,code,sif.lower()))
 
 # ARG -------------------
 
@@ -115,6 +115,8 @@ required.add_argument('--from', help='Records from UTC datetime. [YYYY-mm-dd HH:
 required.add_argument('--until', help='Records until UTC datetime. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 optional = parser.add_argument_group('output')
 optional.add_argument('--check', help='Validation control.', action='store_true')
+optional.add_argument('--daily', help='Write daily DB.', action='store_true')
+optional.add_argument('--weekly', help='Write weekly DB.', action='store_true')
 optional.add_argument('--notify', help='Enable notification.', action='store_true')
 optional.add_argument('--display', help='Display output format. [ident] [marc]', nargs='?', type=valid_display, const='ident')
 args = parser.parse_args()
@@ -140,10 +142,18 @@ if args.get == 'ident':
 # INIT -------------------
 
 try:
-	db = sqlite3.connect(DB)
+	con = sqlite3.connect(DB)
+	db = con.cursor()
+	db.row_factory = lambda cursor, row: row[0]
 except:
 	print('Failed to open database.')
 	exit(1)
+
+country_code = db.execute("SELECT * FROM country;").fetchall()
+
+language_code = db.execute("SELECT * FROM language;").fetchall()
+
+role_code = db.execute("SELECT * FROM role;").fetchall()
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -211,6 +221,7 @@ for record in records:
 			print(header.identifier())
 		if args.display == 'marc':
 			print(metadata)
+		continue
 
 	# VALIDATION ------------------
 
@@ -715,21 +726,21 @@ for record in records:
 			if country_code:
 				if DATA not in country_code:
 					write_error(header.identifier(), SIF, '110')
-			if '044' in metadata and 'a' in metadata['044']:
-				if DATA != metadata['044']['a']:
-					write_error(header.identifier(), SIF, '111')
+				if '044' in metadata and 'a' in metadata['044']:
+					if DATA != metadata['044']['a']:
+						write_error(header.identifier(), SIF, '111')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[35:38].strip()
-			if lang_code:
-				if DATA not in lang_code:
+			if language_code:
+				if DATA not in language_code:
 					write_error(header.identifier(), SIF, '112')
 			if '041' in metadata and 'a' in metadata['041']:
 				if DATA != metadata['041']['a']:
 					write_error(header.identifier(), SIF, '113')
 		if '041' in metadata:
-			if lang_code:
+			if language_code:
 				for DATA in metadata['041'].subfields[1::2]:
-					if DATA not in lang_code:
+					if DATA not in language_code:
 						write_error(header.identifier(), SIF, '114')
 			if len(metadata['041'].subfields) < 2:
 					write_error(header.identifier(), SIF, '115')
@@ -1306,16 +1317,11 @@ for record in records:
 				if F['a'] != F['y']:
 					write_error(header.identifier(), SIF, '196')
 
-	COUNTER+=1
-
 # EXIT -------------------
 
-if args.get != 'record':
-	print('TOTAL ' + str(COUNTER))
-if args.check:
-	print('MATCH ' + str(MATCH))
-if args.notify:
-	notify()
+con.commit()
 
-db.close()
+if args.daily and args.notify: notify()
+
+con.close()
 
