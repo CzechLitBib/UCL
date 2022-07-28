@@ -353,7 +353,7 @@ for record in records:
 		for F in metadata.get_fields('773'):
 			if 'g' in F: VAL = F['g']
 			if len(F.get_subfields('t')) != 1:
-				write_error(header.identifier(), '773', SIF, '023', 'Chybné opakovéní podpole 773t.')
+				write_error(header.identifier(), '773', SIF, '023', 'Chybné opakování podpole 773t.')
 			elif 'g' not in F:
 				ADD=False
 				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): ADD=True

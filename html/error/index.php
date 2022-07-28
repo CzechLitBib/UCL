@@ -31,20 +31,20 @@
 
 <?php
 
-$db = new SQLite3('error.db');
+$db = new SQLite3('devel.db');
 
 if (!$db) {
 	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Chyba databáze.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 } else {
 
-	$result = $db->query("SELECT id,label,text FROM error");
-        
+	$result = $db->query("SELECT code,label,text FROM error");
+
 	while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
 		echo '<div class="card my-2"><div class="card-body"><div class="row"><div class="col-2 col-md-1">'
-		. '<h5 class="card-title text-danger text-nowrap">' . $res['id'] . '</h5>'
+		. '<h5 class="card-title text-danger text-nowrap">' . $res['code'] . '</h5>'
 		. '</div><div class="col"><h5 class="card-title">' . $res['label'] . '</h5>'
 		. '<p class="card-text">' . $res['text'] . '</p></div></div></div></div>';
-		echo '<a class="anchor" id="' . $res['id'] . '"></a>';
+		echo '<a class="anchor" id="' . $res['code'] . '"></a>';
         }
         
 	$db->close();
