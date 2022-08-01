@@ -5,7 +5,7 @@
 
 # INCLUDE -------------------
 
-import argparse,io,urllib.request,smtplib,sqlite3,sys,os,re
+import argparse,urllib.request,smtplib,sqlite3,sys,io,re
 
 from email.mime.text import MIMEText
 from datetime import datetime,timedelta
@@ -24,6 +24,7 @@ WEEKLY_PAGE='https://vyvoj.ucl.cas.cz/weekly'
 
 DB='/var/www/data/devel.db'
 
+MAIL_USER='xxx'
 MAIL_SENDER='xxx'
 MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
@@ -100,7 +101,7 @@ def notify():
 			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">$URL</a><br><br>'
 			+ '---------------------------<br><br>'
 			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.')
-		email = db.execute("SELECT email FROM user WHERE user = 'vm';").fetchone()
+		email = db.execute("SELECT email FROM user WHERE code = '" + MAIL_USER + "';").fetchone()
 		if email: sendmail(email[0], html)
 
 def write_error(timestamp,ident,sif,code):
@@ -153,7 +154,7 @@ try:
 	db.row_factory = lambda cursor, row: row[0]
 except:
 	print('Failed to open database.')
-	exit(1)
+	sys.exit(1)
 
 country_code = db.execute("SELECT * FROM country;").fetchall()
 
