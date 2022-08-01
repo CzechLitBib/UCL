@@ -59,7 +59,8 @@ def url_response(url):
 		if urllib.request.urlopen(req, timeout=10).getcode() == 200: return 1
 	except: pass
 	return 0
-def email(target,message):
+
+def send_mail(target,message):
 	msg = MIMEText(message, 'html', 'utf-8')
 	msg['Subject'] = 'Kontrolní zpráva'
 	msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
@@ -80,14 +81,14 @@ def email(target,message):
 def notify():
 	db = con.cursor()# reset cursor
 	if args.daily:
-		html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
+		html_header = 'Dobrý den,<br><br>Ve Vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
 		html_footer =('<br>Prosíme o opravu.<br><br>---------------------------<br><br>' +
 			'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 		for user,email in db.execute("SELECT code,email FROM user;").fetchall():
 			html_body=''
-			for ident,code in db.execute("SELECT ident,code FROM daily WHERE timestamp >= (?) AND user = (?) ORDER BY code ASC;",
+			for ident,code in db.execute("SELECT ident,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY code ASC;",
 				(int((datetime.now()-timedelta(days=2)).timestamp()), user)).fetchall():
-				label = db.execute("SELECT label FROM error WHERE code = (?);",(code,)).fetchone()
+				label = db.execute("SELECT label FROM error WHERE code = ?;",(code,)).fetchone()
 				html_body+=(
 					'<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					ident + '&local_base=AV&format=001">' + ident + '</a> ' + ' [<a target="_blank" href="' +
@@ -95,14 +96,14 @@ def notify():
 				)
 	
 			if html_body and email:
-				sendmail(email, html_header + html_body + html_footer)
+				send_mail(email, html_header + html_body + html_footer)
 	if args.weekly:
 		html =('Dobrý den,<br><br>Kontrolní zpráva je dostupná na adrese:<br><br>'
 			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">$URL</a><br><br>'
 			+ '---------------------------<br><br>'
 			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.')
 		email = db.execute("SELECT email FROM user WHERE code = '" + MAIL_USER + "';").fetchone()
-		if email: sendmail(email[0], html)
+		if email: send_mail(email[0], html)
 
 def write_error(timestamp,ident,sif,code):
 	if args.daily:

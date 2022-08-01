@@ -71,15 +71,15 @@ def notify():
 		msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
 		msg['Subject'] = 'Bibliografie MZK'
 		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-		msg['To'] = email[0]
+		msg['To'] = email
 		try:
 			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+			s.sendmail(MAIL_SENDER, email, msg.as_string())
 			s.quit()
 		except:
 			try:
 				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-				s.sendmail(MAIL_SENDER, email[0], msg.as_string())
+				s.sendmail(MAIL_SENDER, email, msg.as_string())
 				s.quit()
 			except:
 				print('Sendmail error.')
