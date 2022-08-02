@@ -102,7 +102,7 @@ server {
 		allow 147.231.80.0/24;
 		allow 127.0.0.1;
 		deny all;
-		rewrite ^/vufind/(.*)$ https://vufind.ucl.cas.cz/Record/$1 permanent;
+		rewrite ^/vufind/(.*)$ https://vufind.ucl.cas.cz/Record/$1#details permanent;
 	}
 
 	# PHP - local
