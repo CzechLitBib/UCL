@@ -7,6 +7,7 @@ TODO
 
 - Rule 136 dup code.
 - oai-mdt?
+- Multiple single error handling.
 
 FILE
 <pre>
