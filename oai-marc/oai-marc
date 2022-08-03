@@ -270,6 +270,7 @@ for record in records:
 			SIF = ''
 			write_error(header.identifier(), 'SIF', SIF, '000', 'Chybí pole SIF.')
 		for TAG in ('001', '003', '005', '008', '040', '245', '520', '655', '910', '964', 'OWN'):
+			if TAG == '520' and metadata.leader[7] == 's': continue# skip periodical
 			if TAG in ['520','964'] and metadata.leader[7] == 'm':# library skip
 				for F in metadata.get_fields('599'):
 					if 'a' in F and F['a'] == 'xbibl': break
@@ -688,8 +689,9 @@ for record in records:
 		# TEST DATE / COUNTRY / LANG ------------------
 		
 		if '008' in metadata:
+			CODE = metadata['008'].value()[6]
 			DATE = metadata['008'].value()[7:15].strip()
-			if metadata['008'].value()[6] not in ('s', 'e', 'm', 'q'):
+			if (CODE == 'c' and metadata.leader[7] != 's') or CODE not in ('s', 'e', 'm', 'q'):
 				write_error(header.identifier(), '008', SIF, '102', 'Chybný kód data v poli 008.')
 			if not re.match('^[0-9u]+$', DATE) or len(DATE) not in (4, 6, 8):
 					write_error(header.identifier(), '008', SIF, '103', 'Neplatné datum v poli 008.')
@@ -894,6 +896,7 @@ for record in records:
 		for F in metadata.get_fields('964'):
 			if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' not in metadata:
+					if metadata.leader[7] == 's': continue# skip periodical
 					write_error(header.identifier(), '035', SIF, '139', 'Chybí pole 035.')
 		# 035a
 		BASE=False
@@ -1307,7 +1310,7 @@ for record in records:
 			for F in metadata.get_fields('599'):
 				if 'a' in F and F['a'] == 'CLB-CPK': break
 			else:
-				if 'IST' not in metadata:# library skip
+				if metadata.leader[7] != 's':# skip periodical
 					write_error(header.identifier(), '599', SIF, '192', "Záznam neobsahuje žádné podpole 599a s hodnotou 'CLB-CPK'.")
 
 		# LKR
@@ -1331,6 +1334,22 @@ for record in records:
 			if 'a' and F and 'y' in F:
 				if F['a'] != F['y']:
 					write_error(header.identifier(), '594', SIF, '196', "Podpole 594a a 594y se neshoduje.")
+
+		# TAG presence 
+		MATCH=False
+		for F in metadata.get_fields('700'):
+			if [sub for sub in F.get_subfields('4') if sub != 'aut']: MATCH=True
+		for F in metadata.get_fields('100'):
+			if [sub for sub in F.get_subfields('4') if sub != 'aut']: MATCH=True
+		if MATCH:
+			PASS=False
+			if '245' in metadata and 'c' in metadata['245']:
+				if '<<' in metadata['245']['c']: PASS=True
+			for F in metadata.get_fields('505'):
+				if 'r' in F and '<<' in F['r']: PASS=True
+		if '594' in metadata: PASS=True
+		if not PASS:
+			write_error(header.identifier(), '594', SIF, '197', "Chybí <<>> v poli 245c, nebo není vyplněno pole 594.")
 
 	COUNTER+=1
 
