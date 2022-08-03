@@ -194,14 +194,14 @@ def convert(record):
 		CNT+=1
 	for F in metadata.get_fields('700'):
 		if 'a' in F and '4' in F and F['4'] == 'aut':
+			CNT+=1
+			if CNT == 4:
+				NAME += ' et al.'
+				break
 			if not NAME:
 				NAME = name_to_upper(F['a'].rstrip(','), ident)
 			else:
 				NAME += u' – ' + name_to_upper(F['a'].rstrip(','), ident)
-			CNT+=1
-			if CNT == 3:
-				NAME += ' et al.'
-				break
 		else:
 			continue
 	# NAME 100/700
