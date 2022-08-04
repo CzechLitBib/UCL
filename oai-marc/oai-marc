@@ -139,7 +139,7 @@ if args.get == 'list' or args.get == 'ident':
 		parser.error('argument --until is required.')
 
 if args.get == 'ident':
-	if args.check or args.notify or args.export:
+	if args.check or args.notify:
 		parser.error('Invalid optional argument.')
 	if args.display and args.display != 'ident':
 		parser.error('Invalid display argument.')
@@ -210,6 +210,7 @@ for record in records:
 
 	if args.get == 'ident':
 		if record.isDeleted(): continue
+		print(record.identifier())
 		COUNTER+=1
 		continue
 
