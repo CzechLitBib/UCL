@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 
+- Error text update "Multiple rule update.".
 - Delete confimation.
 - Rule 136 dup code.
 - oai-mdt?
