@@ -99,7 +99,7 @@ for record in records:
 
 	# write / skip deleted records
 	if header.isDeleted():
-		DEL.append(header.identifier())
+		DEL.append(re.sub('^.*-(\d+)$', '\\1', header.identifier()) + '\n')
 		continue
 
 	# ident
