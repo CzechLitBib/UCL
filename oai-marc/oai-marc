@@ -361,7 +361,6 @@ for record in records:
 				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): continue
 				if VAL and 'příl.' in VAL and 'příloha' in F['t']: continue
 				if '[samizdat]' in F['t']: continue
-				if 'Literární archiv' in F['t']: continue
 				write_error(header.identifier(), '773', SIF, '024', 'Chybný zápis přílohy v opakovaném poli 773.')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
