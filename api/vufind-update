@@ -251,8 +251,7 @@ for record in records:
 				NAME = name_to_upper(F['a'].rstrip(','), ident)
 			else:
 				NAME += u' – ' + name_to_upper(F['a'].rstrip(','), ident)
-		else:
-			continue
+
 	# NAME 100/700
 	#if len(metadata.get_fields('100')) == 1 and '700' not in metadata and '710' not in metadata:
 	#	if '245' in metadata and 'c' in metadata['245']:
