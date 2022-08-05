@@ -356,14 +356,13 @@ for record in records:
 			if 'g' in F: VAL = F['g']
 			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '773', SIF, '023', 'Chybné opakování podpole 773t.')
+			elif 'g' in F and 'Literární archiv' in F['t']: break
 			elif 'g' not in F:
-				ADD=False
-				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): ADD=True
-				if VAL and 'příl.' in VAL and 'příloha' in F['t']: ADD =True
-				if '[samizdat]' in F['t']: ADD=True
-				if 'Literární archiv' in F['t']: ADD=True
-				if not ADD:
-					write_error(header.identifier(), '773', SIF, '024', 'Chybný zápis přílohy v opakovaném poli 773.')
+				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): continue
+				if VAL and 'příl.' in VAL and 'příloha' in F['t']: continue
+				if '[samizdat]' in F['t']: continue
+				if 'Literární archiv' in F['t']: continue
+				write_error(header.identifier(), '773', SIF, '024', 'Chybný zápis přílohy v opakovaném poli 773.')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
 				write_error(header.identifier(), '787', SIF, '025', 'Chybné opakování podpole 787t.')
@@ -1337,12 +1336,12 @@ for record in records:
 					write_error(header.identifier(), '594', SIF, '196', "Podpole 594a a 594y se neshoduje.")
 
 		# TAG presence 
-		MATCH=False
+		AUT=False
 		for F in metadata.get_fields('700'):
-			if [sub for sub in F.get_subfields('4') if sub != 'aut']: MATCH=True
+			if [sub for sub in F.get_subfields('4') if sub != 'aut']: AUT=True
 		for F in metadata.get_fields('100'):
-			if [sub for sub in F.get_subfields('4') if sub != 'aut']: MATCH=True
-		if MATCH:
+			if [sub for sub in F.get_subfields('4') if sub != 'aut']: AUT=True
+		if AUT:
 			PASS=False
 			if '245' in metadata and 'c' in metadata['245']:
 				if '<<' in metadata['245']['c']: PASS=True
