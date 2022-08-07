@@ -13,8 +13,8 @@ cur = con.cursor()
 
 # error | user
 
-cur.execute("CREATE TABLE daily (timestamp INTEGER, ident TEXT, user TEXT, code TEXT);")
-cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, user TEXT, code TEXT);")
+cur.execute("CREATE TABLE daily (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
+cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
 cur.execute("CREATE TABLE error (code TEXT, label TEXT, text TEXT);")
 cur.execute("CREATE TABLE country (code TEXT);")
 cur.execute("CREATE TABLE language (code TEXT);")

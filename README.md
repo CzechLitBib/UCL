@@ -9,8 +9,6 @@ TODO
 - Delete confimation.
 - Rule 136 dup code.
 - oai-mdt?
-- Multiple single error handling.
-- Multiple single errro value.
 
 FILE
 <pre>
