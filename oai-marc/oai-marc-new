@@ -77,7 +77,6 @@ def send_mail(target,message):
 		except:
 			print('Sendmail error.')
 
-
 def notify():
 	db = con.cursor()# reset cursor
 	if args.daily:
@@ -86,13 +85,15 @@ def notify():
 			'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 		for user,email in db.execute("SELECT code,email FROM user;").fetchall():
 			html_body=''
-			for ident,code in db.execute("SELECT ident,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY code ASC;",
-				(int((datetime.now()-timedelta(days=2)).timestamp()), user)).fetchall():
+			for ident,tag,code in db.execute(
+					"SELECT ident,tag,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY code ASC;",
+					(int((datetime.now()-timedelta(days=2)).timestamp()), user)
+				).fetchall():
 				label = db.execute("SELECT label FROM error WHERE code = ?;",(code,)).fetchone()
 				html_body+=(
 					'<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
 					ident + '&local_base=AV&format=001">' + ident + '</a> ' + ' [<a target="_blank" href="' +
-					ERROR_PAGE + code + '">' + code + '</a>] ' + label[0] + '<br>'
+					ERROR_PAGE + code + '">' + code + '</a>] ' + label[0].replace('XXX', tag) + '<br>'
 				)
 	
 			if html_body and email:
@@ -105,11 +106,11 @@ def notify():
 		email = db.execute("SELECT email FROM user WHERE code = '" + MAIL_USER + "';").fetchone()
 		if email: send_mail(email[0], html)
 
-def write_error(timestamp,ident,sif,code):
+def write_error(timestamp,ident,sif,tag,code):
 	if args.daily:
-		db.execute("INSERT INTO daily (timestamp,ident,user,code) VALUES (?,?,?,?);",(timestamp,ident,sif.lower(),code))
+		db.execute("INSERT INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?);",(timestamp,ident,sif.lower(),tag,code))
 	if args.weekly:
-		db.execute("INSERT INTO weekly (timestamp,ident,user,code) VALUES (?,?,?,?);",(timestamp,ident,sif.lower(),code))
+		db.execute("INSERT INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?);",(timestamp,ident,sif.lower(),tag,code))
 
 # ARG -------------------
 
@@ -129,7 +130,7 @@ optional.add_argument('--notify', help='Enable notification.', action='store_tru
 optional.add_argument('--display', help='Display output format. [ident] [marc]', nargs='?', type=valid_display, const='ident')
 args = parser.parse_args()
 
-if args.get == 'record' or args.get == 'ident':
+if args.get == 'record':
 	if not args.ident:
 		parser.error('argument --ident is required.')
 
@@ -142,7 +143,7 @@ if args.get == 'list' or args.get == 'ident':
 		parser.error('argument --until is required.')
 
 if args.get == 'ident':
-	if args.check or args.notify or args.export:
+	if args.check or args.notify:
 		parser.error('Invalid optional argument.')
 	if args.display and args.display != 'ident':
 		parser.error('Invalid display argument.')
@@ -201,6 +202,7 @@ for record in records:
 
 	if args.get == 'ident':
 		if record.isDeleted(): continue
+		print(record.identifier())
 		continue
 
 	header = record[0]
