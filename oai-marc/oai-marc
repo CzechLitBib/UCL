@@ -1348,9 +1348,9 @@ for record in records:
 				if '<<' in metadata['245']['c']: PASS=True
 			for F in metadata.get_fields('505'):
 				if 'r' in F and '<<' in F['r']: PASS=True
-		if '594' in metadata: PASS=True
-		if not PASS:
-			write_error(header.identifier(), '594', SIF, '197', "Chybí <<>> v poli 245c, nebo není vyplněno pole 594.")
+			if '594' in metadata: PASS=True
+			if not PASS:
+				write_error(header.identifier(), '594', SIF, '197', "Chybí <<>> v poli 245c, nebo není vyplněno pole 594.")
 
 	COUNTER+=1
 
