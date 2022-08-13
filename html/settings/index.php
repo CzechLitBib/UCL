@@ -9,7 +9,8 @@ if(empty($_SESSION['auth'])) {
         exit();
 }
 
-if($_SESSION['group'] !== 'admin') {
+#if($_SESSION['group'] !== 'admin') {
+if($_SESSION['username'] !== 'bruna') {
         $_SESSION['error'] = True;
         header('Location: /main/');
         exit();
@@ -473,6 +474,24 @@ if ($db) {
 $db->close();
 
 ?>
+
+<div class="modal" id="modal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+	<div class="modal-content">
+		<div class="container-fluid">
+			<div class="row my-2">
+				<div class="col text-nowrap align-text-bottom">
+					Skutecne chcete provest danou akci?
+				</div>
+				<div class="col text-end">
+					<button class="btn btn-sm  btn-success">Ano</button>
+					<button class="btn btn-sm btn-danger">Ne</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</div>
 
 <script src="../bootstrap.min.js"></script>
 <script src="custom.js"></script>

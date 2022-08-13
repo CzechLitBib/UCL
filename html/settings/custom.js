@@ -1,4 +1,7 @@
 
+// MODAL
+modal = new bootstrap.Modal(document.getElementById('modal'));
+
 // FETCH  - JSON { type, value } response JSON { value }
 async function update(payload) {
 	return await fetch('/settings/', {
@@ -59,7 +62,8 @@ async function user_code_change() {
 }
 
 function user_on_save() {
-	document.getElementById('user-save').click();
+	modal.toggle();
+	//document.getElementById('user-save').click();
 }
 
 function user_on_delete() {
