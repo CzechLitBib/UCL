@@ -70,9 +70,9 @@ if (isset($_POST)){
 					. $db->escapeString($_POST['error-text'])
 					. "') ON CONFLICT (code) DO UPDATE SET label=excluded.label, text=excluded.text;");
 				if (!$query) {
-					$error = "Zápis chybové zprávy " . $_POST['error-code'] . " selhal.";
+					$error = "Zápis chybového kódu " . $_POST['error-code'] . " selhal.";
 				} else {
-					$error = "Chybová zpráva " . $_POST['error-code'] . " uložena."; 
+					$error = "Chybový kód " . $_POST['error-code'] . " uložen."; 
 				}
 			} else {
 				$error = "Prázdý vstup chybové zprávy."; 
@@ -481,12 +481,14 @@ $db->close();
 		<div class="container-fluid">
 			<div class="row my-2">
 				<div class="col my-2">
-					<span class="align-middle">Opravdu chcete smazat uzivatele <b>xxx</b>?</span>
+					<span class="align-middle" id="modal-text"></span>
+					<span class="align-middle"><b id="modal-text-bold"></b></span>
+					<span class="align-middle">?</span>
 				</div>
 				<div class="col-3 d-flex align-items-center">
-					<button class="btn btn-sm btn-success w-100" onclick="on_modal()">Ano</button>
+					<button class="btn btn-sm btn-danger w-100" onclick="on_confirm()">Ano</button>
 				</div>
-				<div class="col-1 d-flex align-items-center">
+				<div class="col-1 d-flex align-items-center me-2">
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 			</div>

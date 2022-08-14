@@ -1,6 +1,19 @@
 
 // MODAL
 modal = new bootstrap.Modal(document.getElementById('modal'));
+modal_action = null;
+
+function on_confirm() {
+	if (modal_action == 'error-save') { document.getElementById('error-save').click(); }
+	if (modal_action == 'error-delete') { document.getElementById('error-delete').click(); }
+	if (modal_action == 'user-save') { document.getElementById('user-save').click(); }
+	if (modal_action == 'user-delete') { document.getElementById('user-delete').click(); }
+	if (modal_action == 'review-save') { document.getElementById('review-save').click(); }
+	if (modal_action == 'review-delete') { document.getElementById('review-delete').click(); }
+	if (modal_action == 'code-save') { document.getElementById('code-save').click(); }
+	modal_action = null;
+	modal.toggle();
+}
 
 // FETCH  - JSON { type, value } response JSON { value }
 async function update(payload) {
@@ -37,11 +50,17 @@ async function error_code_change() {
 }
 
 function error_on_save() {
-	document.getElementById('error-save').click();
+	document.getElementById('modal-text').textContent = 'Chcete uložit chybový kód ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('error-code').value;
+	modal.toggle();
+	modal_action = 'error-save';
 }
 
 function error_on_delete() {
-	document.getElementById('error-delete').click();
+	document.getElementById('modal-text').textContent = 'Chcete smazat chybový kód ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('error-code').value;
+	modal.toggle();
+	modal_action = 'error-delete';
 }
 
 // USER
@@ -62,12 +81,17 @@ async function user_code_change() {
 }
 
 function user_on_save() {
+	document.getElementById('modal-text').textContent = 'Chcete uložit uživatele ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('user-code').value;
 	modal.toggle();
-	//document.getElementById('user-save').click();
+	modal_action = 'user-save';
 }
 
 function user_on_delete() {
-	document.getElementById('user-delete').click();
+	document.getElementById('modal-text').textContent = 'Chcete smazat uživatele ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('user-code').value;
+	modal.toggle();
+	modal_action = 'user-delete';
 }
 
 // REVIEW
@@ -87,16 +111,25 @@ async function review_authority_change() {
 }
 
 function review_on_save() {
-	document.getElementById('review-save').click();
+	document.getElementById('modal-text').textContent = 'Chcete uložit recenzi ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('review-authority').value;
+	modal.toggle();
+	modal_action = 'review-save';
 }
 
 function review_on_delete() {
-	document.getElementById('review-delete').click();
+	document.getElementById('modal-text').textContent = 'Chcete smazat recenzi ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('review-authority').value;
+	modal.toggle();
+	modal_action = 'review-delete';
 }
 
 // CODE
 
 function code_on_save() {
-	document.getElementById('code-save').click();
+	document.getElementById('modal-text').textContent = 'Chcete uložit kódy';
+	document.getElementById('modal-text-bold').textContent = '';
+	modal.toggle();
+	modal_action = 'code-save';
 }
 
