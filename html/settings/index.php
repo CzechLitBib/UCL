@@ -477,15 +477,17 @@ $db->close();
 
 <div class="modal" id="modal" tabindex="-1">
 	<div class="modal-dialog modal-dialog-centered">
-	<div class="modal-content">
+	<div class="modal-content shadow">
 		<div class="container-fluid">
 			<div class="row my-2">
-				<div class="col text-nowrap align-text-bottom">
-					Skutecne chcete provest danou akci?
+				<div class="col my-2">
+					<span class="align-middle">Opravdu chcete smazat uzivatele <b>xxx</b>?</span>
 				</div>
-				<div class="col text-end">
-					<button class="btn btn-sm  btn-success">Ano</button>
-					<button class="btn btn-sm btn-danger">Ne</button>
+				<div class="col-3 d-flex align-items-center">
+					<button class="btn btn-sm btn-success w-100" onclick="on_modal()">Ano</button>
+				</div>
+				<div class="col-1 d-flex align-items-center">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 			</div>
 		</div>
