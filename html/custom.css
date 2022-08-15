@@ -13,7 +13,8 @@
 .bi-filetype-csv:hover, .bi-filetype-scv:focus,
 .bi-arrow-up-right-square:hover, .bi-arrow-up-right-square:focus,
 .bi-arrow-down-square:hover, .bi-arrow-down-square:focus,
-.bi-trash:hover, .bi-trash:focus
+.bi-trash:hover, .bi-trash:focus,
+.bi-justify:hover, .bi-justify:focus
 {
 	color: #dc3545;
 }
