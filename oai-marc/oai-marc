@@ -1288,7 +1288,8 @@ for record in records:
 			if BRACKET > 0:
 				FC = 0
 				for F in metadata.get_fields('100','700'):
-					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+					if metadata.leader[7] == 'm' and len(F.get_subfields('4')) == 1 and F['4'] == 'ctb': continue
+					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb','cwt']: continue
 					FC+=1
 				if FC != BRACKET:
 					write_error(header.identifier(), '245', SIF, '190', 'Počet tagů v podpoli 245c neodpovídá počtu polí.')
