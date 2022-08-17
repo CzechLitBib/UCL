@@ -1,5 +1,7 @@
 
 // MODAL
+
+modal_list = new bootstrap.Modal(document.getElementById('modal-list'));
 modal = new bootstrap.Modal(document.getElementById('modal'));
 modal_action = null;
 
@@ -15,6 +17,40 @@ function on_confirm() {
 	modal.toggle();
 }
 
+// FETCH - LISTS
+
+async function modal_data(payload) {
+	return await fetch('/settings/', {
+		method: 'POST',
+		headers: { 'Content-Type' :'application/json' },
+		body: JSON.stringify(payload)
+	})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network error.');
+		}
+		return response.text();
+	})
+	.catch(error => {
+		console.error(error);
+		return;
+	});
+}
+
+async function on_display(type) {
+	payload = { 'type':type, 'data':'list' };
+	const ret = await this.modal_data(payload);
+	document.getElementById('modal-list-data').innerHTML = ret;
+	modal_list.toggle();
+}
+
+// FETCH - EXPORT
+
+async function on_export(type) {
+	payload = { 'type':type, 'data':'export' };
+	const ret = await this.modal_data(payload);
+}
+
 // FETCH  - JSON { type, value } response JSON { value }
 async function update(payload) {
 	return await fetch('/settings/', {
@@ -28,7 +64,7 @@ async function update(payload) {
 	})
 	.catch(error => {
 		console.error(error);
-		return [];
+		return;
 	});
 }
 
