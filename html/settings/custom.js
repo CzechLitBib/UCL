@@ -46,9 +46,38 @@ async function on_display(type) {
 
 // FETCH - EXPORT
 
+async function export_data(payload,type) {
+	return await fetch('/settings/', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(payload)
+	})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network error.');
+	}
+		 return response.blob();
+	})
+        .then(blob => {
+		var url = window.URL.createObjectURL(blob);
+		var a = document.createElement('a');
+		a.href = url;
+		a.download = type + '.csv';
+
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		return true;
+        })
+	.catch(error => {
+		console.error(error);
+		return false;
+	});
+}
+
 async function on_export(type) {
 	payload = { 'type':type, 'data':'export' };
-	const ret = await this.modal_data(payload);
+	const ret = await this.export_data(payload, type);
 }
 
 // FETCH  - JSON { type, value } response JSON { value }
