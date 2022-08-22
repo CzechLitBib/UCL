@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 
+- Settings - SVG layout
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
 - oai-mdt?
