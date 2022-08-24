@@ -161,7 +161,7 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
 
 			# line
 			foreach (array_keys($data) as $sif) {
-				echo '<tr><th>' . $sif . '</th><td>' . $data[$sif]['sif_count'] . '</td><td>' . $data[$sif]['cat_count'] . '</td><td>' . $data[$sif]['sif_cat_count'] . '</td>';
+				echo '<tr><td><b>' . $sif . '</b></td><td>' . $data[$sif]['sif_count'] . '</td><td>' . $data[$sif]['cat_count'] . '</td><td>' . $data[$sif]['sif_cat_count'] . '</td>';
 				foreach (array_keys($data) as $other) {
 					if (!array_key_exists($other, $data[$sif]['other'])) {
 						echo '<td>0</td>';
