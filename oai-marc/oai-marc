@@ -77,7 +77,7 @@ def notify():
 			for aleph in ERROR[sif]:
 				for error in ERROR[sif][aleph]:
 					html_body+=(
-						'<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+						'<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 						aleph + '&local_base=AV&format=001">' + aleph + '</a> ' + ' [<a target="_blank" href="' +
 						ERROR_PAGE + error[0] + '">' + error[0] + '</a>] ' + error[1] + '<br>'
 					)

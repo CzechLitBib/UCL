@@ -57,13 +57,13 @@ def notify():
 	html_body=''
 
 	for aleph in sorted(RECLIST['A']):
-		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+		html_body+=('<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['A'][aleph] + '<br>')
 
 	if RECLIST['A']: html_body+='<br>'
 
 	for aleph in sorted(RECLIST['B']):
-		html_body+=('<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+		html_body+=('<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['B'][aleph] + '<br>')
 
 	if html_body:

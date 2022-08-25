@@ -103,7 +103,7 @@ if (!empty($_SESSION['daily'])){
 			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
 				$label = $db->querySingle("SELECT label FROM error WHERE code = " . $res['code'] . ";");
 				echo '<tr><th class="text-center"><a class="external-link" target="_blank" href="'
-					. 'https://aleph22.lib.cas.cz/F/?func=direct&doc_number='
+					. 'https://aleph.lib.cas.cz/F/?func=direct&doc_number='
 					. $res['ident'] . '&local_base=AV&format=001"><b>' . $res['ident'] . '</b></a></th>';
 				echo '<td class="text-center">' . $res['user'] . '</td>';
 				echo '<td>' . '<a class="external-link" href="/error/#' . $res['code'] . '"><b>' . $res['code'] . '</b></a></td>';

@@ -91,7 +91,7 @@ def notify():
 				).fetchall():
 				label = db.execute("SELECT label FROM error WHERE code = ?;",(code,)).fetchone()
 				html_body+=(
-					'<a target="_blank" href="https://aleph22.lib.cas.cz/F/?func=direct&doc_number=' +
+					'<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 					ident + '&local_base=AV&format=001">' + ident + '</a> ' + ' [<a target="_blank" href="' +
 					ERROR_PAGE + code + '">' + code + '</a>] ' + label[0].replace('XXX', tag) + '<br>'
 				)
