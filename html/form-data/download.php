@@ -27,19 +27,19 @@ $db = new SQLite3('form.db');
 
 if ($db) {
 	if (isset($_GET['id']) and isset($_GET['type'])) {
-		$data = $db->query("SELECT * FROM " . $_GET['type'] . " WHERE ID = '". $_GET['id'] . "';)");
+		$data = $db->querySingle("SELECT * FROM data WHERE id = '". $_GET['id'] . "';)");
 		if ($data) {
 			$buff='';
-			$row = $data->fetchArray(1);// ASSOC
-			if ($_GET['type'] == 'article') {
-				$buff.="ID;Autor;Jméno;Zdroj;Citace;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
+			$row = $data->fetchArray(SQLITE3_ASSOC);
+			if ($_GET['type'] == 'článek') {
+				$buff.="id;author;name;source;quote;public;link;email;note\n";
 				$buff.=implode(";", $row);
 			}
-			if ($_GET['type'] == 'chapter') {
-				$buff.="ID;Autor kapitoly;Jméno kapitoly;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
+			if ($_GET['type'] == 'část knihy') {
+				$buff.="id;Autor kapitoly;Jméno kapitoly;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
 				$buff.=implode(";", $row);
 			}
-			if ($_GET['type'] == 'book') {
+			if ($_GET['type'] == 'kniha') {
 				$buff.="ID;Autor;Jméno;Místo;Nakladatel;Rok;Poznámka;Odkaz;Email;Veřejný;Zpracováno\n";
 				$buff.=implode(";", $row);
 			}
