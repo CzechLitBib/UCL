@@ -255,13 +255,18 @@ for record in records:
 				if 'BATCH' in F['a']: BOT=True
 		if BOT: continue
 	
-		# SKIP LIBRARY ------------------
+		# SKIP FILTER ------------------
 
-		XEDICE=False
-		if 'IST' in metadata: continue
-		for F in metadata.get_fields('599'):
-			if 'a' in F and F['a'] == 'xedice': XEDICE=True
-		if XEDICE: continue
+		for LDR in [metadata.leader]:
+			if LDR[7] in ['a', 'b']: break
+			if LDR[7] == 'm' and 'IST' not in metadata: break
+			if LDR[7] == 's' and '912' in metadata: break
+		else:
+			if LDR[7] == 's':
+				for F in metadata.get_fields('964'):
+					if 'a' in F and F['a'] in ['ECR', 'ECS']: break
+				else: continue
+			else: continue
 
 		# TEST TAG ------------------
 
@@ -1354,6 +1359,18 @@ for record in records:
 			if '594' in metadata: PASS=True
 			if not PASS:
 				write_error(header.identifier(), '594', SIF, '197', "Chybí <<>> v poli 245c, nebo není vyplněno pole 594.")
+	
+		# Serial 912
+		if metadata.leader[7] == 's':
+			if '912' in metadata:
+				for F in metadata.get_fields('964'):
+					if 'a' in F and F['a'] in ['ECR', 'ECS']: break
+				else:
+					write_error(header.identifier(), '594', SIF, '198', "Nesprávná kombinace polí 912 a 964.")
+			for F in metadata.get_fields('964'):
+				if 'a' in F and F['a'] in ['ECR', 'ECS'] and '912' in metadata: break
+			else:
+				write_error(header.identifier(), '594', SIF, '198', "Nesprávná kombinace polí 912 a 964.")
 
 	COUNTER+=1
 
