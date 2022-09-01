@@ -136,8 +136,8 @@ if (!empty($_POST)) {
 		<div class="d-grid gap-2 d-sm-flex">
 			<input type="radio" class="btn-check" id="uclo" name="index" value="uclo" checked>
 			<label class="btn btn-outline-danger w-100" for="uclo">UCLO</label>
-			<input type="radio" class="btn-check" id="uclec" name="index" value="uclec">
-			<label class="btn btn-outline-danger text-nowrap w-100" for="uclec">UCLEC</label>
+			<input type="radio" class="btn-check" id="uclec" name="index" value="clo">
+			<label class="btn btn-outline-danger text-nowrap w-100" for="clo">CLO</label>
 		</div>
 	</div>
 </div>
