@@ -53,63 +53,6 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 		}
 		exit();
 	}
-	if ($req['data'] == 'list') {
-		if ($req['type'] == 'error') {
-			$query = $db->query("SELECT * FROM error;");
-			if ($query) {
-				// LIST
-				echo '<div class="container"><div class="row"><div class="col">'
-				. '<table class="table table-striped table-bordered">'
-				. '<thead><tr><th>Kód</th><th>Text</th><th>Popis</th></tr></thead>'
-				. '<tbody>';
-
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo '<tr><td class="text-center">' . $res['code'] . '</td>'
-					. '<td>' . $res['label'] . '</td>'
-					. '<td>' . $res['text'] . '</td></tr>';
-				}
-
-				echo '</tbody></table></div></div></div>';
-				
-			} else { echo 'DB error.'; }
-		}
-		if ($req['type'] == 'user') {
-			$query = $db->query("SELECT * FROM user ORDER BY code;");
-			if ($query) {
-				echo '<div class="container"><div class="row"><div class="col">'
-				. '<table class="table table-striped table-bordered">'
-				. '<thead><tr><th>Kód</th><th>Aleph</th><th>E-mail</th></tr></thead>'
-				. '<tbody>';
-
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo '<tr><td>' . $res['code'] . '</td>'
-					. '<td>' . $res['aleph'] . '</td>'
-					. '<td>' . $res['email'] . '</td></tr>';
-				}
-
-				echo '</tbody></table></div></div></div>';
-				
-			} else { echo 'DB error.'; }
-		}
-		if ($req['type'] == 'review') {
-			$query = $db->query("SELECT * FROM review ORDER BY authority;");
-			if ($query) {
-				echo '<div class="container"><div class="row"><div class="col">'
-				. '<table class="table table-striped table-bordered">'
-				. '<thead><tr><th>Kód</th><th>Jméno</th></tr></thead>'
-				. '<tbody>';
-
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo '<tr><td>' . $res['authority'] . '</td>'
-					. '<td>' . $res['name'] . '</td></tr>';
-				}
-
-				echo '</tbody></table></div></div></div>';
-				
-			} else { echo 'DB error.'; }
-		}
-		exit();
-	}
 
 	if ($req['type'] == 'error') {
 		$query = $db->querySingle("SELECT * FROM error WHERE code = '" . $req['data'] . "';", true);
@@ -349,7 +292,7 @@ if ($db) {
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="error_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="on_display('error')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+			<a href="/settings/data.php?type=erorr"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></a>
 			</div>
 		</div>
 		<div class="row flex-nowrap">
@@ -391,7 +334,7 @@ if ($db) {
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="on_display('exception')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+			<a href="/settings/data.php?type=exception"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></a>
 			</div>
 		</div>
 		<div class="row flex-nowrap">
@@ -466,7 +409,7 @@ if ($db) {
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="user_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="on_display('user')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+			<a href="/settings/data.php?type=user"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></a>
 			</div>
 		</div>
 		<div class="row flex-nowrap">
@@ -537,7 +480,7 @@ if ($db) {
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="review_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="on_display('review')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+			<a href="/settings/data.php?type=review"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></a>
 			</div>
 		</div>
 		<div class="row flex-nowrap">
@@ -673,16 +616,6 @@ if ($db) {
 </main>
 
 <!-- MODAL --!>
-
-<div class="modal" tabindex="-1" id="modal-list">
-	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: fit-content;"> <!--style="max-width: 80%;">-->
-		<div class="modal-content">
-			<!--<div class="modal-header"></div>-->
-			<div class="modal-body my-4" id="modal-list-data"></div>
-			<!--<div class="modal-footer"></div>-->
-		</div>
-	</div>
-</div>
 
 <div class="modal" id="modal" tabindex="-1">
 	<div class="modal-dialog modal-dialog-centered">
