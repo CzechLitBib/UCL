@@ -381,19 +381,27 @@ if ($db) {
 	</thead>
 	<tbody>
 	<tr>
-	<td class="align-middle w-100">
+	<td class="col-3 align-middle">
 		<input class="form-control text-center" id="exception-sysno" name="exception-sysno" maxlength="9" type="text" value="<?php echo $ex_sysno;?>" size="8" list="exception-list">
 		<datalist id="exception-list">
 
 		</datalist>
 	</td>
-	<!--<td class="align-middle"><input type="text" class="form-control" id="exception-list" size="47" name="exception-list" value="<?php echo $exception_list;?>"></td>-->
-	<td class="align-middle">
-		<div class="row flex-nowrap bg-warning">
-			<div class="col">
+	<td class="col-10 align-middle"><input type="text" class="form-control" id="exception-list" size="47" name="exception-list" value="<?php echo $exception_list;?>"></td>
+	<td class="col align-middle">
+		<div class="row flex-nowrap">
+			<div class="col p-0 mx-2 mb-1 text-center">
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
-			<div class="col bg-danger">
+			<div class="col p-0 mx-2 mb-1 text-center">
+			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
+			</div>
+		</div>
+		<div class="row flex-nowrap">
+			<div class="col p-0 mx-2 mt-1 text-center">
+			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
+			</div>
+			<div class="col p-0 mx-2 mt-1 text-center">
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 		</div>
