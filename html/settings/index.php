@@ -60,6 +60,13 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 			$resp['value'] = $query;
 		}
 	}
+
+	if ($req['type'] == 'exception') {
+		$query = $db->querySingle("SELECT * FROM exception WHERE ident = '" . $req['data'] . "';", true);
+		if ($query) {
+			$resp['value'] = $query;
+		}
+	}
 	if ($req['type'] == 'user') {
 		$query = $db->querySingle("SELECT * FROM user WHERE code = '" . $req['data'] . "';", true);
 		if ($query) {
@@ -103,6 +110,32 @@ if (isset($_POST)){
 				}
 			} else {
 				$error = "Prázdý vstup chybové zprávy."; 
+			}
+		}
+	}
+	
+	if (!empty($_POST['exception-ident'])) {
+		if (isset($_POST['exception-delete'])) {
+			$query = $db->exec("DELETE FROM exception WHERE ident = '" . $_POST['exceptionn-ident'] . "';");
+			if(!$query) {
+				$error = "Odstranění vyjímky " . $_POST['exception-ident'] . " selhalo.";
+			} else {
+				$error = "Vyjímka " . $_POST['exception-ident'] . " odstraněna."; 
+			}
+		}
+		if (isset($_POST['exception-save'])) {
+			if (!empty($_POST['exception-ident']) and !empty($_POST['exception-code'])) {
+				$query = $db->exec("INSERT INTO exception (ident, code) VALUES ('"
+					. $db->escapeString($_POST['exception-ident']) . "','"
+					. serialize(implode(',', $db->escapeString($_POST['exception-code']))) . "','"
+					. "') ON CONFLICT (ident) DO UPDATE SET code=excluded.code;");
+				if (!$query) {
+					$error = "Zápis vyjímky " . $_POST['exception-ident'] . " selhal.";
+				} else {
+					$error = "Vyjímka " . $_POST['exception-ident'] . " uložena."; 
+				}
+			} else {
+				$error = "Prázdý vstup vyjímky."; 
 			}
 		}
 	}
@@ -289,14 +322,16 @@ if ($db) {
 	<td class="col align-middle">
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 mt-1 mb-2 text-center">
+			<input type="submit" id="error-save" name="error-save" value="error-save" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="error_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
-			<a href="/settings/data.php?type=erorr"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></a>
+			<a href="/error"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></a>
 			</div>
 		</div>
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 my-1 text-center">
+			<input type="submit" id="error-delete" name="error-delete" value="error-delete" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="error_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
 			</div>
 			<div class="col p-0 mx-1 my-1 text-center">
@@ -311,6 +346,23 @@ if ($db) {
 
 <h3>Vyjímky</h3>
 
+<?php
+
+if ($db) {
+
+	$exception_ident = '';
+	$exception_code = '';
+
+	$query = $db->query("SELECT * FROM exception limit 1;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		$exception_ident = $result['ident'];
+		$exception_code =explode(',', unserialize($result['code']));
+        }
+	
+}
+
+?>
+
 <form method="post" action="." enctype="multipart/form-data">
 <table class="table my-4">
 	<thead>
@@ -322,15 +374,28 @@ if ($db) {
 	<tbody>
 	<tr>
 	<td class="col-3 align-middle">
-		<input class="form-control text-center" id="exception-sysno" name="exception-sysno" maxlength="9" type="text" value="<?php echo $ex_sysno;?>" size="8" list="exception-list">
+		<input class="form-control text-center" id="exception-ident" name="exception-ident" maxlength="9" type="text" value="<?php echo $exception_ident;?>" size="8" list="exception-list">
 		<datalist id="exception-list">
+
+<?php
+
+if ($db) {
+
+	$query = $db->query("SELECT ident FROM exception;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo '<option value="' . $result['ident'] . '">';
+        }
+}
+
+?>
 
 		</datalist>
 	</td>
-	<td class="col-10 align-middle"><input type="text" class="form-control" id="exception-list" size="47" name="exception-list" value="<?php echo $exception_list;?>"></td>
+	<td class="col-10 align-middle"><input type="text" class="form-control" id="exception-code" size="47" name="exception-code" value="<?php echo $exception_code;?>"></td>
 	<td class="col align-middle">
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 mt-1 mb-2 text-center">
+			<input type="submit" id="exception-save" name="exception-save" value="exception-save" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
@@ -339,6 +404,7 @@ if ($db) {
 		</div>
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 my-1 text-center">
+			<input type="submit" id="exception-delete" name="exception-delete" value="exception-delete" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
 			</div>
 			<div class="col p-0 mx-1 my-1 text-center">
@@ -406,6 +472,7 @@ if ($db) {
 	<td class="col align-middle">
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 mt-1 mb-2 text-center">
+			<input type="submit" id="user-save" name="user-save" value="user-save" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="user_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
@@ -414,6 +481,7 @@ if ($db) {
 		</div>
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 my-1 text-center">
+			<input type="submit" id="user-delete" name="user-delete" value="user-delete" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="user_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
 			</div>
 			<div class="col p-0 mx-1 my-1 text-center">
@@ -477,6 +545,7 @@ if ($db) {
 	<td class="col align-middle">
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 mt-1 mb-2 text-center">
+			<input type="submit" id="review-save" name="review-save" value="review-save" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="review_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 mx-1 mt-1 mb-2 text-center">
@@ -485,6 +554,7 @@ if ($db) {
 		</div>
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 my-1 text-center">
+			<input type="submit" id="review-delete" name="review-delete" value="review-delete" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="review_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
 			</div>
 			<div class="col p-0 mx-1 my-1 text-center">

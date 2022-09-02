@@ -7,6 +7,8 @@ modal_action = null;
 function on_confirm() {
 	if (modal_action == 'error-save') { document.getElementById('error-save').click(); }
 	if (modal_action == 'error-delete') { document.getElementById('error-delete').click(); }
+	if (modal_action == 'exception-save') { document.getElementById('exception-save').click(); }
+	if (modal_action == 'exception-delete') { document.getElementById('exception-delete').click(); }
 	if (modal_action == 'user-save') { document.getElementById('user-save').click(); }
 	if (modal_action == 'user-delete') { document.getElementById('user-delete').click(); }
 	if (modal_action == 'review-save') { document.getElementById('review-save').click(); }
@@ -98,6 +100,37 @@ function error_on_delete() {
 	document.getElementById('modal-text-bold').textContent = document.getElementById('error-code').value;
 	modal.toggle();
 	modal_action = 'error-delete';
+}
+
+// EXCEPTION
+
+const exception_ident = document.getElementById('exception-ident');
+exception_ident.addEventListener('input', exception_ident_change);
+
+async function exception_ident_change() {
+	ident = document.getElementById('exception-ident').value;
+	if (exception_ident) {
+		payload = { 'type':'exception', 'data':ident };
+		const ret = await update(payload);
+		if (ret.length !== 0) {
+			document.getElementById('exception-ident').value = ret['value']['ident'];
+			document.getElementById('exception-code').value = ret['value']['code'];
+		}
+	}
+}
+
+function exception_on_save() {
+	document.getElementById('modal-text').textContent = 'Chcete uložit vyjímku ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('exception-ident').value;
+	modal.toggle();
+	modal_action = 'exception-save';
+}
+
+function exception_on_delete() {
+	document.getElementById('modal-text').textContent = 'Chcete smazat vyjímku ';
+	document.getElementById('modal-text-bold').textContent = document.getElementById('exception-ident').value;
+	modal.toggle();
+	modal_action = 'exception-delete';
 }
 
 // USER
