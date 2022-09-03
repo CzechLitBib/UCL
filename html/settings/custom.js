@@ -14,6 +14,7 @@ function on_confirm() {
 	if (modal_action == 'review-save') { document.getElementById('review-save').click(); }
 	if (modal_action == 'review-delete') { document.getElementById('review-delete').click(); }
 	if (modal_action == 'code-save') { document.getElementById('code-save').click(); }
+	if (modal_action == 'dict-save') { document.getElementById('dict-save').click(); }
 	modal_action = null;
 	modal.toggle();
 }
@@ -201,5 +202,30 @@ function code_on_save() {
 	document.getElementById('modal-text-bold').textContent = '';
 	modal.toggle();
 	modal_action = 'code-save';
+}
+
+// DICT
+
+async function dict_on_change(dict) {
+	payload = { 'type':'dict', 'data':dict };
+	const ret = await update(payload);
+	if (ret.length !== 0) {
+		document.getElementById('error-text').value = ret['value']['text'];
+	}
+}
+
+function dict_on_save() {
+	dicts = document.getElementsByName('dict-option');
+	for(var i=0; i<dicts.length; i++) {
+		if (dicts[i].checked) {
+			selector = 'label[for=' + dicts[i].id + ']';
+			label = document.querySelector(selector);
+			text = label.innerHTML;
+		}
+	}
+	document.getElementById('modal-text').textContent = 'Chcete uložit slovník ';
+	document.getElementById('modal-text-bold').textContent = text;
+	modal.toggle();
+	modal_action = 'dict-save';
 }
 

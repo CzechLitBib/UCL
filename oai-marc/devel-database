@@ -22,6 +22,13 @@ cur.execute("CREATE TABLE role (code TEXT);")
 cur.execute("CREATE TABLE review (authority TEXT, name TEXT);")
 cur.execute("CREATE TABLE user (code TEXT, aleph TEXT, email TEXT);")
 cur.execute("CREATE TABLE exception (ident TEXT, code TEXT);")
+cur.execute("CREATE TABLE dict_26XA (value TEXT);")
+cur.execute("CREATE TABLE dict_26XB (value TEXT);")
+cur.execute("CREATE TABLE dict_490 (value TEXT);")
+cur.execute("CREATE TABLE dict_773 (value TEXT);")
+cur.execute("CREATE TABLE dict_336 (value TEXT);")
+cur.execute("CREATE TABLE dict_337 (value TEXT);")
+cur.execute("CREATE TABLE dict_338 (value TEXT);")
 
 cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
 cur.execute("CREATE INDEX 'weekly_timestamp' ON weekly (timestamp);")
@@ -32,7 +39,6 @@ cur.execute("CREATE UNIQUE INDEX 'language_code' ON language (code);")
 cur.execute("CREATE UNIQUE INDEX 'role_code' ON role (code);")
 cur.execute("CREATE UNIQUE INDEX 'authority' ON review (authority);")
 cur.execute("CREATE UNIQUE INDEX 'user_code' ON user (code);")
-
 
 with open('/usr/local/bin/code/country.txt', 'r') as f:
 	for line in f:
