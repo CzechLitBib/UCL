@@ -5,8 +5,8 @@ Library support software.
 
 TODO
 
-- Solr revert CLO
-- Settings - SVG layout
+- Settings PGR.
+- Solr revert CLO.
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
 - oai-mdt?

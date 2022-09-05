@@ -124,7 +124,7 @@ if (isset($_POST)){
 	
 	if (!empty($_POST['exception-ident'])) {
 		if (isset($_POST['exception-delete'])) {
-			$query = $db->exec("DELETE FROM exception WHERE ident = '" . $_POST['exceptionn-ident'] . "';");
+			$query = $db->exec("DELETE FROM exception WHERE ident = '" . $_POST['exception-ident'] . "';");
 			if(!$query) {
 				$error = "Odstranění vyjímky " . $_POST['exception-ident'] . " selhalo.";
 			} else {
@@ -135,7 +135,7 @@ if (isset($_POST)){
 			if (!empty($_POST['exception-ident']) and !empty($_POST['exception-code'])) {
 				$query = $db->exec("INSERT INTO exception (ident, code) VALUES ('"
 					. $db->escapeString($_POST['exception-ident']) . "','"
-					. serialize(implode(',', $db->escapeString($_POST['exception-code']))) . "','"
+					. serialize(explode(',', preg_replace('/\s+/', '', $db->escapeString($_POST['exception-code']))))
 					. "') ON CONFLICT (ident) DO UPDATE SET code=excluded.code;");
 				if (!$query) {
 					$error = "Zápis vyjímky " . $_POST['exception-ident'] . " selhal.";
@@ -364,7 +364,7 @@ if ($db) {
 	$query = $db->query("SELECT * FROM exception limit 1;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		$exception_ident = $result['ident'];
-		$exception_code =explode(',', unserialize($result['code']));
+		$exception_code = implode(',', unserialize($result['code']));
         }
 	
 }

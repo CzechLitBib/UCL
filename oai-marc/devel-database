@@ -32,7 +32,7 @@ cur.execute("CREATE TABLE dict_338 (value TEXT);")
 
 cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
 cur.execute("CREATE INDEX 'weekly_timestamp' ON weekly (timestamp);")
-cur.execute("CREATE INDEX 'exception_ident' ON exception (ident);")
+cur.execute("CREATE UNIQUE INDEX 'exception_ident' ON exception (ident);")
 cur.execute("CREATE UNIQUE INDEX 'error_code' ON error (code);")
 cur.execute("CREATE UNIQUE INDEX 'country_code' ON country (code);")
 cur.execute("CREATE UNIQUE INDEX 'language_code' ON language (code);")
