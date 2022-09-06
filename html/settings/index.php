@@ -21,6 +21,16 @@ $db = new SQLite3('devel.db');
 
 if (!$db) { $error = 'Chyba čtení databáze.'; }
 
+$dict_map = array(
+	'dict_26XA' => '260/264a',
+	'dict_26XB' => '260/264b',
+	'dict_490' => '490a',
+	'dict_773' => '773',
+	'dict_336' => '336',
+	'dict_337' => '337',
+	'dict_338' => '338'
+);
+
 # XHR POST
 
 if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
@@ -90,9 +100,13 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	}
 
 	if ($req['type'] == 'dict') {
-		$query = $db->query("SELECT * FROM review WHERE authority = '" . $req['data'] . "';");
+		$query = $db->query("SELECT * FROM " . $req['data'] . ";");
 		if ($query) {
-			$resp['value'] = $query;
+			$data = [];
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				array_push($data, $res['value']);
+			}
+			$resp['value'] = $data;
 		}
 	}
 
@@ -229,6 +243,17 @@ if (isset($_POST)){
 			$val = "('" . implode("'),('", array_map('trim', $role)) .  "')";
 			$query = $db->exec("INSERT INTO role (code) VALUES " . $val . " ON CONFLICT (code) DO NOTHING;");
 			! $query ? $error = "Zápis kódů selhal." : $error = "Kódy uloženy."; 
+		}
+	}
+
+	if (!empty($_POST['dict-option']) and !empty($_POST['dict-data'])) {
+		if (isset($_POST['dict-save'])) {
+			$dict = $_POST['dict-option'];
+			$data = explode("\n", trim($_POST['dict-data']));
+			$query = $db->exec("DELETE FROM " . $dict . ";");
+			$val = "('" . implode("'),('", array_map('trim', $data)) .  "')";
+			$query = $db->exec("INSERT INTO " . $dict . " (value) VALUES " . $val . " ON CONFLICT (value) DO NOTHING;");
+			! $query ? $error = "Zápis slovníku " . $dict_map[$dict] . " selhal." : $error = "Slovník " . $dict_map[$dict] . " uložen."; 
 		}
 	}
 }
@@ -665,22 +690,22 @@ if ($db) {
 	<tbody>
 	<tr>
 	<td class="align-middle col-4 text-center">
-		<input type="radio" class="btn-check" onchange="dict_on_change('dict_26XA')" name="dict-option" id="dict-26XA" autocomplete="off" checked>
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_26XA')" name="dict-option" id="dict-26XA" value="dict_26XA" autocomplete="off" checked>
 		<label class="btn btn-outline-dark m-1" for="dict-26XA">260/264a</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_26XB')" name="dict-option" id="dict-26XB" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_26XB')" name="dict-option" id="dict-26XB" value="dict_26XB" autocomplete="off">
 		<label class="btn btn-outline-dark m-1" for="dict-26XB">260/264b</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_490')" name="dict-option" id="dict-490" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_490')" name="dict-option" id="dict-490" value="dict_490" autocomplete="off">
 		<label class="btn btn-outline-dark m-1" for="dict-490">490a</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_773')" name="dict-option" id="dict-773" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_773')" name="dict-option" id="dict-773" value="dict_773" autocomplete="off">
 		<label class="btn btn-outline-dark m-1" for="dict-773">773t</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_336')" name="dict-option" id="dict-336" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_336')" name="dict-option" id="dict-336" value="dict_336" autocomplete="off">
 		<label class="btn btn-outline-dark m-1" for="dict-336">336</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_337')" name="dict-option" id="dict-337" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_337')" name="dict-option" id="dict-337" value="dict_337" autocomplete="off">
 		<label class="btn btn-outline-dark m-1" for="dict-337">337</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" value="dict_338" autocomplete="off">
 		<label class="btn btn-outline-dark m-1" for="dict-338">338</label>
 	</td>
-	<td class="align-middle col-8"><textarea class="form-control" id="dictionary-data" name="dictionary-data" rows="5">
+	<td class="align-middle col-8"><textarea class="form-control" id="dict-data" name="dict-data" rows="5">
 <?php
 
 if ($db) {

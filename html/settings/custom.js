@@ -210,7 +210,7 @@ async function dict_on_change(dict) {
 	payload = { 'type':'dict', 'data':dict };
 	const ret = await update(payload);
 	if (ret.length !== 0) {
-		document.getElementById('error-text').value = ret['value']['text'];
+		document.getElementById('dict-data').value = ret['value'].join('\n');
 	}
 }
 
