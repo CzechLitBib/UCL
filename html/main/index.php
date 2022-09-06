@@ -101,7 +101,7 @@ if(empty($_SESSION['auth'])) {
 	</a>
 	<div>
 		<h4 class="fw-bold mb-0">CLO</h4>
-		<p>Statistika podpole 7 pro set CLO.</p>
+		<p>Statistika podpole 7 databáze CLO.</p>
 	</div>
 </div>
 <div class="col d-flex align-items-start position-relative" onmouseover="menuselect('uclo')" onmouseleave="menuleave('uclo')">
@@ -110,7 +110,7 @@ if(empty($_SESSION['auth'])) {
 	</a>
 	<div>
 		<h4 class="fw-bold mb-0">UCLO</h4>
-		<p>Statistika podpole 7 pro set UCLO.</p>
+		<p>Statistika podpole 7 databáze UCLO.</p>
 	</div>
 </div>
 <div class="col d-flex align-items-start position-relative" onmouseover="menuselect('error')" onmouseleave="menuleave('error')">
@@ -155,7 +155,7 @@ if(empty($_SESSION['auth'])) {
 	</a>
 	<div>
 		<h4 class="fw-bold mb-0">Aleph Solr</h4>
-		<p>Rychlé vyhledávací rozhraní pro Aleph set.</p>
+		<p>Rychlé vyhledávací databázové rozhraní.</p>
 	</div>
 </div>
 <div class="col d-flex align-items-start position-relative" onmouseover="menuselect('settings')" onmouseleave="menuleave('settings')">
