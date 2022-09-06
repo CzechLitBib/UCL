@@ -15,6 +15,8 @@ if($_SESSION['group'] !== 'admin') {
         exit();
 }
 
+$uclo_date = '22.06.2022';
+
 ?>
 
 <!doctype html>
@@ -79,7 +81,7 @@ $seven = 0;
 
 if (!empty($tags)) {
 
-	echo '<table class="table table-sm caption-top text-center"><caption>Poslední záznam: <b>22.06.2022</b></caption>'
+	echo '<table class="table table-sm caption-top text-center"><caption>Poslední záznam: <b>' . $uclo_date . '</b></caption>'
 	. '<thead class="table-light"><tr><th scope="col">#</th><th scope="col" colspan="4">Podpole 7</th>'
 	. '<th scope="col" colspan="4">Bez podpole 7</th></tr></thead><tbody>';
 
