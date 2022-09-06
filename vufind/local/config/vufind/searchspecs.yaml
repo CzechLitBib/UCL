@@ -45,6 +45,11 @@ AuthorityResource:
     - authority_search_str_mv
   DismaxHandler: edismax
 
+AuthoritySubject:
+  DismaxFields:
+    - authority_subject_str_mv
+  DismaxHandler: edismax
+
 Yearstr:
   DismaxFields:
     - date_txt_mv
