@@ -83,18 +83,18 @@ if (isset($_GET['type'])) {
 if (isset($_GET['type'])) {
 	if ($_GET['type'] == 'exception') {
 		$query = $db->query("SELECT * FROM exception ORDER BY ident;");
-		$count = $db->querySingle("SELECT COUNT (*) FROM ident;");
+		$count = $db->querySingle("SELECT COUNT (*) FROM exception;");
 			if ($count == 0) {
 			$error = 'Žádná data.';
 		} else {
 			if ($query) {
 				echo '<table class="table table-striped table-responsive">'
-				. '<thead><tr><th>Kód</th><th>SysNo</th><th>Kód</th></tr></thead>'
+				. '<thead><tr><th>SysNo</th><th>Kód</th></tr></thead>'
 				. '<tbody>';
 
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
 					echo '<tr><td>' . $res['ident'] . '</td>'
-					. '<td>' . explode(',', unserialize($res['code'])) . '</td></tr>';
+					. '<td>' . implode(',', unserialize($res['code'])) . '</td></tr>';
 				}
 
 				echo '</tbody></table>';

@@ -35,6 +35,14 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 				}
 			} else { echo 'DB error.'; }
 		}
+		if ($req['type'] == 'exception') {
+			$query = $db->query("SELECT * FROM exception;");
+			if ($query) {
+				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+					echo $res['ident'] . ';' . implode(',', unserialize($res['code'])) . "\n";
+				}
+			} else { echo 'DB error.'; }
+		}
 		if ($req['type'] == 'user') {
 			$query = $db->query("SELECT * FROM user ORDER BY code;");
 			if ($query) {
@@ -64,7 +72,8 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	if ($req['type'] == 'exception') {
 		$query = $db->querySingle("SELECT * FROM exception WHERE ident = '" . $req['data'] . "';", true);
 		if ($query) {
-			$resp['value'] = unserialize($query);
+			$query['code'] = unserialize($query['code']);
+			$resp['value'] = $query;
 		}
 	}
 	if ($req['type'] == 'user') {
