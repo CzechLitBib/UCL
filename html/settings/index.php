@@ -69,6 +69,25 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 				}
 			} else { echo 'DB error.'; }
 		}
+		if ($req['type'] == 'code') {
+			$query0 = $db->query("SELECT * FROM country;");
+			$query1 = $db->query("SELECT * FROM language;");
+			$query2 = $db->query("SELECT * FROM role;");
+			#if ($query) {
+			#	while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+			#		echo $res['authority'] . ';' . $res['name'] . "\n";
+			#	}
+			#} else { echo 'DB error.'; }
+			echo 'DB error.';
+		}
+		if ($req['type'] == 'dictionary') {
+			$query = $db->query("SELECT * FROM " . $req['dict'] . ";");
+			if ($query) {
+				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+					echo $res['value'] . "\n";
+				}
+			} else { echo 'DB error.'; }
+		}
 		exit();
 	}
 

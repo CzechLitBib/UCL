@@ -24,7 +24,7 @@ function on_confirm() {
 async function export_data(payload,type) {
 	return await fetch('/settings/', {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: {'Content-Type': 'application/json'},
 		body: JSON.stringify(payload)
 	})
 	.then(response => {
@@ -37,8 +37,13 @@ async function export_data(payload,type) {
 		var url = window.URL.createObjectURL(blob);
 		var a = document.createElement('a');
 		a.href = url;
-		a.download = type + '.csv';
-
+	
+		if (type == 'dictionary') {
+			a.download = payload['dict'] + '.txt';
+		} else {
+			a.download = type + '.csv';
+		}
+	
 		document.body.appendChild(a);
 		a.click();
 		a.remove();
@@ -51,7 +56,17 @@ async function export_data(payload,type) {
 }
 
 async function on_export(type) {
-	payload = { 'type':type, 'data':'export' };
+	dict = '';
+	payload = {'type':type, 'data':'export'};
+	if(type == 'dictionary') {
+		dicts = document.getElementsByName('dict-option');
+		for(var i=0; i<dicts.length; i++) {
+			if (dicts[i].checked) {
+				dict = document.getElementById(dicts[i].id).value;
+			}
+		}
+		payload = {'type':type, 'data':'export', 'dict':dict};
+	}
 	const ret = await this.export_data(payload, type);
 }
 
@@ -59,7 +74,7 @@ async function on_export(type) {
 async function update(payload) {
 	return await fetch('/settings/', {
 		method: 'POST',
-		headers: { 'Content-Type' :'application/json' },
+		headers: {'Content-Type' :'application/json'},
 		body: JSON.stringify(payload)
 	})
 	.then(response => response.json())
@@ -80,7 +95,7 @@ error_code.addEventListener('input', error_code_change);
 async function error_code_change() {
 	code = document.getElementById('error-code').value;
 	if (error_code) {
-		payload = { 'type':'error', 'data':code };
+		payload = {'type':'error', 'data':code};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
 			document.getElementById('error-label').value = ret['value']['label'];
@@ -111,7 +126,7 @@ exception_ident.addEventListener('input', exception_ident_change);
 async function exception_ident_change() {
 	ident = document.getElementById('exception-ident').value;
 	if (exception_ident) {
-		payload = { 'type':'exception', 'data':ident };
+		payload = {'type':'exception', 'data':ident};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
 			document.getElementById('exception-ident').value = ret['value']['ident'];
@@ -142,7 +157,7 @@ user_code.addEventListener('input', user_code_change);
 async function user_code_change() {
 	code = document.getElementById('user-code').value;
 	if (user_code) {
-		payload = { 'type':'user', 'data':code };
+		payload = {'type':'user', 'data':code};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
 			document.getElementById('aleph').value = ret['value']['aleph'];
@@ -173,7 +188,7 @@ review_authority.addEventListener('input', review_authority_change);
 async function review_authority_change() {
 	authority = document.getElementById('review-authority').value;
 	if (review_authority) {
-		payload = { 'type':'review', 'data':authority };
+		payload = {'type':'review', 'data':authority};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
 			document.getElementById('review-name').value = ret['value']['name'];
@@ -207,7 +222,7 @@ function code_on_save() {
 // DICT
 
 async function dict_on_change(dict) {
-	payload = { 'type':'dict', 'data':dict };
+	payload = {'type':'dict', 'data':dict};
 	const ret = await update(payload);
 	if (ret.length !== 0) {
 		document.getElementById('dict-data').value = ret['value'].join('\n');
