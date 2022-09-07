@@ -15,11 +15,11 @@ if($_SESSION['group'] !== 'admin') {
         exit();
 }
 
-$error = '';
+if (!isset($_SESSION['result'])) { $result = null; }
 
 $db = new SQLite3('devel.db');
 
-if (!$db) { $error = 'Chyba čtení databáze.'; }
+if (!$db) { $_SESSION['result'] = 'Chyba čtení databáze.'; }
 
 $dict_map = array(
 	'dict_26XA' => '260/264a',
@@ -122,9 +122,9 @@ if (isset($_POST)){
 		if (isset($_POST['error-delete'])) {
 			$query = $db->exec("DELETE FROM error WHERE code = '" . $_POST['error-code'] . "';");
 			if(!$query) {
-				$error = "Odstranění chybového kódu " . $_POST['error-code'] . " selhalo.";
+				$_SESSION['result'] = "Odstranění chybového kódu " . $_POST['error-code'] . " selhalo.";
 			} else {
-				$error = "Chybový kód " . $_POST['error-code'] . " odstraněn."; 
+				$_SESSION['result'] = "Chybový kód " . $_POST['error-code'] . " odstraněn."; 
 			}
 		}
 		if (isset($_POST['error-save'])) {
@@ -135,12 +135,12 @@ if (isset($_POST)){
 					. $db->escapeString($_POST['error-text'])
 					. "') ON CONFLICT (code) DO UPDATE SET label=excluded.label, text=excluded.text;");
 				if (!$query) {
-					$error = "Zápis chybového kódu " . $_POST['error-code'] . " selhal.";
+					$_SESSION['result'] = "Zápis chybového kódu " . $_POST['error-code'] . " selhal.";
 				} else {
-					$error = "Chybový kód " . $_POST['error-code'] . " uložen."; 
+					$_SESSION['result'] = "Chybový kód " . $_POST['error-code'] . " uložen."; 
 				}
 			} else {
-				$error = "Prázdý vstup chybové zprávy."; 
+				$_SESSION['result'] = "Prázdý vstup chybové zprávy."; 
 			}
 		}
 	}
@@ -149,9 +149,9 @@ if (isset($_POST)){
 		if (isset($_POST['exception-delete'])) {
 			$query = $db->exec("DELETE FROM exception WHERE ident = '" . $_POST['exception-ident'] . "';");
 			if(!$query) {
-				$error = "Odstranění vyjímky " . $_POST['exception-ident'] . " selhalo.";
+				$_SESSION['result'] = "Odstranění vyjímky " . $_POST['exception-ident'] . " selhalo.";
 			} else {
-				$error = "Vyjímka " . $_POST['exception-ident'] . " odstraněna."; 
+				$_SESSION['result'] = "Vyjímka " . $_POST['exception-ident'] . " odstraněna."; 
 			}
 		}
 		if (isset($_POST['exception-save'])) {
@@ -161,12 +161,12 @@ if (isset($_POST)){
 					. serialize(explode(',', preg_replace('/\s+/', '', $db->escapeString($_POST['exception-code']))))
 					. "') ON CONFLICT (ident) DO UPDATE SET code=excluded.code;");
 				if (!$query) {
-					$error = "Zápis vyjímky " . $_POST['exception-ident'] . " selhal.";
+					$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-ident'] . " selhal.";
 				} else {
-					$error = "Vyjímka " . $_POST['exception-ident'] . " uložena."; 
+					$_SESSION['result'] = "Vyjímka " . $_POST['exception-ident'] . " uložena."; 
 				}
 			} else {
-				$error = "Prázdý vstup vyjímky."; 
+				$_SESSION['result'] = "Prázdý vstup vyjímky."; 
 			}
 		}
 	}
@@ -175,9 +175,9 @@ if (isset($_POST)){
 		if (isset($_POST['user-delete'])) {
 			$query = $db->exec("DELETE FROM user WHERE code = '" . $_POST['user-code'] . "';");
 			if(!$query) {
-				 $error = "Odstranění uživatele " . $_POST['user-code'] . " selhalo.";
+				 $_SESSION['result'] = "Odstranění uživatele " . $_POST['user-code'] . " selhalo.";
 			} else {
-				$error = "Uživatel " . $_POST['user-code'] . " odstraněn."; 
+				$_SESSION['result'] = "Uživatel " . $_POST['user-code'] . " odstraněn."; 
 			}
 		}
 		if (isset($_POST['user-save'])) {
@@ -188,12 +188,12 @@ if (isset($_POST)){
 					. $db->escapeString($_POST['email'])
 					. "') ON CONFLICT (code) DO UPDATE SET aleph=excluded.aleph, email=excluded.email;");
 				if(!$query) {
-					$error = "Zápis uživatele " . $_POST['user-code'] . " selhal.";
+					$_SESSION['result'] = "Zápis uživatele " . $_POST['user-code'] . " selhal.";
 				} else {
-					$error = "Uživatel " . $_POST['user-code'] . " uložen."; 
+					$_SESSION['result'] = "Uživatel " . $_POST['user-code'] . " uložen."; 
 				}
 			} else {
-				$error = "Prázdný vstup uživatele."; 
+				$_SESSION['result'] = "Prázdný vstup uživatele."; 
 			}
 		}
 	}
@@ -202,9 +202,9 @@ if (isset($_POST)){
 		if (isset($_POST['review-delete'])) {
 			$query = $db->exec("DELETE FROM review WHERE authority = '" . $_POST['review-authority'] . "';");
 			if(!$query) {
-				$error = "Odstranění recenze " . $_POST['review-authority'] . " selhalo.";
+				$_SESSION['result'] = "Odstranění recenze " . $_POST['review-authority'] . " selhalo.";
 			} else {
-				$error = "Recenze " . $_POST['review-authority'] . " odstraněna."; 
+				$_SESSION['result'] = "Recenze " . $_POST['review-authority'] . " odstraněna."; 
 			}
 		}
 		if (isset($_POST['review-save'])) {
@@ -214,12 +214,12 @@ if (isset($_POST)){
 					. $db->escapeString($_POST['review-name'])
 					. "') ON CONFLICT (authority) DO UPDATE SET  name=excluded.name;");
 				if(!$query) {
-					$error = "Zápis recenze " . $_POST['review-authority'] . " selhal.";
+					$_SESSION['result'] = "Zápis recenze " . $_POST['review-authority'] . " selhal.";
 				} else {
-					$error = "Recenze " . $_POST['review-authority'] . " uložena."; 
+					$_SESSION['result'] = "Recenze " . $_POST['review-authority'] . " uložena."; 
 				}
 			} else {
-				$error = "Prázdný vstup recenze."; 
+				$_SESSION['result'] = "Prázdný vstup recenze."; 
 			}
 		}
 	}
@@ -230,19 +230,19 @@ if (isset($_POST)){
 			$query = $db->exec("DELETE FROM country;");
 			$val = "('" . implode("'),('", array_map('trim', $country)) .  "')";
 			$query = $db->exec("INSERT INTO country (code) VALUES " . $val . " ON CONFLICT (code) DO NOTHING;");
-			! $query ? $error = "Zápis kódů selhal." : $error = "Kódy uloženy."; 
+			! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 
 			$language = explode("\n", trim($_POST['language-code']));
 			$query = $db->exec("DELETE FROM language;");
 			$val = "('" . implode("'),('", array_map('trim', $language)) .  "')";
 			$query = $db->exec("INSERT INTO language (code) VALUES " . $val . " ON CONFLICT (code) DO NOTHING;");
-			! $query ? $error = "Zápis kódů selhal." : $error = "Kódy uloženy."; 
+			! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 		
 			$role = explode("\n", trim($_POST['role-code']));
 			$query = $db->exec("DELETE FROM role;");
 			$val = "('" . implode("'),('", array_map('trim', $role)) .  "')";
 			$query = $db->exec("INSERT INTO role (code) VALUES " . $val . " ON CONFLICT (code) DO NOTHING;");
-			! $query ? $error = "Zápis kódů selhal." : $error = "Kódy uloženy."; 
+			! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 		}
 	}
 
@@ -253,9 +253,12 @@ if (isset($_POST)){
 			$query = $db->exec("DELETE FROM " . $dict . ";");
 			$val = "('" . implode("'),('", array_map('trim', $data)) .  "')";
 			$query = $db->exec("INSERT INTO " . $dict . " (value) VALUES " . $val . " ON CONFLICT (value) DO NOTHING;");
-			! $query ? $error = "Zápis slovníku " . $dict_map[$dict] . " selhal." : $error = "Slovník " . $dict_map[$dict] . " uložen."; 
+			! $query ? $_SESSION['result'] = "Zápis slovníku " . $dict_map[$dict] . " selhal." : $_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
 		}
 	}
+
+	header('Location: /settings/');
+	exit();
 }
 
 ?>
@@ -301,8 +304,9 @@ if (isset($_POST)){
 
 <?php 
 
-if (!empty($error)) {
-	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">'. $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+if (isset($_SESSION['result'])) {
+	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">'. $_SESSION['result'] . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+	$_SESSION['result'] = null;
 }
 
 ?>

@@ -5,10 +5,8 @@ Library support software.
 
 TODO
 
-= Settings empty value.
-= Settings exports.
-- Settings PGR.
-- Solr revert CLO.
+- Settings empty value.
+- Settings exports.
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
 - oai-mdt?
