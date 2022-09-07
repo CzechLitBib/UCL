@@ -117,7 +117,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 
 # PHP POST
 
-if (isset($_POST)){
+if (!empty($_POST)){
 	if (!empty($_POST['error-code'])) {
 		if (isset($_POST['error-delete'])) {
 			$query = $db->exec("DELETE FROM error WHERE code = '" . $_POST['error-code'] . "';");
