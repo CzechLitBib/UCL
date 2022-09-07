@@ -5,6 +5,8 @@ Library support software.
 
 TODO
 
+= Settings empty value.
+= Settings exports.
 - Settings PGR.
 - Solr revert CLO.
 - Error text update "Multiple rule update.".

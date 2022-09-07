@@ -11,40 +11,53 @@ ERR='/var/www/html/error/error.db'
 con = sqlite3.connect(DB)
 cur = con.cursor()
 
-# error | user
-
+# DAILY
 cur.execute("CREATE TABLE daily (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
-cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
-cur.execute("CREATE TABLE error (code TEXT, label TEXT, text TEXT);")
-cur.execute("CREATE TABLE country (code TEXT);")
-cur.execute("CREATE TABLE language (code TEXT);")
-cur.execute("CREATE TABLE role (code TEXT);")
-cur.execute("CREATE TABLE review (authority TEXT, name TEXT);")
-cur.execute("CREATE TABLE user (code TEXT, aleph TEXT, email TEXT);")
-cur.execute("CREATE TABLE exception (ident TEXT, code TEXT);")
-cur.execute("CREATE TABLE dict_26XA (value TEXT);")
-cur.execute("CREATE TABLE dict_26XB (value TEXT);")
-cur.execute("CREATE TABLE dict_490 (value TEXT);")
-cur.execute("CREATE TABLE dict_773 (value TEXT);")
-cur.execute("CREATE TABLE dict_336 (value TEXT);")
-cur.execute("CREATE TABLE dict_337 (value TEXT);")
-cur.execute("CREATE TABLE dict_338 (value TEXT);")
-
 cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
-cur.execute("CREATE INDEX 'weekly_timestamp' ON weekly (timestamp);")
-cur.execute("CREATE UNIQUE INDEX 'exception_ident' ON exception (ident);")
+# WEEKLY
+cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
+cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
+# ERROR
+cur.execute("CREATE TABLE error (code TEXT, label TEXT, text TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'error_code' ON error (code);")
+# COUNTRY
+cur.execute("CREATE TABLE country (code TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'country_code' ON country (code);")
+# LANGUAGE
+cur.execute("CREATE TABLE language (code TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'language_code' ON language (code);")
+# ROLE
+cur.execute("CREATE TABLE role (code TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'role_code' ON role (code);")
+# REVIEW
+cur.execute("CREATE TABLE review (authority TEXT, name TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'authority' ON review (authority);")
+# USER
+cur.execute("CREATE TABLE user (code TEXT, aleph TEXT, email TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'user_code' ON user (code);")
+# EXCEPTION
+cur.execute("CREATE TABLE exception (ident TEXT, code TEXT);")
+cur.execute("CREATE UNIQUE INDEX 'exception_ident' ON exception (ident);")
+# DICT 260/264a
+cur.execute("CREATE TABLE dict_26XA (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '26XA_value' ON dict_26XA (value);")
+# DICT 260/264b
+cur.execute("CREATE TABLE dict_26XB (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '26XB_value' ON dict_26XB (value);")
+# DICT 490a
+cur.execute("CREATE TABLE dict_490 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '490_value' ON dict_490 (value);")
+# DICT 773
+cur.execute("CREATE TABLE dict_773 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '773_value' ON dict_773 (value);")
+# DICT 336
+cur.execute("CREATE TABLE dict_336 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '336_value' ON dict_336 (value);")
+# DICT 337
+cur.execute("CREATE TABLE dict_337 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '337_value' ON dict_337 (value);")
+# DICT 338
+cur.execute("CREATE TABLE dict_338 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '338_value' ON dict_338 (value);")
 
 with open('/usr/local/bin/code/country.txt', 'r') as f:

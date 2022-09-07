@@ -82,13 +82,13 @@ if (isset($_GET['type'])) {
 
 if (isset($_GET['type'])) {
 	if ($_GET['type'] == 'exception') {
-		$query = $db->query("SELECT * FROM exception ORDER BY ident;");
+		$query = $db->query("SELECT * FROM exception ORDER BY ident DESC;");
 		$count = $db->querySingle("SELECT COUNT (*) FROM exception;");
 			if ($count == 0) {
 			$error = 'Žádná data.';
 		} else {
 			if ($query) {
-				echo '<table class="table table-striped table-responsive">'
+				echo '<table class="table table-responsive">'
 				. '<thead><tr><th>SysNo</th><th>Kód</th></tr></thead>'
 				. '<tbody>';
 
@@ -109,7 +109,7 @@ if (isset($_GET['type'])) {
 			$error = 'Žádná data.';
 		} else {
 			if ($query) {
-				echo '<table class="table table-striped table-responsive">'
+				echo '<table class="table table-responsive">'
 				. '<thead><tr><th>Kód</th><th>Aleph</th><th>E-mail</th></tr></thead>'
 				. '<tbody>';
 
@@ -131,7 +131,7 @@ if (isset($_GET['type'])) {
 			$error = 'Žádná data.';
 		} else {
 			if ($query) {
-				echo '<table class="table table-striped table-responsive">'
+				echo '<table class="table table-responsive">'
 				. '<thead><tr><th>Kód</th><th>Jméno</th></tr></thead>'
 				. '<tbody>';
 
