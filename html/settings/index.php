@@ -359,12 +359,13 @@ if ($db) {
 			<th scope="col">Kód</th>
 			<th scope="col">Text</th>
 			<th scope="col">Popis</th>
+			<th scope="col"></th>
 		</tr>
 	</thead>
 	<tbody>
 	<tr>
 	<td class="col-2 align-middle">
-		<input class="form-control text-center" id="error-code" name="error-code" maxlength="3" type"text" value="<?php echo $error_code;?>" size="2" list="error-code-list">
+		<input class="form-control text-center" id="error-code" name="error-code" maxlength="3" type="text" value="<?php echo $error_code;?>" size="2" list="error-code-list">
 		<datalist id="error-code-list">
 
 <?php
@@ -434,6 +435,7 @@ if ($db) {
 	<tr>
 		<th scope="col">SysNo</th>
 		<th scope="col">Kód</th>
+		<th scope="col"></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -510,12 +512,13 @@ if ($db) {
 			<th scope="col">Kód</th>
 			<th scope="col">Aleph</th>
 			<th scope="col">E-mail</th>
+			<th scope="col"></th>
 		</tr>
 	</thead>
 	<tbody>
 	<tr>
 	<td class="col-2 align-middle">
-		<input class="form-control text-center" id="user-code" name="user-code" maxlength="3" type"text" value="<?php echo $user_code;?>" size="2" list="user-list">
+		<input class="form-control text-center" id="user-code" name="user-code" maxlength="3" type="text" value="<?php echo $user_code;?>" size="2" list="user-list">
 		<datalist id="user-list">
 
 <?php
@@ -584,12 +587,13 @@ if ($db) {
 	<tr>
 		<th scope="col">Kód</th>
 		<th scope="col">Jméno</th>
+		<th scope="col"></th>
 	</tr>
 	</thead>
 	<tbody>
 	<tr>
 	<td class="col-3 align-middle">
-		<input class="form-control text-center" id="review-authority" name="review-authority" type"text" value="<?php echo $review_authority;?>" size="15" list="review-list">
+		<input class="form-control text-center" id="review-authority" name="review-authority" type="text" value="<?php echo $review_authority;?>" size="15" list="review-list">
 		<datalist id="review-list">
 
 <?php
@@ -641,6 +645,7 @@ if ($db) {
 		<th scope="col">Země</th>
 		<th scope="col">Jazyk</th>
 		<th scope="col">Role</th>
+		<th scope="col"></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -708,24 +713,25 @@ if ($db) {
 	<tr>
 		<th scope="col">Pole</th>
 		<th scope="col">Hodnoty</th>
+		<th scope="col"></th>
 	</tr>
 	</thead>
 	<tbody>
 	<tr>
 	<td class="align-middle col-4 text-center">
-		<input type="radio" class="btn-check" onchange="dict_on_change('dict_26XA')" name="dict-option" id="dict-26XA" value="dict_26XA" autocomplete="off" checked>
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_26XA')" name="dict-option" id="dict-26XA" value="dict_26XA" checked>
 		<label class="btn btn-outline-dark m-1" for="dict-26XA">260/264a</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_26XB')" name="dict-option" id="dict-26XB" value="dict_26XB" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_26XB')" name="dict-option" id="dict-26XB" value="dict_26XB">
 		<label class="btn btn-outline-dark m-1" for="dict-26XB">260/264b</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_490')" name="dict-option" id="dict-490" value="dict_490" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_490')" name="dict-option" id="dict-490" value="dict_490">
 		<label class="btn btn-outline-dark m-1" for="dict-490">490a</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_773')" name="dict-option" id="dict-773" value="dict_773" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_773')" name="dict-option" id="dict-773" value="dict_773">
 		<label class="btn btn-outline-dark m-1" for="dict-773">773t</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_336')" name="dict-option" id="dict-336" value="dict_336" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_336')" name="dict-option" id="dict-336" value="dict_336">
 		<label class="btn btn-outline-dark m-1" for="dict-336">336</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_337')" name="dict-option" id="dict-337" value="dict_337" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_337')" name="dict-option" id="dict-337" value="dict_337">
 		<label class="btn btn-outline-dark m-1" for="dict-337">337</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" value="dict_338" autocomplete="off">
+		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" value="dict_338">
 		<label class="btn btn-outline-dark m-1" for="dict-338">338</label>
 	</td>
 	<td class="align-middle col-8"><textarea class="form-control" id="dict-data" name="dict-data" rows="5">
