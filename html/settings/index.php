@@ -655,7 +655,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT code FROM country;");
+	$query = $db->query("SELECT code FROM country ORDER BY code ASC;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
         }
@@ -668,7 +668,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT code FROM language;");
+	$query = $db->query("SELECT code FROM language ORDER BY code ASC;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
         }
@@ -681,7 +681,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT code FROM role;");
+	$query = $db->query("SELECT code FROM role ORDER BY code ASC;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
         }
@@ -734,7 +734,7 @@ if ($db) {
 		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" value="dict_338">
 		<label class="btn btn-outline-dark m-1" for="dict-338">338</label>
 	</td>
-	<td class="align-middle col-8"><textarea class="form-control" id="dict-data" name="dict-data" rows="5">
+	<td class="align-middle col-8"><textarea class="form-control" style="white-space: pre; overflow: auto; word-wrap: normal;" id="dict-data" name="dict-data" rows="5">
 <?php
 
 if ($db) {

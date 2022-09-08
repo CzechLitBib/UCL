@@ -94,14 +94,18 @@ error_code.addEventListener('input', error_code_change);
 
 async function error_code_change() {
 	code = document.getElementById('error-code').value;
+	label = '';
+	text = '';
 	if (error_code) {
 		payload = {'type':'error', 'data':code};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
-			document.getElementById('error-label').value = ret['value']['label'];
-			document.getElementById('error-text').value = ret['value']['text'];
+			label = ret['value']['label'];
+			text = ret['value']['text'];
 		}
 	}
+	document.getElementById('error-label').value = label;
+	document.getElementById('error-text').value = text;
 }
 
 function error_on_save() {
@@ -125,14 +129,15 @@ exception_ident.addEventListener('input', exception_ident_change);
 
 async function exception_ident_change() {
 	ident = document.getElementById('exception-ident').value;
+	code = '';
 	if (exception_ident) {
 		payload = {'type':'exception', 'data':ident};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
-			document.getElementById('exception-ident').value = ret['value']['ident'];
-			document.getElementById('exception-code').value = ret['value']['code'];
+			code = ret['value']['code'];
 		}
 	}
+	document.getElementById('exception-code').value = code;
 }
 
 function exception_on_save() {
@@ -156,14 +161,18 @@ user_code.addEventListener('input', user_code_change);
 
 async function user_code_change() {
 	code = document.getElementById('user-code').value;
+	aleph = '';
+	email = '';
 	if (user_code) {
 		payload = {'type':'user', 'data':code};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
-			document.getElementById('aleph').value = ret['value']['aleph'];
-			document.getElementById('email').value = ret['value']['email'];
+			aleph = ret['value']['aleph'];
+			email = ret['value']['email'];
 		}
 	}
+	document.getElementById('aleph').value = aleph;
+	document.getElementById('email').value = email;
 }
 
 function user_on_save() {
@@ -187,13 +196,15 @@ review_authority.addEventListener('input', review_authority_change);
 
 async function review_authority_change() {
 	authority = document.getElementById('review-authority').value;
+	name = '';
 	if (review_authority) {
 		payload = {'type':'review', 'data':authority};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
-			document.getElementById('review-name').value = ret['value']['name'];
+			name = ret['value']['name'];
 		}
 	}
+	document.getElementById('review-name').value = name;
 }
 
 function review_on_save() {

@@ -6,13 +6,10 @@ Library support software.
 TODO
 
 - clo / koha
-- no number = empty text
 - zero input save
 - exc:  sysno <-> kod switch
 - exc: sysno zero pad.
 - exc/.: red color warning table line
-- kody: razeni lexicalni
-- slovniky: zalamovani
 - Settings exports.
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
