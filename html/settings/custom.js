@@ -124,32 +124,32 @@ function error_on_delete() {
 
 // EXCEPTION
 
-const exception_ident = document.getElementById('exception-ident');
-exception_ident.addEventListener('input', exception_ident_change);
+const exception_code = document.getElementById('exception-code');
+exception_code.addEventListener('input', exception_code_change);
 
-async function exception_ident_change() {
-	ident = document.getElementById('exception-ident').value;
-	code = '';
-	if (exception_ident) {
-		payload = {'type':'exception', 'data':ident};
+async function exception_code_change() {
+	code = document.getElementById('exception-code').value;
+	ident = '';
+	if (exception_code) {
+		payload = {'type':'exception', 'data':code};
 		const ret = await update(payload);
 		if (ret.length !== 0) {
-			code = ret['value']['code'];
+			ident = ret['value']['ident'];
 		}
 	}
-	document.getElementById('exception-code').value = code;
+	document.getElementById('exception-ident').value = ident;
 }
 
 function exception_on_save() {
 	document.getElementById('modal-text').textContent = 'Chcete uložit vyjímku ';
-	document.getElementById('modal-text-bold').textContent = document.getElementById('exception-ident').value;
+	document.getElementById('modal-text-bold').textContent = document.getElementById('exception-code').value;
 	modal.toggle();
 	modal_action = 'exception-save';
 }
 
 function exception_on_delete() {
 	document.getElementById('modal-text').textContent = 'Chcete smazat vyjímku ';
-	document.getElementById('modal-text-bold').textContent = document.getElementById('exception-ident').value;
+	document.getElementById('modal-text-bold').textContent = document.getElementById('exception-code').value;
 	modal.toggle();
 	modal_action = 'exception-delete';
 }

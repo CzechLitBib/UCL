@@ -49,7 +49,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 			$query = $db->query("SELECT * FROM exception;");
 			if ($query) {
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo $res['ident'] . ';' . implode(',', unserialize($res['code'])) . "\n";
+					echo $res['code'] . ';' . implode(',', unserialize($res['ident'])) . "\n";
 				}
 			} else { echo 'DB error.'; }
 		}
@@ -99,9 +99,9 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	}
 
 	if ($req['type'] == 'exception') {
-		$query = $db->querySingle("SELECT * FROM exception WHERE ident = '" . $req['data'] . "';", true);
+		$query = $db->querySingle("SELECT * FROM exception WHERE code = '" . $req['data'] . "';", true);
 		if ($query) {
-			$query['code'] = unserialize($query['code']);
+			$query['ident'] = unserialize($query['ident']);
 			$resp['value'] = $query;
 		}
 	}
@@ -164,25 +164,25 @@ if (!empty($_POST)){
 		}
 	}
 	
-	if (!empty($_POST['exception-ident'])) {
+	if (!empty($_POST['exception-code'])) {
 		if (isset($_POST['exception-delete'])) {
-			$query = $db->exec("DELETE FROM exception WHERE ident = '" . $_POST['exception-ident'] . "';");
+			$query = $db->exec("DELETE FROM exception WHERE code = '" . $_POST['exception-code'] . "';");
 			if(!$query) {
-				$_SESSION['result'] = "Odstranění vyjímky " . $_POST['exception-ident'] . " selhalo.";
+				$_SESSION['result'] = "Odstranění vyjímky " . $_POST['exception-code'] . " selhalo.";
 			} else {
-				$_SESSION['result'] = "Vyjímka " . $_POST['exception-ident'] . " odstraněna."; 
+				$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " odstraněna."; 
 			}
 		}
 		if (isset($_POST['exception-save'])) {
-			if (!empty($_POST['exception-ident']) and !empty($_POST['exception-code'])) {
-				$query = $db->exec("INSERT INTO exception (ident, code) VALUES ('"
-					. $db->escapeString($_POST['exception-ident']) . "','"
-					. serialize(explode(',', preg_replace('/\s+/', '', $db->escapeString($_POST['exception-code']))))
-					. "') ON CONFLICT (ident) DO UPDATE SET code=excluded.code;");
+			if (!empty($_POST['exception-code']) and !empty($_POST['exception-ident'])) {
+				$query = $db->exec("INSERT INTO exception (code, ident) VALUES ('"
+					. $db->escapeString($_POST['exception-code']) . "','"
+					. serialize(explode(',', preg_replace('/\s+/', '', $db->escapeString($_POST['exception-ident']))))
+					. "') ON CONFLICT (code) DO UPDATE SET ident=excluded.ident;");
 				if (!$query) {
-					$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-ident'] . " selhal.";
+					$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
 				} else {
-					$_SESSION['result'] = "Vyjímka " . $_POST['exception-ident'] . " uložena."; 
+					$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " uložena."; 
 				}
 			} else {
 				$_SESSION['result'] = "Prázdý vstup vyjímky."; 
@@ -416,13 +416,13 @@ if ($db) {
 
 if ($db) {
 
-	$exception_ident = '';
 	$exception_code = '';
+	$exception_ident = '';
 
 	$query = $db->query("SELECT * FROM exception limit 1;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
-		$exception_ident = $result['ident'];
-		$exception_code = implode(',', unserialize($result['code']));
+		$exception_code = $result['code'];
+		$exception_ident = implode(',', unserialize($result['ident']));
         }
 	
 }
@@ -433,24 +433,24 @@ if ($db) {
 <table class="table my-4">
 	<thead>
 	<tr>
-		<th scope="col">SysNo</th>
 		<th scope="col">Kód</th>
+		<th scope="col">SysNo</th>
 		<th scope="col"></th>
 	</tr>
 	</thead>
 	<tbody>
 	<tr>
 	<td class="col-3 align-middle">
-		<input class="form-control text-center" id="exception-ident" name="exception-ident" maxlength="9" type="text" value="<?php echo $exception_ident;?>" size="8" list="exception-list">
+		<input class="form-control text-center" id="exception-code" name="exception-code" maxlength="3" type="text" value="<?php echo $exception_code;?>" size="4" list="exception-list">
 		<datalist id="exception-list">
 
 <?php
 
 if ($db) {
 
-	$query = $db->query("SELECT ident FROM exception;");
+	$query = $db->query("SELECT code FROM exception;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
-		echo '<option value="' . $result['ident'] . '">';
+		echo '<option value="' . $result['code'] . '">';
         }
 }
 
@@ -458,7 +458,7 @@ if ($db) {
 
 		</datalist>
 	</td>
-	<td class="col-10 align-middle"><input type="text" class="form-control" id="exception-code" size="47" name="exception-code" value="<?php echo $exception_code;?>"></td>
+	<td class="col-10 align-middle"><input type="text" class="form-control" id="exception-ident" size="47" name="exception-ident" value="<?php echo $exception_ident;?>"></td>
 	<td class="col align-middle">
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 mt-1 mb-2 text-center">

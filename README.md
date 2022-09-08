@@ -7,7 +7,6 @@ TODO
 
 - clo / koha
 - zero input save
-- exc:  sysno <-> kod switch
 - exc: sysno zero pad.
 - exc/.: red color warning table line
 - Settings exports.
