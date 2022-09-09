@@ -90,13 +90,13 @@ server {
 		allow 147.231.80.0/24;
 		allow 127.0.0.1;
 		deny all;
-		rewrite ^/(.*)$ https://aleph22.lib.cas.cz/F/?func=direct&doc_number=$1&local_base=AV&format=001 permanent;
+		rewrite ^/(.*)$ https://aleph.lib.cas.cz/F/?func=direct&doc_number=$1&local_base=AV&format=001 permanent;
 	}
 	location ~ "^/aleph/[0-9]{9}" {
 		allow 147.231.80.0/24;
 		allow 127.0.0.1;
 		deny all;
-		rewrite ^/aleph/(.*)$ https://aleph22.lib.cas.cz/F/?func=direct&doc_number=$1&local_base=AV&format=001 permanent;
+		rewrite ^/aleph/(.*)$ https://aleph.lib.cas.cz/F/?func=direct&doc_number=$1&local_base=AV&format=001 permanent;
 	}
 	location ~ "^/vufind/[0-9]{9}" {
 		allow 147.231.80.0/24;

@@ -440,8 +440,8 @@ if ($db) {
 	</thead>
 	<tbody>
 	<tr>
-	<td class="col-3 align-middle">
-		<input class="form-control text-center" id="exception-code" name="exception-code" maxlength="3" type="text" value="<?php echo $exception_code;?>" size="4" list="exception-list">
+	<td class="col-2 align-middle">
+		<input class="form-control text-center" id="exception-code" name="exception-code" maxlength="3" type="text" value="<?php echo $exception_code;?>" size="2" list="exception-list">
 		<datalist id="exception-list">
 
 <?php
