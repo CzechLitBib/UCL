@@ -37,7 +37,7 @@ if (!$db) {
 	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Chyba databáze.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 } else {
 
-	$result = $db->query("SELECT code,label,text FROM error");
+	$result = $db->query("SELECT code,label,text FROM error ORDER BY code");
 
 	while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
 		echo '<div class="card my-2"><div class="card-body"><div class="row"><div class="col-2 col-md-1">'
