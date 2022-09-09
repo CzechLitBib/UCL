@@ -85,6 +85,11 @@ Failed to enable unit: Unit /run/systemd/generator.late/koha-common.service is t
 	&lt;/mapping&gt;
 &lt;/ldapserver&gt;
 
+# IMPORT CLI
+
+kohas-shell clo
+./stagefile --file /path/file.mrc --match --authorities
+
 # API
 
 apt-get install python3-lxml python3-six
