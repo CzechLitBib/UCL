@@ -5,7 +5,7 @@
 
 # INCLUDE -------------------
 
-import argparse,urllib.request,smtplib,sqlite3,sys,io,re
+import phpserialize,argparse,urllib.request,smtplib,sqlite3,sys,io,re
 
 from email.mime.text import MIMEText
 from datetime import datetime,timedelta
@@ -19,8 +19,8 @@ from lxml.etree import tostring
 # IDENT: 'oai:aleph.lib.cas.cz:KNA01-IDENT'
 
 URL='https://aleph.lib.cas.cz/OAI'
-ERROR_PAGE='https://vyvoj.ucl.cas.cz/error/#'
 WEEKLY_PAGE='https://vyvoj.ucl.cas.cz/weekly'
+ERROR_PAGE='https://vyvoj.ucl.cas.cz/error/#'
 
 DB='/var/www/data/devel.db'
 
@@ -28,6 +28,9 @@ MAIL_USER='xxx'
 MAIL_SENDER='xxx'
 MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
+
+COUNTER=0
+MATCH=0
 
 # DEF -------------------
 
@@ -78,39 +81,41 @@ def send_mail(target,message):
 			print('Sendmail error.')
 
 def notify():
-	db = con.cursor()# reset cursor
 	if args.daily:
-		html_header = 'Dobrý den,<br><br>Ve Vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
-		html_footer =('<br>Prosíme o opravu.<br><br>---------------------------<br><br>' +
-			'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
+		html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
+		html_footer =('<br>Prosíme o opravu.<br><br>---------------------------<br><br>'
+			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
+		# USER | MAIL
 		for user,email in db.execute("SELECT code,email FROM user;").fetchall():
 			html_body=''
-			for ident,tag,code in db.execute(
-					"SELECT ident,tag,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY code ASC;",
-					(int((datetime.now()-timedelta(days=2)).timestamp()), user)
-				).fetchall():
+			timestamp = int(datetime.now()-timedelta(days=2))
+			# IDENT | TAG | CODE
+			for ident,tag,code in db.execute("SELECT ident,tag,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY code ASC;",(timestamp,user)).fetchall():
+				# EXCEPTION
+				exception = db.execute("SELECT ident FROM exception WHERE code = ?;",(code,)).fechone()
+				if exception and ident in unserialize(exception[0]): continue
+				# LABEL
 				label = db.execute("SELECT label FROM error WHERE code = ?;",(code,)).fetchone()
 				html_body+=(
-					'<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
-					ident + '&local_base=AV&format=001">' + ident + '</a> ' + ' [<a target="_blank" href="' +
-					ERROR_PAGE + code + '">' + code + '</a>] ' + label[0].replace('XXX', tag) + '<br>'
+					'<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number='
+					+ ident + '&local_base=AV&format=001">' + ident + '</a> ' + ' [<a target="_blank" href="'
+					+ ERROR_PAGE + code + '">' + code + '</a>] ' + label[0].replace('XXX',tag) + '<br>'
 				)
-	
 			if html_body and email:
-				send_mail(email, html_header + html_body + html_footer)
-	if args.weekly:
-		html =('Dobrý den,<br><br>Kontrolní zpráva je dostupná na adrese:<br><br>'
-			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">$URL</a><br><br>'
-			+ '---------------------------<br><br>'
-			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.')
-		email = db.execute("SELECT email FROM user WHERE code = '" + MAIL_USER + "';").fetchone()
+				send_mail(email, html_head + html_body + html_footer)
+	if args.daily:
+		html = ('Dobrý den,<br><br>Kontrolni zprava je dospuna na adrese:<br><br>'
+			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">' + WEEKLY_PAGE + '</a></br></br>'
+			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
+		)
+		email = db.execute("SELECT email FROM user WHERE code = ?;",(MAIL_USER,)).fetchone()
 		if email: send_mail(email[0], html)
 
-def write_error(timestamp,ident,sif,tag,code):
+def write_error(timestamp,ident,tag,sif,code):
 	if args.daily:
-		db.execute("INSERT INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?);",(timestamp,ident,sif.lower(),tag,code))
+		db.execute("INSERT INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
 	if args.weekly:
-		db.execute("INSERT INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?);",(timestamp,ident,sif.lower(),tag,code))
+		db.execute("INSERT INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
 
 # ARG -------------------
 
@@ -123,9 +128,9 @@ required.add_argument('--ident', help='Record identifier.')
 required.add_argument('--from', help='Records from UTC datetime. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='from_date')
 required.add_argument('--until', help='Records until UTC datetime. [YYYY-mm-dd HH:MM:SS]', type=valid_date, dest='until_date')
 optional = parser.add_argument_group('output')
-optional.add_argument('--check', help='Validation control.', action='store_true')
 optional.add_argument('--daily', help='Write daily DB.', action='store_true')
 optional.add_argument('--weekly', help='Write weekly DB.', action='store_true')
+optional.add_argument('--check', help='Validation control.', action='store_true')
 optional.add_argument('--notify', help='Enable notification.', action='store_true')
 optional.add_argument('--display', help='Display output format. [ident] [marc]', nargs='?', type=valid_display, const='ident')
 args = parser.parse_args()
@@ -151,18 +156,11 @@ if args.get == 'ident':
 # INIT -------------------
 
 try:
-	con = sqlite3.connect(DB)
-	db = con.cursor()
-	db.row_factory = lambda cursor, row: row[0]
+	db = sqlite3.connect(DB)
+	db.row_factory = sqlite3.Row
 except:
 	print('Failed to open database.')
-	sys.exit(1)
-
-country_code = db.execute("SELECT * FROM country;").fetchall()
-
-language_code = db.execute("SELECT * FROM language;").fetchall()
-
-role_code = db.execute("SELECT * FROM role;").fetchall()
+	exit(1)
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -171,19 +169,19 @@ oai = Client(URL, registry)
 
 record,header,about='','',''
 records=[]
-try:
-	if args.get == 'record':
-		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
-	if args.get == 'list':
-		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-	if args.get == 'ident':
-		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-	if args.get == 'set':
-		records = oai.listSets()
-	if args.get == 'meta':
-		records = oai.listMetadataFormats()
-except:
-	print('Žádný záznam.')
+#try:
+if args.get == 'record':
+	header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
+if args.get == 'list':
+	records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+if args.get == 'ident':
+	records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+if args.get == 'set':
+	records = oai.listSets()
+if args.get == 'meta':
+	records = oai.listMetadataFormats()
+#except:
+#	print('Žádný záznam.')
 
 # MAIN -------------------
 
@@ -198,11 +196,13 @@ for record in records:
 
 	if args.get == 'set' or args.get == 'meta':
 		print(record[0])
+		COUNTER+=1
 		continue
 
 	if args.get == 'ident':
 		if record.isDeleted(): continue
 		print(record.identifier())
+		COUNTER+=1
 		continue
 
 	header = record[0]
@@ -229,14 +229,12 @@ for record in records:
 			print(header.identifier())
 		if args.display == 'marc':
 			print(metadata)
-		continue
 
 	# VALIDATION ------------------
 
 	if args.check:
-
 		# IDENT ------------------
-		
+
 		IDENT = re.sub('^.*-(\d+)$', '\\1', header.identifier())
 
 		# TIMESTAMP ------------------
@@ -255,13 +253,18 @@ for record in records:
 				if 'BATCH' in F['a']: BOT=True
 		if BOT: continue
 	
-		# SKIP LIBRARY ------------------
+		# SKIP FILTER ------------------
 
-		XEDICE=False
-		if 'IST' in metadata: continue
-		for F in metadata.get_fields('599'):
-			if 'a' in F and F['a'] == 'xedice': XEDICE=True
-		if XEDICE: continue
+		for LDR in [metadata.leader]:
+			if LDR[7] in ['a', 'b']: break
+			if LDR[7] == 'm' and 'IST' not in metadata: break
+			if LDR[7] == 's' and '912' in metadata: break
+		else:
+			if LDR[7] == 's':
+				for F in metadata.get_fields('964'):
+					if 'a' in F and F['a'] in ['ECR', 'ECS']: break
+				else: continue
+			else: continue
 
 		# TEST TAG ------------------
 
@@ -269,226 +272,225 @@ for record in records:
 			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a']
 		else:
 			SIF = ''
-			write_error(TIMESTAMP, IDENT, SIF, '000')
+			write_error(TIMESTAMP, IDENT, 'SIF', SIF, '000')
 		for TAG in ('001', '003', '005', '008', '040', '245', '520', '655', '910', '964', 'OWN'):
+			if TAG == '520' and metadata.leader[7] == 's': continue# skip periodical
 			if TAG in ['520','964'] and metadata.leader[7] == 'm':# library skip
 				for F in metadata.get_fields('599'):
 					if 'a' in F and F['a'] == 'xbibl': break
 				else: continue
 			if TAG not in metadata:
-				write_error(TIMESTAMP, IDENT, SIF, '001')
+				write_error(TIMESTAMP, IDENT, TAG, SIF, '001')
 		if 'KAT' not in metadata and 'CAT' not in metadata:
-			write_error(TIMESTAMP, IDENT, SIF, '002')
+			write_error(TIMESTAMP, IDENT, 'CAT', SIF, '002')
 		if not metadata.leader:
-			write_error(TIMESTAMP, IDENT, SIF, '003')
+			write_error(TIMESTAMP, IDENT, 'LDR', SIF, '003')
 	
 		# TEST TAG/SUBFIELD VALUE ------------------
 
 		if '003' in metadata:
 			if metadata['003'].value() != 'CZ PrUCL':
-				write_error(TIMESTAMP, IDENT, SIF, '004')
+				write_error(TIMESTAMP, IDENT, '003', SIF, '004')
 		if '040' in metadata:
 			if 'a' in metadata['040']:
 				if metadata['040']['a'] != 'ABB060':
-					write_error(TIMESTAMP, IDENT, SIF, '005')
+					write_error(TIMESTAMP, IDENT, '040', SIF, '005')
 			if 'b' in metadata['040']:
 				if metadata['040']['b'] != 'cze':
-					write_error(TIMESTAMP, IDENT, SIF, '006')
+					write_error(TIMESTAMP, IDENT, '040', SIF, '006')
 			if 'e' in metadata['040']:
 				if metadata['040']['e'] != 'rda':
-					write_error(TIMESTAMP, IDENT, SIF, '007')
+					write_error(TIMESTAMP, IDENT, '040', SIF, '007')
 		if '072' in metadata:
 			if '2' in metadata['072']:
 				if metadata['072']['2'] != 'Konspekt':
-					write_error(TIMESTAMP, IDENT, SIF, '008')
+					write_error(TIMESTAMP, IDENT, '072', SIF, '008')
 		if '082' in metadata:
 			if '2' in metadata['082']:
 				if metadata['082']['2'] not in ('MRF', 'MRF-sel'):
-					write_error(TIMESTAMP, IDENT, SIF, '009')
+					write_error(TIMESTAMP, IDENT, '082', SIF, '009')
 		if '910' in metadata:
 			if 'a' in metadata['910']:
 				if metadata['910']['a'] != 'ABB060':
-					write_error(TIMESTAMP, IDENT, SIF, '010')
+					write_error(TIMESTAMP, IDENT, '910', SIF, '010')
 		if 'OWN' in metadata:
 			if metadata['OWN'].value() != 'UCLA':
-				write_error(TIMESTAMP, IDENT, SIF, '011')
+				write_error(TIMESTAMP, IDENT, 'OWN', SIF, '011')
 		for F in metadata.get_fields('856'):
 			if '4' in F:
 				if F['4'] != 'N':
-					write_error(TIMESTAMP, IDENT, SIF, '012')
+					write_error(TIMESTAMP, IDENT, '856', SIF, '012')
 			if 'y' in F:
 				if F['y'] not in ('online', 'Webarchiv', 'Obsah knihy', 'DOI', 'digitalizovaný dokument', 'Digitální archiv časopisů'):
-					write_error(TIMESTAMP, IDENT, SIF, '013')
+					write_error(TIMESTAMP, IDENT, '856', SIF, '013')
 
 		# TEST SUBFIELD ------------------
 
 		for TAG in ('022', '072', '100', '245', '520'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
-					write_error(TIMESTAMP, IDENT, SIF, '014')
+					write_error(TIMESTAMP, IDENT, TAG, SIF, '014')
 		for TAG in ('080', '100', '110', '111', '130', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			for F in metadata.get_fields(TAG):
 				if len(F.get_subfields('a')) != 1:
-					write_error(TIMESTAMP, IDENT, SIF, '015')
+					write_error(TIMESTAMP, IDENT, TAG, SIF, '015')
 		if metadata.leader[7] == 's':
 			for F in metadata.get_fields('022'):
 				if len(F.get_subfields('a')) == 0:
-					write_error(TIMESTAMP, IDENT, SIF, '016')
+					write_error(TIMESTAMP, IDENT, '022', SIF, '016')
 		if '072' in metadata:
 			if len(metadata['072'].get_subfields('x')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '017')
+				write_error(TIMESTAMP, IDENT, '072', SIF, '017')
 			if len(metadata['072'].get_subfields('2')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '018')
+				write_error(TIMESTAMP, IDENT, '072', SIF, '018')
 			if len(metadata['072'].get_subfields('9')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '019')
+				write_error(TIMESTAMP, IDENT, '072', SIF, '019')
 		for F in metadata.get_fields('080'):
 			if len(F.get_subfields('2')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '020')
+				write_error(TIMESTAMP, IDENT, '080', SIF, '020')
 		for F in metadata.get_fields('700'):
 			if len(F.get_subfields('4')) == 0:
-				write_error(TIMESTAMP, IDENT, SIF, '021')
+				write_error(TIMESTAMP, IDENT, '700', SIF, '021')
 		for F in metadata.get_fields('710'):
 			if len(F.get_subfields('4')) == 0:
-				write_error(TIMESTAMP, IDENT, SIF, '022')
+				write_error(TIMESTAMP, IDENT, '710', SIF, '022')
 		VAL=''
 		for F in metadata.get_fields('773'):
 			if 'g' in F: VAL = F['g']
 			if len(F.get_subfields('t')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '023')
+				write_error(TIMESTAMP, IDENT, '773', SIF, '023')
+			elif 'g' in F and 'Literární archiv' in F['t']: break
 			elif 'g' not in F:
-				ADD=False
-				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): ADD=True
-				if VAL and 'příl.' in VAL and 'příloha' in F['t']: ADD =True
-				if '[samizdat]' in F['t']: ADD=True
-				if 'Literární archiv' in F['t']: ADD=True
-				if not ADD:
-					write_error(TIMESTAMP, IDENT, SIF, '024')
+				if VAL and re.match('.*' + re.escape(F['t']) + '.*', VAL): continue
+				if VAL and 'příl.' in VAL and 'příloha' in F['t']: continue
+				if '[samizdat]' in F['t']: continue
+				write_error(TIMESTAMP, IDENT, '773', SIF, '024')
 		for F in metadata.get_fields('787'):
 			if len(F.get_subfields('t')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '025')
+				write_error(TIMESTAMP, IDENT, '787', SIF, '025')
 			if len(F.get_subfields('4')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '026')
+				write_error(TIMESTAMP, IDENT, '787', SIF, '026')
 		for F in metadata.get_fields('856'):
 			if len(F.get_subfields('u')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '027')
+				write_error(TIMESTAMP, IDENT, '856', SIF, '027')
 			if len(F.get_subfields('y')) != 1:
-				write_error(TIMESTAMP, IDENT, SIF, '028')
+				write_error(TIMESTAMP, IDENT, '856', SIF, '028')
 
 		# TEST VALID LINK ------------------
 
 		#for F in metadata.get_fields('856'):
 		#	if 'u' in F:
 		#		if not url_response(F['u']):
-		#			write_error(TIMESTAMP, IDENT, SIF, '029')
+		#			write_error(TIMESTAMP, IDENT, '856', SIF, '029')
 		
 		# TEST INDICATOR ------------------
 
 		if '041' in metadata:
 			if metadata['041'].indicator1 + metadata['041'].indicator2 not in ('1 ', '0 '):
-				write_error(TIMESTAMP, IDENT, SIF, '030')
+				write_error(TIMESTAMP, IDENT, '041', SIF, '030')
 		if '072' in metadata:
 			if metadata['072'].indicator1 + metadata['072'].indicator2 != ' 7':
-				write_error(TIMESTAMP, IDENT, SIF, '031')
+				write_error(TIMESTAMP, IDENT, '072', SIF, '031')
 		if '100' in metadata:
 			if metadata['100'].indicator1 + metadata['100'].indicator2 not in ('3 ', '1 ', '0 '):
-				write_error(TIMESTAMP, IDENT, SIF, '032')
+				write_error(TIMESTAMP, IDENT, '100', SIF, '032')
 		if '110' in metadata:
 			if metadata['110'].indicator1 + metadata['110'].indicator2 not in ('0 ', '1 ', '2 '):
-				write_error(TIMESTAMP, IDENT, SIF, '033')
+				write_error(TIMESTAMP, IDENT, '110', SIF, '033')
 		if '245' in metadata:
 			if metadata['245'].indicator1 not in ('0', '1'):
-				write_error(TIMESTAMP, IDENT, SIF, '034')
+				write_error(TIMESTAMP, IDENT, '245', SIF, '034')
 		if '520' in metadata:
 			if metadata['520'].indicator1 + metadata['520'].indicator2 != '2 ':
-				write_error(TIMESTAMP, IDENT, SIF, '035')
+				write_error(TIMESTAMP, IDENT, '520', SIF, '035')
 		for F in metadata.get_fields('600'):
 			if F.indicator1 + F.indicator2 not in ('34', '37', '14', '17', '04', '07'):
-				write_error(TIMESTAMP, IDENT, SIF, '036')
+				write_error(TIMESTAMP, IDENT, '600', SIF, '036')
 		for F in metadata.get_fields('610'):
 			if F.indicator1 + F.indicator2 not in ('14', '17', '24', '27'):
-				write_error(TIMESTAMP, IDENT, SIF, '037')
+				write_error(TIMESTAMP, IDENT, '610', SIF, '037')
 		for F in metadata.get_fields('611'):
 			if F.indicator1 + F.indicator2 not in ('14', '17', '24', '27'):
-				write_error(TIMESTAMP, IDENT, SIF, '038')
+				write_error(TIMESTAMP, IDENT, '611', SIF, '038')
 		for F in metadata.get_fields('648'):
 			if F.indicator1 + F.indicator2 not in (' 4', ' 7'):
-				write_error(TIMESTAMP, IDENT, SIF, '039')
+				write_error(TIMESTAMP, IDENT, '648', SIF, '039')
 		for F in metadata.get_fields('650'):
 			if F.indicator1 + F.indicator2 not in ('14', '17', '04', '07'):
-				write_error(TIMESTAMP, IDENT, SIF, '040')
+				write_error(TIMESTAMP, IDENT, '650', SIF, '040')
 		for F in metadata.get_fields('651'):
 			if F.indicator1 + F.indicator2 not in (' 4', ' 7'):
-				write_error(TIMESTAMP, IDENT, SIF, '041')
+				write_error(TIMESTAMP, IDENT, '651', SIF, '041')
 		for F in metadata.get_fields('653'):
 			if F.indicator1 + F.indicator2 != '0 ':
-				write_error(TIMESTAMP, IDENT, SIF, '042')
+				write_error(TIMESTAMP, IDENT, '653', SIF, '042')
 		for F in metadata.get_fields('655'):
 			if F.indicator1 + F.indicator2 not in (' 4', ' 7'):
-				write_error(TIMESTAMP, IDENT, SIF, '043')
+				write_error(TIMESTAMP, IDENT, '655', SIF, '043')
 		for F in metadata.get_fields('700'):
 			if F.indicator1 + F.indicator2 not in ('3 ', '1 ', '0 '):
-				write_error(TIMESTAMP, IDENT, SIF, '044')
+				write_error(TIMESTAMP, IDENT, '700', SIF, '044')
 		for F in metadata.get_fields('710'):
 			if F.indicator1 + F.indicator2 not in ('0 ', '1 ', '2 '):
-				write_error(TIMESTAMP, IDENT, SIF, '045')
+				write_error(TIMESTAMP, IDENT, '710', SIF, '045')
 		for F in metadata.get_fields('773'):
 			if F.indicator1 + F.indicator2 != '0 ':
-				write_error(TIMESTAMP, IDENT, SIF, '046')
+				write_error(TIMESTAMP, IDENT, '773', SIF, '046')
 		for F in metadata.get_fields('787'):
 			if F.indicator1 + F.indicator2 != '08':
-				write_error(TIMESTAMP, IDENT, SIF, '047')
+				write_error(TIMESTAMP, IDENT, '787', SIF, '047')
 
 		# TEST DEPENDENCE ------------------
 
 		if metadata.leader[7] == 'm':
 			if '260' not in metadata and '264' not in metadata:
-				write_error(TIMESTAMP, IDENT, SIF, '048')
+				write_error(TIMESTAMP, IDENT, '260/264', SIF, '048')
 		for TAG in ('250', '490', '830'):
 			if TAG in metadata:
 				if metadata.leader[7] != 'm':
-					write_error(TIMESTAMP, IDENT, SIF, '049')
+					write_error(TIMESTAMP, IDENT, TAG, SIF, '049')
 		if metadata.leader[7] in ('a', 'b'):
 			if '773' not in metadata:
-				write_error(TIMESTAMP, IDENT, SIF, '050')
+				write_error(TIMESTAMP, IDENT, '773', SIF, '050')
 
 		# TEST SUBFIELD RANGE ------------------
 
 		if '040' in metadata:
 			for SUB in metadata['040'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'e'):
-					write_error(TIMESTAMP, IDENT, SIF, '051')
+					write_error(TIMESTAMP, IDENT, '040', SIF, '051')
 		if '072' in metadata:
 			for SUB in metadata['072'].subfields[0::2]:
 				if SUB not in ('a', 'x', '2', '9'):
-					write_error(TIMESTAMP, IDENT, SIF, '052')
+					write_error(TIMESTAMP, IDENT, '072', SIF, '052')
 		if '100' in metadata:
 			for SUB in metadata['100'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'g', '4', '7', 'x', 'q', 'j'):
-					write_error(TIMESTAMP, IDENT, SIF, '053')
+					write_error(TIMESTAMP, IDENT, '100', SIF, '053')
 		if '110' in metadata:
 			for SUB in metadata['110'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '054')
+					write_error(TIMESTAMP, IDENT, '110', SIF, '054')
 		if '111' in metadata:
 			for SUB in metadata['111'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '055')
+					write_error(TIMESTAMP, IDENT, '111', SIF, '055')
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'n', 'p', 'c'):
-					write_error(TIMESTAMP, IDENT, SIF, '056')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '056')
 		for F in metadata.get_fields('250'):
 			for SUB in F.subfields[0::2]:
 				if SUB != 'a':
-					write_error(TIMESTAMP, IDENT, SIF, '057')
+					write_error(TIMESTAMP, IDENT, '250', SIF, '057')
 		if '260' in metadata:
 			for SUB in metadata['260'].subfields[0::2]:
 				if SUB not in ('a', 'b', 'c'):
-					write_error(TIMESTAMP, IDENT, SIF, '058')
+					write_error(TIMESTAMP, IDENT, '260', SIF, '058')
 		for F in metadata.get_fields('264'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c'):
-					write_error(TIMESTAMP, IDENT, SIF, '059')
+					write_error(TIMESTAMP, IDENT, '264', SIF, '059')
 		if '300' in metadata:
 			BAD=False
 			for SUB in metadata['300'].subfields[0::2]:
@@ -497,95 +499,93 @@ for record in records:
 					for F in metadata.get_fields('964'):
 						if F.value() == 'SMZ': BAD=False
 			if BAD:
-				write_error(TIMESTAMP, IDENT, SIF, '060')
+				write_error(TIMESTAMP, IDENT, '300', SIF, '060')
 		for F in metadata.get_fields('490'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'v', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '061')
+					write_error(TIMESTAMP, IDENT, '490', SIF, '061')
 		for F in metadata.get_fields('500'):
 			for SUB in F.subfields[0::2]:
 				if SUB != 'a':
-					write_error(TIMESTAMP, IDENT, SIF, '062')
+					write_error(TIMESTAMP, IDENT, '500', SIF, '062')
 		for F in metadata.get_fields('505'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('t', 'r', 'g'):
-					write_error(TIMESTAMP, IDENT, SIF, '063')
+					write_error(TIMESTAMP, IDENT, '505', SIF, '063')
 		if '520' in metadata:
 			for SUB in metadata['520'].subfields[0::2]:
 				if SUB not in ('a', '2'):
-					write_error(TIMESTAMP, IDENT, SIF, '064')
+					write_error(TIMESTAMP, IDENT, '520', SIF, '064')
 		for F in metadata.get_fields('600'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'q', '7', '2', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '065')
+					write_error(TIMESTAMP, IDENT, '600', SIF, '065')
 		for F in metadata.get_fields('610'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '066')
+					write_error(TIMESTAMP, IDENT, '610', SIF, '066')
 		for F in metadata.get_fields('611'):
 			for SUB in F.subfields[0::2]:
 				if SUB == 'e' and F['e'] == 'Czech National Exposition': continue
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '7', '2', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '067')
+					write_error(TIMESTAMP, IDENT, '611', SIF, '067')
 		for F in metadata.get_fields('630'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'l', '7', '2', 'x', 'p', 's'):
 					if not ('a' in F and 'Bible' in F['a'] and SUB == 'f'):
-						write_error(TIMESTAMP, IDENT, SIF, '068')
+						write_error(TIMESTAMP, IDENT, '630', SIF, '068')
 		for F in metadata.get_fields('648'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '069')
+					write_error(TIMESTAMP, IDENT, '648', SIF, '069')
 		for F in metadata.get_fields('650'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '070')
+					write_error(TIMESTAMP, IDENT, '650', SIF, '070')
 		for F in metadata.get_fields('651'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '071')
+					write_error(TIMESTAMP, IDENT, '651', SIF, '071')
 		for F in metadata.get_fields('653'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '072')
+					write_error(TIMESTAMP, IDENT, '653', SIF, '072')
 		for F in metadata.get_fields('655'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', '7', '2', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '073')
+					write_error(TIMESTAMP, IDENT, '655', SIF, '073')
 		for F in metadata.get_fields('700'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'q', '4', '7', 'x', 'j'):
-					write_error(TIMESTAMP, IDENT, SIF, '074')
+					write_error(TIMESTAMP, IDENT, '700', SIF, '074')
 		for F in metadata.get_fields('710'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'b', 'c', 'd', 'n', '4', '7', 'x', 'j'):
-					write_error(TIMESTAMP, IDENT, SIF, '075')
+					write_error(TIMESTAMP, IDENT, '710', SIF, '075')
 		for F in metadata.get_fields('773'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 't', 'x', 'n', 'd', 'b', 'k', 'y', 'g', 'q', '9', 'z'):
-					write_error(TIMESTAMP, IDENT, SIF, '076')
+					write_error(TIMESTAMP, IDENT, '773', SIF, '076')
 		for F in metadata.get_fields('787'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('i', 'a', 't', 'n', 'd', 'b', 'k', 'h', 'z', 'y', '4', 'x'):
-					write_error(TIMESTAMP, IDENT, SIF, '077')
+					write_error(TIMESTAMP, IDENT, '787', SIF, '077')
 		for F in metadata.get_fields('830'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'p', 'n'):
-					write_error(TIMESTAMP, IDENT, SIF, '078')
+					write_error(TIMESTAMP, IDENT, '830', SIF, '078')
 		for F in metadata.get_fields('856'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('u', 'y', 'z', '4'):
-					write_error(TIMESTAMP, IDENT, SIF, '079')
+					write_error(TIMESTAMP, IDENT, '856', SIF, '079')
 		if '910' in metadata:
 			for SUB in metadata['910'].subfields[0::2]:
 				if SUB != 'a':
-					write_error(TIMESTAMP, IDENT, SIF, '080')
+					write_error(TIMESTAMP, IDENT, '910', SIF, '080')
 		for F in metadata.get_fields('964'):
 			for SUB in F.subfields[0::2]:
 				if SUB != 'a':
-					write_error(TIMESTAMP, IDENT, SIF, '081')
-		
-		# TEST SUBFIELD ORDER ------------------
+					write_error(TIMESTAMP, IDENT, '964', SIF, '081')
 
 		# TEST SUBFIELD REPEAT ------------------
 		
@@ -593,107 +593,106 @@ for record in records:
 			for SUB in list(set(metadata['041'].subfields[0::2])):
 				if SUB not in ('a', 'b', 'k', 'h'):
 					if len(metadata['041'].get_subfields(SUB)) > 1:
-						write_error(TIMESTAMP, IDENT, SIF, '082')
+						write_error(TIMESTAMP, IDENT, '041', SIF, '082')
 		if '044' in metadata:
 			for SUB in list(set(metadata['044'].subfields[0::2])):
 				if SUB != 'a':
 					if len(metadata['044'].get_subfields(SUB)) > 1:
-						write_error(TIMESTAMP, IDENT, SIF, '083')
+						write_error(TIMESTAMP, IDENT, '044', SIF, '083')
 		if '245' in metadata:
 			for SUB in list(set(metadata['245'].subfields[0::2])):
 				if SUB not in ('n', 'p'):
 					if len(metadata['245'].get_subfields(SUB)) > 1:
-						write_error(TIMESTAMP, IDENT, SIF, '084')
+						write_error(TIMESTAMP, IDENT, '245', SIF, '084')
 		if '260' in metadata:
 			for SUB in list(set(metadata['260'].subfields[0::2])):
 				if SUB not in ('a', 'b'):
 					if len(metadata['260'].get_subfields(SUB)) > 1:
-						write_error(TIMESTAMP, IDENT, SIF, '085')
+						write_error(TIMESTAMP, IDENT, '260', SIF, '085')
 		for F in metadata.get_fields('264'):
 			for SUB in list(set(F.subfields[0::2])):
 				if SUB not in ('a', 'b'):
 					if len(F.get_subfields(SUB)) > 1:
-						write_error(TIMESTAMP, IDENT, SIF, '086')
+						write_error(TIMESTAMP, IDENT, '264', SIF, '086')
 		for F in metadata.get_fields('773'):
 			for SUB in list(set(F.subfields[0::2])):
 				if SUB not in ('q', 'z', '9'):
 					if len(F.get_subfields(SUB)) > 1:
-						write_error(TIMESTAMP, IDENT, SIF, '087')
+						write_error(TIMESTAMP, IDENT, '773', SIF, '087')
 		for F in metadata.get_fields('787'):
 			for SUB in list(set(F.subfields[0::2])):
 				if SUB not in ('k', 'z'):
 					if len(F.get_subfields(SUB)) > 1:
-						write_error(TIMESTAMP, IDENT, SIF, '088')
-
-		# TEST VALUE RANGE ------------------
+						write_error(TIMESTAMP, IDENT, '787', SIF, '088')
 
 		# TEST SUBFIELD DEPENDENCE ------------------
 
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '0':
 				if 'h' in metadata['041']:
-					write_error(TIMESTAMP, IDENT, SIF, '089')
+					write_error(TIMESTAMP, IDENT, '041', SIF, '089')
 		if '041' in metadata:
 			if metadata['041'].indicator1 == '1':
 				if 'h' not in metadata['041']:
-					write_error(TIMESTAMP, IDENT, SIF, '090')
+					write_error(TIMESTAMP, IDENT, '041', SIF, '090')
 		if '100' in metadata:
 			if metadata['100'].indicator1 == '0':
 				if 'a' in metadata['100']:
 					if re.match('^.*,.+$', metadata['100']['a']):
-						write_error(TIMESTAMP, IDENT, SIF, '091')
+						write_error(TIMESTAMP, IDENT, '100', SIF, '091')
 			if metadata['100'].indicator1 == '1':
 				if 'c' in metadata['100']:
 					if re.match('^\[.*$', metadata['100']['c']):
-						write_error(TIMESTAMP, IDENT, SIF, '092')
+						write_error(TIMESTAMP, IDENT, '100', SIF, '092')
 				#if 'a' in metadata['100']:
 				#	if '.' in metadata['100']['a']:
-				#		write_error(TIMESTAMP, IDENT, SIF, '093')
+				#		write_error(TIMESTAMP, IDENT, '100', SIF, '093')
 		if '245' in metadata:
 			N=0
 			for TAG in ('100', '110', '111', '130'):
 				if TAG in metadata: N+=1
 			if metadata['245'].indicator1 == '1':
 				if not N >= 1:
-					write_error(TIMESTAMP, IDENT, SIF, '094')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '094')
 			if metadata['245'].indicator1 == '0':
 				if N != 0:
-					write_error(TIMESTAMP, IDENT, SIF, '095')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '095')
 			if metadata['245'].indicator2 == '0':
 				if 'a' in metadata['245']:
 					for S in ('The ', 'An ', 'Der ', 'Die ', 'Das ', 'Le ', 'La '):
 						if re.match('^' + S + '.*', metadata['245']['a']):
-							write_error(TIMESTAMP, IDENT, SIF, '096')
+							write_error(TIMESTAMP, IDENT, '245', SIF, '096')
 		for F in metadata.get_fields('600'):
 			if F.indicator1 == '0' and F.indicator2 != '7':
 				if 'a' in F:
 					if re.match('^.*,.+$', F['a']):
-						write_error(TIMESTAMP, IDENT, SIF, '097')
+						write_error(TIMESTAMP, IDENT, '600', SIF, '097')
 		for TAG in ('600', '610', '611', '630' ,'648', '650', '651', '655'):
 			for F in metadata.get_fields(TAG):
 				if F.indicator2 == '7':
 					if '2' not in F or '7' not in F:
-						write_error(TIMESTAMP, IDENT, SIF, '098')
+						write_error(TIMESTAMP, IDENT, TAG, SIF, '098')
 					if '2' in F and '7' in F:
 						if F['2'] != 'czenas':
-							write_error(TIMESTAMP, IDENT, SIF, '099')
+							write_error(TIMESTAMP, IDENT, TAG, SIF, '099')
 				if F.indicator2 == '4':
 					if '7' in F or '2' in F and F['2'] == 'czenas':
-						write_error(TIMESTAMP, IDENT, SIF, '100')
+						write_error(TIMESTAMP, IDENT, TAG, SIF, '100')
 					#if '2' in F:
 					#	if F['2'] == 'czenas':
-					#		write_error(TIMESTAMP, IDENT, SIF, '101')
+					#		write_error(TIMESTAMP, IDENT, TAG, SIF, '101')
 	
 		# TEST SPACE DOT / SPACE COMA TAG 2xx/5xx ------------------
 
 		# TEST DATE / COUNTRY / LANG ------------------
 		
 		if '008' in metadata:
+			CODE = metadata['008'].value()[6]
 			DATE = metadata['008'].value()[7:15].strip()
-			if metadata['008'].value()[6] not in ('s', 'e', 'm', 'q'):
-				write_error(TIMESTAMP, IDENT, SIF, '102')
+			if (CODE == 'c' and metadata.leader[7] != 's') or CODE not in ('s', 'e', 'm', 'q'):
+				write_error(TIMESTAMP, IDENT, '008', SIF, '102')
 			if not re.match('^[0-9u]+$', DATE) or len(DATE) not in (4, 6, 8):
-					write_error(TIMESTAMP, IDENT, SIF, '103')
+					write_error(TIMESTAMP, IDENT, '008', SIF, '103')
 			if metadata['008'].value()[6] == 'q':
 				if len(DATE) != 4:
 					BAD=True
@@ -703,28 +702,28 @@ for record in records:
 						if '773' in metadata and '9' in metadata['773']:
 							if DATE.replace('u','-') == metadata['773']['9']: BAD=False
 					if BAD:
-						write_error(TIMESTAMP, IDENT, SIF, '104')
+						write_error(TIMESTAMP, IDENT, '008', SIF, '104')
 			if metadata['008'].value()[6] == 's':
 				if len(DATE) != 4:
-					write_error(TIMESTAMP, IDENT, SIF, '104')
+					write_error(TIMESTAMP, IDENT, '008', SIF, '104')
 			if metadata['008'].value()[6] == 'e':
 				if len(DATE) not in (6, 8):
-					write_error(TIMESTAMP, IDENT, SIF, '105')
+					write_error(TIMESTAMP, IDENT, '008', SIF, '105')
 			if metadata['008'].value()[6] == 'm':
 				if len(DATE) != 8:
-					write_error(TIMESTAMP, IDENT, SIF, '106')
+					write_error(TIMESTAMP, IDENT, '008', SIF, '106')
 		if metadata.leader[7] == 'm':
 			if '008' in metadata:
 				DATA = metadata['008'].value()[7:15].strip()
 				if '260' in metadata and 'c' in metadata['260']:
 					if not re.match('^\[.*\]\.?$', metadata['260']['c']):
 						if DATA != metadata['260']['c'].strip('.').replace('-', ''):
-							write_error(TIMESTAMP, IDENT, SIF, '107')
+							write_error(TIMESTAMP, IDENT, '008', SIF, '107')
 				for F in metadata.get_fields('264'):
 					if 'c' in F:
 						if not re.match('^\[.*\]\.?$', F['c']):
 							if DATA != F['c'].strip('.').replace('-', ''):
-								write_error(TIMESTAMP, IDENT, SIF, '108')
+								write_error(TIMESTAMP, IDENT, '008', SIF, '108')
 		if metadata.leader[7] == 'b':
 			if '008' in metadata:
 				DATA = metadata['008'].value()[7:15].strip()
@@ -736,82 +735,76 @@ for record in records:
 							if DATA == re.sub('^(.*)-.*','\\1', metadata['773']['9']): NINE=True
 						if DATA == metadata['773']['9'].replace('-','').replace('/',''): NINE=True
 						if not NINE:
-							write_error(TIMESTAMP, IDENT, SIF, '109')
+							write_error(TIMESTAMP, IDENT, '008', SIF, '109')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[15:18].strip()
-			if country_code:
-				if DATA not in country_code:
-					write_error(TIMESTAMP, IDENT, SIF, '110')
-				if '044' in metadata and 'a' in metadata['044']:
-					if DATA != metadata['044']['a']:
-						write_error(TIMESTAMP, IDENT, SIF, '111')
+			if not db.execute("SELECT * FROM country WHERE CODE == ?;",(DATA,)).fetchone():
+					write_error(TIMESTAMP, IDENT, '008', SIF, '110')
+			if '044' in metadata and 'a' in metadata['044']:
+				if DATA != metadata['044']['a']:
+					write_error(TIMESTAMP, IDENT, '008', SIF, '111')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[35:38].strip()
-			if language_code:
-				if DATA not in language_code:
-					write_error(TIMESTAMP, IDENT, SIF, '112')
+			if not db.execute("SELECT * FROM language WHERE CODE == ?;",(DATA,)).fetchone():
+				write_error(TIMESTAMP, IDENT, '008', SIF, '112')
 			if '041' in metadata and 'a' in metadata['041']:
 				if DATA != metadata['041']['a']:
-					write_error(TIMESTAMP, IDENT, SIF, '113')
+					write_error(TIMESTAMP, IDENT, '008', SIF, '113')
 		if '041' in metadata:
-			if language_code:
-				for DATA in metadata['041'].subfields[1::2]:
-					if DATA not in language_code:
-						write_error(TIMESTAMP, IDENT, SIF, '114')
+			for DATA in metadata['041'].subfields[1::2]:
+				if not db.execute("SELECT * FROM language WHERE CODE == ?;",(DATA,)).fetchone():
+					write_error(TIMESTAMP, IDENT, '041', SIF, '114')
 			if len(metadata['041'].subfields) < 2:
-					write_error(TIMESTAMP, IDENT, SIF, '115')
+					write_error(TIMESTAMP, IDENT, '041', SIF, '115')
 		if '044' in metadata:
-			if country_code:
-				for DATA in metadata['044'].subfields[1::2]:
-					if DATA not in country_code:
-						write_error(TIMESTAMP, IDENT, SIF, '116')
+			for DATA in metadata['044'].subfields[1::2]:
+				if not db.execute("SELECT * FROM country WHERE CODE == ?;",(DATA,)).fetchone():
+					write_error(TIMESTAMP, IDENT, '044', SIF, '116')
 			if len(metadata['044'].subfields) < 2:
-					write_error(TIMESTAMP, IDENT, SIF, '117')
+					write_error(TIMESTAMP, IDENT, '044', SIF, '117')
 		if '100' in metadata:
-			if role_code:
-				for DATA in metadata['100'].get_subfields('4'):
-					if DATA not in role_code:
-						write_error(TIMESTAMP, IDENT, SIF, '118')
+			for DATA in metadata['100'].get_subfields('4'):
+				if not db.execute("SELECT * FROM role WHERE CODE == ?;",(DATA,)).fetchone():
+					write_error(TIMESTAMP, IDENT, '100', SIF, '118')
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
-					write_error(TIMESTAMP, IDENT, SIF, '119')
+					write_error(TIMESTAMP, IDENT, '100', SIF, '119')
 				if '4' not in metadata['100'] or 'oth' not in metadata['100'].get_subfields('4'):
-					write_error(TIMESTAMP, IDENT, SIF, '120')
+					write_error(TIMESTAMP, IDENT, '100', SIF, '120')
 		for F in metadata.get_fields('700'):
-			if role_code:
-				for DATA in F.get_subfields('4'):
-					if DATA not in role_code:
-						write_error(TIMESTAMP, IDENT, SIF, '121')
+			for DATA in F.get_subfields('4'):
+				if not db.execute("SELECT * FROM role WHERE CODE == ?;",(DATA,)).fetchone():
+					write_error(TIMESTAMP, IDENT, '700', SIF, '121')
 			if 'j' in F:
 				if F['j'] not in ('bbg', 'rej'):
-					write_error(TIMESTAMP, IDENT, SIF, '122')
+					write_error(TIMESTAMP, IDENT, '700', SIF, '122')
 				if '4' not in F or 'oth' not in F.get_subfields('4'):
-						write_error(TIMESTAMP, IDENT, SIF, '123')
+						write_error(TIMESTAMP, IDENT, '700', SIF, '123')
 		if '100' in metadata:
 			if '4' in metadata['100']:
 				DATA = metadata['100'].get_subfields('4')
 				if 'aut' not in DATA and 'ive' not in DATA and 'crp' not in DATA:
-					write_error(TIMESTAMP, IDENT, SIF, '124')
+					write_error(TIMESTAMP, IDENT, '100', SIF, '124')
 
 		# TEST OTHER ------------------
 
 		for TAG in ('001', '003', '005', '008', '040', '041', '044', '072', '100', '110', '111', '130', '245', '260', '520', '910', 'OWN', 'SIF', 'ZAZ'):
 			if len(metadata.get_fields(TAG)) > 1:
-				write_error(TIMESTAMP, IDENT, SIF, '125')
+				write_error(TIMESTAMP, IDENT, TAG, SIF, '125')
 		if '110' in metadata:
 			if metadata['110'].indicator1 + metadata['110'].indicator2 == '0 ':
 				if 'c' in metadata['110']:
 					if not re.match('^\[.*$', metadata['110']['c']):
-						write_error(TIMESTAMP, IDENT, SIF, '126')
+						write_error(TIMESTAMP, IDENT, '110', SIF, '126')
 				else:
-					write_error(TIMESTAMP, IDENT, SIF, '127')
+					write_error(TIMESTAMP, IDENT, '110', SIF, '127')
 		for F in metadata.get_fields('710'):
 			if F.indicator1 + F.indicator2 == '0 ':
 				if 'c' in F:
 					if not re.match('^\[.*$', F['c']):
-						write_error(TIMESTAMP, IDENT, SIF, '128')
+						write_error(TIMESTAMP, IDENT, '710', SIF, '128')
 				else:
-					write_error(TIMESTAMP, IDENT, SIF, '129')
+					write_error(TIMESTAMP, IDENT, '710', SIF, '129')
 		#if len(metadata.get_fields('300')) > 1:
 		#	BAD=False
 		#	for F in metadata.get_fields('964'):
@@ -819,12 +812,14 @@ for record in records:
 		#	for F in metadata.get_fields('300'):
 		#		if 'e' not in F: BAD=True
 		#	if BAD:
-		#		write_error(TIMESTAMP, IDENT, SIF, '130')
+		#		 write_error(TIMESTAMP, IDENT, '300', SIF, '130')
 		if '008' in metadata:
 			for F in metadata.get_fields('CAT','KAT')[:1]:# first CAT
+				if metadata.leader[7] == 'a': break
+			else:
 				if 'c' in F:
 					if metadata['008'].value()[:6] != F['c'][2:]:
-						write_error(TIMESTAMP, IDENT, SIF, '131')
+						write_error(TIMESTAMP, IDENT, '008', SIF, '131')
 
 		# 2ND BATCH ------------------
 
@@ -842,11 +837,11 @@ for record in records:
 			if F.value() == 'SMZ': CNB=False
 		if CNB:
 			if '015' not in metadata:
-				write_error(TIMESTAMP, IDENT, SIF, '132')
+				write_error(TIMESTAMP, IDENT, '506', SIF, '132')
 		# CNB format
 		for F in metadata.get_fields('015'):
 			if not re.match('^cnb\d{9}$', F.value()):
-				write_error(TIMESTAMP, IDENT, SIF, '133')
+				write_error(TIMESTAMP, IDENT, '015', SIF, '133')
 		#ISBN
 		ISBN=True
 		if metadata.leader:
@@ -861,7 +856,7 @@ for record in records:
 			if F.value() == 'SMZ': ISBN=False
 		if ISBN:
 			if '020' not in metadata:
-				write_error(TIMESTAMP, IDENT, SIF, '134')
+				write_error(TIMESTAMP, IDENT, '020', SIF, '134')
 		#ISBN format
 		for F in metadata.get_fields('020'):
 			for I in F.get_subfields('a'):
@@ -869,33 +864,34 @@ for record in records:
 				if re.match('^[0-9X]{10}$', I.replace('-','')): ISBN=True
 				if re.match('^[0-9X]{13}$', I.replace('-','')): ISBN=True
 				if not ISBN:
-					write_error(TIMESTAMP, IDENT, SIF, '135')
+					write_error(TIMESTAMP, IDENT, '020', SIF, '135')
 		# 020q
 		for F in metadata.get_fields('020'):
 			INT = F.get_subfields('q')
 			if INT:
 				if not (re.match('^\(.*', INT[0]) and re.match('.*\)$', INT[-1])):
-					write_error(TIMESTAMP, IDENT, SIF, '136')
+					write_error(TIMESTAMP, IDENT, '020', SIF, '136')
 				if len(INT) >= 2:
 					for I in INT[:-1]:
 						if not re.match('.*;$', I):
-							write_error(TIMESTAMP, IDENT, SIF, '136')
+							write_error(TIMESTAMP, IDENT, '020', SIF, '136')
 		# 020	
 		for F in metadata.get_fields('020'):
 			for SUB in F.subfields[0::2]:
 				if SUB not in ('a', 'q', 'z'):
-					write_error(TIMESTAMP, IDENT, SIF, '137')
+					write_error(TIMESTAMP, IDENT, '020', SIF, '137')
 		# 035
 		if '035' in metadata:
 			BASE=False
 			for F in metadata.get_fields('964'):
 				if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'): BASE=True
 			if not BASE:
-				write_error(TIMESTAMP, IDENT, SIF, '138')
+				write_error(TIMESTAMP, IDENT, '035', SIF, '138')
 		for F in metadata.get_fields('964'):
 			if F.value() in ('B70', 'B80', 'B97', 'CLE', 'ECS', 'ECR', 'RET'):
 				if '035' not in metadata:
-					write_error(TIMESTAMP, IDENT, SIF, '139')
+					if metadata.leader[7] == 's': continue# skip periodical
+					write_error(TIMESTAMP, IDENT, '035', SIF, '139')
 		# 035a
 		BASE=False
 		SUB = metadata.get_fields('035')
@@ -908,7 +904,7 @@ for record in records:
 				B2 = re.sub('.*\(ISIS-(...)-ID\).*', '\\1', SUB[1].value())
 				if not (B1 and B2) in ('B70', 'B80', 'B97', 'ECS', 'ECR', 'RET'): BASE=True
 			if BASE:
-				write_error(TIMESTAMP, IDENT, SIF, '140')
+				write_error(TIMESTAMP, IDENT, '035', SIF, '140')
 		# 100c
 		if metadata.leader[7] == 'm':
 			if '100' in metadata and '773' in metadata:
@@ -920,77 +916,77 @@ for record in records:
 						FS = [re.sub('^([^\[]+).*','\\1', S['t']).strip() for S in metadata.get_fields('773')[:1] if 't' in S]
 						if F and C not in F[0]:
 							if FS and CS not in FS[0]:
-								write_error(TIMESTAMP, IDENT, SIF, '141')
+								write_error(TIMESTAMP, IDENT, '100', SIF, '141')
 		# 110c
 		#if '110' in metadata:
 		#	if metadata['110'].indicator1 == '0':
 		#		if not ('c' in metadata['110'] and re.match('^\[.*', metadata['110']['c'])):
-		#			write_error(TIMESTAMP, IDENT, SIF, '142')
+		#			write_error(TIMESTAMP, IDENT, '110', SIF, '142')
 		# 110b
 		if '110' in metadata:
 			if metadata['110'].indicator1 == '1':
 				if 'b' not in metadata['110']:
-					write_error(TIMESTAMP, IDENT, SIF, '143')
+					write_error(TIMESTAMP, IDENT, '110', SIF, '143')
 		# 710c
 		#for F in metadata.get_fields('710'):
 		#	if F.indicator1 == '0':
 		#		if not ('c' in F and re.match('^\[.*', F['c'])):
-		#			write_error(TIMESTAMP, IDENT, SIF, '144')
+		#			write_error(TIMESTAMP, IDENT, '710', SIF, '144')
 		# 710b
 		for F in metadata.get_fields('710'):
 			if F.indicator1 == '1':
 				if 'b' not in F:
-					write_error(TIMESTAMP, IDENT, SIF, '145')
+					write_error(TIMESTAMP, IDENT, '710', SIF, '145')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if ';' in metadata['245']['c']:
 					if re.findall('(?<![^ ] );|;(?! [^ ])', metadata['245']['c']):
-						write_error(TIMESTAMP, IDENT, SIF, '146')
+						write_error(TIMESTAMP, IDENT, '245', SIF, '146')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if ';' in F['r']:
 					if re.findall('(?<![^ ] );|;(?! [^ ])', F['r']):
-						write_error(TIMESTAMP, IDENT, SIF, '147')
+						write_error(TIMESTAMP, IDENT, '505', SIF, '147')
 		# 787n
 		for F in metadata.get_fields('787'):
 			if 'n' in F:
 				if ';' in F['n']:
 					if re.findall('(?<![^ ] );|;(?! [^ ])', F['n']):
-						write_error(TIMESTAMP, IDENT, SIF, '148')
+						write_error(TIMESTAMP, IDENT, '787', SIF, '148')
 		# 787k
 		for F in metadata.get_fields('787'):
 			for SUB in F.get_subfields('k'):
 				if ';' in SUB:
 					if re.findall('(?<![^ ] );|;(?! [^ ])', SUB):
-						write_error(TIMESTAMP, IDENT, SIF, '149')
+						write_error(TIMESTAMP, IDENT, '787', SIF, '149')
 		# 773n
 		for F in metadata.get_fields('773'):
 			if 'n' in F:
 				if ';' in F['n']:
 					if re.findall('(?<![^ ] );|;(?! [^ ])', F['n']):
-						write_error(TIMESTAMP, IDENT, SIF, '150')
+						write_error(TIMESTAMP, IDENT, '773', SIF, '150')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if re.findall('\[ =', metadata['245']['c']):
-					write_error(TIMESTAMP, IDENT, SIF, '151')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '151')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if re.findall('\[ =', F['r']):
-					write_error(TIMESTAMP, IDENT, SIF, '152')
+					write_error(TIMESTAMP, IDENT, '505', SIF, '152')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if len(re.findall('\[', F['r'])) != len(re.findall('\]', F['r'])):
-					write_error(TIMESTAMP, IDENT, SIF, '153')
+					write_error(TIMESTAMP, IDENT, '505', SIF, '153')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if len(re.findall('\[', metadata['245']['c'])) != len(re.findall('\]', metadata['245']['c'])):
-					write_error(TIMESTAMP, IDENT, SIF, '154')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '154')
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0' and '700' not in metadata:
@@ -1008,7 +1004,7 @@ for record in records:
 						for F in metadata.get_fields('506'):
 							if '155' in F.get_subfields('a'): break
 						else:
-							write_error(TIMESTAMP, IDENT, SIF, '155')
+							write_error(TIMESTAMP, IDENT, '245', SIF, '155')
 		# 245c
 		GER=False
 		if '008' in metadata:
@@ -1020,7 +1016,7 @@ for record in records:
 				if 'c' in metadata['245']:
 					for S in re.findall('; \S', metadata['245']['c']):
 						if S[2].isupper():
-							write_error(TIMESTAMP, IDENT, SIF, '156')
+							write_error(TIMESTAMP, IDENT, '245', SIF, '156')
 		# 245c
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '0':
@@ -1030,27 +1026,27 @@ for record in records:
 						for E in ('ed.', 'edd.', 'eds.', 'hg.', '.)'):
 							if E in metadata['245']['c'].lower(): EDIT=True
 						if not EDIT:
-							write_error(TIMESTAMP, IDENT, SIF, '157')
+							write_error(TIMESTAMP, IDENT, '245', SIF, '157')
 		# 245b
 		if '245' in metadata:
 			if 'b' in metadata['245']:
 				if re.match('^\(.*\)$', metadata['245']['b'].strip('/ ')):
-					write_error(TIMESTAMP, IDENT, SIF, '158')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '158')
 		# 245 
 		#if '245' in metadata:
 		#	if 'a' in metadata['245']:
 		#		if re.findall('\D[1-9]\D|\D[1][0-9]\D|\D20\D', metadata['245']['a']):
-		#			write_error(TIMESTAMP, IDENT, SIF, '159')
+		#			write_error(TIMESTAMP, IDENT, '245', SIF, '159')
 		#	if 'b' in metadata['245']:
 		#		if re.findall('\D[1-9]\D|\D[1][0-9]\D|\D20\D', metadata['245']['b']):
-		#			write_error(TIMESTAMP, IDENT, SIF, '160')
+		#			write_error(TIMESTAMP, IDENT, '245', SIF, '160')
 		# 245
 		if '245' in metadata:
 			for SUB in metadata['245'].subfields[1::2]:
 				for R in re.findall('([^ ]+)\. :', SUB):
 					if R not in ('ml', 'st', 'kol', 'spol', 'min', 'Dr', 'atp', 'etc'):
 						if not R[-1:].isupper() and R[-2:] != '..':
-							write_error(TIMESTAMP, IDENT, SIF, '161')
+							write_error(TIMESTAMP, IDENT, '245', SIF, '161')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245'] and metadata['245'].indicator1 == '1':
@@ -1066,7 +1062,7 @@ for record in records:
 							if '162' in F.get_subfields('a'): DOT=True
 						if not DOT:
 							if metadata['245']['c'][:1].islower():
-								write_error(TIMESTAMP, IDENT, SIF, '162')
+								write_error(TIMESTAMP, IDENT, '245', SIF, '162')
 		# 245
 		if '245' in metadata:
 			if metadata['245'].indicator1 == '1':
@@ -1075,7 +1071,7 @@ for record in records:
 					for F in metadata.get_fields('506'):
 						if '163' in F.get_subfields('a'): SKIP=True
 					if not SKIP:
-						write_error(TIMESTAMP, IDENT, SIF, '163')
+						write_error(TIMESTAMP, IDENT, '245', SIF, '163')
 		# 245c
 		if '245' in metadata:
 			if 'c' in metadata['245']:
@@ -1089,7 +1085,7 @@ for record in records:
 							if len(SPL) == 2:
 								if SPL[0][0].isupper() and SPL[1][0].isupper():
 									if ',' not in ' '.join(SPL):
-										write_error(TIMESTAMP, IDENT, SIF, '164')
+										write_error(TIMESTAMP, IDENT, '245', SIF, '164')
 		# 505r
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
@@ -1099,19 +1095,19 @@ for record in records:
 						if len(SPL) == 2:
 							if SPL[0][0].isupper() and SPL[1][0].isupper():
 								if ',' not in ' '.join(SPL):
-									write_error(TIMESTAMP, IDENT, SIF, '165')
+									write_error(TIMESTAMP, IDENT, '505', SIF, '165')
 		# 245c			
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if re.match('.*s\. [0-9]+.*', metadata['245']['c']):
-					write_error(TIMESTAMP, IDENT, SIF, '166')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '166')
 		# 264a
 		for F in metadata.get_fields('264'):
 			IND=0
 			for SUB in F.subfields[0::2]:
 				if SUB == 'a' and IND > 0:
 					if not re.match('.*;$', F.subfields[1::2][IND - 1]):
-						write_error(TIMESTAMP, IDENT, SIF, '167')
+						write_error(TIMESTAMP, IDENT, '264', SIF, '167')
 				IND+=1
 		# 260a
 		if '260' in metadata:
@@ -1119,33 +1115,33 @@ for record in records:
 			for F in metadata['260'].subfields[0::2]:
 				if F == 'a' and IND > 0:
 					if not re.match('.*;$', metadata['260'].subfields[1::2][IND - 1]):
-						write_error(TIMESTAMP, IDENT, SIF, '168')
+						write_error(TIMESTAMP, IDENT, '260', SIF, '168')
 				IND+=1
 		# 264b
 		for F in metadata.get_fields('264'):
 			IND=0
 			for SUB in F.subfields[0::2]:
 				if SUB == 'b' and IND == 0:
-					write_error(TIMESTAMP, IDENT, SIF, '169')
+					write_error(TIMESTAMP, IDENT, '264', SIF, '169')
 				if SUB == 'b' and IND > 0:
 					if not re.match('.*:$', F.subfields[1::2][IND - 1]):
-						write_error(TIMESTAMP, IDENT, SIF, '169')
+						write_error(TIMESTAMP, IDENT, '264', SIF, '169')
 				IND+=1
 		# 260b
 		if '260' in metadata:
 			IND=0
 			for F in metadata['260'].subfields[0::2]:
 				if F == 'b' and IND == 0:
-					write_error(TIMESTAMP, IDENT, SIF, '170')
+					write_error(TIMESTAMP, IDENT, '260', SIF, '170')
 				if F == 'b' and IND > 0:
 					if not re.match('.*:$', metadata['260'].subfields[1::2][IND - 1]):
-						write_error(TIMESTAMP, IDENT, SIF, '170')
+						write_error(TIMESTAMP, IDENT, '260', SIF, '170')
 				IND+=1
 		# 300e
 		for F in metadata.get_fields('300'):
 			if 'e' in F.subfields[:1]:
 				if 'INT' not in [F.value() for F in metadata.get_fields('964')]:
-					write_error(TIMESTAMP, IDENT, SIF, '171')
+					write_error(TIMESTAMP, IDENT, '300', SIF, '171')
 		# 490
 		if '490' in metadata:
 			IND=0
@@ -1154,7 +1150,7 @@ for record in records:
 				if F == 'a' and IND > 0:
 					if SUB[IND - 1] == 'v':
 						if not re.match('.*\.$', metadata['490'].subfields[1::2][IND - 1]):
-							write_error(TIMESTAMP, IDENT, SIF, '172')
+							write_error(TIMESTAMP, IDENT, '490', SIF, '172')
 				IND+=1
 		# 490
 		if '490' in metadata:
@@ -1164,26 +1160,26 @@ for record in records:
 				if F == 'a' and IND > 0:
 					if SUB[IND - 1] == 'a':
 						if not re.match('.*=$', metadata['490'].subfields[1::2][IND - 1]):
-							write_error(TIMESTAMP, IDENT, SIF, '173')
+							write_error(TIMESTAMP, IDENT, '490', SIF, '173')
 				IND+=1
 		# 245c / 505r generic
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if re.match('.*,[^ ].*', metadata['245']['c']):
-					write_error(TIMESTAMP, IDENT, SIF, '174')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '174')
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if re.match('.*,[^ ].*', F['r']):
-					write_error(TIMESTAMP, IDENT, SIF, '175')
+					write_error(TIMESTAMP, IDENT, '505', SIF, '175')
 		# 245c / 505r generic
 		if '245' in metadata:
 			if 'c' in metadata['245']:
 				if re.findall('(?<![0-9\[ ])=', metadata['245']['c']):
-					write_error(TIMESTAMP, IDENT, SIF, '176')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '176')
 		for F in metadata.get_fields('505'):
 			if 'r' in F:
 				if re.findall('(?<![0-9\[ ])=', F['r']):
-					write_error(TIMESTAMP, IDENT, SIF, '177')
+					write_error(TIMESTAMP, IDENT, '505', SIF, '177')
 		# 080
 		PASS=False
 		for F in metadata.get_fields('600'):
@@ -1191,16 +1187,16 @@ for record in records:
 		for F in metadata.get_fields('655'):
 			if F.indicator2 == '7': PASS=True
 		if PASS and '080' not in metadata:
-			write_error(TIMESTAMP, IDENT, SIF, '178')
+			write_error(TIMESTAMP, IDENT, '080', SIF, '178')
 
 		# 3RD BATCH ------------------
 
 		# 100-4
 		#if '100' in metadata and '4' not in metadata['100']:
-		#	write_error(TIMESTAMP, IDENT, SIF, '179')
+		#	write_error(TIMESTAMP, IDENT, '100', SIF, '179')
 		# 110-4
 		if '110' in metadata and '4' not in metadata['110']:
-			write_error(TIMESTAMP, IDENT, SIF, '180')
+			write_error(TIMESTAMP, IDENT, '110', SIF, '180')
 		# 773g semi-colon
 		for F in metadata.get_fields('773'):
 			if 'g' in F and ';' in F['g']:
@@ -1212,32 +1208,32 @@ for record in records:
 					if G + 1 != N: PASS=True
 				elif G + 1 != Q or G + 1 != N: PASS=True
 				if PASS:	
-					write_error(TIMESTAMP, IDENT, SIF, '181')
+					write_error(TIMESTAMP, IDENT, '773', SIF, '181')
 		# 773q 773-9 match 
 		for F in metadata.get_fields('773'):
 			if 'q' in F and '9' in F:
 				if len(F.get_subfields('q')) != len(F.get_subfields('9')):
-					write_error(TIMESTAMP, IDENT, SIF, '182')
+					write_error(TIMESTAMP, IDENT, '773', SIF, '182')
 		# 856y brace
 		for F in metadata.get_fields('856'):
 			if 'y' in F:
 				if '(' in F['y'] or ')' in F['y']:
-					write_error(TIMESTAMP, IDENT, SIF, '183')
+					write_error(TIMESTAMP, IDENT, '856', SIF, '183')
 		# 856z brace
 		for F in metadata.get_fields('856'):
 			if 'z' in F:
 				if '(' not in F['z'] or ')' not in F['z']:
-					write_error(TIMESTAMP, IDENT, SIF, '184')
+					write_error(TIMESTAMP, IDENT, '856', SIF, '184')
 		# 500
 		for F in metadata.get_fields('500'):
 			if 'a' in F:
 				if not re.match('.*([.!?]|\.")$', F['a']):
-					write_error(TIMESTAMP, IDENT, SIF, '185')
+					write_error(TIMESTAMP, IDENT, '500', SIF, '185')
 		# 520
 		for F in metadata.get_fields('520')[-1:]:#the last one
 			if 'a' in F:
 				if not re.match('.*([.!?]|\.")$', F['a']):
-					write_error(TIMESTAMP, IDENT, SIF, '186')
+					write_error(TIMESTAMP, IDENT, '520', SIF, '186')
 		# 700c I
 		if metadata.leader[7] != 'm':
 			for F in metadata.get_fields('700'):
@@ -1249,7 +1245,7 @@ for record in records:
 						FS = [re.sub('^([^\[]+).*','\\1', S['t']).strip() for S in metadata.get_fields('773')[:1] if 't' in S]
 						if C not in F:
 							if CS not in FS:
-								write_error(TIMESTAMP, IDENT, SIF, '187')
+								write_error(TIMESTAMP, IDENT, '700', SIF, '187')
 		# 700c II
 		if metadata.leader[7] == 'm':
 			for F in metadata.get_fields('700'):
@@ -1260,7 +1256,7 @@ for record in records:
 						F = [F['a'].strip('.:=/ ') for F in metadata.get_fields('245') if 'a' in F]
 						if C not in F:
 							if CS not in F:
-								write_error(TIMESTAMP, IDENT, SIF, '188')
+								write_error(TIMESTAMP, IDENT, '700', SIF, '188')
 		# 245c
 		#ROLE=True
 		#for F in metadata.get_fields('700'):
@@ -1271,7 +1267,7 @@ for record in records:
 		#if not ROLE and '100' in metadata:
 		#	if '245' in metadata and 'c' in metadata['245']:
 		#		if ';' not in metadata['245']['c']:
-		#			write_error(TIMESTAMP, IDENT, SIF, '189')
+		#			write_error(TIMESTAMP, IDENT, '245', SIF, '189')
 
 		# << >> TAG count
 		if '700' in metadata and '245' in metadata and 'c' in metadata['245']:
@@ -1285,10 +1281,11 @@ for record in records:
 			if BRACKET > 0:
 				FC = 0
 				for F in metadata.get_fields('100','700'):
-					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+					if metadata.leader[7] == 'm' and len(F.get_subfields('4')) == 1 and F['4'] == 'ctb': continue
+					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb','cwt']: continue
 					FC+=1
 				if FC != BRACKET:
-					write_error(TIMESTAMP, IDENT, SIF, '190')
+					write_error(TIMESTAMP, IDENT, '245', SIF, '190')
  
 
 		# TAG value
@@ -1301,20 +1298,20 @@ for record in records:
 				else:
 					if T != '<<>>' and T[2].islower():
 						if not re.match('.*' + T + '[^<>]+\[=.*', metadata['245']['c']):
-							write_error(TIMESTAMP, IDENT, SIF, '191')
+							write_error(TIMESTAMP, IDENT, '245', SIF, '191')
 
 		# CPK
-		if int(IDENT) >= 2735900:
+		if int(re.sub('^.*-(\d+)$', '\\1', TIMESTAMP, IDENT)) >= 2735900:
 			for F in metadata.get_fields('599'):
 				if 'a' in F and F['a'] == 'CLB-CPK': break
 			else:
-				if 'IST' not in metadata:# library skip
-					write_error(TIMESTAMP, IDENT, SIF, '192')
+				if metadata.leader[7] != 's':# skip periodical
+					write_error(TIMESTAMP, IDENT, '599', SIF, '192')
 
 		# LKR
 		for F in metadata.get_fields('994'):
 			if 'b' in F and not re.match('^\d{9}$', F['b']):
-				write_error(TIMESTAMP, IDENT, SIF, '193')
+				write_error(TIMESTAMP, IDENT, '994', SIF, '193')
 
 		# 594
 		for F in metadata.get_fields('594'):
@@ -1323,21 +1320,56 @@ for record in records:
 				if len(F.subfields) >= 2:
 					if F.subfields[0] == 'x' and F.subfields[2:] == F2.subfields: break
 			else:
-				write_error(TIMESTAMP, IDENT, SIF, '194')
+				write_error(TIMESTAMP, IDENT, '594', SIF, '194')
 			if not metadata.get_fields('100','110','111','700','710','711'):
 				for F3 in metadata.get_fields('500'):
 					if 'a' in F3 and F3['a'] == 'Nepodepsáno.': break
 				else:
-					write_error(TIMESTAMP, IDENT, SIF, '195')
+					write_error(TIMESTAMP, IDENT, '594', SIF, '195')
 			if 'a' and F and 'y' in F:
 				if F['a'] != F['y']:
-					write_error(TIMESTAMP, IDENT, SIF, '196')
+					write_error(TIMESTAMP, IDENT, '594', SIF, '196')
+
+		# TAG presence 
+		AUT=False
+		for F in metadata.get_fields('700'):
+			if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+			if sorted(F.get_subfields('4')) == ['aqt','ctb']: continue
+			if [sub for sub in F.get_subfields('4') if sub != 'aut']: AUT=True
+		for F in metadata.get_fields('100'):
+			if [sub for sub in F.get_subfields('4') if sub != 'aut']: AUT=True
+		if AUT:
+			PASS=False
+			if '245' in metadata and 'c' in metadata['245']:
+				if '<<' in metadata['245']['c']: PASS=True
+			for F in metadata.get_fields('505'):
+				if 'r' in F and '<<' in F['r']: PASS=True
+			if '594' in metadata: PASS=True
+			if not PASS:
+				write_error(TIMESTAMP, IDENT, '594', SIF, '197')
+	
+		# Serial 912
+		if metadata.leader[7] == 's':
+			if '912' in metadata:
+				for F in metadata.get_fields('964'):
+					if 'a' in F and F['a'] in ['ECR', 'ECS']: break
+				else:
+					write_error(TIMESTAMP, IDENT, '594', SIF, '198')
+			for F in metadata.get_fields('964'):
+				if 'a' in F and F['a'] in ['ECR', 'ECS'] and '912' in metadata: break
+			else:
+				write_error(TIMESTAMP, IDENT, '594', SIF, '198')
+
+	COUNTER+=1
 
 # EXIT -------------------
 
+if args.get != 'record': print('TOTAL ' + str(COUNTER))
+if args.check: print('MATCH ' + str(MATCH))
+
 con.commit()
 
-if args.notify: notify()
+if args.notify:	notify()
 
 con.close()
 
