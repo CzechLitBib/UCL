@@ -3,7 +3,7 @@
 # DEVEL REST API
 #
 
-import sqlite3,json,re
+import requests,sqlite3,json,re
 
 from datetime import datetime
 from flask import Flask,make_response,g,render_template,request,abort
@@ -12,6 +12,8 @@ from flask_restful import Resource,Api
 # VAR -------------------------
 
 DB='vufind.db'# record[ident|timestamp|json|xml|marc]
+
+OAI='https://aleph.lib.cas.cz/OAI'
 
 XML_HEAD=b'''<?xml version="1.0" encoding="UTF-8"?>
 <collection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -75,7 +77,12 @@ api.representations['application/ocetet-stream'] = output_raw
 class API(Resource):
 	def get(self):
 		headers = {'Content-Type': 'text/html'}
-		return make_response(render_template('/api.html'), 200, headers)
+		try:
+        		req = requests.get(OAI)
+        		if r.status_code == '200': state = 'up'
+		except:
+        		state = 'down'
+		return make_response(render_template('/api.html', status=state), 200, headers)
 
 class GetDeletes(Resource):
 	def get(self):

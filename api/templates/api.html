@@ -35,6 +35,26 @@
 	<div class="card-header bg-dark">
 		<div class="row">
 			<div class="col">
+				<span class="text-light fs-5">Status</span>
+			</div>
+		</div>
+	</div>
+	<div class="card-body">
+	{% if status == 'up' %}
+		<svg xmlns="http://www.w3.org/2000/svg" style="color: #198754;" width="16" height="16" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8"/></svg><span class="card-text ms-2">Služba Aleph OAI je dostupná.</span>
+	{% endif %}
+
+	{% if status == 'down' %}
+		<svg xmlns="http://www.w3.org/2000/svg" style="color: #dc3545;" width="16" height="16" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8"/></svg><span class="card-text ms-2">Služba Aleph OAI není dostupná.</span>
+	{% endif %}
+
+	</div>
+</div>
+
+<div class="card">
+	<div class="card-header bg-dark">
+		<div class="row">
+			<div class="col">
 				<span class="text-light fs-5">Kódy odpovědí</span>
 			</div>
 		</div>
