@@ -77,11 +77,12 @@ api.representations['application/ocetet-stream'] = output_raw
 class API(Resource):
 	def get(self):
 		headers = {'Content-Type': 'text/html'}
+		state = 'down'
 		try:
-        		req = requests.get(OAI)
-        		if r.status_code == '200': state = 'up'
+			req = requests.get(OAI)
+			if req.status_code == 200: state = 'up'
 		except:
-        		state = 'down'
+			pass
 		return make_response(render_template('/api.html', status=state), 200, headers)
 
 class GetDeletes(Resource):
