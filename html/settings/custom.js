@@ -127,17 +127,12 @@ function error_on_delete() {
 const exception_code = document.getElementById('exception-code');
 exception_code.addEventListener('input', exception_code_change);
 
-async function exception_code_change() {
-	code = document.getElementById('exception-code').value;
-	ident = '';
-	if (exception_code) {
-		payload = {'type':'exception', 'data':code};
-		const ret = await update(payload);
-		if (ret.length !== 0) {
-			ident = ret['value']['ident'];
-		}
+async function exception_on_change(code) {
+	payload = {'type':'exception', 'data':code};
+	const ret = await update(payload);
+	if (ret.length !== 0) {
+		document.getElementById('exception-data').value = ret['value'].join('\n');
 	}
-	document.getElementById('exception-ident').value = ident;
 }
 
 function exception_on_save() {

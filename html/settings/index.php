@@ -97,7 +97,6 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 			$resp['value'] = $query;
 		}
 	}
-
 	if ($req['type'] == 'exception') {
 		$query = $db->query("SELECT * FROM exception WHERE code = '" . $req['data'] . "';");
 		if ($query) {
@@ -177,14 +176,12 @@ if (!empty($_POST)){
 			}
 		}
 		if (isset($_POST['exception-save'])) {
-			if (!empty($_POST['exception-code']) and !empty($_POST['exception-ident'])) {
-				$query = $db->exec("DELETE FROM exception WHERE code = '"
-					. $_POST['exception-code'] . "';");
+			if (!empty($_POST['exception-code']) and !empty($_POST['exception-data'])) {
+				$query = $db->exec("DELETE FROM exception WHERE code = '" . $_POST['exception-code'] . "';");
 				$data = explode("\n", $db->escapeString(trim($_POST['exception-data'])));
 				foreach($data as $ident) {
-					$query = $db->exec("INSERT INTO exception (code, ident) VALUES ('"
-						. $db->escapeString($_POST['exception-code']) . "','" . $ident
-						. "') ON CONFLICT (ident) DO NOTHING;");
+					$query = $db->exec("INSERT OR IGNORE INTO exception (code,ident) VALUES ('"
+						. $_POST['exception-code'] . "','" . $ident . "');");
 					if (!$query) {
 						$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
 					} else {
@@ -426,10 +423,10 @@ if ($db) {
 	$exception_code = '';
 	$exception_ident = '';
 
-	$query = $db->query("SELECT * FROM exception limit 1;");
+	$query = $db->query("SELECT * FROM exception LIMIT 1;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		$exception_code = $result['code'];
-		$exception_ident = implode(',', unserialize($result['ident']));
+		$exception_ident = $result['ident'];
         }
 	
 }
@@ -455,7 +452,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT code FROM exception;");
+	$query = $db->query("SELECT DISTINCT code FROM exception;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo '<option value="' . $result['code'] . '">';
         }
@@ -470,7 +467,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT ident FROM exception ORDER BY ident;");
+	$query = $db->query("SELECT ident FROM exception WHERE code = '" . $exception_code . "' ORDER BY ident;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['ident'] . "\n";
         }

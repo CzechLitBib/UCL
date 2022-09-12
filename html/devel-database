@@ -37,7 +37,7 @@ cur.execute("CREATE TABLE user (code TEXT, aleph TEXT, email TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'user_code' ON user (code);")
 # EXCEPTION
 cur.execute("CREATE TABLE exception (code TEXT, ident TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'exception_code' ON exception (code);")
+cur.execute("CREATE UNIQUE INDEX 'exception_code' ON exception (code,ident);")
 # DICT 260/264a
 cur.execute("CREATE TABLE dict_26XA (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '26XA_value' ON dict_26XA (value);")
