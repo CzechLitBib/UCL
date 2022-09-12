@@ -24,7 +24,7 @@ $uclo_date = '22.06.2022';
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>ČLB Vývoj</title>
+	<title>ČLB Vývoj - UCLO</title>
 	<link href="../bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">

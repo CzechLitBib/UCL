@@ -42,7 +42,7 @@ if (preg_match('/drop:.*/', $raw)) {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>ČLB Vývoj</title>
+	<title>ČLB Vývoj - Formulář</title>
 	<link href="../bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">
