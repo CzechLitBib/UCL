@@ -46,10 +46,10 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 			} else { echo 'DB error.'; }
 		}
 		if ($req['type'] == 'exception') {
-			$query = $db->query("SELECT * FROM exception;");
+			$query = $db->query("SELECT * FROM exception ORDER BY code;");
 			if ($query) {
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo $res['code'] . ';' . implode(',', unserialize($res['ident'])) . "\n";
+					echo $res['code'] . ';' . $res['ident'] . "\n";
 				}
 			} else { echo 'DB error.'; }
 		}
@@ -99,10 +99,13 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	}
 
 	if ($req['type'] == 'exception') {
-		$query = $db->querySingle("SELECT * FROM exception WHERE code = '" . $req['data'] . "';", true);
+		$query = $db->query("SELECT * FROM exception WHERE code = '" . $req['data'] . "';");
 		if ($query) {
-			$query['ident'] = unserialize($query['ident']);
-			$resp['value'] = $query;
+			$data = [];
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				array_push($data, $res['ident']);
+			}
+			$resp['value'] = $data;
 		}
 	}
 	if ($req['type'] == 'user') {
@@ -175,14 +178,18 @@ if (!empty($_POST)){
 		}
 		if (isset($_POST['exception-save'])) {
 			if (!empty($_POST['exception-code']) and !empty($_POST['exception-ident'])) {
-				$query = $db->exec("INSERT INTO exception (code, ident) VALUES ('"
-					. $db->escapeString($_POST['exception-code']) . "','"
-					. serialize(explode(',', preg_replace('/\s+/', '', $db->escapeString($_POST['exception-ident']))))
-					. "') ON CONFLICT (code) DO UPDATE SET ident=excluded.ident;");
-				if (!$query) {
-					$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
-				} else {
-					$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " uložena."; 
+				$query = $db->exec("DELETE FROM exception WHERE code = '"
+					. $_POST['exception-code'] . "';");
+				$data = explode("\n", $db->escapeString(trim($_POST['exception-data'])));
+				foreach($data as $ident) {
+					$query = $db->exec("INSERT INTO exception (code, ident) VALUES ('"
+						. $db->escapeString($_POST['exception-code']) . "','" . $ident
+						. "') ON CONFLICT (ident) DO NOTHING;");
+					if (!$query) {
+						$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
+					} else {
+						$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " uložena."; 
+					}
 				}
 			} else {
 				$_SESSION['result'] = "Prázdý vstup vyjímky."; 
@@ -458,7 +465,19 @@ if ($db) {
 
 		</datalist>
 	</td>
-	<td class="col-10 align-middle"><input type="text" class="form-control" id="exception-ident" size="47" name="exception-ident" value="<?php echo $exception_ident;?>"></td>
+	<td class="col-10 align-middle"><textarea class="form-control" id="exception-data" name="exception-data" rows="3">
+<?php
+
+if ($db) {
+
+	$query = $db->query("SELECT ident FROM exception ORDER BY ident;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo $result['ident'] . "\n";
+        }
+}
+
+?>
+</textarea></td>
 	<td class="col align-middle">
 		<div class="row flex-nowrap">
 			<div class="col p-0 mx-2 mt-1 mb-2 text-center">
@@ -655,7 +674,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT code FROM country ORDER BY code ASC;");
+	$query = $db->query("SELECT code FROM country ORDER BY code;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
         }
@@ -668,7 +687,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT code FROM language ORDER BY code ASC;");
+	$query = $db->query("SELECT code FROM language ORDER BY code;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
         }
@@ -681,7 +700,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT code FROM role ORDER BY code ASC;");
+	$query = $db->query("SELECT code FROM role ORDER BY code;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
         }

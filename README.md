@@ -5,7 +5,7 @@ Library support software.
 
 TODO
 
-- clo / koha
+- exc: textarea
 - zero input save
 - exc: sysno zero pad.
 - exc/.: red color warning table line

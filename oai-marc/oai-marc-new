@@ -5,8 +5,9 @@
 
 # INCLUDE -------------------
 
-import phpserialize,argparse,urllib.request,smtplib,sqlite3,sys,io,re
+import argparse,urllib.request,smtplib,sqlite3,sys,io,re
 
+from phpserialize import unserialize,dict_to_list
 from email.mime.text import MIMEText
 from datetime import datetime,timedelta
 from oaipmh.client import Client
@@ -88,12 +89,12 @@ def notify():
 		# USER | MAIL
 		for user,email in db.execute("SELECT code,email FROM user;").fetchall():
 			html_body=''
-			timestamp = int(datetime.now()-timedelta(days=2))
+			timestamp = int((datetime.now()-timedelta(days=7)).timestamp())
 			# IDENT | TAG | CODE
-			for ident,tag,code in db.execute("SELECT ident,tag,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY code ASC;",(timestamp,user)).fetchall():
+			for ident,tag,code in db.execute("SELECT ident,tag,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY ident DESC;",(timestamp,user)).fetchall():
 				# EXCEPTION
-				exception = db.execute("SELECT ident FROM exception WHERE code = ?;",(code,)).fechone()
-				if exception and ident in unserialize(exception[0]): continue
+				exception = db.execute("SELECT ident FROM exception WHERE code = ?;",(code,)).fetchone()
+				if exception and ident in dict_to_list(unserialize(exception[0].encode('utf-8'),decode_strings=True)): continue
 				# LABEL
 				label = db.execute("SELECT label FROM error WHERE code = ?;",(code,)).fetchone()
 				html_body+=(
@@ -102,7 +103,8 @@ def notify():
 					+ ERROR_PAGE + code + '">' + code + '</a>] ' + label[0].replace('XXX',tag) + '<br>'
 				)
 			if html_body and email:
-				send_mail(email, html_head + html_body + html_footer)
+			#	send_mail(email, html_header + html_body + html_footer)
+				send_mail('bruna@ucl.cas.cz', html_header+ html_body + html_footer)
 	if args.daily:
 		html = ('Dobrý den,<br><br>Kontrolni zprava je dospuna na adrese:<br><br>'
 			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">' + WEEKLY_PAGE + '</a></br></br>'
@@ -112,10 +114,12 @@ def notify():
 		if email: send_mail(email[0], html)
 
 def write_error(timestamp,ident,tag,sif,code):
+	global MATCH
+	MATCH+=1
 	if args.daily:
-		db.execute("INSERT INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
+		db.execute("INSERT OR IGNORE INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
 	if args.weekly:
-		db.execute("INSERT INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
+		db.execute("INSERT OR IGNORE INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
 
 # ARG -------------------
 
@@ -1301,7 +1305,7 @@ for record in records:
 							write_error(TIMESTAMP, IDENT, '245', SIF, '191')
 
 		# CPK
-		if int(re.sub('^.*-(\d+)$', '\\1', TIMESTAMP, IDENT)) >= 2735900:
+		if int(IDENT) >= 2735900:
 			for F in metadata.get_fields('599'):
 				if 'a' in F and F['a'] == 'CLB-CPK': break
 			else:
@@ -1367,9 +1371,9 @@ for record in records:
 if args.get != 'record': print('TOTAL ' + str(COUNTER))
 if args.check: print('MATCH ' + str(MATCH))
 
-con.commit()
+db.commit()
 
 if args.notify:	notify()
 
-con.close()
+db.close()
 

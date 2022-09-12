@@ -13,10 +13,10 @@ cur = con.cursor()
 
 # DAILY
 cur.execute("CREATE TABLE daily (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
-cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
+cur.execute("CREATE UNIQUE INDEX 'daily_code' ON daily (timestamp,ident,tag);")
 # WEEKLY
 cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
-cur.execute("CREATE INDEX 'daily_timestamp' ON daily (timestamp);")
+cur.execute("CREATE UNIQUE INDEX 'weekly_code' ON weekly (timestamp,ident,code);")
 # ERROR
 cur.execute("CREATE TABLE error (code TEXT, label TEXT, text TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'error_code' ON error (code);")
