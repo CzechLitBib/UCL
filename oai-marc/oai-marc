@@ -852,7 +852,7 @@ for record in records:
 				write_error(header.identifier(), '506', SIF, '132', 'Chybí číslo ČNB.')
 		# CNB format
 		for F in metadata.get_fields('015'):
-			if not re.match('^cnb\d{9}$', F.value()):
+			if not re.match('^cnb\d{9}|xxx$', F.value()):
 				write_error(header.identifier(), '015', SIF, '133', 'Chybný tvar čísla ČNB.')
 		#ISBN
 		ISBN=True
