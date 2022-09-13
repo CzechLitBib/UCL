@@ -84,7 +84,7 @@ if (isset($_GET['type'])) {
 	if ($_GET['type'] == 'exception') {
 		$query = $db->query("SELECT * FROM exception ORDER BY code;");
 		$count = $db->querySingle("SELECT COUNT (*) FROM exception;");
-			if ($count == 0) {
+		if ($count == 0) {
 			$error = 'Žádná data.';
 		} else {
 			if ($query) {
@@ -134,9 +134,8 @@ if (isset($_GET['type'])) {
 				. '<thead><tr><th>Kód</th><th>Jméno</th></tr></thead>'
 				. '<tbody>';
 
-					while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo '<tr><td>' . $res['authority'] . '</td>'
-					. '<td>' . $res['name'] . '</td></tr>';
+				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+					echo '<tr><td>' . $res['authority'] . '</td><td>' . $res['name'] . '</td></tr>';
 				}
 
 				echo '</tbody></table>';

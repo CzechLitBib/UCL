@@ -813,7 +813,6 @@ $db->close();
 
 ?>
 
-
 <script src="../bootstrap.min.js"></script>
 <script src="custom.js"></script>
 

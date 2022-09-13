@@ -5,10 +5,7 @@ Library support software.
 
 TODO
 
-- exc: textarea
 - zero input save
-- exc: sysno zero pad.
-- exc/.: red color warning table line
 - Settings exports.
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
