@@ -344,7 +344,7 @@ if ($db) {
 	$error_label = '';
 	$error_text = '';
 
-	$query = $db->query("SELECT code,label,text FROM error limit 1;");
+	$query = $db->query("SELECT code,label,text FROM error ORDER BY code LIMIT 1;");
 
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		$error_code = $result['code'];
@@ -423,7 +423,7 @@ if ($db) {
 	$exception_code = '';
 	$exception_ident = '';
 
-	$query = $db->query("SELECT * FROM exception LIMIT 1;");
+	$query = $db->query("SELECT * FROM exception ORDER BY code LIMIT 1;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		$exception_code = $result['code'];
 		$exception_ident = $result['ident'];
@@ -510,7 +510,7 @@ if ($db) {
 	$user_aleph = '';
 	$user_email = '';
 
-	$query = $db->query("SELECT code,aleph,email FROM user limit 1;");
+	$query = $db->query("SELECT code,aleph,email FROM user ORDER BY code LIMIT 1;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		$user_code = $result['code'];
 		$user_aleph = $result['aleph'];
