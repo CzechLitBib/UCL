@@ -70,7 +70,7 @@ field.patch
 
 # OAI
 
-apt-get install python3-lxml python3-six python3-phpserialize
+apt-get install python3-lxml python3-six
 
 (pyoai-2.5.0)
 

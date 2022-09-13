@@ -98,7 +98,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 		}
 	}
 	if ($req['type'] == 'exception') {
-		$query = $db->query("SELECT * FROM exception WHERE code = '" . $req['data'] . "';");
+		$query = $db->query("SELECT * FROM exception WHERE code = '" . $req['data'] . "' ORDER BY ident DESC;");
 		if ($query) {
 			$data = [];
 			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
@@ -467,7 +467,7 @@ if ($db) {
 
 if ($db) {
 
-	$query = $db->query("SELECT ident FROM exception WHERE code = '" . $exception_code . "' ORDER BY ident;");
+	$query = $db->query("SELECT ident FROM exception WHERE code = '" . $exception_code . "' ORDER BY ident DESC;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['ident'] . "\n";
         }

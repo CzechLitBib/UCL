@@ -127,7 +127,8 @@ function error_on_delete() {
 const exception_code = document.getElementById('exception-code');
 exception_code.addEventListener('input', exception_code_change);
 
-async function exception_on_change(code) {
+async function exception_code_change(code) {
+	code = document.getElementById('exception-code').value;
 	payload = {'type':'exception', 'data':code};
 	const ret = await update(payload);
 	if (ret.length !== 0) {

@@ -7,7 +7,6 @@
 
 import argparse,urllib.request,smtplib,sqlite3,sys,io,re
 
-from phpserialize import unserialize,dict_to_list
 from email.mime.text import MIMEText
 from datetime import datetime,timedelta
 from oaipmh.client import Client
@@ -93,8 +92,7 @@ def notify():
 			# IDENT | TAG | CODE
 			for ident,tag,code in db.execute("SELECT ident,tag,code FROM daily WHERE timestamp >= ? AND user = ? ORDER BY ident DESC;",(timestamp,user)).fetchall():
 				# EXCEPTION
-				exception = db.execute("SELECT ident FROM exception WHERE code = ?;",(code,)).fetchone()
-				if exception and ident in dict_to_list(unserialize(exception[0].encode('utf-8'),decode_strings=True)): continue
+				if db.execute("SELECT * FROM exception WHERE ident = ? AND code = ?;",(ident,code)).fetchone(): continue
 				# LABEL
 				label = db.execute("SELECT label FROM error WHERE code = ?;",(code,)).fetchone()
 				html_body+=(
@@ -105,7 +103,7 @@ def notify():
 			if html_body and email:
 			#	send_mail(email, html_header + html_body + html_footer)
 				send_mail('bruna@ucl.cas.cz', html_header+ html_body + html_footer)
-	if args.daily:
+	if args.weekly:
 		html = ('Dobrý den,<br><br>Kontrolni zprava je dospuna na adrese:<br><br>'
 			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">' + WEEKLY_PAGE + '</a></br></br>'
 			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
@@ -117,9 +115,9 @@ def write_error(timestamp,ident,tag,sif,code):
 	global MATCH
 	MATCH+=1
 	if args.daily:
-		db.execute("INSERT OR IGNORE INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
+		db.execute("INSERT OR IGNORE INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif,tag,code))
 	if args.weekly:
-		db.execute("INSERT OR IGNORE INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif.lower(),tag,code))
+		db.execute("INSERT OR IGNORE INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif,tag,code))
 
 # ARG -------------------
 
