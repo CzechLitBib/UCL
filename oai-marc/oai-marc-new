@@ -114,9 +114,9 @@ def write_error(timestamp,ident,tag,sif,code):
 	global MATCH
 	MATCH+=1
 	if args.daily:
-		db.execute("INSERT OR IGNORE INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif,tag,code))
+		db.execute("INSERT INTO daily (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif,tag,code))
 	if args.weekly:
-		db.execute("INSERT OR IGNORE INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif,tag,code))
+		db.execute("INSERT INTO weekly (timestamp,ident,user,tag,code) VALUES (?,?,?,?,?);", (timestamp,ident,sif,tag,code))
 
 # ARG -------------------
 
@@ -170,19 +170,20 @@ oai = Client(URL, registry)
 
 record,header,about='','',''
 records=[]
-#try:
-if args.get == 'record':
-	header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
-if args.get == 'list':
-	records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-if args.get == 'ident':
-	records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
-if args.get == 'set':
-	records = oai.listSets()
-if args.get == 'meta':
-	records = oai.listMetadataFormats()
-#except:
-#	print('Žádný záznam.')
+
+try:
+	if args.get == 'record':
+		header, record, about = oai.getRecord(metadataPrefix='marc21', identifier=args.ident)
+	if args.get == 'list':
+		records = oai.listRecords(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'ident':
+		records = oai.listIdentifiers(metadataPrefix='marc21', set=args.set, from_=args.from_date, until=args.until_date)
+	if args.get == 'set':
+		records = oai.listSets()
+	if args.get == 'meta':
+		records = oai.listMetadataFormats()
+except:
+	print('Žádný záznam.')
 
 # MAIN -------------------
 
