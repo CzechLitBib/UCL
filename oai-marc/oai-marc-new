@@ -109,8 +109,7 @@ def notify():
 			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
 		)
 		email = db.execute("SELECT email FROM user WHERE code = ?;",(MAIL_USER,)).fetchone()
-		#if email: send_mail(email[0], html)
-		if email: send_mail('bruna@ucl.cas.cz', html)
+		if email: send_mail(email[0], html)
 
 def write_error(timestamp,ident,tag,sif,code):
 	global MATCH
