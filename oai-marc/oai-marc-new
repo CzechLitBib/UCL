@@ -83,7 +83,7 @@ def send_mail(target,message):
 def notify():
 	if args.daily:
 		html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
-		html_footer =('<br>Prosíme o opravu.<br><br>---------------------------<br><br>'
+		html_footer = ('<br>Prosíme o opravu.<br><br>---------------------------<br><br>'
 			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 		# USER | MAIL
 		for user,email in db.execute("SELECT code,email FROM user;").fetchall():
@@ -95,7 +95,7 @@ def notify():
 				if db.execute("SELECT * FROM exception WHERE ident = ? AND code = ?;",(ident,code)).fetchone(): continue
 				# LABEL
 				label = db.execute("SELECT label FROM error WHERE code = ?;",(code,)).fetchone()
-				html_body+=(
+				html_body += (
 					'<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number='
 					+ ident + '&local_base=AV&format=001">' + ident + '</a> ' + ' [<a target="_blank" href="'
 					+ ERROR_PAGE + code + '">' + code + '</a>] ' + label[0].replace('XXX',tag) + '<br>'
@@ -103,12 +103,14 @@ def notify():
 			if html_body and email:
 				send_mail(email, html_header + html_body + html_footer)
 	if args.weekly:
-		html = ('Dobrý den,<br><br>Kontrolni zprava je dospuna na adrese:<br><br>'
-			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">' + WEEKLY_PAGE + '</a></br></br>'
+		html = ('Dobrý den,<br><br>Kontrolní zpráva je dostupná na adrese:<br><br>'
+			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">' + WEEKLY_PAGE + '</a><br><br>'
+			+ '---------------------------<br><br>'
 			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
 		)
 		email = db.execute("SELECT email FROM user WHERE code = ?;",(MAIL_USER,)).fetchone()
-		if email: send_mail(email[0], html)
+		#if email: send_mail(email[0], html)
+		if email: send_mail('bruna@ucl.cas.cz', html)
 
 def write_error(timestamp,ident,tag,sif,code):
 	global MATCH
@@ -842,7 +844,7 @@ for record in records:
 				write_error(TIMESTAMP, IDENT, '506', SIF, '132')
 		# CNB format
 		for F in metadata.get_fields('015'):
-			if not re.match('^cnb\d{9}$', F.value()):
+			if not re.match('^cnb\d{9}|xxx$', F.value()):
 				write_error(TIMESTAMP, IDENT, '015', SIF, '133')
 		#ISBN
 		ISBN=True
