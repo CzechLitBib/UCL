@@ -145,6 +145,8 @@ if (isset($_GET['type'])) {
 	}
 }
 
+$db->close();
+
 ?>
 </div>
 

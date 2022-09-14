@@ -186,13 +186,12 @@ if (!empty($_POST)){
 					$query->bindValue(2, $ident);
 					$query->execute();
 				}
-				$db->exec('COMMIT;');
-				#	if (!$query) {
-				#		$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
-				#	} else {
-				#		$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " uložena."; 
-				#	}
-				#}
+				$transaction = $db->exec('COMMIT;');
+				if (!$transaction) {
+					$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
+				} else {
+					$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " uložena."; 
+				}
 			} else {
 				$_SESSION['result'] = "Prázdý vstup vyjímky."; 
 			}
@@ -254,7 +253,7 @@ if (!empty($_POST)){
 
 	if (!empty($_POST['country-code']) and !empty($_POST['language-code']) and !empty($_POST['role-code'])) {
 		if (isset($_POST['code-save'])) {
-			$country = explode("\n", trim($_POST['country-code']));
+			$country = explode("\n", $db->escapeString(trim($_POST['country-code'])));
 			$query = $db->exec("DELETE FROM country;");
 			#! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 			$db->exec('BEGIN;');
@@ -263,29 +262,30 @@ if (!empty($_POST)){
 				$query->bindValue(1, $c);
 				$query->execute();
 			}
-			$db->exec('COMMIT;');
-			
-			$language = explode("\n", trim($_POST['language-code']));
+			$transaction = $db->exec('COMMIT;');
+			! $transaction ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
+
+			$language = explode("\n", $db->escapeString(trim($_POST['language-code'])));
 			$query = $db->exec("DELETE FROM language;");
-			#! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 			$db->exec('BEGIN;');
 			$query = $db->prepare("INSERT OR IGNORE INTO language (code) VALUES (?);");
 			foreach($language as $l) {
 				$query->bindValue(1, $l);
 				$query->execute();
 			}
-			$db->exec('COMMIT;');
-			
-			$role = explode("\n", trim($_POST['role-code']));
+			$transaction = $db->exec('COMMIT;');
+			! $transaction ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
+
+			$role = explode("\n", $db->escapeString(trim($_POST['role-code'])));
 			$query = $db->exec("DELETE FROM role;");
-			#! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 			$db->exec('BEGIN;');
 			$query = $db->prepare("INSERT INTO role (code) VALUES (?);");
 			foreach($role as $r) {
 				$query->bindValue(1, $r);
 				$query->execute();
 			}
-			$db->exec('COMMIT;');
+			$transaction = $db->exec('COMMIT;');
+			! $transaction ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 		}
 	}
 
@@ -294,14 +294,18 @@ if (!empty($_POST)){
 			$dict = $_POST['dict-option'];
 			$data = explode("\n", trim($_POST['dict-data']));
 			$query = $db->exec("DELETE FROM " . $dict . ";");
-			#! $query ? $_SESSION['result'] = "Zápis slovníku " . $dict_map[$dict] . " selhal." : $_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
 			$db->exec('BEGIN;');
 			$query = $db-prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (" . $val . ");");
 			foreach($data as $d) {
 				$query->bindValue(1, $d);
 				$query->execute();
 			}
-			$db->exec('COMMIT;');
+			$transaction = $db->exec('COMMIT;');
+			if (!$transaction) {
+				$_SESSION['result'] = "Zápis slovníku " . $dict_map[$dict] . " selhal.";
+			} else {
+				$_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
+			}
 		}
 	}
 
