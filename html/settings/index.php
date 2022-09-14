@@ -179,15 +179,20 @@ if (!empty($_POST)){
 			if (!empty($_POST['exception-code']) and !empty($_POST['exception-data'])) {
 				$query = $db->exec("DELETE FROM exception WHERE code = '" . $_POST['exception-code'] . "';");
 				$data = explode("\n", $db->escapeString(trim($_POST['exception-data'])));
+				$query = $db->prepare("INSERT OR IGNORE INTO exception (code,ident) VALUES (?,?);");
+				$db->exec('BEGIN;');
 				foreach($data as $ident) {
-					$query = $db->exec("INSERT OR IGNORE INTO exception (code,ident) VALUES ('"
-						. $_POST['exception-code'] . "','" . $ident . "');");
-					if (!$query) {
-						$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
-					} else {
-						$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " uložena."; 
-					}
+					$query->bindValue(1, $_POST['exception-code']);
+					$query->bindValue(2, $ident);
+					$query->execute();
 				}
+				$db->exec('COMMIT;');
+				#	if (!$query) {
+				#		$_SESSION['result'] = "Zápis vyjímky " . $_POST['exception-code'] . " selhal.";
+				#	} else {
+				#		$_SESSION['result'] = "Vyjímka " . $_POST['exception-code'] . " uložena."; 
+				#	}
+				#}
 			} else {
 				$_SESSION['result'] = "Prázdý vstup vyjímky."; 
 			}
@@ -251,21 +256,36 @@ if (!empty($_POST)){
 		if (isset($_POST['code-save'])) {
 			$country = explode("\n", trim($_POST['country-code']));
 			$query = $db->exec("DELETE FROM country;");
-			$val = "('" . implode("'),('", array_map('trim', $country)) .  "')";
-			$query = $db->exec("INSERT INTO country (code) VALUES " . $val . " ON CONFLICT (code) DO NOTHING;");
-			! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
-
+			#! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
+			$db->exec('BEGIN;');
+			$query = $db->prepare("INSERT OR IGNORE INTO country (code) VALUES (?);");
+			foreach($country as $c) {
+				$query->bindValue(1, $c);
+				$query->execute();
+			}
+			$db->exec('COMMIT;');
+			
 			$language = explode("\n", trim($_POST['language-code']));
 			$query = $db->exec("DELETE FROM language;");
-			$val = "('" . implode("'),('", array_map('trim', $language)) .  "')";
-			$query = $db->exec("INSERT INTO language (code) VALUES " . $val . " ON CONFLICT (code) DO NOTHING;");
-			! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
-		
+			#! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
+			$db->exec('BEGIN;');
+			$query = $db->prepare("INSERT OR IGNORE INTO language (code) VALUES (?);");
+			foreach($language as $l) {
+				$query->bindValue(1, $l);
+				$query->execute();
+			}
+			$db->exec('COMMIT;');
+			
 			$role = explode("\n", trim($_POST['role-code']));
 			$query = $db->exec("DELETE FROM role;");
-			$val = "('" . implode("'),('", array_map('trim', $role)) .  "')";
-			$query = $db->exec("INSERT INTO role (code) VALUES " . $val . " ON CONFLICT (code) DO NOTHING;");
-			! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
+			#! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
+			$db->exec('BEGIN;');
+			$query = $db->prepare("INSERT INTO role (code) VALUES (?);");
+			foreach($role as $r) {
+				$query->bindValue(1, $r);
+				$query->execute();
+			}
+			$db->exec('COMMIT;');
 		}
 	}
 
@@ -274,9 +294,14 @@ if (!empty($_POST)){
 			$dict = $_POST['dict-option'];
 			$data = explode("\n", trim($_POST['dict-data']));
 			$query = $db->exec("DELETE FROM " . $dict . ";");
-			$val = "('" . implode("'),('", array_map('trim', $data)) .  "')";
-			$query = $db->exec("INSERT INTO " . $dict . " (value) VALUES " . $val . " ON CONFLICT (value) DO NOTHING;");
-			! $query ? $_SESSION['result'] = "Zápis slovníku " . $dict_map[$dict] . " selhal." : $_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
+			#! $query ? $_SESSION['result'] = "Zápis slovníku " . $dict_map[$dict] . " selhal." : $_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
+			$db->exec('BEGIN;');
+			$query = $db-prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (" . $val . ");");
+			foreach($data as $d) {
+				$query->bindValue(1, $d);
+				$query->execute();
+			}
+			$db->exec('COMMIT;');
 		}
 	}
 
