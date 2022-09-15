@@ -6,6 +6,7 @@ Library support software.
 TODO
 <pre>
 - Permission module "micro icon button multiselect radio group".
+- DB RO, DB error checks.
 - Zero input save.
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
