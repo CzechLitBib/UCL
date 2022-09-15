@@ -116,6 +116,7 @@ server {
 			fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;
 			fastcgi_index	index.php;
 			fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+			fastcgi_intercept_errors on;
 			include		fastcgi_params;
 		}
 	}
@@ -133,6 +134,7 @@ server {
 		fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;
 		fastcgi_index	index.php;
 		fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_intercept_errors on;
 		include		fastcgi_params;
 	}
 
