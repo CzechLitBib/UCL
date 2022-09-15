@@ -31,6 +31,12 @@ $dict_map = array(
 	'dict_338' => '338'
 );
 
+$code_map = array(
+	'country' => 'Země',
+	'language' => 'Jazyk',
+	'role' => 'Role'
+);
+
 # XHR POST
 
 if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
@@ -70,15 +76,12 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 			} else { echo 'DB error.'; }
 		}
 		if ($req['type'] == 'code') {
-			$query0 = $db->query("SELECT * FROM country;");
-			$query1 = $db->query("SELECT * FROM language;");
-			$query2 = $db->query("SELECT * FROM role;");
-			#if ($query) {
-			#	while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-			#		echo $res['authority'] . ';' . $res['name'] . "\n";
-			#	}
-			#} else { echo 'DB error.'; }
-			echo 'DB error.';
+			$query = $db->query("SELECT * FROM " . $req['code'] . ";");
+			if ($query) {
+				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+					echo $res['code'] . "\n";
+				}
+			} else { echo 'DB error.'; }
 		}
 		if ($req['type'] == 'dictionary') {
 			$query = $db->query("SELECT * FROM " . $req['dict'] . ";");
@@ -119,7 +122,16 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 			$resp['value'] = $query;
 		}
 	}
-
+	if ($req['type'] == 'code') {
+		$query = $db->query("SELECT * FROM " . $req['data'] . ";");
+		if ($query) {
+			$data = [];
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				array_push($data, $res['code']);
+			}
+			$resp['value'] = $data;
+		}
+	}
 	if ($req['type'] == 'dict') {
 		$query = $db->query("SELECT * FROM " . $req['data'] . ";");
 		if ($query) {
@@ -251,41 +263,23 @@ if (!empty($_POST)){
 		}
 	}
 
-	if (!empty($_POST['country-code']) and !empty($_POST['language-code']) and !empty($_POST['role-code'])) {
+	if (!empty($_POST['code-option']) and !empty($_POST['code-data'])) {
 		if (isset($_POST['code-save'])) {
-			$country = explode("\n", $db->escapeString(trim($_POST['country-code'])));
-			$query = $db->exec("DELETE FROM country;");
-			#! $query ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
+			$code = $_POST['code-option'];
+			$data = explode("\n", trim($_POST['code-data']));
+			$query = $db->exec("DELETE FROM " . $code . ";");
 			$db->exec('BEGIN;');
-			$query = $db->prepare("INSERT OR IGNORE INTO country (code) VALUES (?);");
-			foreach($country as $c) {
-				$query->bindValue(1, $c);
+			$query = $db->prepare("INSERT OR IGNORE INTO " . $code . " (code) VALUES (?);");
+			foreach($data as $d) {
+				$query->bindValue(1, $d);
 				$query->execute();
 			}
 			$transaction = $db->exec('COMMIT;');
-			! $transaction ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
-
-			$language = explode("\n", $db->escapeString(trim($_POST['language-code'])));
-			$query = $db->exec("DELETE FROM language;");
-			$db->exec('BEGIN;');
-			$query = $db->prepare("INSERT OR IGNORE INTO language (code) VALUES (?);");
-			foreach($language as $l) {
-				$query->bindValue(1, $l);
-				$query->execute();
+			if (!$transaction) {
+				$_SESSION['result'] = "Zápis kódů " . $code_map[$code] .  " selhal.";
+			} else {
+				$_SESSION['result'] = "Kódy pro " . $code_map[$code] . " uloženy."; 
 			}
-			$transaction = $db->exec('COMMIT;');
-			! $transaction ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
-
-			$role = explode("\n", $db->escapeString(trim($_POST['role-code'])));
-			$query = $db->exec("DELETE FROM role;");
-			$db->exec('BEGIN;');
-			$query = $db->prepare("INSERT INTO role (code) VALUES (?);");
-			foreach($role as $r) {
-				$query->bindValue(1, $r);
-				$query->execute();
-			}
-			$transaction = $db->exec('COMMIT;');
-			! $transaction ? $_SESSION['result'] = "Zápis kódů selhal." : $_SESSION['result'] = "Kódy uloženy."; 
 		}
 	}
 
@@ -295,7 +289,7 @@ if (!empty($_POST)){
 			$data = explode("\n", trim($_POST['dict-data']));
 			$query = $db->exec("DELETE FROM " . $dict . ";");
 			$db->exec('BEGIN;');
-			$query = $db-prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (" . $val . ");");
+			$query = $db-prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (?);");
 			foreach($data as $d) {
 				$query->bindValue(1, $d);
 				$query->execute();
@@ -687,46 +681,27 @@ if ($db) {
 <table class="table my-4">
 	<thead>
 	<tr>
-		<th scope="col">Země</th>
-		<th scope="col">Jazyk</th>
-		<th scope="col">Role</th>
+		<th scope="col">Kategorie</th>
+		<th scope="col">Hodnoty</th>
 		<th scope="col"></th>
 	</tr>
 	</thead>
 	<tbody>
 	<tr>
-	<td class="col-4 align-middle"><textarea class="form-control" id="country-code" name="country-code" rows="5">
+	<td class="align-middle col-4 text-center">
+		<input type="radio" class="btn-check" onchange="code_on_change('country')" name="code-option" id="code-country" value="country" checked>
+		<label class="btn btn-outline-dark m-1" for="code-country">Země</label>
+		<input type="radio" class="btn-check"  onchange="code_on_change('language')" name="code-option" id="code-language" value="language">
+		<label class="btn btn-outline-dark m-1" for="code-language">Jazyk</label>
+		<input type="radio" class="btn-check"  onchange="code_on_change('role')" name="code-option" id="code-role" value="role">
+		<label class="btn btn-outline-dark m-1" for="code-role">Role</label>
+	</td>
+	<td class="col-8 align-middle"><textarea class="form-control" id="code-data" name="code-data" rows="5">
 <?php
 
 if ($db) {
 
 	$query = $db->query("SELECT code FROM country ORDER BY code;");
-	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
-		echo $result['code'] . "\n";
-        }
-}
-
-?>
-</textarea></td>
-	<td class="col-4 align-middle"><textarea class="form-control" id="language-code" name="language-code" rows="5">
-<?php
-
-if ($db) {
-
-	$query = $db->query("SELECT code FROM language ORDER BY code;");
-	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
-		echo $result['code'] . "\n";
-        }
-}
-
-?>
-</textarea></td>
-	<td class="col-4 align-middle"><textarea class="form-control" id="role-code" name="role-code" rows="5">
-<?php
-
-if ($db) {
-
-	$query = $db->query("SELECT code FROM role ORDER BY code;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
         }

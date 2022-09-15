@@ -67,6 +67,15 @@ async function on_export(type) {
 		}
 		payload = {'type':type, 'data':'export', 'dict':dict};
 	}
+	if(type == 'code') {
+		codes = document.getElementsByName('code-option');
+		for(var i=0; i<codes.length; i++) {
+			if (codes[i].checked) {
+				code = document.getElementById(codes[i].id).value;
+			}
+		}
+		payload = {'type':type, 'data':'export', 'code':code};
+	}
 	const ret = await this.export_data(payload, type);
 }
 
@@ -219,16 +228,32 @@ function review_on_delete() {
 
 // CODE
 
+async function code_on_change(code) {
+	payload = {'type':'code', 'data':code};
+	const ret = await update(payload);
+	if (ret.length !== 0) {
+		document.getElementById('code-data').value = ret['value'].join('\n');
+	}
+}
+
 function code_on_save() {
-	document.getElementById('modal-text').textContent = 'Chcete uložit kódy';
-	document.getElementById('modal-text-bold').textContent = '';
+	codes = document.getElementsByName('code-option');
+	for(var i=0; i<codes.length; i++) {
+		if (codes[i].checked) {
+			selector = 'label[for=' + codes[i].id + ']';
+			label = document.querySelector(selector);
+			text = label.innerHTML;
+		}
+	}
+	document.getElementById('modal-text').textContent = 'Chcete uložit kódy pro ';
+	document.getElementById('modal-text-bold').textContent = text;
 	modal.toggle();
 	modal_action = 'code-save';
 }
 
 // DICT
 
-async function dict_on_change(dict) {
+async function dict_on_change(dict) { 
 	payload = {'type':'dict', 'data':dict};
 	const ret = await update(payload);
 	if (ret.length !== 0) {
