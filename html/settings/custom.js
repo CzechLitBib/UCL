@@ -125,7 +125,7 @@ function error_on_save() {
 }
 
 function error_on_delete() {
-	document.getElementById('modal-text').textContent = 'Chcete smazat chybový kód ';
+	document.getElementById('modal-text').textContent = 'Chcete odstranit chybový kód ';
 	document.getElementById('modal-text-bold').textContent = document.getElementById('error-code').value;
 	modal.toggle();
 	modal_action = 'error-delete';
@@ -153,7 +153,7 @@ function exception_on_save() {
 }
 
 function exception_on_delete() {
-	document.getElementById('modal-text').textContent = 'Chcete smazat vyjímku ';
+	document.getElementById('modal-text').textContent = 'Chcete odstranit vyjímku ';
 	document.getElementById('modal-text-bold').textContent = document.getElementById('exception-code').value;
 	modal.toggle();
 	modal_action = 'exception-delete';
@@ -188,7 +188,7 @@ function user_on_save() {
 }
 
 function user_on_delete() {
-	document.getElementById('modal-text').textContent = 'Chcete smazat uživatele ';
+	document.getElementById('modal-text').textContent = 'Chcete odstranit uživatele ';
 	document.getElementById('modal-text-bold').textContent = document.getElementById('user-code').value;
 	modal.toggle();
 	modal_action = 'user-delete';
@@ -220,7 +220,7 @@ function review_on_save() {
 }
 
 function review_on_delete() {
-	document.getElementById('modal-text').textContent = 'Chcete smazat recenzi ';
+	document.getElementById('modal-text').textContent = 'Chcete odstranit recenzi ';
 	document.getElementById('modal-text-bold').textContent = document.getElementById('review-authority').value;
 	modal.toggle();
 	modal_action = 'review-delete';
