@@ -94,16 +94,15 @@ if (!empty($_SESSION['daily'])){
 		$result = $db->query("SELECT * FROM daily WHERE timestamp BETWEEN "
 		. $date->getTimestamp() . " AND " . $date->modify("+1 day")->getTimestamp() . " ORDER BY ident DESC LIMIT 1000;");
 
-		if ($result->numColumns() > 0) {
-
+		if ($res = $result->fetchArray(SQLITE3_ASSOC)) {
 			echo '<table class="table">';
 			echo '<thead class=""><tr><th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr>';
-			echo '</thead><tbody>';
+			echo '</thead>'. $result->numColumns() . '<tbody>';
 
-			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+			foreach ($res as $row) {
 				$exception = $db->querySingle("SELECT * FROM exception WHERE code = '"
-					. $res['code'] . "' AND ident LIKE '%" . ltrim($res['ident'], '0') . "%';");
-				$label = $db->querySingle("SELECT label FROM error WHERE code = '" . $res['code'] . "';");
+					. $row['code'] . "' AND ident LIKE '%" . ltrim($row['ident'], '0') . "%';");
+				$label = $db->querySingle("SELECT label FROM error WHERE code = '" . $row['code'] . "';");
 				if ($exception) { 
 					echo '<tr style="background-color: #fff3cd;">';
 				} else {
@@ -111,10 +110,10 @@ if (!empty($_SESSION['daily'])){
 				}
 				echo '<td class="text-center"><a class="external-link" target="_blank" href="'
 					. 'https://aleph.lib.cas.cz/F/?func=direct&doc_number='
-					. $res['ident'] . '&local_base=AV&format=001"><b>' . $res['ident'] . '</b></a></td>';
-				echo '<td class="text-center">' . $res['user'] . '</td>';
-				echo '<td>' . '<a class="external-link" href="/error/#' . $res['code'] . '"><b>' . $res['code'] . '</b></a></td>';
-				echo '<td>' . preg_replace('/XXX/', $res['tag'], $label) . '.</td></tr>';
+					. $row['ident'] . '&local_base=AV&format=001"><b>' . $row['ident'] . '</b></a></td>';
+				echo '<td class="text-center">' . $row['user'] . '</td>';
+				echo '<td>' . '<a class="external-link" href="/error/#' . $row['code'] . '"><b>' . $row['code'] . '</b></a></td>';
+				echo '<td>' . preg_replace('/XXX/', $row['tag'], $label) . '.</td></tr>';
 			}
 
 			echo '</tbody></table>';
