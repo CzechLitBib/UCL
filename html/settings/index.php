@@ -25,7 +25,7 @@ $dict_map = array(
 	'dict_26XA' => '260/264a',
 	'dict_26XB' => '260/264b',
 	'dict_490' => '490a',
-	'dict_773' => '773',
+	'dict_773' => '773t',
 	'dict_336' => '336',
 	'dict_337' => '337',
 	'dict_338' => '338'
@@ -150,7 +150,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 
 # PHP POST
 
-if (!empty($_POST)){
+if (!empty($_POST)) {
 	if (!empty($_POST['error-code'])) {
 		if (isset($_POST['error-delete'])) {
 			$query = $db->exec("DELETE FROM error WHERE code = '" . $_POST['error-code'] . "';");
@@ -161,7 +161,7 @@ if (!empty($_POST)){
 			}
 		}
 		if (isset($_POST['error-save'])) {
-			if (!empty($_POST['error-label']) and !empty($_POST['error-text'])) {
+			if (!empty(trim($_POST['error-label'])) and !empty(trim($_POST['error-text']))) {
 				$query = $db->exec("INSERT INTO error (code, label, text) VALUES ('"
 					. $db->escapeString($_POST['error-code']) . "','"
 					. $db->escapeString($_POST['error-label']) . "','"
@@ -176,7 +176,7 @@ if (!empty($_POST)){
 				$_SESSION['result'] = "Prázdý vstup chybové zprávy."; 
 			}
 		}
-	}
+	} else { $_SESSION['result'] = "Prázdý chybový kód."; }
 	
 	if (!empty($_POST['exception-code'])) {
 		if (isset($_POST['exception-delete'])) {
@@ -188,7 +188,7 @@ if (!empty($_POST)){
 			}
 		}
 		if (isset($_POST['exception-save'])) {
-			if (!empty($_POST['exception-code']) and !empty($_POST['exception-data'])) {
+			if (!empty($_POST['exception-code']) and !empty(trim($_POST['exception-data']))) {
 				$query = $db->exec("DELETE FROM exception WHERE code = '" . $_POST['exception-code'] . "';");
 				$data = explode("\n", $db->escapeString(trim($_POST['exception-data'])));
 				$query = $db->prepare("INSERT OR IGNORE INTO exception (code,ident) VALUES (?,?);");
@@ -208,7 +208,7 @@ if (!empty($_POST)){
 				$_SESSION['result'] = "Prázdý vstup vyjímky."; 
 			}
 		}
-	}
+	} else { $_SESSION['result'] = "Prázdý kód vyjímky."; } 
 
 	if (!empty($_POST['user-code'])) {
 		if (isset($_POST['user-delete'])) {
@@ -235,7 +235,7 @@ if (!empty($_POST)){
 				$_SESSION['result'] = "Prázdný vstup uživatele."; 
 			}
 		}
-	}
+	} else { $_SESSION['result'] = 'Prázdný kód uživatele.'; }
 
 	if (!empty($_POST['review-authority'])) {
 		if (isset($_POST['review-delete'])) {
@@ -261,9 +261,9 @@ if (!empty($_POST)){
 				$_SESSION['result'] = "Prázdný vstup recenze."; 
 			}
 		}
-	}
+	} else { $_SESSION['result'] = 'Prázdný kód autority.'; }
 
-	if (!empty($_POST['code-option']) and !empty($_POST['code-data'])) {
+	if (!empty($_POST['code-option']) and !empty(trim($_POST['code-data']))) {
 		if (isset($_POST['code-save'])) {
 			$code = $_POST['code-option'];
 			$data = explode("\n", trim($_POST['code-data']));
@@ -281,15 +281,15 @@ if (!empty($_POST)){
 				$_SESSION['result'] = "Kódy pro " . $code_map[$code] . " uloženy."; 
 			}
 		}
-	}
+	} else { $_SESSION['result'] = 'Prázdný seznam hodnot.'; }
 
-	if (!empty($_POST['dict-option']) and !empty($_POST['dict-data'])) {
+	if (!empty($_POST['dict-option']) and !empty(trim($_POST['dict-data']))) {
 		if (isset($_POST['dict-save'])) {
 			$dict = $_POST['dict-option'];
 			$data = explode("\n", trim($_POST['dict-data']));
 			$query = $db->exec("DELETE FROM " . $dict . ";");
 			$db->exec('BEGIN;');
-			$query = $db-prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (?);");
+			$query = $db->prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (?);");
 			foreach($data as $d) {
 				$query->bindValue(1, $d);
 				$query->execute();
@@ -301,7 +301,7 @@ if (!empty($_POST)){
 				$_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
 			}
 		}
-	}
+	} else { $_SESSION['result'] = 'Prázdný seznam hodnot.'; }
 
 	header('Location: /settings/');
 	exit();
