@@ -4,13 +4,13 @@ DESCRIPTION
 Library support software.
 
 TODO
-
-- zero input save
-- Settings exports.
+<pre>
+- Permission module "micro icon button multiselect radio group".
+- Zero input save.
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
 - oai-mdt?
-
+</pre>
 FILE
 <pre>
       api/ - Vufind REST API.
