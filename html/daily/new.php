@@ -94,13 +94,12 @@ if (!empty($_SESSION['daily'])){
 		$result = $db->query("SELECT * FROM daily WHERE timestamp BETWEEN "
 		. $date->getTimestamp() . " AND " . $date->modify("+1 day")->getTimestamp() . " ORDER BY ident DESC LIMIT 1000;");
 
-		if ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+		if ($result->fetchArray()) {
 			$result->reset();
 
 			echo '<table class="table">';
 			echo '<thead class=""><tr><th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr>';
 			echo '</thead><tbody>';
-
 			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
 				$exception = $db->querySingle("SELECT * FROM exception WHERE code = '"
 					. $res['code'] . "' AND ident LIKE '%" . ltrim($res['ident'], '0') . "%';");
@@ -117,7 +116,6 @@ if (!empty($_SESSION['daily'])){
 				echo '<td>' . '<a class="external-link" href="/error/#' . $res['code'] . '"><b>' . $res['code'] . '</b></a></td>';
 				echo '<td>' . preg_replace('/XXX/', $res['tag'], $label) . '.</td></tr>';
 			}
-
 			echo '</tbody></table>';
 		} else {
 			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';

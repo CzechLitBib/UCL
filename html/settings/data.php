@@ -83,64 +83,53 @@ if (isset($_GET['type'])) {
 if (isset($_GET['type'])) {
 	if ($_GET['type'] == 'exception') {
 		$query = $db->query("SELECT * FROM exception ORDER BY code;");
-		$count = $db->querySingle("SELECT COUNT (*) FROM exception;");
-		if ($count == 0) {
-			$error = 'Žádná data.';
+		if ($query->fetchArray()) {
+			$query->reset();
+
+			echo '<table class="table table-responsive">'
+			. '<thead><tr><th>Kód</th><th>SysNo</th></tr></thead>'
+			. '<tbody>';
+
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				echo '<tr><td>' . $res['code'] . '</td><td>' . $res['ident'] . '</td></tr>';
+			}
+			echo '</tbody></table>';
 		} else {
-			if ($query) {
-				echo '<table class="table table-responsive">'
-				. '<thead><tr><th>Kód</th><th>SysNo</th></tr></thead>'
-				. '<tbody>';
-
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo '<tr><td>' . $res['code'] . '</td><td>' . $res['ident'] . '</td></tr>';
-				}
-
-				echo '</tbody></table>';
-
-			} else { echo 'DB error.'; }
+			$error = 'Žádná data.';
 		}
 	}
 	if ($_GET['type'] == 'user') {
 		$query = $db->query("SELECT * FROM user ORDER BY code;");
-		$count = $db->querySingle("SELECT COUNT (*) FROM user;");
-		if ($count == 0) {
-			$error = 'Žádná data.';
+		if ($query->fetchArray()) {
+			$query->reset();
+
+			echo '<table class="table table-responsive">'
+			. '<thead><tr><th>Kód</th><th>Aleph</th><th>E-mail</th></tr></thead>'
+			. '<tbody>';
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				echo '<tr><td>' . $res['code'] . '</td>'
+				. '<td>' . $res['aleph'] . '</td>'
+				. '<td>' . $res['email'] . '</td></tr>';
+			}
+			echo '</tbody></table>';
 		} else {
-			if ($query) {
-				echo '<table class="table table-responsive">'
-				. '<thead><tr><th>Kód</th><th>Aleph</th><th>E-mail</th></tr></thead>'
-				. '<tbody>';
-
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo '<tr><td>' . $res['code'] . '</td>'
-					. '<td>' . $res['aleph'] . '</td>'
-					. '<td>' . $res['email'] . '</td></tr>';
-				}
-
-				echo '</tbody></table>';
-
-			} else { echo 'DB error.'; }
+			$error = 'Žádná data.';
 		}
 	}
 	if ($_GET['type'] == 'review') {
 		$query = $db->query("SELECT * FROM review ORDER BY authority;");
-		$count = $db->querySingle("SELECT COUNT (*) FROM review;");
-		if ($count == 0) {
-			$error = 'Žádná data.';
+		if ($query->fetchArray()) {
+			$query->reset();
+	
+			echo '<table class="table table-responsive">'
+			. '<thead><tr><th>Kód</th><th>Jméno</th></tr></thead>'
+			. '<tbody>';
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				echo '<tr><td>' . $res['authority'] . '</td><td>' . $res['name'] . '</td></tr>';
+			}
+			echo '</tbody></table>';
 		} else {
-			if ($query) {
-				echo '<table class="table table-responsive">'
-				. '<thead><tr><th>Kód</th><th>Jméno</th></tr></thead>'
-				. '<tbody>';
-
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo '<tr><td>' . $res['authority'] . '</td><td>' . $res['name'] . '</td></tr>';
-				}
-
-				echo '</tbody></table>';
-				
-			} else { echo 'DB error.'; }
+			$error = 'Žádná data.';
 		}
 	}
 }
