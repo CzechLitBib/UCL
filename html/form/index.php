@@ -132,12 +132,12 @@ if (isset($_POST['code'])) {
 	<div class="accordion-item">
 		<h2 class="accordion-header" id="headingOne">
 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie.
+	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie a repozitáře ASEP Knihovny AV.
 			</button>
 		</h2>
 		<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 			<div class="accordion-body">
-Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běžný excerpční záběr ČLB či publikacích obtížněji dostupných – přednostně jde o publikace vydané v zahraničí, malonákladové či regionální tiskoviny, články o literatuře v tiskovinách, které se literatuře a literárnímu dění systematicky nevěnují atp. Pakliže daný dokument splňuje podmínky pro zařazení do bází ČLB, bude na základě dodaných podkladů vytvořen bibliografický záznam. Podmínkou pro vytvoření záznamu je dodání plného textu daného dokumentu či umožnění přístupu k němu, aby mohla být provedena obsahová analýza a ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a nebude jej jakkoli dále distribuovat. Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
+Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo běžný excerpční záběr ČLB. Přednostně jde o&nbsp;publikace vydané v&nbsp;zahraničí, malonákladové či regionální tiskoviny a&nbsp;články o&nbsp;literatuře v&nbsp;neliterárních periodikách. Na základě dodaných podkladů bude vytvořen bibliografický záznam. Pro vytvoření záznamu je vítané dodání plného textu dokumentu či umožnění přístupu k&nbsp;němu, aby mohly být ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a&nbsp;nebude jej jakkoli ukládat a&nbsp;dále šířit. Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
 			</div>
 		</div>
 	</div>
@@ -151,19 +151,19 @@ Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běž
 	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
 		<input type="radio" class="btn-check" id="article" name="format" value="článek" onclick="format_load();" checked>
 		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
-		<input type="radio" class="btn-check" id="chapter" name="format" value="část knihy" onclick="format_load();" >
+		<input type="radio" class="btn-check" id="chapter" name="format" value="část knihy" onclick="format_load();">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
 		<input type="radio" class="btn-check" id="book" name="format" value="kniha" onclick="format_load();">
 		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
+		<input type="radio" class="btn-check" id="study" name="format" value="studie" onclick="format_load();">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="study">Sborníková studie</label>
+		<input type="radio" class="btn-check" id="other" name="format" value="other" onclick="format_load();">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="other">Ostatní</label>
 	</div>
 </div>
 
-<h4>Plný text</h4>
+<h4>Voložit plný text</h4>
 <p>Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
-
-<div class="form-floating my-2">
-	<input type="text" class="form-control" id="link" name="link" value="<?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="link">Odkaz</label>
-</div>
 
 <div class="form-group">
 	<label for="pdf" class="form-label">Elektronická verze</label>
@@ -171,27 +171,32 @@ Tímto způsobem jsou přednostně sbírány informace o publikacích mimo běž
 	<input type="file" class="form-control" id="pdf" name="file">
 </div>
 
-<div class="alert alert-warning my-2 pb-2" role="alert">Souhlasím s uveřejněním elektronické verze dokumentu a potvrzuji, že tak mohu učinit a že toto uveřejnění není v rozporu s autorským zákonem a právy třetích stran.
+<div class="form-floating my-2">
+	<input type="text" class="form-control" id="link" name="link" value="<?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="link">Vložte odkaz</label>
+</div>
+
+<div class="alert alert-warning my-2 pb-2" role="alert">Souhlasím s&nbsp;uveřejněním elektronické verze dokumentu a&nbsp;potvrzuji, že tak mohu učinit a&nbsp;že toto uveřejnění není v&nbsp;rozporu s&nbsp;autorským zákonem a&nbsp;právy třetích stran.
 	<div class="form-switch text-end pe-2">
 		<input class="form-check-input" id="public" name="public" type="checkbox" value="1" role="switch" onclick="yesno();">
 		<label class="form-check-label" for="public" id="public-label">Ne</label>
 	</div>
 </div>
 
+<div class="alert alert-warning my-2 pb-2" role="alert">V&nbsp;textu je uvedena dedikace na výzkumnou infrastrukturu. Uvádění dedikace je vyžadováno pro systém hodnocení vědy a&nbsp;výzkumu ČR.<br>(více zde: <a class="alert-link" target="_blank" href="https://clb.ucl.cas.cz/jak-citovat-clb">https://clb.ucl.cas.cz/jak-citovat-clb</a> )
+</div>
+
+
 <div class="form-floating">
-	<input type="email" class="form-control" id="email" name="email" value="<?php if (!$valid and isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="email">Emailová adresa</label>
+	<input type="email" class="form-control" id="email" name="email" value="<?php if (!$valid and isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="email">Emailová adresa pro ověření kontaktu</label>
 	<div id="help" class="form-text text-end">Nikdy neposkytujeme Váš email třetím stranám.</div>
 </div>
 
 <div class="mb-2">
 <div class="form-floating">
 	<textarea class="form-control" id="note" name="note" style="height: 100px"><?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?></textarea>
-	<label for="note">Poznámka</label>
+	<label for="note">Poznámka (nepovinné)</label>
 </div>
 </div>
-
-<p>K bibliografickému záznamu daného dokumentu je možno přidat i odkaz na plný text. Ten bude k záznamu připojen, pokud: a) je daný dokument zpřístupněn prostřednictvím veřejně dostupného repozitáře s perzistentním odkazem (např. repozitáře výzkumných institucí a univerzit atp.). b) pokud jej navrhovatel, který je zároveň autorem dokumentu, dodá v elektronické verzi, souhlasí se zveřejněním a následně tuto skutečnost potvrdí prostřednictvím kontaktního emailu.
-</p>
 
 <hr/>
 
