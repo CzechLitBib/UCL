@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- Aleph Solr hint tooltip
 - Permission module "micro icon button multiselect radio group".
 - DB RO, DB error checks.
 - SQLi protection.
