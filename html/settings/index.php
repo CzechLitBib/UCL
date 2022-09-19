@@ -222,19 +222,15 @@ if (!empty($_POST)) {
 			}
 		}
 		if (isset($_POST['user-save'])) {
-			if (!(empty($_POST['aleph']) and empty($_POST['email']))) {
-				$query = $db->exec("INSERT INTO user (code, aleph, email) VALUES ('"
-					. $db->escapeString($_POST['user-code']) . "','"
-					. $db->escapeString($_POST['aleph']) . "','"
-					. $db->escapeString($_POST['email'])
-					. "') ON CONFLICT (code) DO UPDATE SET aleph=excluded.aleph, email=excluded.email;");
-				if(!$query) {
-					$_SESSION['result'] = "Zápis uživatele " . $_POST['user-code'] . " selhal.";
-				} else {
-					$_SESSION['result'] = "Uživatel " . $_POST['user-code'] . " uložen."; 
-				}
+			$query = $db->exec("INSERT INTO user (code, aleph, email) VALUES ('"
+				. $db->escapeString($_POST['user-code']) . "','"
+				. $db->escapeString($_POST['aleph']) . "','"
+				. $db->escapeString($_POST['email'])
+				. "') ON CONFLICT (code) DO UPDATE SET aleph=excluded.aleph, email=excluded.email;");
+			if(!$query) {
+				$_SESSION['result'] = "Zápis uživatele " . $_POST['user-code'] . " selhal.";
 			} else {
-				$_SESSION['result'] = "Prázdný vstup uživatele."; 
+				$_SESSION['result'] = "Uživatel " . $_POST['user-code'] . " uložen."; 
 			}
 		}
 	}# else { $_SESSION['result'] = 'Prázdný kód uživatele.'; }
