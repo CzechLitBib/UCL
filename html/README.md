@@ -7,7 +7,6 @@ TODO
 -Nginx errors(scandir).
 CAT - Download.
 FORM - SVG logo, switch shift+color.
-F-DATA - pagiantion+color, switch off color.
 </pre>
 
 INSTALL

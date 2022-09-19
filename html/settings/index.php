@@ -176,7 +176,7 @@ if (!empty($_POST)) {
 				$_SESSION['result'] = "Prázdý vstup chybové zprávy."; 
 			}
 		}
-	} else { $_SESSION['result'] = "Prázdý chybový kód."; }
+	}# else { $_SESSION['result'] = "Prázdý chybový kód."; }
 	
 	if (!empty($_POST['exception-code'])) {
 		if (isset($_POST['exception-delete'])) {
@@ -194,9 +194,11 @@ if (!empty($_POST)) {
 				$query = $db->prepare("INSERT OR IGNORE INTO exception (code,ident) VALUES (?,?);");
 				$db->exec('BEGIN;');
 				foreach($data as $ident) {
-					$query->bindValue(1, $_POST['exception-code']);
-					$query->bindValue(2, $ident);
-					$query->execute();
+					if (trim($d)) {
+						$query->bindValue(1, $_POST['exception-code']);
+						$query->bindValue(2, $ident);
+						$query->execute();
+					}
 				}
 				$transaction = $db->exec('COMMIT;');
 				if (!$transaction) {
@@ -208,7 +210,7 @@ if (!empty($_POST)) {
 				$_SESSION['result'] = "Prázdý vstup vyjímky."; 
 			}
 		}
-	} else { $_SESSION['result'] = "Prázdý kód vyjímky."; } 
+	}# else { $_SESSION['result'] = "Prázdý kód vyjímky."; } 
 
 	if (!empty($_POST['user-code'])) {
 		if (isset($_POST['user-delete'])) {
@@ -235,7 +237,7 @@ if (!empty($_POST)) {
 				$_SESSION['result'] = "Prázdný vstup uživatele."; 
 			}
 		}
-	} else { $_SESSION['result'] = 'Prázdný kód uživatele.'; }
+	}# else { $_SESSION['result'] = 'Prázdný kód uživatele.'; }
 
 	if (!empty($_POST['review-authority'])) {
 		if (isset($_POST['review-delete'])) {
@@ -261,7 +263,7 @@ if (!empty($_POST)) {
 				$_SESSION['result'] = "Prázdný vstup recenze."; 
 			}
 		}
-	} else { $_SESSION['result'] = 'Prázdný kód autority.'; }
+	}# else { $_SESSION['result'] = 'Prázdný kód autority.'; }
 
 	if (!empty($_POST['code-option']) and !empty(trim($_POST['code-data']))) {
 		if (isset($_POST['code-save'])) {
@@ -271,8 +273,10 @@ if (!empty($_POST)) {
 			$db->exec('BEGIN;');
 			$query = $db->prepare("INSERT OR IGNORE INTO " . $code . " (code) VALUES (?);");
 			foreach($data as $d) {
-				$query->bindValue(1, $d);
-				$query->execute();
+				if (trim($d)) {
+					$query->bindValue(1, $d);
+					$query->execute();
+				}
 			}
 			$transaction = $db->exec('COMMIT;');
 			if (!$transaction) {
@@ -281,7 +285,7 @@ if (!empty($_POST)) {
 				$_SESSION['result'] = "Kódy pro " . $code_map[$code] . " uloženy."; 
 			}
 		}
-	} else { $_SESSION['result'] = 'Prázdný seznam hodnot.'; }
+	}#else { $_SESSION['result'] = 'Prázdný seznam hodnot.'; }
 
 	if (!empty($_POST['dict-option']) and !empty(trim($_POST['dict-data']))) {
 		if (isset($_POST['dict-save'])) {
@@ -291,8 +295,10 @@ if (!empty($_POST)) {
 			$db->exec('BEGIN;');
 			$query = $db->prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (?);");
 			foreach($data as $d) {
-				$query->bindValue(1, $d);
-				$query->execute();
+				if (trim($d)) {
+					$query->bindValue(1, $d);
+					$query->execute();
+				}
 			}
 			$transaction = $db->exec('COMMIT;');
 			if (!$transaction) {
@@ -301,7 +307,7 @@ if (!empty($_POST)) {
 				$_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
 			}
 		}
-	} else { $_SESSION['result'] = 'Prázdný seznam hodnot.'; }
+	}# else { $_SESSION['result'] = 'Prázdný seznam hodnot.'; }
 
 	header('Location: /settings/');
 	exit();

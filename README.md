@@ -7,7 +7,7 @@ TODO
 <pre>
 - Permission module "micro icon button multiselect radio group".
 - DB RO, DB error checks.
-- Zero input save.
+- SQLi protection.
 - Error text update "Multiple rule update.".
 - Rule 136 dup code.
 - oai-mdt?
