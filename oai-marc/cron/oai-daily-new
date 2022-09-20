@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Crontab daily runner
+#
+# 00 5 * * * root oai-daily >> /var/log/oai-daily.log 2>&1 &
+#
+
+echo "start $(date '+%Y-%m-%d %H:%M:%S')"
+
+# OAI
+
+oai-marc-new \
+	--set UCLO \
+	--from "$(date --date='yesterday' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='today' '+%Y-%m-%d 00:00:00')" \
+	--check \
+	--daily \
+	--notify
+
+echo "end $(date '+%Y-%m-%d %H:%M:%S')"
+
+exit 0
+
