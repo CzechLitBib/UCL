@@ -9,12 +9,12 @@ echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
 # OAI RECENZE
 
-#oai-recenze \
-#	--set UCLO \
-#	--from "$(date --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
-#	--until "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
-#	--check \
-#	--notify
+oai-recenze-new \
+	--set UCLO \
+	--from "$(date --date='8 days ago' '+%Y-%m-%d 00:00:00')" \
+	--until "$(date --date='2 days ago' '+%Y-%m-%d 00:00:00')" \
+	--check \
+	--notify
 
 # OAI CONTROL
 

@@ -60,13 +60,13 @@ def notify():
 	html_body=''
 	mail = db.execute("SELECT email FROM user WHERE code = ?;",(MAIL_USER,)).fetchone()
 
-	for aleph in sorted(RECLIST['A']):
+	for aleph in sorted(RECLIST['A'], reverse=True):
 		html_body+=('<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['A'][aleph] + '<br>')
 
 	if RECLIST['A']: html_body+='<br>'
 
-	for aleph in sorted(RECLIST['B']):
+	for aleph in sorted(RECLIST['B'], reverse=True):
 		html_body+=('<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['B'][aleph] + '<br>')
 
