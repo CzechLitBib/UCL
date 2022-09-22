@@ -84,7 +84,20 @@ if ($valid) {
 			</body></html>';
 
 		mail($target, $subject, $text, $headers, '-f '. $from);
+
+		# CONFIRMATION
+		if ($_POST['public']) {
+			$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>Potvrďte prosím publicitu Vámi zaslaného podkladu kliknutím na následujicí odkaz:';
+		
+		$text.='<br><br><a target="_blank" href="https://vyvoj.ucl.cas.cz/form/confirm.php?' . $id . '">https://vyvoj.ucl.cas.cz/form/confirm.php?' . $id . '<a>
+			<br><br>--------------------------------<br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
+			</body></html>';
+	
+			mail($_POST['email'], $subject, $text, $headers, '-f '. $from);
+		}
 	}
+
+	
 }
 
 ?>
@@ -115,7 +128,7 @@ if (isset($_POST['code'])) {
         if ($error) {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">' . $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
         } elseif ($valid) {
-		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Hotovo. Děkujeme!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Hotovo. Děkujeme! (V případě souhlasu s uveřejněním Vám byl zaslán potvrzovací email.)<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
         } else {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Neplatný kontrolní kód.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
         }
@@ -143,27 +156,10 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	</div>
 </div>
 
-<h4>Formát</h4>
-
 <form method="post" action="." enctype="multipart/form-data">
 
-<div class="row my-4">
-	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
-		<input type="radio" class="btn-check" id="article" name="format" value="článek" onclick="format_load();" checked>
-		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
-		<input type="radio" class="btn-check" id="chapter" name="format" value="část knihy" onclick="format_load();">
-		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
-		<input type="radio" class="btn-check" id="book" name="format" value="kniha" onclick="format_load();">
-		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
-		<input type="radio" class="btn-check" id="study" name="format" value="studie" onclick="format_load();">
-		<label class="btn btn-outline-danger text-nowrap w-100" for="study">Sborníková studie</label>
-		<input type="radio" class="btn-check" id="other" name="format" value="other" onclick="format_load();">
-		<label class="btn btn-outline-danger text-nowrap w-100" for="other">Ostatní</label>
-	</div>
-</div>
-
-<h4>Voložit plný text</h4>
-<p>Nahrejte, prosím, plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
+<h4>Vložit plný text</h4>
+<p>Nahrejte prosím plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení, nebo vložte odkaz na repozitář.</p>
 
 <div class="form-group">
 	<label for="pdf" class="form-label">Elektronická verze</label>
@@ -182,9 +178,12 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	</div>
 </div>
 
-<div class="alert alert-warning my-2 pb-2" role="alert">V&nbsp;textu je uvedena dedikace na výzkumnou infrastrukturu. Uvádění dedikace je vyžadováno pro systém hodnocení vědy a&nbsp;výzkumu ČR.<br>(více zde: <a class="alert-link" target="_blank" href="https://clb.ucl.cas.cz/jak-citovat-clb">https://clb.ucl.cas.cz/jak-citovat-clb</a> )
+<div class="alert alert-warning my-2 pb-2" role="alert">V&nbsp;textu je uvedena dedikace na výzkumnou infrastrukturu. Uvádění dedikace je vyžadováno pro systém hodnocení vědy a&nbsp;výzkumu ČR (více <a class="alert-link" target="_blank" href="https://clb.ucl.cas.cz/jak-citovat-clb">zde</a>).
+	<div class="form-switch text-end pe-2">
+		<input class="form-check-input" id="dedication" name="dedication" type="checkbox" value="1" role="switch" onclick="yesno();">
+		<label class="form-check-label" for="dedication" id="public-label">Ne</label>
+	</div>
 </div>
-
 
 <div class="form-floating">
 	<input type="email" class="form-control" id="email" name="email" value="<?php if (!$valid and isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="email">Emailová adresa pro ověření kontaktu</label>
@@ -200,10 +199,30 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <hr/>
 
+<h4 class="mt-4">Vložit bibliografický údaj</h4>
+<p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
+
+<h4>Formát</h4>
+
+<div class="row my-4">
+	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
+		<input type="radio" class="btn-check" id="article" name="format" value="článek" onclick="format_load();" checked>
+		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
+		<input type="radio" class="btn-check" id="chapter" name="format" value="část knihy" onclick="format_load();">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
+		<input type="radio" class="btn-check" id="book" name="format" value="kniha" onclick="format_load();">
+		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
+		<input type="radio" class="btn-check" id="study" name="format" value="studie" onclick="format_load();">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="study">Sborníková studie</label>
+		<input type="radio" class="btn-check" id="other" name="format" value="other" onclick="format_load();">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="other">Ostatní</label>
+	</div>
+</div>
+
 <div id="chapter-block">
 	<h4 class="mt-4">Text</h4>
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-author" name="text-author" value="<?php if (!$valid and isset($_POST['text-author'])) { echo htmlspecialchars($_POST['text-author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-author">Autor</label>
+		<input type="text" class="form-control" id="text-author" name="text-author" value="<?php if (!$valid and isset($_POST['text-author'])) { echo htmlspecialchars($_POST['text-author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-author">Autor/Editor</label>
 	</div>
 	<div class="form-floating my-2">
 		<input type="text" class="form-control" id="text-name" name="text-name" value="<?php if (!$valid and isset($_POST['text-name'])) { echo htmlspecialchars($_POST['text-name'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-name">Název</label>
@@ -214,12 +233,10 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div id="article-book-block">
 	<h4 class="mt-4">Údaje o dokumentu</h4>
-
-	<p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
 </div>
 
 <div class="form-floating my-2">
-	<input type="text" class="form-control" id="author" name="author" value="<?php if (!$valid and isset($_POST['author'])) { echo htmlspecialchars($_POST['author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="author">Autor</label>
+	<input type="text" class="form-control" id="author" name="author" value="<?php if (!$valid and isset($_POST['author'])) { echo htmlspecialchars($_POST['author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="author">Autor/Editor</label>
 </div>
 <div class="form-floating my-2">
 	<input type="text" class="form-control" id="name" name="name" value="<?php if (!$valid and isset($_POST['name'])) { echo htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="name">Název</label>
@@ -246,13 +263,20 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	</div>
 </div>
 
+<div id="other-block">
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="text-other" name="text-other" value="<?php if (!$valid and isset($_POST['text-other'])) { echo htmlspecialchars($_POST['text-other'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-other">Další údaje</label>
+	</div>
+</div>
+
+
 <div class="row my-4 justify-content-center">
 	<div class="col-4 col-sm-2 d-flex align-items-center justify-content-center">
 		<img src="validation.php" alt="Validation">
 	</div>
 	<div class="col-4 col-sm-3">
 		<div class="form-floating">
-			<input type="text" class="form-control" id="code" name="code" value="" required><label class="text-nowrap" for="code">Kontrolní kód</label>
+			<input type="text" class="form-control" maxlength="5" id="code" name="code" value="" required><label class="text-nowrap" for="code">Kontrolní kód</label>
 		</div>
 	</div>
 </div>

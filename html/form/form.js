@@ -5,6 +5,7 @@ function on_load() {
 	document.getElementById("article-book-block").style.display = "block";
 	document.getElementById("chapter-block").style.display = "none";
 	document.getElementById("chapter-book-block").style.display = "none";
+	document.getElementById("other-block").style.display = "none";
 }
 
 function format_load() {
@@ -16,12 +17,28 @@ function format_load() {
 		document.getElementById("article-book-block").style.display = "none";
 		document.getElementById("chapter-block").style.display = "block";
 		document.getElementById("chapter-book-block").style.display = "block";
+		document.getElementById("other-block").style.display = "none";
 	}
 	if (document.getElementById('book').checked) {
 		document.getElementById("article-block").style.display = "none";
 		document.getElementById("article-book-block").style.display = "block";
 		document.getElementById("chapter-block").style.display = "none";
 		document.getElementById("chapter-book-block").style.display = "block";
+		document.getElementById("other-block").style.display = "none";
+	}
+	if (document.getElementById('study').checked) {
+		document.getElementById("article-block").style.display = "none";
+		document.getElementById("article-book-block").style.display = "none";
+		document.getElementById("chapter-block").style.display = "block";
+		document.getElementById("chapter-book-block").style.display = "block";
+		document.getElementById("other-block").style.display = "none";
+	}
+	if (document.getElementById('other').checked) {
+		document.getElementById("article-block").style.display = "none";
+		document.getElementById("article-book-block").style.display = "block";
+		document.getElementById("chapter-block").style.display = "none";
+		document.getElementById("chapter-book-block").style.display = "none";
+		document.getElementById("other-block").style.display = "block";
 	}
 }
 
