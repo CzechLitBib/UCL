@@ -7,7 +7,6 @@ TODO
 <pre>
 - Settings: 640a dict rule + test.
 - Form - Backend.
-- Form - Alert btn colors.
 - Aleph Solr hint tooltip
 - Aleph Solr add query
 - Permission module "micro icon button multiselect radio group".
