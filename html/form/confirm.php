@@ -8,9 +8,9 @@ if (!$db) {
 	$error = 'Chyba čtení databáze.';
 } else {
 	if(!isset($_GET)) {
-		$error = 'Neplatny token.';
+		$error = 'Neplatný token.';
 	} elseif (!preg_match('/^[a-z0-9]{13}$/', array_key_first($_GET))) {
-		$error = 'Neplatny token.';
+		$error = 'Neplatný token.';
 	} else {
 		$query = $db->exec("UPDATE data SET public = 1 WHERE id = '" . array_key_first($_GET) . "';");
 		if (!$query) { $error = 'Chyba zápisu do databáze.'; }
@@ -40,7 +40,7 @@ if (!$db) {
 <?php
 
 if (!$error) {
-	echo '<p class="fs-1 my-4">Potvrzeno. Dekujeme!</p>';
+	echo '<p class="fs-1 my-4">Potvrzeno. Děkujeme!</p>';
 } else {
 	echo '<p class="fs-1 my-4">'. $error . '</p>';
 }

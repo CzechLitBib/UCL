@@ -4,26 +4,35 @@ session_start();
 
 $id = uniqid();
 
-$error = '';
-
 $from= 'xxx';
 $target = 'xxx';
 $server = 'xxx';
 
-$valid=False;
+$message_map = array(
+	1 => 'Platný kód.',
+	2 => 'Neplatný kód.',
+	3 => 'Chyba čtení databáze.',
+	4 => 'Chyba zápisu databáze.',
+	5 => 'Hotovo. Děkujeme!',
+	6 => 'Hotovo. Děkujeme! (Byl Vám zaslán potvrzovací email.)',
+	7 => 'Chyba formátu souboru.'
+);
+
+if (!isset($_SESSION['message'])) { $_SESSION['message'] = null; }
+if (!isset($_SESSION['public'])) { $_SESSION['public'] = null; }
+
 if (isset($_POST['code']) and isset($_SESSION['secret'])) {
-	if ($_SESSION['secret'] == $_POST['code'])  { $valid=True; }
+	($_SESSION['secret'] == $_POST['code']) ? $_SESSION['message'] = 1 : $_SESSION['message'] = 2;
 }
 
-if ($valid) {
-
+if ($_SESSION['message'] == 1) {
 	# SQL
 	$db = new SQLite3('form.db');
 	if (!$db) {
-		$error = 'Chyba čtení databáze.';
+		$_SESSION['message'] = 3;
 	} else {
 		$query = $db->exec("
-			INSERT INTO data (id,valid,format,public,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote)"
+			INSERT INTO data (id,valid,format,public,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,other)"
 			. " VALUES ('" . $id . "',0,'" . $_POST['format'] . "', 0,'" 
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
@@ -40,7 +49,13 @@ if ($valid) {
 			. str_replace("'", '_', $_POST['other']) . "'"
 			. ");"
 		);
-		if (!$query) { $error = 'Chyba zápisu do databáze.'; }
+		if (!$query) {
+			$_SESSION['message'] = 4;
+		} elseif ($_POST['public']) {
+			$_SESSION['message'] = 6;
+		} else {
+			$_SESSION['message'] = 5;
+		}		
 
 		# FILE
 		if (isset($_FILES['file'])) {
@@ -54,7 +69,7 @@ if ($valid) {
 					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
 					if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 				} else {
-					$error = 'Chyba formátu souboru.';
+					$_SESSION['message'] = 7;
 				}
 			}
 		}
@@ -62,7 +77,7 @@ if ($valid) {
 	}
 
 	# NOTIFY
-	if (!$error) {
+	if ($_SESSION['message'] == 5 or $_SESSION['message'] == 6) {
 
 		$headers="MIME-Version: 1.0\r\n";
 		$headers.="From: UCL Vyvoj <" . $from . ">\r\n";
@@ -81,7 +96,7 @@ if ($valid) {
 			<br><br>--------------------------------<br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
 			</body></html>';
 
-		mail($target, $subject, $text, $headers, '-f '. $from);
+		#mail($target, $subject, $text, $headers, '-f '. $from);
 
 		# CONFIRMATION
 		if ($_POST['public']) {
@@ -94,8 +109,10 @@ if ($valid) {
 			mail($_POST['email'], $subject, $text, $headers, '-f '. $from);
 		}
 	}
-
 	
+	#PRG
+	header('Location: /form/');
+	exit();
 }
 
 ?>
@@ -122,14 +139,9 @@ if ($valid) {
 	<div class="col-md-8">
 <?php
 
-if (isset($_POST['code'])) {
-        if ($error) {
-		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">' . $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-        } elseif ($valid) {
-		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Hotovo. Děkujeme! (V případě souhlasu s uveřejněním Vám byl zaslán potvrzovací email.)<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-        } else {
-		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Neplatný kontrolní kód.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-        }
+if ($_SESSION['message'] > 0) {
+	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">' . $message_map[$_SESSION['message']] . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+	$_SESSION['message'] = null;
 }
 
 ?>
@@ -153,6 +165,8 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 		</div>
 	</div>
 </div>
+
+<hr/>
 
 <form method="post" action="." enctype="multipart/form-data">
 
@@ -188,7 +202,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	<div id="help" class="form-text text-end">Nikdy neposkytujeme Váš email třetím stranám.</div>
 </div>
 
-<div class="mb-2">
+<div class="mb-4">
 <div class="form-floating">
 	<textarea class="form-control" id="note" name="note" style="height: 100px"><?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?></textarea>
 	<label for="note">Poznámka (nepovinné)</label>
@@ -274,7 +288,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	</div>
 	<div class="col-4 col-sm-3">
 		<div class="form-floating">
-			<input type="text" class="form-control" maxlength="5" id="code" name="code" value="" required><label class="text-nowrap" for="code">Kontrolní kód</label>
+			<input type="text" class="form-control text-center" maxlength="5" id="code" name="code" value="" required><label class="text-nowrap" for="code">Kontrolní kód</label>
 		</div>
 	</div>
 </div>
