@@ -193,7 +193,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 <div class="alert alert-warning my-2 pb-2" role="alert">V&nbsp;textu je uvedena dedikace na výzkumnou infrastrukturu. Uvádění dedikace je vyžadováno pro systém hodnocení vědy a&nbsp;výzkumu ČR (více <a class="alert-link" target="_blank" href="https://clb.ucl.cas.cz/jak-citovat-clb">zde</a>).
 	<div class="form-switch text-end pe-2">
 		<input class="form-check-input" id="dedication" name="dedication" type="checkbox" value="1" role="switch" onclick="yesno();">
-		<label class="form-check-label" for="dedication" id="public-label">Ne</label>
+		<label class="form-check-label" for="dedication" id="dedication-label">Ne</label>
 	</div>
 </div>
 
