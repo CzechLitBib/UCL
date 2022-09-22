@@ -22,12 +22,9 @@ if ($valid) {
 	if (!$db) {
 		$error = 'Chyba čtení databáze.';
 	} else {
-		$public = 0;
-		if (isset($_POST['public'])) { $public = 1; }
-			
 		$query = $db->exec("
 			INSERT INTO data (id,valid,format,public,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote)"
-			. " VALUES ('" . $id . "',0,'" . $_POST['format'] . "'," . $public . ",'" 
+			. " VALUES ('" . $id . "',0,'" . $_POST['format'] . "', 0,'" 
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
@@ -39,7 +36,8 @@ if ($valid) {
 			. str_replace("'", '_', $_POST['publisher']) . "','"
 			. str_replace("'", '_', $_POST['year']) . "','"
 			. str_replace("'", '_', $_POST['source']) . "','"
-			. str_replace("'", '_', $_POST['quote']) . "'"
+			. str_replace("'", '_', $_POST['quote']) . "','"
+			. str_replace("'", '_', $_POST['other']) . "'"
 			. ");"
 		);
 		if (!$query) { $error = 'Chyba zápisu do databáze.'; }
@@ -265,7 +263,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div id="other-block">
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-other" name="text-other" value="<?php if (!$valid and isset($_POST['text-other'])) { echo htmlspecialchars($_POST['text-other'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-other">Další údaje</label>
+		<input type="text" class="form-control" id="text-other" name="other" value="<?php if (!$valid and isset($_POST['other'])) { echo htmlspecialchars($_POST['other'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="other">Další údaje</label>
 	</div>
 </div>
 
