@@ -5,6 +5,8 @@ Library support software.
 
 TODO
 <pre>
+- Form - Backend.
+- Form - Sliders.
 - Aleph Solr hint tooltip
 - Aleph Solr add query
 - Permission module "micro icon button multiselect radio group".
