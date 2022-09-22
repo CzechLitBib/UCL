@@ -42,19 +42,6 @@ function format_load() {
 	}
 }
 
-// Toggle button
-function yesno() {
-    
-    var checkbox = document.getElementById('public');
-    var label = document.getElementById('public-label');
-    if (!checkbox.checked) {
-        label.innerHTML = "Ne";
-    }
-    else {
-        label.innerHTML = "Ano";
-    }
-}
-
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (function () {
   'use strict'

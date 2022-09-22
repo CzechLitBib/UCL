@@ -32,8 +32,8 @@ if ($_SESSION['message'] == 1) {
 		$_SESSION['message'] = 3;
 	} else {
 		$query = $db->exec("
-			INSERT INTO data (id,valid,format,public,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,other)"
-			. " VALUES ('" . $id . "',0,'" . $_POST['format'] . "', 0,'" 
+			INSERT INTO data (id,format,public,dedication,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,other)"
+			. " VALUES ('" . $id . "','" . $_POST['format'] . "', 0," . $_POST['dedication'] . ",'"
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
@@ -184,16 +184,30 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 </div>
 
 <div class="alert alert-warning my-2 pb-2" role="alert">Souhlasím s&nbsp;uveřejněním elektronické verze dokumentu a&nbsp;potvrzuji, že tak mohu učinit a&nbsp;že toto uveřejnění není v&nbsp;rozporu s&nbsp;autorským zákonem a&nbsp;právy třetích stran.
-	<div class="form-switch text-end pe-2">
-		<input class="form-check-input" id="public" name="public" type="checkbox" value="1" role="switch" onclick="yesno();">
-		<label class="form-check-label" for="public" id="public-label">Ne</label>
+
+	<div class="row gap-2 mt-2 justify-content-end">
+		<div class="d-grid col-2 col-md-1 p-0">
+			<input type="radio" class="btn-check alert-link" id="public-true" name="public" value="1">
+			<label class="btn btn-outline-danger btn-sm" for="public-true">Ano</label>
+		</div>
+		<div class="d-grid col-2 col-md-1 p-0 me-3">
+			<input type="radio" class="btn-check" id="public-false" name="public" value="0" checked>
+			<label class="btn btn-outline-danger btn-sm" for="public-false">Ne</label>
+		</div>
 	</div>
 </div>
 
 <div class="alert alert-warning my-2 pb-2" role="alert">V&nbsp;textu je uvedena dedikace na výzkumnou infrastrukturu. Uvádění dedikace je vyžadováno pro systém hodnocení vědy a&nbsp;výzkumu ČR (více <a class="alert-link" target="_blank" href="https://clb.ucl.cas.cz/jak-citovat-clb">zde</a>).
-	<div class="form-switch text-end pe-2">
-		<input class="form-check-input" id="dedication" name="dedication" type="checkbox" value="1" role="switch" onclick="yesno();">
-		<label class="form-check-label" for="dedication" id="dedication-label">Ne</label>
+
+	<div class="row gap-2 mt-2 justify-content-end">
+		<div class="d-grid col-2 col-md-1 p-0">
+			<input type="radio" class="btn-check alert-link" id="dedication-true" name="dedication" value="1">
+			<label class="btn btn-outline-danger btn-sm" for="dedication-true">Ano</label>
+		</div>
+		<div class="d-grid col-2 col-md-1 p-0 me-3">
+			<input type="radio" class="btn-check" id="dedication-false" name="dedication" value="0" checked>
+			<label class="btn btn-outline-danger btn-sm" for="dedication-false">Ne</label>
+		</div>
 	</div>
 </div>
 

@@ -12,9 +12,9 @@ cur = con.cursor()
 
 cur.execute("""CREATE TABLE data (
 	id		TEXT,
-	valid		INTEGER,
 	format		TEXT,
 	public		INTEGER,
+	dedication	INTEGER,
 	link		TEXT,
 	email		TEXT,
 	note		TEXT,
