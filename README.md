@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- Settings: 640a dict rule + test.
 - Form - Backend.
 - Form - Sliders.
 - Aleph Solr hint tooltip
