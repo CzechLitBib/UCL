@@ -188,11 +188,11 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	<div class="row gap-2 mt-2 justify-content-end">
 		<div class="d-grid col-2 col-md-1 p-0">
 			<input type="radio" class="btn-check alert-link" id="public-true" name="public" value="1">
-			<label class="btn btn-sm btn-outline-secondary" for="public-true">Ano</label>
+			<label class="btn btn-sm btn-outline-dark" for="public-true">Ano</label>
 		</div>
 		<div class="d-grid col-2 col-md-1 p-0 me-3">
 			<input type="radio" class="btn-check" id="public-false" name="public" value="0" checked>
-			<label class="btn btn-sm btn-outline-secondary" for="public-false">Ne</label>
+			<label class="btn btn-sm btn-outline-dark" for="public-false">Ne</label>
 		</div>
 	</div>
 </div>
@@ -202,11 +202,11 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	<div class="row gap-2 mt-2 justify-content-end">
 		<div class="d-grid col-2 col-md-1 p-0">
 			<input type="radio" class="btn-check alert-link" id="dedication-true" name="dedication" value="1">
-			<label class="btn btn-sm btn-outline-secondary" for="dedication-true">Ano</label>
+			<label class="btn btn-sm btn-outline-dark" for="dedication-true">Ano</label>
 		</div>
 		<div class="d-grid col-2 col-md-1 p-0 me-3">
 			<input type="radio" class="btn-check" id="dedication-false" name="dedication" value="0" checked>
-			<label class="btn btn-sm btn-outline-secondary" for="dedication-false">Ne</label>
+			<label class="btn btn-sm btn-outline-dark" for="dedication-false">Ne</label>
 		</div>
 	</div>
 </div>
