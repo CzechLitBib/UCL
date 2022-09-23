@@ -6,13 +6,11 @@ Library support software.
 TODO
 <pre>
 - Settings: 640a dict rule + test.
-- Form - Backend.
-- Aleph Solr hint tooltip
-- Aleph Solr add query
-- Permission module "micro icon button multiselect radio group".
+- Form: Backend.
+- Aleph: tooltip + add query JS.
+- Settings: Permission module "micro icon button multiselect radio group".
 - DB RO, DB error checks.
 - SQLi protection.
-- Error text update "Multiple rule update.".
 - Rule 136 dup code.
 - oai-mdt?
 </pre>

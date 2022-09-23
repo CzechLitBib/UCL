@@ -17,7 +17,7 @@ if($_SESSION['group'] !== 'admin') {
 
 if (!isset($_SESSION['result'])) { $result = null; }
 
-$db = new SQLite3('devel.db');
+$db = new SQLite3('/var/www/data/devel.db');
 
 if (!$db) { $_SESSION['result'] = 'Chyba čtení databáze.'; }
 

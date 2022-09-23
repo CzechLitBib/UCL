@@ -23,7 +23,7 @@ if (!empty($_POST['date'])) {
 	exit();
 }
 
-$db = new SQLite3('devel.db');
+$db = new SQLite3('/var/www/data/devel.db');
 
 ?>
 
