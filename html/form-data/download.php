@@ -23,7 +23,7 @@ if (!isset($_GET['id'])) {
 header("Content-type: application/octet-stream; charset=UTF-8");
 header("Content-disposition: attachment;filename=" . $_GET['id'] . ".txt");
 
-$db = new SQLite3('form.db');
+$db = new SQLite3('/var/www/data/form/form.db');
 
 if ($db) {
 	if (isset($_GET['id']) and isset($_GET['type'])) {

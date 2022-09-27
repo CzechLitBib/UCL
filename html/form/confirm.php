@@ -2,7 +2,7 @@
 
 $error='';
 
-$db = new SQLite3('form.db');
+$db = new SQLite3('/var/www/data/form/form.db');
 
 if (!$db) {
 	$error = 'Chyba čtení databáze.';

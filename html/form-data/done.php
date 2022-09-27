@@ -15,16 +15,16 @@ if(!in_array($_SESSION['group'], array('admin','form'))) {
         exit();
 }
 
-$from = 'xxx';
-$target = 'xxx';
-$server = 'xxx';
+$from = 'webmaster@vyvoj.ucl.cas.cz';
+$target = 'gnot@ucl.cas.cz';
+$server = 'mail.ucl.cas.cz';
 
 if (!isset($_GET['id'])) {
 	header('HTTP/1.0 400 Bad Request', true, 400);
 	exit();
 }
 
-$db = new SQLite3('form.db');
+$db = new SQLite3('/var/www/data/form/form.db');
 
 if ($db) {
 	if (isset($_GET['id']) and isset($_GET['type'])) {

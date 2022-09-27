@@ -8,6 +8,9 @@ $from= 'xxx';
 $target = 'xxx';
 $server = 'xxx';
 
+$DB_PATH='/var/www/data/form/form.db';
+$FILE_PATH='/var/www/data/form/data/';
+
 $message_map = array(
 	1 => 'Platný kód.',
 	2 => 'Neplatný kód.',
@@ -27,7 +30,7 @@ if (isset($_POST['code']) and isset($_SESSION['secret'])) {
 
 if ($_SESSION['message'] == 1) {
 	# SQL
-	$db = new SQLite3('form.db');
+	$db = new SQLite3($DB_PATH);
 	if (!$db) {
 		$_SESSION['message'] = 3;
 	} else {
@@ -65,7 +68,7 @@ if ($_SESSION['message'] == 1) {
 				if ($ftype == 'application/pdf') {
 					# escape dot, space, slash and quote
 					$fn = preg_replace("/^\.+| |\/|'|\.+$/", '_', $_FILES['file']['name']);
-					move_uploaded_file($_FILES['file']['tmp_name'], 'data/' . $id . '_' . $fn);
+					move_uploaded_file($_FILES['file']['tmp_name'], $FILE_PATH . $id . '_' . $fn);
 					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
 					if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 				} else {
@@ -151,7 +154,7 @@ if ($_SESSION['message'] > 0) {
 </div>
 <div class="p-4 text-center"><h2>Návrhy podkladů pro zpracování v ČLB</h2></div>
 
-<div class="accordion mb-4" id="accordionExample">
+<div class="accordion shadow-sm mb-4" id="accordionExample">
 	<div class="accordion-item">
 		<h2 class="accordion-header" id="headingOne">
 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -175,7 +178,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div class="form-group">
 	<label for="pdf" class="form-label">Elektronická verze</label>
-	<span class="badge bg-warning text-dark">PDF &lt; 5MB</span>
+	<span class="badge bg-danger text-white">PDF &lt; 5MB</span>
 	<input type="file" class="form-control" id="pdf" name="file">
 </div>
 
