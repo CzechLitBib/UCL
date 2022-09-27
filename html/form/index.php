@@ -10,6 +10,7 @@ $server = 'xxx';
 
 $DB_PATH='/var/www/data/form/form.db';
 $FILE_PATH='/var/www/data/form/data/';
+$UPLOAD='';
 
 $message_map = array(
 	1 => 'Platný kód.',
@@ -67,9 +68,9 @@ if ($_SESSION['message'] == 1) {
 				$ftype = $finfo->file($_FILES['file']['tmp_name']);
 				if ($ftype == 'application/pdf') {
 					# escape dot, space, slash and quote
-					$fn = preg_replace("/^\.+| |\/|'|\.+$/", '_', $_FILES['file']['name']);
-					move_uploaded_file($_FILES['file']['tmp_name'], $FILE_PATH . $id . '_' . $fn);
-					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $fn . "');");
+					$UPLOAD = preg_replace("/^\.+| |\/|'|\.+$/", '_', $_FILES['file']['name']);
+					move_uploaded_file($_FILES['file']['tmp_name'], $FILE_PATH . $id . '_' . $UPLOAD);
+					$query = $db->exec("INSERT INTO file (id,name) VALUES ('" . $id . "','". $UPLOAD . "');");
 					if (!$query) { $error = 'Chyba zápisu do databáze.'; }
 				} else {
 					$_SESSION['message'] = 7;
@@ -103,12 +104,23 @@ if ($_SESSION['message'] == 1) {
 
 		# CONFIRMATION
 		if ($_POST['public']) {
-			$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>Potvrďte prosím publicitu Vámi zaslaného podkladu kliknutím na následujicí odkaz:';
+			$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>';
+			$text.='z Vaší emailové adresy byl odeslán souhlas se zveřejněním následujících souborů<br>';
+			$text.='v databázích České literární bibliografie:<br><br>';
 		
-		$text.='<br><br><a target="_blank" href="https://vyvoj.ucl.cas.cz/form/confirm.php?' . $id . '">https://vyvoj.ucl.cas.cz/form/confirm.php?' . $id . '<a>
-			<br><br>--------------------------------<br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
-			</body></html>';
-	
+			if($UPLOAD) { 
+				$text.= $UPLOAD;
+			} elseif (isset($_POST['link'])) {
+				$text.= htmlspecialchars($_POST['link']);
+			}
+
+			$text.='<br><br>Prosím, potvrďte tento souhlas kliknutím na následující odkaz:';		
+			$text.='<br><br><a target="_blank" href="https://vyvoj.ucl.cas.cz/form/confirm.php?'
+				. $id . '">https://vyvoj.ucl.cas.cz/form/confirm.php?'
+				. $id . '<a><br><br>Děkujeme za spolupráci<br>';
+			$text.='Tým České literární bibliografie<br><br>--------------------------------<br>';
+			$text.='TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.</body></html>';
+
 			mail($_POST['email'], $subject, $text, $headers, '-f '. $from);
 		}
 	}
@@ -158,7 +170,7 @@ if ($_SESSION['message'] > 0) {
 	<div class="accordion-item">
 		<h2 class="accordion-header" id="headingOne">
 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie a&nbsp;repozitáře ASEP Knihovny AV.
+	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie a&nbsp;repozitáře ASEP Knihovny AV.<br/>Dokument je možné dodat buď v&nbsp;elektronické verzi (preferováno), nebo alespoň formou vyplnění bibliografické citace. 
 			</button>
 		</h2>
 		<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
@@ -169,12 +181,20 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	</div>
 </div>
 
+<div class="row my-4">
+        <div class="d-grid gap-2 d-sm-flex justify-content-md-center">
+                <input type="radio" class="btn-check" id="fulltext" name="type" onclick="type_load();" checked>
+                <label class="btn btn-outline-danger w-100" for="fulltext">Plný text</label>
+                <input type="radio" class="btn-check" id="biblio" name="type" onclick="type_load();">
+                <label class="btn btn-outline-danger text-nowrap w-100" for="biblio">Bibliografický údaj</label>
+        </div>
+</div>
+
 <hr/>
 
 <form method="post" action="." enctype="multipart/form-data">
-
-<h4>Vložit plný text</h4>
-<p>Nahrejte prosím plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení, nebo vložte odkaz na repozitář.</p>
+<div id="fulltext-block">
+<p>Nahrejte prosím plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
 
 <div class="form-group">
 	<label for="pdf" class="form-label">Elektronická verze</label>
@@ -186,49 +206,33 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	<input type="text" class="form-control" id="link" name="link" value="<?php if (!$valid and isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="link">Vložte odkaz</label>
 </div>
 
-<div class="alert alert-warning my-2 pb-2" role="alert">Souhlasím s&nbsp;uveřejněním elektronické verze dokumentu a&nbsp;potvrzuji, že tak mohu učinit a&nbsp;že toto uveřejnění není v&nbsp;rozporu s&nbsp;autorským zákonem a&nbsp;právy třetích stran.
-
-	<div class="row gap-2 mt-2 justify-content-end">
-		<div class="d-grid col-2 col-md-1 p-0">
-			<input type="radio" class="btn-check alert-link" id="public-true" name="public" value="1">
-			<label class="btn btn-sm btn-outline-dark" for="public-true">Ano</label>
-		</div>
-		<div class="d-grid col-2 col-md-1 p-0 me-3">
-			<input type="radio" class="btn-check" id="public-false" name="public" value="0" checked>
-			<label class="btn btn-sm btn-outline-dark" for="public-false">Ne</label>
-		</div>
-	</div>
-</div>
-
-<div class="alert alert-warning my-2 pb-2" role="alert">V&nbsp;textu je uvedena dedikace na výzkumnou infrastrukturu. Uvádění dedikace je vyžadováno pro systém hodnocení vědy a&nbsp;výzkumu ČR (více <a class="alert-link" target="_blank" href="https://clb.ucl.cas.cz/jak-citovat-clb">zde</a>).
-
-	<div class="row gap-2 mt-2 justify-content-end">
-		<div class="d-grid col-2 col-md-1 p-0">
-			<input type="radio" class="btn-check alert-link" id="dedication-true" name="dedication" value="1">
-			<label class="btn btn-sm btn-outline-dark" for="dedication-true">Ano</label>
-		</div>
-		<div class="d-grid col-2 col-md-1 p-0 me-3">
-			<input type="radio" class="btn-check" id="dedication-false" name="dedication" value="0" checked>
-			<label class="btn btn-sm btn-outline-dark" for="dedication-false">Ne</label>
-		</div>
-	</div>
-</div>
-
 <div class="form-floating">
 	<input type="email" class="form-control" id="email" name="email" value="<?php if (!$valid and isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="email">Emailová adresa pro ověření kontaktu</label>
 	<div id="help" class="form-text text-end">Nikdy neposkytujeme Váš email třetím stranám.</div>
 </div>
 
-<div class="mb-4">
 <div class="form-floating">
 	<textarea class="form-control" id="note" name="note" style="height: 100px"><?php if (!$valid and isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?></textarea>
 	<label for="note">Poznámka (nepovinné)</label>
 </div>
+
+<div class="alert alert-warning mt-3 pb-2" role="alert">Souhlasím s&nbsp;uveřejněním elektronické verze dokumentu a&nbsp;potvrzuji, že tak mohu učinit a&nbsp;že toto uveřejnění není v&nbsp;rozporu s&nbsp;autorským zákonem a&nbsp;právy třetích stran.
+
+	<div class="row gap-2 mt-2 justify-content-end">
+		<div class="d-grid col-2 col-md-1 p-0">
+			<input type="radio" class="btn-check alert-link" id="public-true" name="public" value="1" onclick="mail_req(1)">
+			<label class="btn btn-sm btn-outline-dark" for="public-true">Ano</label>
+		</div>
+		<div class="d-grid col-2 col-md-1 p-0 me-3">
+			<input type="radio" class="btn-check" id="public-false" name="public" value="0" onclick="mail_req(0)" checked>
+			<label class="btn btn-sm btn-outline-dark" for="public-false">Ne</label>
+		</div>
+	</div>
 </div>
 
-<hr/>
+</div>
+<div id="biblio-block">
 
-<h4 class="mt-4">Vložit bibliografický údaj</h4>
 <p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
 
 <h4>Formát</h4>
@@ -298,6 +302,22 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	</div>
 </div>
 
+</div>
+<hr/>
+
+<div class="alert alert-warning my-2 pb-2" role="alert">V&nbsp;textu je uvedena dedikace na výzkumnou infrastrukturu. Uvádění dedikace je vyžadováno pro systém hodnocení vědy a&nbsp;výzkumu ČR (více <a class="alert-link" target="_blank" href="https://clb.ucl.cas.cz/jak-citovat-clb">zde</a>).
+
+	<div class="row gap-2 mt-2 justify-content-end">
+		<div class="d-grid col-2 col-md-1 p-0">
+			<input type="radio" class="btn-check alert-link" id="dedication-true" name="dedication" value="1">
+			<label class="btn btn-sm btn-outline-dark" for="dedication-true">Ano</label>
+		</div>
+		<div class="d-grid col-2 col-md-1 p-0 me-3">
+			<input type="radio" class="btn-check" id="dedication-false" name="dedication" value="0" checked>
+			<label class="btn btn-sm btn-outline-dark" for="dedication-false">Ne</label>
+		</div>
+	</div>
+</div>
 
 <div class="row my-4 justify-content-center">
 	<div class="col-4 col-sm-2 d-flex align-items-center justify-content-center">

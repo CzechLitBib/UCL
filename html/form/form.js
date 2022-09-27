@@ -1,6 +1,31 @@
 
+// mail requirement
+function mail_req(req) {
+	if (req) {
+		document.getElementById("email").required = true;
+	} else {
+		document.getElementById("email").required = false;
+	}
+}
+
+// Type selection
+
+function type_load() {
+	if (document.getElementById('fulltext').checked) {
+		document.getElementById("fulltext-block").style.display = "block";
+		document.getElementById("biblio-block").style.display = "none";
+	} else {
+		document.getElementById("fulltext-block").style.display = "none";
+		document.getElementById("biblio-block").style.display = "block";
+	}
+}
+
 // Customize selection 
 function on_load() {
+
+	document.getElementById("fulltext-block").style.display = "block";
+	document.getElementById("biblio-block").style.display = "none";
+
 	document.getElementById("article-block").style.display = "block";
 	document.getElementById("article-book-block").style.display = "block";
 	document.getElementById("chapter-block").style.display = "none";
@@ -10,7 +35,11 @@ function on_load() {
 
 function format_load() {
 	if (document.getElementById('article').checked) {
-		on_load();
+		document.getElementById("article-block").style.display = "block";
+		document.getElementById("article-book-block").style.display = "block";
+		document.getElementById("chapter-block").style.display = "none";
+		document.getElementById("chapter-book-block").style.display = "none";
+		document.getElementById("other-block").style.display = "none";
 	}
 	if (document.getElementById('chapter').checked) {
 		document.getElementById("article-block").style.display = "none";
