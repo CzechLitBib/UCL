@@ -31,7 +31,7 @@ function on_load() {
 	document.getElementById("chapter-block").style.display = "none";
 	document.getElementById("chapter-book-block").style.display = "none";
 	document.getElementById("other-block").style.display = "none";
-	document.getElementById("page-block").style.display = "none";
+	document.getElementById("page-block").style.display = "block";
 }
 
 // format selection 
@@ -74,6 +74,7 @@ function format_load() {
 		document.getElementById("chapter-block").style.display = "none";
 		document.getElementById("chapter-book-block").style.display = "none";
 		document.getElementById("other-block").style.display = "block";
+		document.getElementById("page-block").style.display = "none";
 	}
 }
 
