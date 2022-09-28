@@ -166,11 +166,11 @@ if ($_SESSION['message'] > 0) {
 
 <div class="accordion shadow-sm mb-4" id="accordionExample">
 	<div class="accordion-item">
-		<h2 class="accordion-header" id="headingOne">
+		<div class="accordion-header" id="headingOne">
 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie a&nbsp;repozitáře ASEP Knihovny AV. Dokument je možné dodat buď v&nbsp;elektronické verzi (preferováno), nebo alespoň formou vyplnění bibliografické citace. 
+	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie. Dokument je možné dodat buď v&nbsp;elektronické verzi (preferováno), nebo alespoň formou vyplnění bibliografické citace. 
 			</button>
-		</h2>
+		</div>
 		<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 			<div class="accordion-body">
 Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo běžný excerpční záběr ČLB. Zejmána jde o&nbsp;publikace vydané v&nbsp;zahraničí, malonákladové či regionální tiskoviny a&nbsp;články o&nbsp;literatuře v&nbsp;neliterárních periodikách. Na základě dodaných podkladů bude vytvořen bibliografický záznam. Pro vytvoření záznamu je vítané dodání plného textu dokumentu či umožnění přístupu k&nbsp;němu, aby mohly být ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a&nbsp;nebude jej jakkoli ukládat a&nbsp;dále šířit. Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
@@ -249,7 +249,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 </div>
 
 <div id="chapter-block">
-	<h4 class="mt-4">Text</h4>
+	<h4 class="mt-4">Údaje o dokumentu</h4>
 	<div class="form-floating my-2">
 		<input type="text" class="form-control" id="text-author" name="text-author" value="<?php if (isset($_POST['text-author'])) { echo htmlspecialchars($_POST['text-author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-author">Autor/Editor</label>
 	</div>
