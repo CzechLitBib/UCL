@@ -23,7 +23,6 @@ $message_map = array(
 );
 
 if (!isset($_SESSION['message'])) { $_SESSION['message'] = null; }
-if (!isset($_SESSION['public'])) { $_SESSION['public'] = null; }
 
 if (isset($_POST['code']) and isset($_SESSION['secret'])) {
 	($_SESSION['secret'] == $_POST['code']) ? $_SESSION['message'] = 1 : $_SESSION['message'] = 2;

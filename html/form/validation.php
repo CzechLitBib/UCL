@@ -1,14 +1,12 @@
 <?php
 
-putenv('GDFONTPATH=' . realpath('.'));
-
-// session
 session_start();
+
+putenv('GDFONTPATH=' . realpath('.'));
 
 $secret = '';
 $abc = '0123456789';
 
-// image
 $im = imagecreate(130, 45);
 $pastel = imagecolorallocate($im, 210, 210, 210);
 $black = imagecolorallocate($im, 0, 0, 0);
@@ -21,10 +19,8 @@ for($i=0; $i < 5; $i++) {
 	imagettftext($im, 22+$ran, 0, 15+(20*$i), 34, $black, 'font', $secret[$i]);
 }
 
-// code
 $_SESSION['secret'] = $secret;
 
-// header
 header('Content-Type: image/png');
 header('Cache-Control: no-cache, must-revalidate'); 
 header('Expires: Sat, 26 Jul 2042 05:00:00 GMT');
