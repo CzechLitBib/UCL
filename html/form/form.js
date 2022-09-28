@@ -23,6 +23,9 @@ function type_load() {
 // default selection 
 function on_load() {
 
+	document.getElementById("fulltext").checked = true;
+	document.getElementById("article").checked = true;
+
 	document.getElementById("fulltext-block").style.display = "block";
 	document.getElementById("biblio-block").style.display = "none";
 
