@@ -2,13 +2,6 @@ DESCRIPTION
 
 PHP7 frontend.
 
-TODO
-<pre>
--Nginx errors(scandir).
-CAT - Download.
-FORM - SVG logo, switch shift+color.
-</pre>
-
 INSTALL
 <pre>
 apt-get install nginx php7.3 php7.3-fpm php7.3-cli php7-gd php7-ldap php7-json php7.3-sqlite3
@@ -86,26 +79,26 @@ server {
 
 	# Aleph URL redirect
 	location ~ "^/[0-9]{9}" {
-		allow 147.231.80.0/24;
+		allow xxx/24;
 		allow 127.0.0.1;
 		deny all;
 		rewrite ^/(.*)$ https://aleph.lib.cas.cz/F/?func=direct&doc_number=$1&local_base=AV&format=001 permanent;
 	}
 	location ~ "^/aleph/[0-9]{9}" {
-		allow 147.231.80.0/24;
+		allow xxx./24;
 		allow 127.0.0.1;
 		deny all;
 		rewrite ^/aleph/(.*)$ https://aleph.lib.cas.cz/F/?func=direct&doc_number=$1&local_base=AV&format=001 permanent;
 	}
 	location ~ "^/vufind/[0-9]{9}" {
-		allow 147.231.80.0/24;
+		allow xxx/24;
 		allow 127.0.0.1;
 		deny all;
 		rewrite ^/vufind/(.*)$ https://vufind.ucl.cas.cz/Record/$1#details permanent;
 	}
 
 	# PHP - local
-	location ~ ^/(?!form|cardio) {
+	location ~ ^/(?!form|cardio|2fa) {
 		allow xxx/24;
 		allow 127.0.0.1;
 		deny all;
@@ -118,13 +111,6 @@ server {
 			fastcgi_intercept_errors on;
 			include		fastcgi_params;
 		}
-	}
-
-	# PHP - form data + db
-	location ~ ^/form/(data|from.db) {
-		allow xxx/24;
-		allow 127.0.0.1;
-		deny all;
 	}
 
 	# PHP - fallback

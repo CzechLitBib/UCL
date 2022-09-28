@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- CAT: download.
 - Settings: 640a dict rule + test.
 - Form: Backend.
 - Aleph: tooltip + add query JS.
