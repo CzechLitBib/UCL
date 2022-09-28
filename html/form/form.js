@@ -31,7 +31,7 @@ function on_load() {
 	document.getElementById("chapter-block").style.display = "none";
 	document.getElementById("chapter-book-block").style.display = "none";
 	document.getElementById("other-block").style.display = "none";
-	document.getElementById("page-block").style.display = "block";
+	document.getElementById("page-block").style.display = "none";
 }
 
 // format selection 
@@ -42,7 +42,7 @@ function format_load() {
 		document.getElementById("chapter-block").style.display = "none";
 		document.getElementById("chapter-book-block").style.display = "none";
 		document.getElementById("other-block").style.display = "none";
-		document.getElementById("page-block").style.display = "block";
+		document.getElementById("page-block").style.display = "none";
 	}
 	if (document.getElementById('chapter').checked) {
 		document.getElementById("article-block").style.display = "none";

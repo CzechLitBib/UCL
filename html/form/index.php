@@ -194,11 +194,11 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div id="fulltext-block">
 
-<p>Nahrejte prosím plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
+<p class="my-4">Nahrejte prosím plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
 
 <div class="form-group">
 	<label for="pdf" class="form-label">Elektronická verze</label>
-	<span class="badge bg-danger text-white">PDF &lt; 5MB</span>
+	<span class="badge bg-secondary text-white">PDF &lt; 5MB</span>
 	<input type="file" class="form-control" id="pdf" name="file">
 </div>
 <div class="form-floating my-2">
@@ -229,11 +229,11 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 </div>
 <div id="biblio-block">
 
-<p>Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
+<p class="my-4">Údaje není třeba vyplňovat, pakliže jsou dostupné v dodané elektronické verzi.</p>
 
-<h4>Formát</h4>
+<h4>Zvolte formát dokumentu</h4>
 
-<div class="row my-4">
+<div class="row mt-4 mb-5">
 	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
 		<input type="radio" class="btn-check" id="article" name="format" value="článek" onclick="format_load()" checked>
 		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
@@ -273,7 +273,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div id="chapter-book-block">
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="place" name="place" value="<?php if (isset($_POST['place'])) { echo htmlspecialchars($_POST['place'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="place">Místo</label>
+		<input type="text" class="form-control" id="place" name="place" value="<?php if (isset($_POST['place'])) { echo htmlspecialchars($_POST['place'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="place">Místo vydání</label>
 	</div>
 	<div class="form-floating my-2">
 		<input type="text" class="form-control" id="publisher" name="publisher" value="<?php if (isset($_POST['publisher'])) { echo htmlspecialchars($_POST['publisher'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="publisher">Nakladatelství</label>
