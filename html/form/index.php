@@ -4,7 +4,7 @@ session_start();
 
 $id = uniqid();
 
-$from= 'xxx';
+$from= 'webmaster@vyvoj.ucl.cas.cz';
 $target = 'xxx';
 $server = 'xxx';
 
@@ -35,7 +35,7 @@ if ($_SESSION['message'] == 1) {
 		$_SESSION['message'] = 3;
 	} else {
 		$query = $db->exec("
-			INSERT INTO data (id,format,public,dedication,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,other)"
+			INSERT INTO data (id,format,public,dedication,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,page,other)"
 			. " VALUES ('" . $id . "','" . $_POST['format'] . "', 0," . $_POST['dedication'] . ",'"
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
@@ -49,6 +49,7 @@ if ($_SESSION['message'] == 1) {
 			. str_replace("'", '_', $_POST['year']) . "','"
 			. str_replace("'", '_', $_POST['source']) . "','"
 			. str_replace("'", '_', $_POST['quote']) . "','"
+			. str_replace("'", '_', $_POST['page']) . "','"
 			. str_replace("'", '_', $_POST['other']) . "'"
 			. ");"
 		);
@@ -172,7 +173,7 @@ if ($_SESSION['message'] > 0) {
 		</h2>
 		<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 			<div class="accordion-body">
-Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo běžný excerpční záběr ČLB. Přednostně jde o&nbsp;publikace vydané v&nbsp;zahraničí, malonákladové či regionální tiskoviny a&nbsp;články o&nbsp;literatuře v&nbsp;neliterárních periodikách. Na základě dodaných podkladů bude vytvořen bibliografický záznam. Pro vytvoření záznamu je vítané dodání plného textu dokumentu či umožnění přístupu k&nbsp;němu, aby mohly být ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a&nbsp;nebude jej jakkoli ukládat a&nbsp;dále šířit. Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
+Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo běžný excerpční záběr ČLB. Zejmána jde o&nbsp;publikace vydané v&nbsp;zahraničí, malonákladové či regionální tiskoviny a&nbsp;články o&nbsp;literatuře v&nbsp;neliterárních periodikách. Na základě dodaných podkladů bude vytvořen bibliografický záznam. Pro vytvoření záznamu je vítané dodání plného textu dokumentu či umožnění přístupu k&nbsp;němu, aby mohly být ověřeny základní bibliografické údaje. Pokud navrhovatel neurčí jinak, ČLB se zavazuje plný text využít pouze pro účely zpracování bibliografického záznamu a&nbsp;nebude jej jakkoli ukládat a&nbsp;dále šířit. Návrhy dokumentů ke zpracování je možné zadat prostřednictvím formuláře níže.
 			</div>
 		</div>
 	</div>
@@ -181,9 +182,9 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 <div class="row my-4">
         <div class="d-grid gap-2 d-sm-flex justify-content-md-center">
                 <input type="radio" class="btn-check" id="fulltext" name="type" onclick="type_load()" checked>
-                <label class="btn btn-outline-danger w-100" for="fulltext">Plný text</label>
+                <label class="btn btn-outline-danger w-100" for="fulltext">Vložit plný text</label>
                 <input type="radio" class="btn-check" id="biblio" name="type" onclick="type_load()">
-                <label class="btn btn-outline-danger text-nowrap w-100" for="biblio">Bibliografický údaj</label>
+                <label class="btn btn-outline-danger text-nowrap w-100" for="biblio">Vložit bibliografický údaj</label>
         </div>
 </div>
 
@@ -211,7 +212,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	<textarea class="form-control" id="note" name="note" style="height: 100px"><?php if (isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?></textarea>
 	<label for="note">Poznámka (nepovinné)</label>
 </div>
-<div class="alert alert-warning mt-3 pb-2" role="alert">Souhlasím s&nbsp;uveřejněním elektronické verze dokumentu a&nbsp;potvrzuji, že tak mohu učinit a&nbsp;že toto uveřejnění není v&nbsp;rozporu s&nbsp;autorským zákonem a&nbsp;právy třetích stran.
+<div class="alert alert-warning mt-3 pb-2" role="alert">Souhlasím s&nbsp;uveřejněním elektronické verze dokumentu a&nbsp;potvrzuji, že toto uveřejnění není v&nbsp;rozporu s&nbsp;autorským zákonem a&nbsp;právy třetích stran.
 
 	<div class="row gap-2 mt-2 justify-content-end">
 		<div class="d-grid col-2 col-md-1 p-0">
@@ -294,6 +295,12 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 <div id="other-block">
 	<div class="form-floating my-2">
 		<input type="text" class="form-control" id="text-other" name="other" value="<?php if (isset($_POST['other'])) { echo htmlspecialchars($_POST['other'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="other">Další údaje</label>
+	</div>
+</div>
+
+<div id="page-block">
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="text-page" name="page" value="<?php if (isset($_POST['page'])) { echo htmlspecialchars($_POST['page'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="page">Stránkový rozsah</label>
 	</div>
 </div>
 

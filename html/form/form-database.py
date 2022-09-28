@@ -27,6 +27,7 @@ cur.execute("""CREATE TABLE data (
 	year		TEXT,
 	source		TEXT,
 	quote		TEXT,
+	page		TEXT,
 	other		TEXT);"""
 )
 

@@ -20,7 +20,7 @@ function type_load() {
 	}
 }
 
-// customize selection 
+// default selection 
 function on_load() {
 
 	document.getElementById("fulltext-block").style.display = "block";
@@ -31,8 +31,10 @@ function on_load() {
 	document.getElementById("chapter-block").style.display = "none";
 	document.getElementById("chapter-book-block").style.display = "none";
 	document.getElementById("other-block").style.display = "none";
+	document.getElementById("page-block").style.display = "none";
 }
 
+// format selection 
 function format_load() {
 	if (document.getElementById('article').checked) {
 		document.getElementById("article-block").style.display = "block";
@@ -40,6 +42,7 @@ function format_load() {
 		document.getElementById("chapter-block").style.display = "none";
 		document.getElementById("chapter-book-block").style.display = "none";
 		document.getElementById("other-block").style.display = "none";
+		document.getElementById("page-block").style.display = "block";
 	}
 	if (document.getElementById('chapter').checked) {
 		document.getElementById("article-block").style.display = "none";
@@ -47,6 +50,7 @@ function format_load() {
 		document.getElementById("chapter-block").style.display = "block";
 		document.getElementById("chapter-book-block").style.display = "block";
 		document.getElementById("other-block").style.display = "none";
+		document.getElementById("page-block").style.display = "block";
 	}
 	if (document.getElementById('book').checked) {
 		document.getElementById("article-block").style.display = "none";
@@ -54,6 +58,7 @@ function format_load() {
 		document.getElementById("chapter-block").style.display = "none";
 		document.getElementById("chapter-book-block").style.display = "block";
 		document.getElementById("other-block").style.display = "none";
+		document.getElementById("page-block").style.display = "none";
 	}
 	if (document.getElementById('study').checked) {
 		document.getElementById("article-block").style.display = "none";
@@ -61,6 +66,7 @@ function format_load() {
 		document.getElementById("chapter-block").style.display = "block";
 		document.getElementById("chapter-book-block").style.display = "block";
 		document.getElementById("other-block").style.display = "none";
+		document.getElementById("page-block").style.display = "block";
 	}
 	if (document.getElementById('other').checked) {
 		document.getElementById("article-block").style.display = "none";
