@@ -8,7 +8,7 @@ function mail_req(req) {
 	}
 }
 
-// Type selection
+// type selection
 
 function type_load() {
 	if (document.getElementById('fulltext').checked) {
@@ -20,7 +20,7 @@ function type_load() {
 	}
 }
 
-// Customize selection 
+// customize selection 
 function on_load() {
 
 	document.getElementById("fulltext-block").style.display = "block";
