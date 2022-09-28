@@ -168,7 +168,7 @@ if ($_SESSION['message'] > 0) {
 	<div class="accordion-item">
 		<h2 class="accordion-header" id="headingOne">
 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie a&nbsp;repozitáře ASEP Knihovny AV.<br/>Dokument je možné dodat buď v&nbsp;elektronické verzi (preferováno), nebo alespoň formou vyplnění bibliografické citace. 
+	Tento formulář slouží pro zasílání návrhů dokumentů ke zpracování pro potřeby databází České literární bibliografie a&nbsp;repozitáře ASEP Knihovny AV. Dokument je možné dodat buď v&nbsp;elektronické verzi (preferováno), nebo alespoň formou vyplnění bibliografické citace. 
 			</button>
 		</h2>
 		<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
