@@ -185,8 +185,8 @@ if(!empty($_SESSION['error'])) {
 </div>
 </main>
 
+<script src="custom.js"></script>
 <script src="../bootstrap.min.js"></script>
-<script src="../custom.js"></script>
 
 </body>
 </html>
