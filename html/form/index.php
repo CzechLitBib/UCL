@@ -4,7 +4,7 @@ session_start();
 
 $id = uniqid();
 
-$from= 'webmaster@vyvoj.ucl.cas.cz';
+$from= 'no-reply@ucl.cas.cz';
 $target = 'xxx';
 $server = 'xxx';
 
