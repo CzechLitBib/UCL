@@ -294,13 +294,13 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div id="other-block">
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-other" name="other" value="<?php if (isset($_POST['other'])) { echo htmlspecialchars($_POST['other'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="other">Další údaje</label>
+		<input type="text" class="form-control" id="text-other" name="other" value="<?php if (isset($_POST['other'])) { echo htmlspecialchars($_POST['other'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-other">Další údaje</label>
 	</div>
 </div>
 
 <div id="page-block">
 	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-page" name="page" value="<?php if (isset($_POST['page'])) { echo htmlspecialchars($_POST['page'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="page">Stránkový rozsah</label>
+		<input type="text" class="form-control" id="text-page" name="page" value="<?php if (isset($_POST['page'])) { echo htmlspecialchars($_POST['page'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-page">Stránkový rozsah</label>
 	</div>
 </div>
 
