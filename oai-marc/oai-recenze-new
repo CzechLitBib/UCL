@@ -227,10 +227,10 @@ for record in records:
 
 # EXIT -------------------
 
-if args.notify: notify()
-
 print('TOTAL:' + str(TOTAL))
 print('MATCH:' + str(MATCH))
+
+if args.notify: notify()
 
 db.close()
 
