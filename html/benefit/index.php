@@ -37,7 +37,7 @@ if (isset($_POST['sn']) and isset($_POST['n']) and isset($_POST['q'])) {
 		$db->close();
 	}
 	# PRG
-	header('Location: /sodexo/');
+	header('Location: /benefit/');
 	exit();
 }
 
@@ -66,40 +66,59 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		if ($ldap_bind) { $_SESSION['message'] = 1; }
 	}
 	if ($_SESSION['message'] == 1) {
-
-		echo '<div class="container"><div class="row">'
-		. '<div class="col m-2 text-nowrap">'
-		. '<table class="table table-striped">'
-		. '<thead><tr class="text-center"><th>Jméno</th><th>Přijmení</th><th>Využití</th></tr>'
-		. '</thead><tbody>';
-
+		header('Content-Type: text/plain; charset=UTF-8');
+		header("Content-Disposition: attachment;filename=\"benefity2022.csv\"");
+		
 		$db = new SQLite3($DB_FILE);
 		if (!$db) {
 			$_SESSION['message'] = 3;
 		} else {
 			$result = $db->query("SELECT n, sn, q FROM data");
-		
-			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
-				echo '<tr><td class="text-center">' . $res['n'] . '</td>'
-				. '<td class="text-center">' . $res['sn'] . '</td>'
-				. '<td class="text-center">' . $res['q'] . '</td></tr>';
-			}
-			if (!$result) { $_SESSION['message'] = 3; }
+			if ($result->fetchArray()) {
+				$result->reset();
+				echo 'Jméno;Příjmení;Využití' . "\n";
+				while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+					echo $res['n'] . ';' . $res['sn'] . ';' . $res['q'] . "\n";
+				}
+			} else { $_SESSION['message'] = 3; }
 			$db->close();
 		}
+		exit();
+	#	echo '<div class="container"><div class="row">'
+	#	. '<div class="col m-2 text-nowrap">'
+	#	. '<table class="table table-striped">'
+	#	. '<thead><tr class="text-center"><th>Jméno</th><th>Přijmení</th><th>Využití</th></tr>'
+	#	. '</thead><tbody>';
 
-		echo '</tbody></table>'
-		. '</div></div></div>';
+	#	$db = new SQLite3($DB_FILE);
+	#	if (!$db) {
+	#		$_SESSION['message'] = 3;
+	#	} else {
+	#		$result = $db->query("SELECT n, sn, q FROM data");
+		
+	#		while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+	#			echo '<tr><td class="text-center">' . $res['n'] . '</td>'
+	#			. '<td class="text-center">' . $res['sn'] . '</td>'
+	#			. '<td class="text-center">' . $res['q'] . '</td></tr>';
+	#		}
+	#		if (!$result) { $_SESSION['message'] = 3; }
+	#		$db->close();
+	#	}
+
+	#	echo '</tbody></table>'
+	#	. '</div></div></div>';
 
 	} else {
-		echo '<div class="container"><div class="row">'
-			.'<div class="col m-2 text-nowrap">'
-			. '<h5 class="modal-title" id="ModalLabel">Přístup zamítnut</h5>'
-			. '</div>'
-			. '<div class="col m-2 align-self-center">'
-			. '<button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>'
-			. '</div></div></div>';
+		$_SESSION['message'] = 2;
+	#	echo '<div class="container"><div class="row">'
+	#		.'<div class="col m-2 text-nowrap">'
+	#		. '<h5 class="modal-title" id="ModalLabel">Přístup zamítnut</h5>'
+	#		. '</div>'
+	#		. '<div class="col m-2 align-self-center">'
+	#		. '<button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>'
+	#		. '</div></div></div>';
 	}
+	header('Location: /benefit/');
 	exit();
 }
 ?>
@@ -229,6 +248,7 @@ V případě zájmu o&nbsp;čerpání příspěvku vyplňte prosím informace n�
 </div>
 
 <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="login" aria-hidden="true">
+	<form method="post" action="." enctype="multipart/form-data">
 	<div class="modal-dialog">
 	<div class="modal-content">
 		<div class="container-fluid">
@@ -257,12 +277,14 @@ V případě zájmu o&nbsp;čerpání příspěvku vyplňte prosím informace n�
 			</div>
 			<div class="row my-2">
 			<div class="col text-end">
-				<button class="btn btn-primary" onclick="login()">Přihlásit</button>
+				<button class="btn btn-primary">Přihlásit</button>
+				<!--<button class="btn btn-primary" onclick="login()">Přihlásit</button>-->
 			</div>
 			</div>
 		</div>
 	</div>
 	</div>
+	</form>
 </div>
 
 <script src="bootstrap.min.js"></script>
