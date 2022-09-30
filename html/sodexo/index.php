@@ -2,34 +2,50 @@
 
 session_start();
 
-$user = ['xxx'];
-$auth = False;
-$year = date('Y');
-$error = '';
-$stored = False;
+$user = ['xxx', 'xxx'];
 
-# Data
+$DB_FILE= '/var/www/data/sodexo.db';
+
+$message_map = array(
+        1 => 'Přihlášení.',
+        2 => 'Přihlášení selhalo.',
+        3 => 'Chyba čtení databáze.',
+        4 => 'Chyba zápisu databáze.',
+        5 => 'Uloženo.'
+);
+
+if (!isset($_SESSION['message'])) { $_SESSION['message'] = null; }
+
+# DATA
 if (isset($_POST['sn']) and isset($_POST['n']) and isset($_POST['q'])) {
-	$db = new SQLite3('sodexo.db');
+	$db = new SQLite3($DB_FILE);
 	if (!$db) {
-		$error = 'Chyba čtení databáze.';
+		$_SESSION['message'] = 3;
 	} else {
-		$y = date('Y');
-		$q = 0;
-		if (!empty($_POST['q'])) { $q = 1; }
-	
-		$query = $db->exec("INSERT INTO data (y, sn, n, q)" . " VALUES (" . $y . ",'" . $_POST['sn'] . "','" . $_POST['n'] . "'," . $q . ");");
-		if (!$query) { $error = 'Chyba zápisu do databáze.'; }
+		$query = $db->exec("INSERT INTO data (y, n, sn, q)" . " VALUES ("
+			. date('Y') . ",'"
+			. $_POST['n'] . "','"
+			. $_POST['sn'] . "','"
+			. $_POST['q'] . "');"
+		);
+
+		if (!$query) {
+			$_SESSION['message'] = 4;
+		} else {
+			$_SESSION['message'] = 5;
+		}
 		$db->close();
-		$stored = True;
 	}
+	# PRG
+	header('Location: /sodexo/');
+	exit();
 }
 
-# Authorization
+# AUTH
 if (isset($_POST['name']) and isset($_POST['pass'])) {
 	if (in_array($_POST['name'], $user)) {	
-		$ldap_dn = 'xxx';
-		$ldap_conn = ldap_connect('xxx');
+		$ldap_dn = 'uid=' . $_POST['name'] . ',ou=Users,dc=ucl,dc=cas,dc=cz';
+		$ldap_conn = ldap_connect('ldap://ds.ucl.cas.cz');
 
 		ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 		ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
@@ -38,7 +54,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		$ldap_bind = @ldap_bind($ldap_conn, $ldap_dn, $_POST['pass']);
 
 		if (!$ldap_bind) {//fall-back
-			$ldap_conn2 = ldap_connect('xxx');
+			$ldap_conn2 = ldap_connect('ldap://ds2.ucl.cas.cz');
 
 			ldap_set_option($ldap_conn2, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_conn2, LDAP_OPT_REFERRALS, 0);
@@ -47,27 +63,28 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 			$ldap_bind = @ldap_bind($ldap_conn2, $ldap_dn, $_POST['pass']);
 		}
 
-		if ($ldap_bind) { $auth = True; }
+		if ($ldap_bind) { $_SESSION['message'] = 1; }
 	}
-	if ($auth) {
+	if ($_SESSION['message'] == 1) {
 
 		echo '<div class="container"><div class="row">'
 		. '<div class="col m-2 text-nowrap">'
 		. '<table class="table table-striped">'
-		. '<thead><tr class="text-center"><th>Jméno</th><th>Příjmení</th><th>Čerpáno</th></tr>'
+		. '<thead><tr class="text-center"><th>Jméno</th><th>Přijmení</th><th>Využití</th></tr>'
 		. '</thead><tbody>';
 
-		$db = new SQLite3('sodexo.db');
-
-		if ($db) {
-			$result = $db->query("SELECT sn, n, q FROM data");
+		$db = new SQLite3($DB_FILE);
+		if (!$db) {
+			$_SESSION['message'] = 3;
+		} else {
+			$result = $db->query("SELECT n, sn, q FROM data");
 		
 			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
-				$yesno = $res['q'] ? 'Ano' : 'Ne';
-				echo '<tr><td class="text-center">' . $res['sn'] . '</td>'
-				. '<td class="text-center">' . $res['n'] . '</td>'
-				. '<td class="text-center">' . $yesno . '</td></tr>';
+				echo '<tr><td class="text-center">' . $res['n'] . '</td>'
+				. '<td class="text-center">' . $res['sn'] . '</td>'
+				. '<td class="text-center">' . $res['q'] . '</td></tr>';
 			}
+			if (!$result) { $_SESSION['message'] = 3; }
 			$db->close();
 		}
 
@@ -92,7 +109,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Sodexo Flexi Pass <?php echo date('Y');?></title>
+	<title>Příspěvek <?php echo date('Y');?></title>
 	<link href="bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="./favicon/apple-touch-icon.png" sizes="180x180">
@@ -109,18 +126,12 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 
 <?php
 
-if($stored) {
-	if ($error) {
-		echo '<div class="row justify-content-center"><div class="col col-md-7 mt-2">'
-		. '<div class="alert alert-warning alert-dismissible fade show" role="alert">'
-		. $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
-		. '</div></div></div>';
-	} else {
-		echo '<div class="row justify-content-center"><div class="col col-md-7 mt-2">'
-		. '<div class="alert alert-warning alert-dismissible fade show" role="alert">Uloženo.'
-		. '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
-		. '</div></div></div>';
-	}
+if($_SESSION['message'] > 1) {
+	echo '<div class="row justify-content-center"><div class="col col-md-7 mt-2">'
+	. '<div class="alert alert-warning alert-dismissible fade show" role="alert">'
+	. $message_map[$_SESSION['message']] . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+	. '</div></div></div>';
+	$_SESSION['message'] = null;
 }
 
 ?>
@@ -130,22 +141,9 @@ if($stored) {
 		<div class="card shadow-sm">
 			<div class="card-header bg-primary"></div>
 		<div class="card-body p-md-4">
-   			<h3 class="card-title">Sodexo Flexi Pass <?php echo date('Y');?></h3>
+   			<h3 class="card-title">Příspěvek ze Sociálního fondu <?php echo date('Y');?></h3>
 			<p class="card-text">Příspěvek mohou čerpat zaměstnanci s&nbsp;úvazkem 0,5 a&nbsp;vyšším. Hodnota příspěvku je 7000,-
-V případě zájmu o&nbsp;nahrání příspěvku za rok 2022 na Multi Pass kartu prosím vyplňte informace níže a&nbsp;to nejpozději do 24.6.2022.</p>
-		</div>
-		</div>
-	</div>
-</div>
-
-<div class="row justify-content-center">
-	<div class="col col-md-7 my-2">
-		<div class="card shadow-sm">
-		<div class="card-body p-md-4">
-		<p class="card-title">Příjmení zaměstnance</p>
-		<p class="card-text">
-		<input type="text" class="form-control" id="sn" name="sn" required>
-		</p>
+V případě zájmu o&nbsp;čerpání příspěvku vyplňte prosím informace níže.</p>
 		</div>
 		</div>
 	</div>
@@ -168,20 +166,40 @@ V případě zájmu o&nbsp;nahrání příspěvku za rok 2022 na Multi Pass kart
 	<div class="col col-md-7 my-2">
 		<div class="card shadow-sm">
 		<div class="card-body p-md-4">
-		<p class="card-title">Příspěvek ze Soc. fondu jsem v&nbsp;roce <?php echo date('Y');?> již čerpal/a</p>
+		<p class="card-title">Příjmení zaměstnance</p>
 		<p class="card-text">
-			<input class="form-check-input" type="radio" name="q" id="rad" value="0" checked>
-			<label class="form-check-label mx-2" for="no"> Ne</label>
-		</p>
-		<p class="card-text">
-			<input class="form-check-input" type="radio" name="q" id="rad" value="1">
-			<label class="form-check-label mx-2" for="yes"> Ano a&nbsp;zbývající částku chci nahrát na Flexi Pass</label>
+		<input type="text" class="form-control" id="sn" name="sn" required>
 		</p>
 		</div>
 		</div>
 	</div>
 </div>
 
+<div class="row justify-content-center">
+	<div class="col col-md-7 my-2">
+		<div class="card shadow-sm">
+		<div class="card-body p-md-4">
+		<p class="card-title">Příspěvek chci využít na:</p>
+		<p class="card-text">
+			<input class="form-check-input" type="radio" name="q" id="flexipass" value="Flexi Pass" checked>
+			<label class="form-check-label mx-2" for="flexipass">Flexi Pass</label>
+		</p>
+		<p class="card-text">
+			<input class="form-check-input" type="radio" name="q" id="insurance" value="Pojištění">
+			<label class="form-check-label mx-2" for="insurance">Penzijní a životní pojištění</label>
+		</p>
+		<p class="card-text">
+			<input class="form-check-input" type="radio" name="q" id="course" value="Kurz">
+			<label class="form-check-label mx-2" for="course">Jazykový kurz</label>
+		</p>
+		<p class="card-text">
+			<input class="form-check-input" type="radio" name="q" id="vacation" value="Rekreace">
+			<label class="form-check-label mx-2" for="vacation">Rekreaci a dětský tábor</label>
+		</p>
+		</div>
+		</div>
+	</div>
+</div>
 
 <div class="row justify-content-center my-2">
 	<div class="col-2 col-md-2"></div>
