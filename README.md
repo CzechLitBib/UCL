@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- SMTP auth
 - CAT: download.
 - Settings: 640a dict rule + test.
 - Form: Backend.

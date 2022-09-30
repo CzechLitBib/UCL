@@ -69,6 +69,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		header('Content-Type: text/plain; charset=UTF-8');
 		header("Content-Disposition: attachment;filename=\"benefity2022.csv\"");
 		
+		echo 'Jméno;Příjmení;Využití' . "\n";
 		$db = new SQLite3($DB_FILE);
 		if (!$db) {
 			$_SESSION['message'] = 3;
@@ -76,7 +77,6 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 			$result = $db->query("SELECT n, sn, q FROM data");
 			if ($result->fetchArray()) {
 				$result->reset();
-				echo 'Jméno;Příjmení;Využití' . "\n";
 				while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
 					echo $res['n'] . ';' . $res['sn'] . ';' . $res['q'] . "\n";
 				}
