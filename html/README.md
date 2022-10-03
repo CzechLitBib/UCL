@@ -100,7 +100,7 @@ server {
 	# PHP - local
 	location ~ ^/(?!form|cardio|2fa) {
 		allow xxx/24;
-		allow xxx/23;
+		allow xxx/25;
 		allow 127.0.0.1;
 		deny all;
 

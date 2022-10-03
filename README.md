@@ -7,8 +7,7 @@ TODO
 <pre>
 - nginx log.
 - Monthly crash.
-- OAI session timeout
-- SMTP auth(vufind,five,seven)
+- SMTP auth(vufind,five,seven).
 - CAT: download.
 - Settings: 640a dict rule + test.
 - Form: Backend.
