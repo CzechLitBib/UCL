@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- nginx log.
 - Monthly crash.
 - OAI session timeout
 - SMTP auth(vufind,five,seven)
