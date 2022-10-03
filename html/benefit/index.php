@@ -44,8 +44,8 @@ if (isset($_POST['sn']) and isset($_POST['n']) and isset($_POST['q'])) {
 # AUTH
 if (isset($_POST['name']) and isset($_POST['pass'])) {
 	if (in_array($_POST['name'], $user)) {	
-		$ldap_dn = 'uid=' . $_POST['name'] . ',ou=Users,dc=ucl,dc=cas,dc=cz';
-		$ldap_conn = ldap_connect('ldap://ds.ucl.cas.cz');
+		$ldap_dn = 'xxx';
+		$ldap_conn = ldap_connect('xxx');
 
 		ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 		ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
@@ -54,7 +54,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		$ldap_bind = @ldap_bind($ldap_conn, $ldap_dn, $_POST['pass']);
 
 		if (!$ldap_bind) {//fall-back
-			$ldap_conn2 = ldap_connect('ldap://ds2.ucl.cas.cz');
+			$ldap_conn2 = ldap_connect('xxx');
 
 			ldap_set_option($ldap_conn2, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_conn2, LDAP_OPT_REFERRALS, 0);
@@ -85,40 +85,10 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 			} else { $_SESSION['message'] = 3; }
 			$db->close();
 		}
+		$_SESSION['message'] = null; # reset login
 		exit();
-	#	echo '<div class="container"><div class="row">'
-	#	. '<div class="col m-2 text-nowrap">'
-	#	. '<table class="table table-striped">'
-	#	. '<thead><tr class="text-center"><th>Jméno</th><th>Přijmení</th><th>Využití</th></tr>'
-	#	. '</thead><tbody>';
-
-	#	$db = new SQLite3($DB_FILE);
-	#	if (!$db) {
-	#		$_SESSION['message'] = 3;
-	#	} else {
-	#		$result = $db->query("SELECT n, sn, q FROM data");
-		
-	#		while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
-	#			echo '<tr><td class="text-center">' . $res['n'] . '</td>'
-	#			. '<td class="text-center">' . $res['sn'] . '</td>'
-	#			. '<td class="text-center">' . $res['q'] . '</td></tr>';
-	#		}
-	#		if (!$result) { $_SESSION['message'] = 3; }
-	#		$db->close();
-	#	}
-
-	#	echo '</tbody></table>'
-	#	. '</div></div></div>';
-
 	} else {
 		$_SESSION['message'] = 2;
-	#	echo '<div class="container"><div class="row">'
-	#		.'<div class="col m-2 text-nowrap">'
-	#		. '<h5 class="modal-title" id="ModalLabel">Přístup zamítnut</h5>'
-	#		. '</div>'
-	#		. '<div class="col m-2 align-self-center">'
-	#		. '<button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>'
-	#		. '</div></div></div>';
 	}
 	header('Location: /benefit/');
 	exit();
@@ -163,8 +133,7 @@ if($_SESSION['message'] > 1) {
 			<div class="card-header bg-primary"></div>
 		<div class="card-body p-md-4">
    			<h3 class="card-title">Příspěvek ze Sociálního fondu <?php echo date('Y');?></h3>
-			<p class="card-text">Příspěvek mohou čerpat zaměstnanci s&nbsp;úvazkem 0,5 a&nbsp;vyšším. Hodnota příspěvku je 7000,-
-V případě zájmu o&nbsp;čerpání příspěvku vyplňte prosím informace níže.</p>
+			<p class="card-text">Příspěvek mohou čerpat zaměstnanci s&nbsp;úvazkem 0,5 a&nbsp;vyšším. Hodnota příspěvku je 7000,-. V&nbsp;případě zájmu o&nbsp;čerpání příspěvku vyplňte prosím informace níže.</p>
 		</div>
 		</div>
 	</div>
@@ -280,7 +249,6 @@ V případě zájmu o&nbsp;čerpání příspěvku vyplňte prosím informace n�
 			<div class="row my-2">
 			<div class="col text-end">
 				<button class="btn btn-primary">Přihlásit</button>
-				<!--<button class="btn btn-primary" onclick="login()">Přihlásit</button>-->
 			</div>
 			</div>
 		</div>
