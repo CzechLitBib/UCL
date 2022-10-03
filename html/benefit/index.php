@@ -66,9 +66,11 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 		if ($ldap_bind) { $_SESSION['message'] = 1; }
 	}
 	if ($_SESSION['message'] == 1) {
-		header('Content-Type: text/plain; charset=UTF-8');
-		header("Content-Disposition: attachment;filename=\"benefity2022.csv\"");
-		
+		header("Content-Type: application/vnd.ms-excel");
+		header("Content-Disposition: attachment;filename=benefity2022.csv");
+		header("Content-Encoding: UTF-8");
+
+		echo "\xEF\xBB\xBF";# UTF-8 BOM
 		echo 'Jméno;Příjmení;Využití' . "\n";
 		$db = new SQLite3($DB_FILE);
 		if (!$db) {

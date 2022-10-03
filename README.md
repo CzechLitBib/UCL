@@ -5,7 +5,9 @@ Library support software.
 
 TODO
 <pre>
-- SMTP auth
+- Monthly crash.
+- OAI session timeout
+- SMTP auth(vufind,five,seven)
 - CAT: download.
 - Settings: 640a dict rule + test.
 - Form: Backend.

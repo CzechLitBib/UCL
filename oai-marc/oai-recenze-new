@@ -24,8 +24,8 @@ RECLIST={'A':{},'B':{}}
 
 MAIL_USER='xxx'
 MAIL_SENDER='xxx'
+MAIL_PASSWD='xxx'
 MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
 
 TOTAL=0
 MATCH=0
@@ -76,16 +76,14 @@ def notify():
 		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
 		msg['To'] = mail
 		try:
-			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+			s = smtplib.SMTP(MAIL_SERVER, timeout=5)
+			s.ehlo()
+			s.starttls()
+			s.login(MAIL_SENDER, MAIL_PASSWD)
 			s.sendmail(MAIL_SENDER, mail, msg.as_string())
 			s.quit()
 		except:
-			try:
-				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-				s.sendmail(MAIL_SENDER, mail, msg.as_string())
-				s.quit()
-			except:
-				print('Sendmail error.')
+			print('Sendmail error.')
 
 # ARG -------------------
 
