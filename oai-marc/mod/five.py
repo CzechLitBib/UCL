@@ -69,6 +69,12 @@ def run(DATA):
 
 	for record in DATA:
 
+		# ident
+		if '001' in record:
+			IDENT = record['001'].value()
+		else:
+			continue
+
 		# only newly created
 		OUTDATE=False
 		for F in record.get_fields('CAT','KAT')[:1]:# first CAT/KAT
@@ -80,12 +86,6 @@ def run(DATA):
 				# 1st day prev. month 
 				if CAT_DATE < (FIRST - timedelta(days=1)).replace(day=1): OUTDATE=True 
 		if OUTDATE: continue
-
-		# ident
-		if '001' in record:
-			IDENT = record['001'].value()
-		else:
-			continue
 
 		# SIF
 		SIF = ''
