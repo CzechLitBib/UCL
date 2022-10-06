@@ -739,33 +739,33 @@ for record in records:
 							write_error(TIMESTAMP, IDENT, '008', SIF, '109')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[15:18].strip()
-			if not db.execute("SELECT * FROM country WHERE CODE == ?;",(DATA,)).fetchone():
+			if not db.execute("SELECT * FROM country WHERE code = ?;",(DATA,)).fetchone():
 					write_error(TIMESTAMP, IDENT, '008', SIF, '110')
 			if '044' in metadata and 'a' in metadata['044']:
 				if DATA != metadata['044']['a']:
 					write_error(TIMESTAMP, IDENT, '008', SIF, '111')
 		if '008' in metadata:
 			DATA = metadata['008'].value()[35:38].strip()
-			if not db.execute("SELECT * FROM language WHERE CODE == ?;",(DATA,)).fetchone():
+			if not db.execute("SELECT * FROM language WHERE code = ?;",(DATA,)).fetchone():
 				write_error(TIMESTAMP, IDENT, '008', SIF, '112')
 			if '041' in metadata and 'a' in metadata['041']:
 				if DATA != metadata['041']['a']:
 					write_error(TIMESTAMP, IDENT, '008', SIF, '113')
 		if '041' in metadata:
 			for DATA in metadata['041'].subfields[1::2]:
-				if not db.execute("SELECT * FROM language WHERE CODE == ?;",(DATA,)).fetchone():
+				if not db.execute("SELECT * FROM language WHERE code = ?;",(DATA,)).fetchone():
 					write_error(TIMESTAMP, IDENT, '041', SIF, '114')
 			if len(metadata['041'].subfields) < 2:
 					write_error(TIMESTAMP, IDENT, '041', SIF, '115')
 		if '044' in metadata:
 			for DATA in metadata['044'].subfields[1::2]:
-				if not db.execute("SELECT * FROM country WHERE CODE == ?;",(DATA,)).fetchone():
+				if not db.execute("SELECT * FROM country WHERE code = ?;",(DATA,)).fetchone():
 					write_error(TIMESTAMP, IDENT, '044', SIF, '116')
 			if len(metadata['044'].subfields) < 2:
 					write_error(TIMESTAMP, IDENT, '044', SIF, '117')
 		if '100' in metadata:
 			for DATA in metadata['100'].get_subfields('4'):
-				if not db.execute("SELECT * FROM role WHERE CODE == ?;",(DATA,)).fetchone():
+				if not db.execute("SELECT * FROM role WHERE code = ?;",(DATA,)).fetchone():
 					write_error(TIMESTAMP, IDENT, '100', SIF, '118')
 			if 'j' in metadata['100']:
 				if metadata['100']['j'] not in ('bbg', 'rej'):
@@ -774,7 +774,7 @@ for record in records:
 					write_error(TIMESTAMP, IDENT, '100', SIF, '120')
 		for F in metadata.get_fields('700'):
 			for DATA in F.get_subfields('4'):
-				if not db.execute("SELECT * FROM role WHERE CODE == ?;",(DATA,)).fetchone():
+				if not db.execute("SELECT * FROM role WHERE code = ?;",(DATA,)).fetchone():
 					write_error(TIMESTAMP, IDENT, '700', SIF, '121')
 			if 'j' in F:
 				if F['j'] not in ('bbg', 'rej'):
@@ -1360,6 +1360,15 @@ for record in records:
 				if 'a' in F and F['a'] in ['ECR', 'ECS'] and '912' in metadata: break
 			else:
 				write_error(TIMESTAMP, IDENT, '594', SIF, '198')
+		# 260/264a dict
+		for F in metadata.get_fields('260'):
+			if 'a' in F:
+				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'],)).fetchone():
+					write_error(TIMESTAMP, IDENT, '260', SIF, '199')
+		for F in metadata.get_fields('264'):
+			if 'a' in F:
+				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'],)).fetchone():
+					write_error(TIMESTAMP, IDENT, '264', SIF, '199')
 
 	COUNTER+=1
 
