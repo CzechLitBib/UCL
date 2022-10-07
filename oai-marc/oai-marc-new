@@ -1364,11 +1364,11 @@ for record in records:
 		# 260/264a dict
 		for F in metadata.get_fields('260'):
 			if 'a' in F:
-				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'].strip('.:/ '),)).fetchone():
+				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'].strip(': '),)).fetchone():
 					write_error(TIMESTAMP, IDENT, '260', SIF, '199')
 		for F in metadata.get_fields('264'):
 			if 'a' in F:
-				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'].strip('.:/ '),)).fetchone():
+				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'].strip(': '),)).fetchone():
 					write_error(TIMESTAMP, IDENT, '264', SIF, '199')
 
 	COUNTER+=1
