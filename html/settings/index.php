@@ -196,7 +196,7 @@ if (!empty($_POST)) {
 				foreach($data as $ident) {
 					if (trim($d)) {
 						$query->bindValue(1, $_POST['exception-code']);
-						$query->bindValue(2, $ident);
+						$query->bindValue(2, trim($ident));
 						$query->execute();
 					}
 				}
@@ -270,7 +270,7 @@ if (!empty($_POST)) {
 			$query = $db->prepare("INSERT OR IGNORE INTO " . $code . " (code) VALUES (?);");
 			foreach($data as $d) {
 				if (trim($d)) {
-					$query->bindValue(1, $d);
+					$query->bindValue(1, trim($d));
 					$query->execute();
 				}
 			}
@@ -292,7 +292,7 @@ if (!empty($_POST)) {
 			$query = $db->prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (?);");
 			foreach($data as $d) {
 				if (trim($d)) {
-					$query->bindValue(1, $d);
+					$query->bindValue(1, trim($d));
 					$query->execute();
 				}
 			}
