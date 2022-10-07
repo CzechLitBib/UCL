@@ -1360,14 +1360,15 @@ for record in records:
 				if 'a' in F and F['a'] in ['ECR', 'ECS'] and '912' in metadata: break
 			else:
 				write_error(TIMESTAMP, IDENT, '594', SIF, '198')
+
 		# 260/264a dict
 		for F in metadata.get_fields('260'):
 			if 'a' in F:
-				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'],)).fetchone():
+				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'].strip('.:/ '),)).fetchone():
 					write_error(TIMESTAMP, IDENT, '260', SIF, '199')
 		for F in metadata.get_fields('264'):
 			if 'a' in F:
-				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'],)).fetchone():
+				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'].strip('.:/ '),)).fetchone():
 					write_error(TIMESTAMP, IDENT, '264', SIF, '199')
 
 	COUNTER+=1
