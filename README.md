@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- Dict whisper search.
 - nginx log.
 - SMTP auth(five,cat,seven).
 - CAT: download.
