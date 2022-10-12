@@ -4,7 +4,7 @@ session_start();
 
 $id = uniqid();
 
-$from= 'no-reply@ucl.cas.cz';
+$from= 'xxx';
 $target = 'xxx';
 $server = 'xxx';
 
@@ -84,7 +84,7 @@ if ($_SESSION['message'] == 1) {
 	if ($_SESSION['message'] == 5 or $_SESSION['message'] == 6) {
 
 		$headers="MIME-Version: 1.0\r\n";
-		$headers.="From: UCL Vyvoj <" . $from . ">\r\n";
+		$headers.="From: ČLB Data <" . $from . ">\r\n";
 		$headers.="Reply-To: " . $from . "\r\n";
 		$headers.="Content-type: text/html; charset=utf-8\r\n";
 
@@ -122,7 +122,7 @@ if ($_SESSION['message'] == 1) {
 	}
 	
 	#PRG
-	header('Location: /form/');
+	header('Location: /konsorcium_form/');
 	exit();
 }
 
