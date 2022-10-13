@@ -5,7 +5,8 @@ session_start();
 $id = uniqid();
 
 $from= 'xxx';
-$target = 'xxx';
+$login = 'xxx';
+$pass = 'xxx';
 $server = 'xxx';
 
 $DB_PATH='/var/www/data/form/form.db';
@@ -19,13 +20,58 @@ $message_map = array(
 	4 => 'Chyba zápisu databáze.',
 	5 => 'Hotovo. Děkujeme!',
 	6 => 'Hotovo. Děkujeme! (Byl Vám zaslán potvrzovací email.)',
-	7 => 'Chyba formátu souboru.'
+	7 => 'Chyba formátu souboru.',
+	8 => 'Chyba odesílání.'
 );
 
 if (!isset($_SESSION['message'])) { $_SESSION['message'] = null; }
 
 if (isset($_POST['code']) and isset($_SESSION['secret'])) {
 	($_SESSION['secret'] == $_POST['code']) ? $_SESSION['message'] = 1 : $_SESSION['message'] = 2;
+}
+
+function send_mail($sender, $recipient, $mime_message) {
+	
+	global $login, $pass, $server;
+	$ctx = stream_context_create();
+
+	stream_context_set_option($ctx, 'ssl', 'verify_peer', false);
+	stream_context_set_option($ctx, 'ssl', 'verify_peer_name', false);
+
+	$socket = stream_socket_client('tcp://' . $server . ':25', $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+
+	if (!$socket) {
+		$_SESSION['message'] = 8;
+	} else{
+		fread($socket,8192);
+		fwrite($socket, "EHLO ". $_SERVER['SERVER_NAME'] . "\r\n");
+		fread($socket,8192);
+		fwrite($socket, "STARTTLS\r\n");
+		fread($socket,8192);
+
+		stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+
+		fwrite($socket, "EHLO " . $_SERVER['SERVER_NAME'] . "\r\n");
+		fread($socket,8192);
+		fwrite($socket, "MAIL FROM: <" . $sender . ">\r\n");
+		fread($socket,8192);
+		fwrite($socket, "AUTH LOGIN\r\n");
+		fread($socket,8192);
+		fwrite($socket, base64_encode($login)  . "\r\n");
+		fread($socket,8192);
+		fwrite($socket, base64_encode($pass) . "\r\n");
+		fread($socket,8192);
+		fwrite($socket, "RCPT TO: <" . $recipient . ">\r\n");
+		fread($socket,8192);
+		fwrite($socket, "DATA\n");
+		fread($socket,8192);
+		fwrite($socket, $mime_message . "\r\n.\r\n");
+		fread($socket,8192);
+		fwrite($socket, "QUIT \n");
+		fread($socket,8192);
+
+		fclose($socket);
+   	 }
 }
 
 if ($_SESSION['message'] == 1) {
@@ -83,41 +129,33 @@ if ($_SESSION['message'] == 1) {
 	# NOTIFY
 	if ($_SESSION['message'] == 5 or $_SESSION['message'] == 6) {
 
-		$headers="MIME-Version: 1.0\r\n";
-		$headers.="From: ČLB Data <" . $from . ">\r\n";
-		$headers.="Reply-To: " . $from . "\r\n";
-		$headers.="Content-type: text/html; charset=utf-8\r\n";
-
-		$subject="=?utf-8?B?" . base64_encode("ČLB - Návrhy podkladů") . "?=";
-
-		$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>';
-		$text.='Prostřednictvím formuláře byl zaslán nový záznam.';
-		$text.='<br><br><a target="_blank" href="https://vyvoj.ucl.cas.cz/form-data/">https://vyvoj.ucl.cas.cz/form-data/<a>
-			<br><br>--------------------------------<br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.
-			</body></html>';
-
-		#mail($target, $subject, $text, $headers, '-f '. $from);
-
 		# CONFIRMATION
 		if ($_POST['public']) {
-			$text='<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>';
-			$text.='z Vaší emailové adresy byl odeslán souhlas se zveřejněním následujících souborů<br>';
-			$text.='v databázích České literární bibliografie:<br><br>';
-		
+
+			$text = "MIME-Version: 1.0\r\n"; 
+			$text .= "From: =?utf-8?B?" .base64_encode('ČLB Data'). "?= <no-reply@ucl.cas.cz>\r\n";
+			$text .= "To: bruna@ucl.cas.cz\r\n";
+			$text .= "Content-type: text/html; charset=utf-8\r\n";
+			$text .= "Subject: =?utf-8?B?" . base64_encode("ČLB - Návrhy podkladů") . "?=\r\n";
+
+			$text .= '<html><head><meta charset="utf-8"></head><body><br>Dobrý den,<br><br>';
+			$text .= 'z Vaší emailové adresy byl odeslán souhlas se zveřejněním následujících souborů<br>';
+			$text .= 'v databázích České literární bibliografie:<br><br>';
+
 			if($UPLOAD) { 
-				$text.= $UPLOAD;
+				$text .= $UPLOAD;
 			} elseif (isset($_POST['link'])) {
-				$text.= htmlspecialchars($_POST['link']);
+				$text .= htmlspecialchars($_POST['link']);
 			}
 
-			$text.='<br><br>Prosím, potvrďte tento souhlas kliknutím na následující odkaz:';		
-			$text.='<br><br><a target="_blank" href="https://vyvoj.ucl.cas.cz/form/confirm.php?'
-				. $id . '">https://vyvoj.ucl.cas.cz/form/confirm.php?'
+			$text .= '<br><br>Prosím, potvrďte tento souhlas kliknutím na následující odkaz:';		
+			$text .= '<br><br><a target="_blank" href="https://clbdata.ucl.cas.cz/konsircium_form/confirm.php?'
+				. $id . '">https://clbdata.ucl.cas.cz/konsorcium_form/confirm.php?'
 				. $id . '<a><br><br>Děkujeme za spolupráci<br>';
-			$text.='Tým České literární bibliografie<br><br>--------------------------------<br>';
-			$text.='TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.</body></html>';
+			$text .= 'Tým České literární bibliografie<br><br>--------------------------------<br>';
+			$text .= 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.</body></html>';
 
-			mail($_POST['email'], $subject, $text, $headers, '-f '. $from);
+			send_mail($from, $_POST['email'], $text);
 		}
 	}
 	
