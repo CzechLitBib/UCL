@@ -5,8 +5,8 @@ session_start();
 $id = uniqid();
 
 $from= 'xxx';
-$login = "xxx";
-$pass = "xxx";
+$login = 'xxx';
+$pass = 'xxx';
 $server = 'xxx';
 
 $DB_PATH='/var/www/data/form/form.db';
@@ -133,8 +133,8 @@ if ($_SESSION['message'] == 1) {
 		if ($_POST['public']) {
 
 			$text = "MIME-Version: 1.0\r\n"; 
-			$text .= "From: =?utf-8?B?" .base64_encode('ČLB Data'). "?= <no-reply@ucl.cas.cz>\r\n";
-			$text .= "To: bruna@ucl.cas.cz\r\n";
+			$text .= "From: =?utf-8?B?" .base64_encode('ČLB Data'). "?= <" . $from . ">\r\n";
+			$text .= "To: " . $_POST['email'] . "\r\n";
 			$text .= "Content-type: text/html; charset=utf-8\r\n";
 			$text .= "Subject: =?utf-8?B?" . base64_encode("ČLB - Návrhy podkladů") . "?=\r\n";
 
