@@ -5,8 +5,8 @@ session_start();
 $id = uniqid();
 
 $from= 'xxx';
-$login = 'xxx';
-$pass = 'xxx';
+$login = "xxx";
+$pass = "xxx";
 $server = 'xxx';
 
 $DB_PATH='/var/www/data/form/form.db';
@@ -149,7 +149,7 @@ if ($_SESSION['message'] == 1) {
 			}
 
 			$text .= '<br><br>Prosím, potvrďte tento souhlas kliknutím na následující odkaz:';		
-			$text .= '<br><br><a target="_blank" href="https://clbdata.ucl.cas.cz/konsircium_form/confirm.php?'
+			$text .= '<br><br><a target="_blank" href="https://clbdata.ucl.cas.cz/konsorcium_form/confirm.php?'
 				. $id . '">https://clbdata.ucl.cas.cz/konsorcium_form/confirm.php?'
 				. $id . '<a><br><br>Děkujeme za spolupráci<br>';
 			$text .= 'Tým České literární bibliografie<br><br>--------------------------------<br>';
