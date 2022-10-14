@@ -5,7 +5,7 @@
 
 # INCLUDE -------------------
 
-import argparse,io,smtplib,sys,os,re
+import argparse,smtplib,sqlite3,sys,os,io,re
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -18,14 +18,14 @@ from lxml.etree import tostring
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
-RECENZE='/usr/local/bin/code/recenze.txt'
+DB='/var/www/data/devel.db'
 
 RECLIST={'A':{},'B':{}}
 
-MAIL_TARGET='xxx'
+MAIL_USER='xxx'
 MAIL_SENDER='xxx'
+MAIL_PASSWD='xxx'
 MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
 
 TOTAL=0
 MATCH=0
@@ -58,34 +58,32 @@ def notify():
 	html_footer =('<br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 	html_body=''
+	mail = db.execute("SELECT email FROM user WHERE code = ?;",(MAIL_USER,)).fetchone()
 
-	for aleph in sorted(RECLIST['A']):
+	for aleph in sorted(RECLIST['A'], reverse=True):
 		html_body+=('<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['A'][aleph] + '<br>')
 
 	if RECLIST['A']: html_body+='<br>'
 
-	for aleph in sorted(RECLIST['B']):
+	for aleph in sorted(RECLIST['B'], reverse=True):
 		html_body+=('<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' +
 			aleph + '&local_base=AV">' + aleph + '</a> ' + RECLIST['B'][aleph] + '<br>')
 
-	if html_body:
-
+	if html_body and mail:
 		msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
 		msg['Subject'] = 'Bibliografie MZK'
 		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-		msg['To'] = MAIL_TARGET
+		msg['To'] = mail
 		try:
-			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
+			s = smtplib.SMTP(MAIL_SERVER, timeout=5)
+			s.ehlo()
+			s.starttls()
+			s.login(MAIL_SENDER, MAIL_PASSWD)
+			s.sendmail(MAIL_SENDER, mail, msg.as_string())
 			s.quit()
 		except:
-			try:
-				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-				s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
-				s.quit()
-			except:
-				print('Sendmail error.')
+			print('Sendmail error.')
 
 # ARG -------------------
 
@@ -112,12 +110,11 @@ if args.get == 'record' or args.get == 'ident':
 # INIT -------------------
 
 try:
-	recenze_map = {}
-	with open(RECENZE, 'r') as f:
-		for line in f:
-			rec_name, rec_code = line.split('#')
-			recenze_map[rec_code.strip()] = rec_name
-except: recenze_map = {}
+	db = sqlite3.connect(DB)
+	db.row_factory = sqlite3.Row
+except:
+	print('Failed to open database.')
+	exit(1)
 
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
@@ -169,10 +166,9 @@ for record in records:
 
 		# SKIP NOT B12 ------------------
 
-		B12=False
 		for F in metadata.get_fields('964'):		
-			if 'a' in F and F['a'] == 'B12': B12=True
-		if not B12: continue
+			if 'a' in F and F['a'] == 'B12': break
+		else: continue
 
 		# TEST ------------------
 
@@ -184,11 +180,10 @@ for record in records:
 		# TEST A
 		if metadata.leader[7] == 'm':
 			for F in metadata.get_fields('700'):
-				if '7' in F and F['7'] in recenze_map:
-					A=True
+				if '7' in F and F['7']:
+					if db.execute("SELECT * FROM review WHERE authority = ?;", (F['7'],)).fetchone(): A=True
 			if '100' in metadata and '7' in metadata['100']:
-				if metadata['100']['7'] in recenze_map:
-					A=True
+				if db.execute("SELECT * FROM review WHERE authority = ?;", (metadata['100']['7'],)).fetchone(): A=True
 			# NAME
 			if '245' in metadata and 'a' in metadata['245']:
 				NAME = metadata['245']['a']
@@ -199,8 +194,7 @@ for record in records:
 			if 'a' in F and F['a'] == 'recenze': REC=True
 		if REC:		
 			for F in metadata.get_fields('600'):
-				if '7' in F and F['7'] in recenze_map:
-					B=True
+				if db.execute("SELECT * FROM review WHERE authority = ?;", (F['7'],)).fetchone(): B=True
 			#NAME
 			for F in metadata.get_fields('787'):
 				#NAME
@@ -231,10 +225,10 @@ for record in records:
 
 # EXIT -------------------
 
-if args.notify: notify()
-
 print('TOTAL:' + str(TOTAL))
 print('MATCH:' + str(MATCH))
 
-sys.exit(0)
+if args.notify: notify()
+
+db.close()
 
