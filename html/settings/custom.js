@@ -40,6 +40,8 @@ async function export_data(payload,type) {
 	
 		if (type == 'dictionary') {
 			a.download = payload['dict'] + '.txt';
+		} else if (type == 'code') {
+			a.download = payload['code'] + '.txt';
 		} else {
 			a.download = type + '.csv';
 		}

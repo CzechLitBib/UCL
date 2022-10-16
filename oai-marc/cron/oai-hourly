@@ -7,12 +7,9 @@
 
 echo "start $(date '+%Y-%m-%d %H:%M:%S')"
 
-FROM="$(date -u --date '1 hour ago' '+%Y-%m-%d %H:00:00')"
-UNTIL="$(date -u '+%Y-%m-%d %H:00:00')"
-
 # VUFIND
 
-vufind-update --from "$FROM" --until "$UNTIL"
+vufind-update --from "$(date -u --date '1 hour ago' '+%Y-%m-%d %H:00:00')" --until "$(date -u '+%Y-%m-%d %H:00:00')"
 
 echo "end $(date '+%Y-%m-%d %H:%M:%S')"
 

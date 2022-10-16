@@ -21,7 +21,11 @@ $error = '';
 
 $FILE_PATH='/var/www/data/form/data/';
 
-$db = new SQLite3('/var/www/data/form/form.db');
+try {
+	$db = new SQLite3('/var/www/data/form/form.db');
+} catch (Exception $e) {
+	$db = null;
+}
 
 if (!$db) { $error = 'Chyba databáze.'; }
 
