@@ -12,9 +12,9 @@ from email.mime.text import MIMEText
 DATA = {'fl':'id', 'q':'record_change_date:[' + (date.today() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ') + ' TO ' + date.today().strftime('%Y-%m-%dT%H:%M:%SZ') + ']'}
 
 MAIL_SENDER='xxx'
+MAIL_PASSWD='xxx'
 MAIL_TARGET='xxx'
 MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
 
 def notify():
 	html_text = (
@@ -28,15 +28,13 @@ def notify():
 	msg['To'] = MAIL_TARGET
 	try:
 		s = smtplib.SMTP(MAIL_SERVER, timeout=10)
+		s.ehlo()
+		s.starttls()
+		s.login(MAIL_SENDER, MAIL_PASSWD)
 		s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
 		s.quit()
 	except:
-		try:
-			s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-			s.sendmail(MAIL_SENDER, MAIL_TARGET, msg.as_string())
-			s.quit()
-		except:
-			print('Sendmail error.')
+		print('Sendmail error.')
 
 try:
 	req = requests.get('http://localhost:8983/solr/biblio/select', params=DATA, timeout=10)
