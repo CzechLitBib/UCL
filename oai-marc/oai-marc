@@ -75,8 +75,8 @@ def send_mail(target,message):
 		s.login(MAIL_SENDER, MAIL_PASSWD)
 		s.sendmail(MAIL_SENDER, target, msg.as_string())
 		s.quit()
-	except:
-		print('Sendmail error.')
+	except Exception as e:
+		print(e)
 
 def notify():
 	if args.daily:
