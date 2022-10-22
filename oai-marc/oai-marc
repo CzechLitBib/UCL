@@ -1239,6 +1239,14 @@ for record in records:
 		# 700c I
 		if metadata.leader[7] != 'm':
 			for F in metadata.get_fields('700'):
+				#if 'c' in F and re.match('^\[.*\]$', F['c']):
+				#	C = re.sub('^\[(.*)\]$', '\\1', F['c']).strip()
+				#	CS = re.sub('^([^(]+).*', '\\1', C).strip()
+				#	for F in metadata.get_fields('773')[:1]:
+				#		if 't' in F and C in F['t']: break
+				#		if 't' in F and CS in re.sub('^([^\[]+).*','\\1', F['t']).strip(): break
+				#	else:
+				#		write_error(TIMESTAMP, IDENT, '700', SIF, '187')
 				if 'c' in F:
 					if re.match('^\[.*\]$', F['c']):
 						C = re.sub('^\[(.*)\]$', '\\1', F['c']).strip()
@@ -1251,6 +1259,14 @@ for record in records:
 		# 700c II
 		if metadata.leader[7] == 'm':
 			for F in metadata.get_fields('700'):
+				#if 'c' in F and re.match('^\[.*\]$', F['c']):
+				#	C = re.sub('^\[(.*)\]$', '\\1', F['c']).strip()
+				#	CS = re.sub('^([^(]+).*', '\\1', C).strip()
+				#	for F in metadata.get_fields('245'):
+				#		if 'a' in F and C in F['a'].strip('.:=/ '): break
+				#		if 'a' in F and CS in F['a'].strip('.:=/ '): break
+				#	else:
+				#		write_error(TIMESTAMP, IDENT, '700', SIF, '188')
 				if 'c' in F:
 					if re.match('^\[.*\]$', F['c']):
 						C = re.sub('^\[(.*)\]$', '\\1', F['c']).strip()
