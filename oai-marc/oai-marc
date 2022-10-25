@@ -328,11 +328,11 @@ for record in records:
 
 		# TEST SUBFIELD ------------------
 
-		for TAG in ('022', '072', '100', '245', '520'):
+		for TAG in ('022', '072', '100', '110', '111', '130', '245', '520'):
 			if TAG in metadata:
 				if len(metadata[TAG].get_subfields('a')) != 1:
 					write_error(TIMESTAMP, IDENT, TAG, SIF, '014')
-		for TAG in ('080', '100', '110', '111', '130', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
+		for TAG in ('080', '600', '610', '611', '630', '648', '650', '651', '653', '655', '700', '710'):
 			for F in metadata.get_fields(TAG):
 				if len(F.get_subfields('a')) != 1:
 					write_error(TIMESTAMP, IDENT, TAG, SIF, '015')
