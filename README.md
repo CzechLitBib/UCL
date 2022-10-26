@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- From/data - Smooth collapse, footer line.
 - Dict whisper search.
 - nginx log.
 - SMTP auth(five,cat,seven).
