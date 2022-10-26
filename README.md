@@ -5,6 +5,7 @@ Library support software.
 
 TODO
 <pre>
+- Cat/Settings - CSV Content-type; BOM(/benefity/)
 - From/data - Smooth collapse, footer line.
 - Dict whisper search.
 - nginx log.
