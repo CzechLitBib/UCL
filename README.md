@@ -9,7 +9,6 @@ TODO
 - nginx log.
 - SMTP auth(five,cat,seven).
 - CAT: download.
-- Form: Backend.
 - Aleph: tooltip + add query JS.
 - Settings: Permission module "micro icon button multiselect radio group".
 - DB RO, DB error checks.

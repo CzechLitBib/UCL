@@ -31,7 +31,7 @@ cur.execute("""CREATE TABLE data (
 	other		TEXT);"""
 )
 
-cur.execute("CREATE TABLE file (id TEXT, name TEXT, binary BLOB);")
+cur.execute("CREATE TABLE file (id TEXT, name TEXT);")
 
 cur.execute("CREATE UNIQUE INDEX 'data_index' ON data (id);")
 cur.execute("CREATE UNIQUE INDEX 'file_index' ON file (id);")

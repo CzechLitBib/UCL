@@ -31,7 +31,7 @@
 
 <?php
 
-$db = new SQLite3('devel.db');
+$db = new SQLite3('/var/www/data/devel.db');
 
 if (!$db) {
 	echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Chyba databáze.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';

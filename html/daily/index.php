@@ -23,6 +23,8 @@ if (!empty($_POST['date'])) {
         exit();
 }
 
+$db = new SQLite3('/var/www/data/devel.db');
+
 ?>
 
 <!doctype html>
@@ -30,7 +32,7 @@ if (!empty($_POST['date'])) {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>ČLB Vývoj - Denní</title>
+	<title>ČLB Vývoj</title>
 	<link href="../bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">
@@ -88,42 +90,40 @@ echo '<input type="date" class="form-control" name="date" value="' . $default . 
 if (!empty($_SESSION['daily'])){
         if (preg_match('/\d{4}-\d{2}-\d{2}/', $_SESSION['daily'])) {
 
-                $file =  'data/' . preg_replace('/(\d{4})-(\d{2})-.*/', '${1}/${2}', $_SESSION['daily']) . '/' . $_SESSION['daily'] . '.csv';
+		$date = new DateTime($_SESSION['daily']);
+		$result = $db->query("SELECT * FROM daily WHERE timestamp BETWEEN "
+		. $date->getTimestamp() . " AND " . $date->modify("+1 day")->getTimestamp() . " ORDER BY ident DESC LIMIT 1000;");
 
-                if (file_exists($file)) {
-                        $csv = array();
-                        $row = 0;
-                        if (($handle = fopen($file, 'r')) !== FALSE) {
-                                while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
-                                        $num = count($data);
-                                        for ($c=0;  $c < $num; $c++) {
-                                                $csv[$row][] = $data[$c];
-                                        }
-                                        $row++;
-                                }
-                                fclose($handle);
-                        }
-		
+		if ($result->fetchArray()) {
+			$result->reset();
+
 			echo '<table class="table">';
 			echo '<thead class=""><tr><th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr>';
 			echo '</thead><tbody>';
-
-			array_multisort(array_column($csv,0), SORT_DESC, SORT_NUMERIC, $csv);
-                        foreach($csv as $row) {
-                                echo '<tr><td class="text-center"><a class="external-link" target="_blank" href="' . 'https://aleph.lib.cas.cz/F/?func=direct&doc_number='
-					. $row[0] . '&local_base=AV&format=001"><b>' . $row[0] . '</b></a></td>';
-				echo '<td class="text-center">' . $row[1] . '</td>';
-				echo '<td>' . '<a class="external-link" href="/error/#' . $row[2] . '"><b>' . $row[2] . '</b></a></td>';
-				echo '<td>' . $row[3] . '</td></tr>';
-                        }
-
+			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+				$exception = $db->querySingle("SELECT * FROM exception WHERE code = '"
+					. $res['code'] . "' AND ident LIKE '%" . ltrim($res['ident'], '0') . "%';");
+				$label = $db->querySingle("SELECT label FROM error WHERE code = '" . $res['code'] . "';");
+				if ($exception) { 
+					echo '<tr style="background-color: #fff3cd;">';
+				} else {
+					echo '<tr>';
+				}
+				echo '<td class="text-center"><a class="external-link" target="_blank" href="'
+					. 'https://aleph.lib.cas.cz/F/?func=direct&doc_number='
+					. $res['ident'] . '&local_base=AV&format=001"><b>' . $res['ident'] . '</b></a></td>';
+				echo '<td class="text-center">' . $res['user'] . '</td>';
+				echo '<td>' . '<a class="external-link" href="/error/#' . $res['code'] . '"><b>' . $res['code'] . '</b></a></td>';
+				echo '<td>' . preg_replace('/XXX/', $res['tag'], $label) . '.</td></tr>';
+			}
 			echo '</tbody></table>';
-
-                } else {
-                        echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                }
-        }
+		} else {
+			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+		}
+	}
 }
+
+$db->close();
 
 ?>
 

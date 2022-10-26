@@ -10,18 +10,20 @@ if(empty($_SESSION['auth'])) {
 }
 
 if($_SESSION['group'] !== 'admin') {
-        $_SESSION['error'] = True;
-        header('Location: /main/');
-        exit();
+	$_SESSION['error'] = True;
+	header('Location: /main/');
+	exit();
 }
 
 if(!isset($_SESSION['weekly'])) { $_SESSION['weekly'] = Null; }
 
 if (!empty($_POST['date'])) {
-        $_SESSION['weekly'] = $_POST['date'];
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit();
+	$_SESSION['weekly'] = $_POST['date'];
+	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
 }
+
+$db = new SQLite3('/var/www/data/devel.db');
 
 ?>
 
@@ -91,34 +93,32 @@ if (!empty($_SESSION['weekly'])){ $default = $_SESSION['weekly']; }
 
 if (!empty($_SESSION['weekly'])){
 	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_SESSION['weekly'])) {
-
-		$file = 'data/'
-		. date("Y-m-d", strtotime($_SESSION['weekly']) - 8*24*3600) . '_'
-		. date("Y-m-d", strtotime($_SESSION['weekly']) - 2*24*3600) . '.csv';
-
-		if (file_exists($file)) {
-			$csv = array();
-			$row = 0;
-			if (($handle = fopen($file, 'r')) !== FALSE) {
-				while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
-					$num = count($data);
-					for ($c=0;  $c < $num; $c++) {
-						$csv[$row][] = $data[$c];
-					}
-					$row++;
-				}
-				fclose($handle);
-			}
+		$from = new DateTime($_SESSION['weekly']);
+		$until = new DateTime($_SESSION['weekly']);
+		$result = $db->query("SELECT * FROM weekly WHERE timestamp BETWEEN "
+		. $from->modify("-8 days")->getTimestamp() . " AND " . $until->modify("-1 day")->getTimestamp() . " ORDER BY ident DESC LIMIT 1000;");
+	
+		if ($result->fetchArray()) {
+			$result->reset();
 
 			echo '<table class="table"><thead><tr>';
-			echo '<th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr></thead><tbody>';
-
-			array_multisort(array_column($csv,0), SORT_DESC, SORT_NUMERIC, $csv);
-			foreach($csv as $row) {
-				echo '<tr><td class="text-center"><a class="external-link" target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number=' . $row[0] . '&local_base=AV&format=001"><b>' . $row[0] . '</b></a></td>';
-				echo '<td class="text-center">' . $row[1] . '</td>';
-				echo '<td><a class="external-link" href="/error/#' . $row[2] . '"><b>' . $row[2] . '</b></a></td>';
-				echo '<td>' . $row[3] . '</td></tr>';
+			echo '<th class="text-center" scope="col">SysNo</th><th class="text-center" scope="col">SIF</th><th scope="col">Kód</th><th scope="col">Popis</th></tr>';
+			echo '</thead><tbody>';
+			while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+				$exception = $db->querySingle("SELECT * FROM exception WHERE code = '"
+					. $res['code'] . "' AND ident LIKE '%" . ltrim($res['ident'], '0') . "%';");
+				$label = $db->querySingle("SELECT label FROM error WHERE code = '" . $res['code'] . "';");
+				if ($exception) { 
+					echo '<tr style="background-color: #fff3cd;">';
+				} else {
+					echo '<tr>';
+				}
+				echo '<td class="text-center"><a class="external-link" target="_blank" href="'
+					. 'https://aleph.lib.cas.cz/F/?func=direct&doc_number='
+					. $res['ident'] . '&local_base=AV&format=001"><b>' . $res['ident'] . '</b></a></td>';
+				echo '<td class="text-center">' . $res['user'] . '</td>';
+				echo '<td>' . '<a class="external-link" href="/error/#' . $res['code'] . '"><b>' . $res['code'] . '</b></a></td>';
+				echo '<td>' . preg_replace('/XXX/', $res['tag'], $label) . '.</td></tr>';
 			}
 			echo '</tbody></table>';
 		} else {
@@ -126,6 +126,8 @@ if (!empty($_SESSION['weekly'])){
 		}
 	}
 }
+
+$db->close();
 
 ?>
 

@@ -1,3 +1,4 @@
+
 // drop form-data
 async function drop_prescription(id) {
 	return await fetch('/form-data/', {
@@ -21,5 +22,22 @@ async function remove_form_data(id) {
 	if (ret === 'ok') {
 		document.getElementById(id).style.display = 'none';	
 	}
+}
+
+// collapse
+function card_toggle(id) {
+	myCollapse = document.getElementById('collapse-' + id);
+	bsCollapse = new bootstrap.Collapse(myCollapse, {
+	toggle: false
+	})
+
+	bsCollapse.toggle();
+}
+
+// modal
+function on_done() {
+	modal = new bootstrap.Modal(document.getElementById('modal'));
+        document.getElementById('modal-text').textContent = 'Chcete označit záznam jako zpracovaný';
+        modal.toggle();
 }
 
