@@ -92,9 +92,7 @@ if (preg_match('/drop:.*/', $raw)) {
 			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 		} else {
 			$data->reset();
-			echo '<table class="table table-sm text-center"><thead><tr>'
-			. '<th scope="col"></th><th scope="col">Datum</th><th class="text-start" scope="col">Formát</th>'
-			. '<th scope="col"></th></tr></thead><tbody>';
+			echo '<table class="table table-sm text-center mt-4"><thead></thead><tbody>';
 
 			while ($row = $data->fetchArray()) {
 				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
@@ -169,7 +167,7 @@ if (preg_match('/drop:.*/', $raw)) {
 				echo '</tbody></table>';
 			echo '</td></tr>';
 			}
-			echo '</tbody></table>';
+			echo '</tbody><tfoot><th></th></tfoot></table>';
 		}
 	}
 ?>
