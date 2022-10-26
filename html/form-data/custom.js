@@ -25,7 +25,7 @@ async function remove_form_data(id) {
 }
 
 // collapse
-function card_toggle(id) {
+function toggle_data(id) {
 	myCollapse = document.getElementById('collapse-' + id);
 	bsCollapse = new bootstrap.Collapse(myCollapse, {
 	toggle: false
