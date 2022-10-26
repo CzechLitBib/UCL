@@ -81,8 +81,8 @@ if ($_SESSION['message'] == 1) {
 		$_SESSION['message'] = 3;
 	} else {
 		$query = $db->exec("
-			INSERT INTO data (id,format,public,dedication,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,page,other)"
-			. " VALUES ('" . $id . "','" . $_POST['format'] . "', 0," . $_POST['dedication'] . ",'"
+			INSERT INTO data (id,visible,format,public,dedication,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,page,other)"
+			. " VALUES ('" . $id . "',0,'" . $_POST['format'] . "', 0," . $_POST['dedication'] . ",'"
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
