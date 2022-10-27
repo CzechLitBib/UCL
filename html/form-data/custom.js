@@ -20,6 +20,36 @@ async function update(payload) {
 	});
 }
 
+// FETCH - PDF
+async function export_data(payload) {
+	return await fetch('/form-data/', {
+		method: 'POST',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(payload)
+	})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network error.');
+	}
+		 return response.blob();
+	})
+        .then(blob => {
+		var url = window.URL.createObjectURL(blob);
+		var a = document.createElement('a');
+		a.href = url;
+		a.download = payload['data'] + '.pdf';
+	
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		return true;
+        })
+	.catch(error => {
+		console.error(error);
+		return false;
+	});
+}
+
 // drop form-data
 async function drop_prescription(id) {
 	return await fetch('/form-data/', {
@@ -72,5 +102,11 @@ async function on_confirm() {
 	}
 	modal_action = null;
 	modal.toggle();
+}
+
+// PDF
+async function get_pdf(id) {
+	payload = {'type':'file', 'data':id};
+	const ret = await this.export_data(payload);
 }
 
