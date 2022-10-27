@@ -21,6 +21,23 @@ $error = '';
 
 $FILE_PATH='/var/www/data/form/data/';
 
+$db_map = array(
+	'email' => 'E-mail',
+	'note' => 'Poznámka',
+	'author' => 'Autor/Editor',
+	'name' => 'Název',
+	'source' => 'Zdrojový dokument',
+	'quote' => 'Citace',
+	'text_author' => 'Autor/Editor(zdroj.)',
+	'text_name' => 'Název(zdroj.)',
+	'place' => 'Místo vydání',
+	'publisher' => 'Nakladatelství',
+	'year' => 'Rok',
+	'page' => 'Stránkový rozsah',
+	'other' => 'Další údaje'
+						
+);
+
 try {
 	$db = new SQLite3('/var/www/data/form/form.db');
 } catch (Exception $e) {
@@ -113,7 +130,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 				echo '<hr class="m-1 p-0">';
 				echo '<div class="row px-1 d-flex align-items-center">';
 					echo '<div class="col col-auto"><svg xmlns="http://www.w3.org/2000/svg" onclick="toggle_data(' . "'" .   $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></div>';
-					echo '<div class="col col-auto text-nowrap">' . date(" d.m Y", hexdec(substr($row['id'],0,8))) . '</div>';# ID
+					echo '<div class="col col-auto text-nowrap">' . date(" d.m Y H:i", hexdec(substr($row['id'],0,8))) . '</div>';# ID
 					echo '<div class="col">' . $row['format'] . '</div>';# FORMAT
 					echo '<div class="col text-end"><button type="button" class="btn btn-secondary btn-sm" onclick="confirmation(' . "'" . $row['id'] . "'" . ')">Zpracováno</button></div>';
 				echo '</div>';
@@ -122,54 +139,49 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	
 				echo '<div class="collapse" id="collapse-' . $row['id'] . '">';
  				echo '<div class="card card-body bg-light">';
-				echo '<table class="table table-borderless bg-danger m-0"><tbody>';
+				echo '<table class="table table-sm table-borderless m-0"><tbody>';
 		
-		#				# PUBLIC
-		#				echo '<tr><td class="text-end align-middle col-2"><b>'
-		##				. 'Veřejný'
-		#				. '</b></td><td class="text-start align-middle">';
-		#				if ($row[2])  {
-		#					echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
-		#				} else {
-		#					echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
-		#				}
-		#				echo '</td></tr>';
+						# PUBLIC
+						if (isset($row['public'])) {
+							echo '<tr><td class="text-end align-middle col-2"><b>Veřejný</b></td><td class="text-start align-middle">';
+							if ($row['public'])  {
+								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
+							} else {
+								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
+							}
+							echo '</td></tr>';
+						}
+						# DEDICATION
+						if (isset($row['dedication'])) {
+							echo '<tr><td class="text-end align-middle col-2"><b>Dedikace</b></td><td class="text-start align-middle">';
+							if ($row['dedication'])  {
+								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
+							} else {
+								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
+							}
+							echo '</td></tr>';
+						}
 
-	#					# DEDICATION
-	#					echo '<tr><td class="text-end align-middle col-2"><b>'
-	#					. 'Dedikace'
-	#					. '</b></td><td class="text-start align-middle">';
-	#					if ($row[3])  {
-	#						echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
-	#					} else {
-	#						echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
-	#					}
-	#					echo '</td></tr>';
+						# ODKAZ
+						if (isset($row['link'])) {
+							echo '<tr><td class="text-end align-middle col-2"><b>Odkaz</b></td>';
+							echo '<td class="text-start align-middle"><a class="external-link" href="' . $row['link'] . '" target="_blank">'. $row['link'] . '</a></td></tr>';
+						}
 
-	#					# ODKAZ
-						echo '<tr><td class="text-end align-middle col-2 bg-secondary"><b>Odkaz</b></td>';
-						echo '<td class="text-start align-middle"><a class="external-link" href="' . $row['link'] . '" target="_blank">'. $row['link'] . '</a></td></tr>';
+						# SOUBOR
+						if (isset($file)) {
+							echo '<tr><td class="text-end align-middle col-2"><b>Soubor</b></td><td class="text-start align-middle">';
+							echo '<svg xmlns="http://www.w3.org/2000/svg" onclick="get_pdf(' . "'" . $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-filetype-pdf" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.6 11.85H0v3.999h.791v-1.342h.803c.287 0 .531-.057.732-.173.203-.117.358-.275.463-.474a1.42 1.42 0 0 0 .161-.677c0-.25-.053-.476-.158-.677a1.176 1.176 0 0 0-.46-.477c-.2-.12-.443-.179-.732-.179Zm.545 1.333a.795.795 0 0 1-.085.38.574.574 0 0 1-.238.241.794.794 0 0 1-.375.082H.788V12.48h.66c.218 0 .389.06.512.181.123.122.185.296.185.522Zm1.217-1.333v3.999h1.46c.401 0 .734-.08.998-.237a1.45 1.45 0 0 0 .595-.689c.13-.3.196-.662.196-1.084 0-.42-.065-.778-.196-1.075a1.426 1.426 0 0 0-.589-.68c-.264-.156-.599-.234-1.005-.234H3.362Zm.791.645h.563c.248 0 .45.05.609.152a.89.89 0 0 1 .354.454c.079.201.118.452.118.753a2.3 2.3 0 0 1-.068.592 1.14 1.14 0 0 1-.196.422.8.8 0 0 1-.334.252 1.298 1.298 0 0 1-.483.082h-.563v-2.707Zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638H7.896Z"/></svg>';
+							echo '</td></tr>';
+						}
 
-	#					# SOUBOR
-						echo '<tr><td class="text-end align-middle col-2"><b>'
-						. 'Soubor'
-						. '</b></td><td class="text-start align-middle">';
-						echo '<svg xmlns="http://www.w3.org/2000/svg" onclick="get_pdf(' . "'" . $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-filetype-pdf" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.6 11.85H0v3.999h.791v-1.342h.803c.287 0 .531-.057.732-.173.203-.117.358-.275.463-.474a1.42 1.42 0 0 0 .161-.677c0-.25-.053-.476-.158-.677a1.176 1.176 0 0 0-.46-.477c-.2-.12-.443-.179-.732-.179Zm.545 1.333a.795.795 0 0 1-.085.38.574.574 0 0 1-.238.241.794.794 0 0 1-.375.082H.788V12.48h.66c.218 0 .389.06.512.181.123.122.185.296.185.522Zm1.217-1.333v3.999h1.46c.401 0 .734-.08.998-.237a1.45 1.45 0 0 0 .595-.689c.13-.3.196-.662.196-1.084 0-.42-.065-.778-.196-1.075a1.426 1.426 0 0 0-.589-.68c-.264-.156-.599-.234-1.005-.234H3.362Zm.791.645h.563c.248 0 .45.05.609.152a.89.89 0 0 1 .354.454c.079.201.118.452.118.753a2.3 2.3 0 0 1-.068.592 1.14 1.14 0 0 1-.196.422.8.8 0 0 1-.334.252 1.298 1.298 0 0 1-.483.082h-.563v-2.707Zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638H7.896Z"/></svg>';
-						echo '</td></tr>';
+						foreach($db_map as $name => $text) {
+							if (isset($row[$name])) {
+								echo '<tr><td class="text-end align-middle col-2"><b>' . $text . '</b></td>';
+								echo '<td class="text-start align-middle">' . $row[$name] . '</a></td></tr>';
+							}
+						}
 
-	#					# AUTOR
-	#					echo '<tr><td class="text-end align-middle col-2"><b>'
-	#					. 'Autor'
-	#					. '</b></td><td class="text-start align-middle">';
-	#					echo 'Jmeno Autora';
-	#					echo '</td></tr>';
-
-	#					# NAME
-	#					echo '<tr><td class="text-end align-middle col-2"><b>'
-	#					. 'Název'
-	#					. '</b></td><td class="text-start align-middle">';
-	#					echo 'Testovaci dilo';
-	#					echo '</td></tr>';
 					echo '</tbody></table>';
 					echo '</div>';
 					echo '</div>';
