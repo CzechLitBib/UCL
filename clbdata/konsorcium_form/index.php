@@ -393,7 +393,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 </div>
 
 <script src="form.js"></script>
-<script src="bootstrap.min.js"></script>
+<script src="../bootstrap.min.js"></script>
 
 </body>
 </html>

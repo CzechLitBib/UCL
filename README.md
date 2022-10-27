@@ -5,9 +5,8 @@ Library support software.
 
 TODO
 <pre>
--SQL cath exception
+- SQL catch exception
 - Cat/Settings - CSV Content-type; BOM(/benefity/)
-- From/data - Smooth collapse, footer line.
 - Dict whisper search.
 - nginx log.
 - SMTP auth(five,cat,seven).
