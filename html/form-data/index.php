@@ -31,13 +31,17 @@ if (!$db) { $error = 'Chyba databáze.'; }
 
 // XHR
 
-$raw = file_get_contents('php://input');
-
-if (preg_match('/drop:.*/', $raw)) {
-	if ($db) {
-		$drop = $db->exec("DELETE FROM data WHERE id = '" . preg_replace('/drop:(.*)/','${1}', $raw) . "';");
-		if ($drop) { echo 'ok'; }
+if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
+	$req = json_decode(file_get_contents('php://input'), True);
+	$resp = [];
+	if ($req['type'] == 'visible') {
+		$query = $db->exec("UPDATE data SET visible = 0 WHERE id = '" . $req['data'] . "';");
+		if ($query) {
+			$resp['value'] = 'ok';
+		}
 	}
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode($resp);
 	exit();
 }
 
@@ -86,28 +90,30 @@ if (preg_match('/drop:.*/', $raw)) {
 	if ($error) {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">' . $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 	} else {
-		$data = $db->query("SELECT * FROM data ORDER BY id DESC;");
+		$data = $db->query("SELECT * FROM data WHERE visible = 1 ORDER BY id DESC;");
 
 		if (!$data->fetchArray()) {
 			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 		} else {
 			$data->reset();
-			echo '<div class="container mt-4" id="' . $row[0] . '">';
-			echo '<hr class="m-1 p-0">';
+			echo '<div class="container mt-4">';
 
-			while ($row = $data->fetchArray()) {
+			while ($row = $data->fetchArray(SQLITE3_ASSOC)) {
 			
-				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row[0] . "';)");
-
+				$file = $db->querySingle("SELECT name FROM file WHERE ID = '" . $row['id'] . "';)");
+				
+				echo '<div id="' . $row['id'] . '">';
+				echo '<hr class="m-1 p-0">';
 				echo '<div class="row px-1 d-flex align-items-center">';
-					echo '<div class="col col-auto"><svg xmlns="http://www.w3.org/2000/svg" onclick="toggle_data(' . "'" .   $row[0] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></div>';
-					echo '<div class="col col-auto text-nowrap">' . date(" d.m Y", hexdec(substr($row[0],0,8))) . '</div>';# ID
-					echo '<div class="col">' . $row[1] . '</div>';# FORMAT
-					echo '<div class="col text-end"><button type="button" class="btn btn-secondary btn-sm" onclick="on_done()">Zpracováno</button></div>';
+					echo '<div class="col col-auto"><svg xmlns="http://www.w3.org/2000/svg" onclick="toggle_data(' . "'" .   $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></div>';
+					echo '<div class="col col-auto text-nowrap">' . date(" d.m Y", hexdec(substr($row['id'],0,8))) . '</div>';# ID
+					echo '<div class="col">' . $row['format'] . '</div>';# FORMAT
+					echo '<div class="col text-end"><button type="button" class="btn btn-secondary btn-sm" onclick="confirmation(' . "'" . $row['id'] . "'" . ')">Zpracováno</button></div>';
+				echo '</div>';
+				echo '<hr class="m-1 p-0">';
 				echo '</div>';
 	
-				echo '<div class="collapse" id="collapse-' . $row[0] . '">';
-				echo '<hr class="m-1 p-0">';
+				echo '<div class="collapse" id="collapse-' . $row['id'] . '">';
  				echo '<div class="card card-body bg-light">';
 				echo '<table class="table table-borderless bg-danger m-0"><tbody>';
 		
@@ -135,7 +141,7 @@ if (preg_match('/drop:.*/', $raw)) {
 
 	#					# ODKAZ
 						echo '<tr><td class="text-end align-middle col-2 bg-secondary"><b>Odkaz</b></td>';
-						echo '<td class="text-start align-middle"><a class="external-link" href="https://clb.ucl.cas.cz" target="_blank">https://clb.ucl.cas.cz</a></td></tr>';
+						echo '<td class="text-start align-middle"><a class="external-link" href="' . $row['link'] . '" target="_blank">'. $row['link'] . '</a></td></tr>';
 
 	#					# SOUBOR
 	#					echo '<tr><td class="text-end align-middle col-2"><b>'
@@ -160,7 +166,6 @@ if (preg_match('/drop:.*/', $raw)) {
 					echo '</tbody></table>';
 					echo '</div>';
 					echo '</div>';
-				echo '<hr class="m-1 p-0">';
 			}
 			echo '</div>';
 		}

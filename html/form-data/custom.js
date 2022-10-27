@@ -1,4 +1,25 @@
 
+// MODAL
+modal = new bootstrap.Modal(document.getElementById('modal'));
+modal_action = null;
+
+// FETCH  - JSON { type, value } response JSON { value }
+async function update(payload) {
+	return await fetch('/form-data/', {
+		method: 'POST',
+		headers: {'Content-Type' :'application/json'},
+		body: JSON.stringify(payload)
+	})
+	.then(response => response.json())
+	.then(data => {
+		 return data;
+	})
+	.catch(error => {
+		console.error(error);
+		return;
+	});
+}
+
 // drop form-data
 async function drop_prescription(id) {
 	return await fetch('/form-data/', {
@@ -35,9 +56,21 @@ function toggle_data(id) {
 }
 
 // modal
-function on_done() {
-	modal = new bootstrap.Modal(document.getElementById('modal'));
+function confirmation(id) {
         document.getElementById('modal-text').textContent = 'Chcete označit záznam jako zpracovaný';
+	modal_action = id;
         modal.toggle();
+}
+
+// confirmation
+async function on_confirm() {
+	payload = {'type':'visible', 'data':modal_action};
+	const ret = await update(payload);
+	if (ret.length !== 0) {
+		document.getElementById(modal_action).style.display = "none";
+		document.getElementById('collapse-' + modal_action).style.display = "none";
+	}
+	modal_action = null;
+	modal.toggle();
 }
 
