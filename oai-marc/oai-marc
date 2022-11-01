@@ -1244,7 +1244,7 @@ for record in records:
 					CS = re.sub('^([^(]+).*', '\\1', C).strip()
 					for F in metadata.get_fields('773')[:1]:
 						if 't' in F and C == F['t']: break
-						if 't' in F and CS == re.sub('^([^\[]+).*','\\1', F['t']).strip(): break
+						if 't' in F and CS == re.sub('^([^:\[]+).*', '\\1', F['t']).strip(): break
 					else:
 						write_error(TIMESTAMP, IDENT, '700', SIF, '187')
 		# 700c II
@@ -1254,8 +1254,8 @@ for record in records:
 					C = re.sub('^\[(.*)\]$', '\\1', F['c']).strip()
 					CS = re.sub('^([^(]+).*', '\\1', C).strip()
 					for F in metadata.get_fields('245'):
-						if 'a' in F and C == F['a'].strip('.:=/ '): break
-						if 'a' in F and CS == F['a'].strip('.:=/ '): break
+						if 'a' in F and C == F['a'].strip(':=/ '): break
+						if 'a' in F and CS == F['a'].strip(':=/ '): break
 					else:
 						write_error(TIMESTAMP, IDENT, '700', SIF, '188')
 		# 245c
