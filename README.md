@@ -5,6 +5,13 @@ Library support software.
 
 TODO
 <pre>
+- programmer CV
+- 505.xml + info_resource -> vufind-dev
+- API: plot 2x Ne ??
+- 187/188 [done]
+- Aleph: UCLO live
+- Aleph: CLO + field_600:\* ?; CLO index.txt
+- OIT + BATCH
 - SQL catch exception
 - Cat/Settings - CSV Content-type; BOM(/benefity/)
 - Dict whisper search.
