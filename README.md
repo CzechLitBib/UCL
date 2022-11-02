@@ -12,7 +12,6 @@ FRONTEND
 - DB catch exception
 - nginx + CSV read
 - Aleph: tooltip + add query JS
-- Aleph: CLO + field_600:\* ?
 - CAT/Settings: CSV BOM/Content-type
 - Settings: Solr codes
 - Settings: Search whisper
