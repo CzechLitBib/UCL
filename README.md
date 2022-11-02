@@ -21,12 +21,12 @@ FRONTEND
 
 BACKEND
 
+- Mod: DB
 - Rule 136 dup code.
 - SMTP auth(five,cat,seven).
 - OIT + BATCH
 - API: plot UTC bug
 - Aleph: UCLO live
-- Aleph: CLO index
 
 OTHER
 

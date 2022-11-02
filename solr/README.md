@@ -41,8 +41,8 @@ systemctl enable solr
 
 # DELETE / CREATE CORE
 
-sudo -u solr delete -c core
-sudo -u solr create -c core
+sudo -u solr ./solr delete -c core
+sudo -u solr ./solr create -c core
 
 # SOLRMARC
 
