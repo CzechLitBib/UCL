@@ -5,24 +5,32 @@ Library support software.
 
 TODO
 <pre>
-- programmer CV
-- 505.xml + info_resource -> vufind-dev
-- API: plot 2x Ne ??
-- 187/188 [done]
-- Aleph: UCLO live
-- Aleph: CLO + field_600:\* ?; CLO index.txt
-- OIT + BATCH
-- SQL catch exception
-- Cat/Settings - CSV Content-type; BOM(/benefity/)
-- Dict whisper search.
-- nginx log.
-- SMTP auth(five,cat,seven).
-- CAT: download.
-- Aleph: tooltip + add query JS.
+FRONTEND
+
+- DB SQLi protection
+- DB RO, DB error checks
+- DB catch exception
+- nginx + CSV read
+- Aleph: tooltip + add query JS + field JS
+- Aleph: CLO + field_600:\* ?
+- Aleph: CLO field update
+- CAT/Settings: CSV BOM/Content-type
+- Settings: Search whisper
 - Settings: Permission module "micro icon button multiselect radio group".
-- DB RO, DB error checks.
-- SQLi protection.
+- CAT: CSV download
+
+BACKEND
+
 - Rule 136 dup code.
+- SMTP auth(five,cat,seven).
+- OIT + BATCH
+- API: plot UTC bug
+- Aleph: UCLO live
+- Aleph: CLO index
+
+OTHER
+
+- 505.xml + info_resource -> vufind-dev
 </pre>
 FILE
 <pre>

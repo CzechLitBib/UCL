@@ -1,9 +1,9 @@
 #!/bin/bash
 
-for F in $(cat special_all.txt); do
-	./solr-schema.py --add $F --type string
+for F in $(cat clo.txt); do
+	./solr-schema.py --add uclo "$F" strings
 	sleep 1
 done
 
-echo
+./solr-schema.py --add uclo field_VER string
 
