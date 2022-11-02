@@ -11,7 +11,7 @@ FRONTEND
 - DB RO, DB error checks
 - DB catch exception
 - nginx + CSV read
-- Aleph: tooltip + add query JS + field JS
+- Aleph: tooltip + add query JS
 - Aleph: CLO + field_600:\* ?
 - Aleph: CLO field update
 - CAT/Settings: CSV BOM/Content-type

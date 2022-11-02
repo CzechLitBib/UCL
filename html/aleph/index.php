@@ -134,9 +134,9 @@ if (!empty($_POST)) {
 <div class="row mt-4 justify-content-center">
 	<div class="col-md-8">
 		<div class="d-grid gap-2 d-sm-flex">
-			<input type="radio" class="btn-check" id="uclo" name="index" value="uclo" checked>
+			<input type="radio" class="btn-check" id="uclo" name="index" value="uclo" onclick="get_selection('uclo')" checked>
 			<label class="btn btn-outline-danger w-100" for="uclo">UCLO</label>
-			<input type="radio" class="btn-check" id="clo" name="index" value="clo">
+			<input type="radio" class="btn-check" id="clo" name="index" value="clo" onclick="get_selection('clo')">
 			<label class="btn btn-outline-danger text-nowrap w-100" for="clo">CLO</label>
 		</div>
 	</div>
@@ -308,6 +308,7 @@ foreach($subfield as $field=>$subs) {
 </main>
 
 <script src="../bootstrap.min.js"></script>
+<script src="custom.js"></script>
 
 </body>
 </html>
