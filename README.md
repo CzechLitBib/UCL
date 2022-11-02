@@ -14,6 +14,7 @@ FRONTEND
 - Aleph: tooltip + add query JS
 - Aleph: CLO + field_600:\* ?
 - CAT/Settings: CSV BOM/Content-type
+- Settings: Solr codes
 - Settings: Search whisper
 - Settings: Permission module "micro icon button multiselect radio group".
 - CAT: CSV download
