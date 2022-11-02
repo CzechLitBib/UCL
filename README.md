@@ -13,7 +13,6 @@ FRONTEND
 - nginx + CSV read
 - Aleph: tooltip + add query JS
 - Aleph: CLO + field_600:\* ?
-- Aleph: CLO field update
 - CAT/Settings: CSV BOM/Content-type
 - Settings: Search whisper
 - Settings: Permission module "micro icon button multiselect radio group".

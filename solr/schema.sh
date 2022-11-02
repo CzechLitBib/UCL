@@ -1,9 +1,24 @@
 #!/bin/bash
 
-for F in $(cat clo.txt); do
-	./solr-schema.py --add uclo "$F" strings
+CORE='clo'
+
+for F in $(cat field_string.txt); do
+	./solr-schema.py --add "$CORE" "$F" string
 	sleep 1
 done
 
-./solr-schema.py --add uclo field_VER string
+for F in $(cat field_all.txt); do
+	./solr-schema.py --add "$CORE" "$F" strings
+	sleep 1
+done
+
+for F in $(cat subfield_string.txt); do
+	./solr-schema.py --add "$CORE" "$F" string
+	sleep 1
+done
+
+for F in $(cat subfield_all.txt); do
+	./solr-schema.py --add "$CORE" "$F" strings
+	sleep 1
+done
 

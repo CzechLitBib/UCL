@@ -39,6 +39,11 @@ cp solr /etc/init.d/
 
 systemctl enable solr
 
+# DELETE / CREATE CORE
+
+sudo -u solr delete -c core
+sudo -u solr create -c core
+
 # SOLRMARC
 
 wget 'https://github.com/solrmarc/solrmarc/releases/download/3.4/simple_install_package_3.4.zip'

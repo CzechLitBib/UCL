@@ -1,4 +1,3 @@
-field_000
 field_001
 field_003
 field_005
@@ -8,6 +7,9 @@ field_044
 field_111
 field_130
 field_245
+field_678
 field_990
+field_LDR
 field_OWN
+field_VER
 field_ZAZ
