@@ -12,7 +12,7 @@ FRONTEND
 - DB catch exception
 - nginx + CSV read
 - Aleph: tooltip + add query JS
-- CAT/Settings: CSV BOM/Content-type
+- CAT/Settings/Aleph: CSV BOM/Content-type
 - Settings: Solr codes
 - Settings: Search whisper
 - Settings: Permission module "micro icon button multiselect radio group".
@@ -25,10 +25,6 @@ BACKEND
 - SMTP auth(five,cat,seven).
 - OIT + BATCH
 - API: plot UTC bug
-
-OTHER
-
-- 505.xml + info_resource -> vufind-dev
 </pre>
 FILE
 <pre>

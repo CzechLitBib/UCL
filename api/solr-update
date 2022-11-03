@@ -8,7 +8,6 @@ from datetime import datetime,timedelta
 
 # SOLR
 
-CORE='uclo'
 SOLR='http://localhost:8983/solr/uclo/update' 
 SOLRJ='/opt/solr-8.10.0/dist/solrj-lib'
 SOLRMARC='/opt/solrmarc/solrmarc_core_3.4.jar'
@@ -16,7 +15,7 @@ INDEX='/opt/solrmarc/index.properties'
 
 ARGS=['java', '-jar', SOLRMARC, 'IndexDriver', '-config', INDEX, '-solrj', SOLRJ, '-u', SOLR, '-']
 
-print('start ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+print('start ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'), flush=True)
 
 # SOLR - ListRecords
 
