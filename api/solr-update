@@ -16,7 +16,7 @@ INDEX='/opt/solrmarc/index.properties'
 
 ARGS=['java', '-jar', SOLRMARC, 'IndexDriver', '-config', INDEX, '-solrj', SOLRJ, '-u', SOLR, '-']
 
-# API
+# SOLR - ListRecords
 
 API='https://vyvoj.ucl.cas.cz/api/ListRecords'
 
@@ -27,8 +27,6 @@ HEADER={'Accept':'application/octet-stream'}
 PARAMS={'from':FROM, 'until':UNTIL}
 
 BUFF=io.BytesIO()
-
-# MAIN
 
 try:
 	req = requests.get(API, params=PARAMS, headers=HEADER, timeout=5)
@@ -43,6 +41,30 @@ try:
 		proc.stdin.write(BUFF.read())
 except:
 	print('SOLRMARC update error.')
+
+BUFF.close()
+
+# SOLR - GetDeltes
+
+API='https://vyvoj.ucl.cas.cz/api/GetDeletes'
+
+BUFF=io.StringIO()
+
+try:
+	req = requests.get(API, timeout=5)
+	if req.status_code == 200:
+		BUFF.write(req.text)
+		BUFF.seek(0)
+except:
+	print('API GetDeletes request error.')
+
+HEADER={'Content-type':'application/json'}
+PAYLOAD={'commit':{}, 'delete':BUFF.read().splitlines()}
+
+try:
+	req = requests.post(SOLR, json=PAYLOAD, headers=HEADER, timeout=5)
+except:
+	print('SOLR delete record error.')
 
 BUFF.close()
 
