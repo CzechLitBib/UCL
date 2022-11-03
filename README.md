@@ -25,7 +25,6 @@ BACKEND
 - SMTP auth(five,cat,seven).
 - OIT + BATCH
 - API: plot UTC bug
-- Aleph: UCLO live
 
 OTHER
 
