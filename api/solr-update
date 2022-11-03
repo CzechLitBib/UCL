@@ -16,6 +16,8 @@ INDEX='/opt/solrmarc/index.properties'
 
 ARGS=['java', '-jar', SOLRMARC, 'IndexDriver', '-config', INDEX, '-solrj', SOLRJ, '-u', SOLR, '-']
 
+print('start ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
 # SOLR - ListRecords
 
 API='https://vyvoj.ucl.cas.cz/api/ListRecords'
@@ -67,4 +69,6 @@ except:
 	print('SOLR delete record error.')
 
 BUFF.close()
+
+print('end ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
