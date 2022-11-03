@@ -80,6 +80,7 @@ pyoai.patch
 
 /etc/crontab:
 10 *    * * *   root    oai-hourly >> /var/log/oai-hourly.log 2>&1 &
+20 *	* * *	root    solr-update >> /var/log/solr-update.log 2>&1 &
 00 5    * * *   root    oai-daily >> /var/log/oai-daily.log 2>&1 &
 00 6    * * TUE root    oai-weekly >> /var/log/oai-weekly.log 2>&1 &
 00 7    1 * *   root    oai-monthly >> /var/log/oai-monthly.log 2>&1 &

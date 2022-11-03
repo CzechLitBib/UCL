@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+#
+# Update Solr 'uclo' core from API
+#
+
+import subprocess,requests,io
+from datetime import datetime,timedelta
+
+# SOLR
+
+CORE='uclo'
+SOLR='http://localhost:8983/solr/uclo/update' 
+SOLRJ='/opt/solr-8.10.0/dist/solrj-lib'
+SOLRMARC='/opt/solrmarc/solrmarc_core_3.4.jar'
+INDEX='/opt/solrmarc/index.properties'
+
+ARGS=['java', '-jar', SOLRMARC, 'IndexDriver', '-config', INDEX, '-solrj', SOLRJ, '-u', SOLR, '-']
+
+# API
+
+API='https://vyvoj.ucl.cas.cz/api/ListRecords'
+
+UNTIL=datetime.utcnow().strftime('%Y-%m-%d %H:00:00')
+FROM=(datetime.utcnow()-timedelta(hours=1)).strftime('%Y-%m-%d %H:00:00')
+
+HEADER={'Accept':'application/octet-stream'}
+PARAMS={'from':FROM, 'until':UNTIL}
+
+BUFF=io.BytesIO()
+
+# MAIN
+
+try:
+	req = requests.get(API, params=PARAMS, headers=HEADER, timeout=5)
+	if req.status_code == 200:
+		BUFF.write(req.text.encode('utf-8'))
+		BUFF.seek(0)
+except:
+	print('API request error.')
+
+try:
+	with subprocess.Popen(ARGS, stdin=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+		proc.stdin.write(BUFF.read())
+except:
+	print('SOLRMARC update error.')
+
+BUFF.close()
+
