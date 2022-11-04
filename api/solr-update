@@ -45,7 +45,7 @@ except:
 
 BUFF.close()
 
-# SOLR - GetDeltes
+# SOLR - GetDeletes
 
 API='https://vyvoj.ucl.cas.cz/api/GetDeletes'
 

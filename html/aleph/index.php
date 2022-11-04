@@ -72,9 +72,15 @@ if (!empty($_POST)) {
 	$fp = fopen($request, 'r', false, $context);
 
 	if ($fp != false) {
-	
-		header('Content-type: application/octet-stream; charset=UTF-8');
+		if($_POST['wt'] == 'csv') { header('Content-type: application/vnd.ms-excel; charset=UTF-8'); }
+		if($_POST['xml'] == 'json') { header('Content-type: application/json; charset=UTF-8'); }
+		if($_POST['wt'] == 'xml') { header('Content-type: application/xml; charset=UTF-8'); }
+
 		header('Content-disposition: attachment;filename=' . $_POST['index'] . '-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
+		header('Content-Encoding: UTF-8');
+
+		if($_POST['wt'] == 'csv') { echo "\xEF\xBB\xBF"; }# UTF-8 BOM
+
 		while(!feof($fp)) {
 			$buffer = fread($fp, 2048);
 			print $buffer;
