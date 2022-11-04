@@ -48,7 +48,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 			if ($query) {
 				echo "\xEF\xBB\xBF"; # UTF-8 BOM
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo $res['code'] . ';' . $res['label'] . ';' . $res['text'] . "\n";	
+					echo $res['code'] . ';' . $res['label'] . ';' . $res['text'] . "\n";
 				}
 			} else { echo 'DB error.'; }
 		}
