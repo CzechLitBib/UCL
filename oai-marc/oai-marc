@@ -274,7 +274,7 @@ for record in records:
 		if 'SIF' in metadata:
 			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a']
 		else:
-			SIF = 'DEV'
+			SIF = 'dev'
 			write_error(TIMESTAMP, IDENT, 'SIF', SIF, '000')
 		for TAG in ('001', '003', '005', '008', '040', '245', '520', '655', '910', '964', 'OWN'):
 			if TAG == '520' and metadata.leader[7] == 's': continue# skip periodical
