@@ -1,0 +1,100 @@
+---
+# This file contains search specifications used by the authority module; for details
+# on the workings of this file, see the comments in searchspecs.yaml.
+# -----------------------------------------------------------------------------------
+
+AuthNote:
+  DismaxFields:
+    - note_txt_mv
+  DismaxHandler: edismax
+
+AuthRelatedPlace:
+  DismaxFields:
+    - related_place
+  DismaxHandler: edismax
+
+AuthCountry:
+  DismaxFields:
+    - country
+  DismaxHandler: edismax
+
+AuthLanguageTo:
+  DismaxFields:
+    - language_to_str_mv
+  DismaxHandler: edismax
+
+AuthLanguageFrom:
+  DismaxFields:
+    - language_from_str_mv
+  DismaxHandler: edismax
+
+AuthGender:
+  DismaxFields:
+    - gender
+  DismaxHandler: edismax
+
+AuthHonorific:
+  DismaxFields:
+    - honorific_str_mv
+  DismaxHandler: edismax
+
+AuthAssociatedGroup:
+  DismaxFields:
+    - associated_group_str_mv
+  DismaxHandler: edismax
+
+AuthActivity:
+  DismaxFields:
+    - field_of_activity
+  DismaxHandler: edismax
+
+AuthOccupation:
+  DismaxFields:
+    - occupation
+  DismaxHandler: edismax
+
+AuthBirthPlace:
+  DismaxFields:
+    - birth_place
+  DismaxHandler: edismax
+
+AuthDeathPlace:
+  DismaxFields:
+    - death_place
+  DismaxHandler: edismax
+
+AuthBirth:
+  DismaxFields:
+    - birth_date_str
+  DismaxHandler: edismax
+
+AuthDeath:
+  DismaxFields:
+    - death_date_str
+  DismaxHandler: edismax
+
+AllFields:
+  DismaxFields:
+    - heading_keywords^750
+    - use_for_keywords^400
+    - see_also_keywords^100
+    - allfields
+  DismaxParams:
+    - [bq, (record_type:"Personal Name" OR record_type:"Corporate Name")^500]
+  DismaxHandler: edismax
+
+Heading:
+  DismaxFields:
+    - heading_keywords^750
+    - use_for_keywords^400
+    - see_also_keywords^100
+  DismaxParams:
+    - [bq, (record_type:"Personal Name" OR record_type:"Corporate Name")^500]
+  DismaxHandler: edismax
+
+MainHeading:
+  DismaxFields:
+    - heading_keywords^750
+  DismaxParams:
+    - [bq, (record_type:"Personal Name" OR record_type:"Corporate Name")^500]
+  DismaxHandler: edismax
