@@ -253,6 +253,7 @@ for record in records:
 		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
 			if 'a' in F:
 				if 'BATCH' in F['a']: BOT=True
+				if 'OIT' in F['a']: BOT=True
 		if BOT: continue
 	
 		# SKIP FILTER ------------------
@@ -273,7 +274,7 @@ for record in records:
 		if 'SIF' in metadata:
 			if 'a' in metadata['SIF']: SIF = metadata['SIF']['a']
 		else:
-			SIF = ''
+			SIF = 'DEV'
 			write_error(TIMESTAMP, IDENT, 'SIF', SIF, '000')
 		for TAG in ('001', '003', '005', '008', '040', '245', '520', '655', '910', '964', 'OWN'):
 			if TAG == '520' and metadata.leader[7] == 's': continue# skip periodical
