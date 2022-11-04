@@ -12,11 +12,10 @@ FRONTEND
 - DB catch exception
 - nginx + CSV read
 - Aleph: tooltip + add query JS
-- CAT/Settings/Aleph: CSV BOM/Content-type
 - Settings: Solr codes
 - Settings: Search whisper
 - Settings: Permission module "micro icon button multiselect radio group".
-- CAT: CSV download
+- CAT: CSV download + BOM/Content-type
 
 BACKEND
 

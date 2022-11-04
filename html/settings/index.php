@@ -46,14 +46,16 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 		if ($req['type'] == 'error') {
 			$query = $db->query("SELECT * FROM error;");
 			if ($query) {
+				echo "\xEF\xBB\xBF"; # UTF-8 BOM
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo $res['code'] . ';' . $res['label'] . ';' . $res['text'] . "\n";
+					echo $res['code'] . ';' . $res['label'] . ';' . $res['text'] . "\n";	
 				}
 			} else { echo 'DB error.'; }
 		}
 		if ($req['type'] == 'exception') {
 			$query = $db->query("SELECT * FROM exception ORDER BY code;");
 			if ($query) {
+				echo "\xEF\xBB\xBF"; # UTF-8 BOM
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
 					echo $res['code'] . ';' . $res['ident'] . "\n";
 				}
@@ -62,6 +64,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 		if ($req['type'] == 'user') {
 			$query = $db->query("SELECT * FROM user ORDER BY code;");
 			if ($query) {
+				echo "\xEF\xBB\xBF"; # UTF-8 BOM
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
 					echo $res['code'] . ';' . $res['aleph'] . ';' . $res['email'] . "\n";
 				}
@@ -70,6 +73,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 		if ($req['type'] == 'review') {
 			$query = $db->query("SELECT * FROM review ORDER BY authority;");
 			if ($query) {
+				echo "\xEF\xBB\xBF"; # UTF-8 BOM
 				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
 					echo $res['authority'] . ';' . $res['name'] . "\n";
 				}
