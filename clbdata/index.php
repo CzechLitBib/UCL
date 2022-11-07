@@ -19,7 +19,7 @@ if (!isset($_SESSION['error'])) { $_SESSION['error'] = False; }
 $authorized = False;
 
 if (isset($_POST['name']) and isset($_POST['pass'])) {
-	
+
 	$ldap_dn = 'xxx';
 	$ldap_conn = ldap_connect('xxx');
 
@@ -40,6 +40,18 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 	}
 
 	if ($ldap_bind) { $authorized = True; }
+
+	if ($authorized) {
+		$_SESSION['auth'] = True;
+		$_SESSION['username'] = $_POST['name'];
+
+		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
+
+		if(empty($_SESSION['page'])) { $_SESSION['page'] = '/form-data/'; }// default page
+
+		header('Location: ' . $_SESSION['page']);
+		exit();
+	}
 }
 
 ?>
@@ -68,16 +80,6 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 if (isset($_POST['name']) and isset($_POST['pass'])) {
 	if (!$authorized) {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Přihlášení selhalo.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-	} else {
-		$_SESSION['auth'] = True;
-		$_SESSION['username'] = $_POST['name'];
-
-		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
-
-		if(empty($_SESSION['page'])) { $_SESSION['page'] = '/form-data/'; }// default page
-
-		header('Location: ' . $_SESSION['page']);
-		exit();
 	}
 }
 

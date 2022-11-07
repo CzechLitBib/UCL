@@ -554,7 +554,7 @@ if ($db) {
 <table class="table my-4">
 	<thead>
 		<tr>
-			<th scope="col">Kód</th>
+			<th scope="col">Šifra</th>
 			<th scope="col">Aleph</th>
 			<th scope="col">E-mail</th>
 			<th scope="col"></th>
