@@ -1284,7 +1284,8 @@ for record in records:
 				FC = 0
 				for F in metadata.get_fields('100','700'):
 					if metadata.leader[7] == 'm' and len(F.get_subfields('4')) == 1 and F['4'] == 'ctb': continue
-					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb','cwt']: continue
+					if metadata.leader[7] in ['a', 'm'] and len(F.get_subfields('4')) == 1 and F['4'] == 'cwt': continue
+					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
 					FC+=1
 				if FC != BRACKET:
 					write_error(TIMESTAMP, IDENT, '245', SIF, '190')
@@ -1371,6 +1372,11 @@ for record in records:
 			if 'a' in F:
 				if not db.execute("SELECT * FROM dict_26XA WHERE value = ?;",(F['a'].strip(':; ').strip('[]'),)).fetchone():
 					write_error(TIMESTAMP, IDENT, '264', SIF, '199')
+
+		# 245a /\.? + 245c
+		if '245' in metadata and 'c' not in metadata['245']:
+			if 'a' in metadata['245'] and re.match('.*/\.?$', metadata['245']['a']):
+				write_error(TIMESTAMP, IDENT, '245', SIF, '200')
 
 	COUNTER+=1
 
