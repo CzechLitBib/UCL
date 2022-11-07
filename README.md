@@ -16,7 +16,7 @@ FRONTEND
 - Settings: Search whisper
 - Settings: Permission module "micro icon button multiselect radio group".
 - CAT: CSV download + BOM/Content-type
-
+- clbdata: text/author;  biblio != public; fulltext != clanek
 BACKEND
 
 - Mod: DB

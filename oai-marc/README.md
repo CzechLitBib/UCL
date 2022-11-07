@@ -43,25 +43,6 @@ apt-get install git
 
 ssh-kegen -t ed25519
 
-# DAVFS
-
-apt-get install python3-easywebdav
-apt-get install davfs2
-
-usermod -a -G davfs2 xxx
-
-/etc/davfs2/davfs2.conf:
-
-use_locks	0
-
-/etc/davfs2/secrets:
-
-/home/xxx xxx xxx
-
-/etc/fstab:
-
-https://xxx/public.php/webdav/ /home/xxx davfs rw,user 0 0
-
 # MARC
 
 (pymarc-4.0.0)
@@ -103,14 +84,6 @@ FILE
            patch/
   field.py.patch - Allow non-standard control field(FMT).
      pyoai.patch - Python3 test file patch.
-
-           code/
-     country.txt - MARC country code file.
-        lang.txt - MARC language code file.
-        role.txt - MARC role code file.
-         sif.txt - MARC sif code file.
-     recenze.txt - Data file oai-recenze.
-         kat.txt - Aleph editor SIF.
 
            cron/ - Cron scheduling.
             xml/ - XML file parsing.
