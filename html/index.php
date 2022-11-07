@@ -43,6 +43,21 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 	}
 
 	if ($ldap_bind) { $authorized = True; }
+
+	if ($authorized) {
+		$_SESSION['auth'] = True;
+		$_SESSION['username'] = $_POST['name'];
+
+		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
+		if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'form'; }
+		if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
+		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
+
+		if(empty($_SESSION['page'])) { $_SESSION['page'] = '/main/'; }// default page
+
+		header('Location: ' . $_SESSION['page']);
+		exit();
+	}
 }
 
 ?>
@@ -60,7 +75,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 	<link rel="icon" href="favicon/favicon-16x16.png" sizes="16x16" type="image/png">
 	<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#7952b3">
 	<!-- Custom styles -->
-	<link href="../custom.css" rel="stylesheet">
+	<link href="custom.css" rel="stylesheet">
 </head>
 
 <body class="bg-light text-center">
@@ -71,19 +86,6 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 if (isset($_POST['name']) and isset($_POST['pass'])) {
 	if (!$authorized) {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Přihlášení selhalo.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-	} else {
-		$_SESSION['auth'] = True;
-		$_SESSION['username'] = $_POST['name'];
-
-		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
-		if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'form'; }
-		if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
-		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
-
-		if(empty($_SESSION['page'])) { $_SESSION['page'] = '/main/'; }// default page
-
-		header('Location: ' . $_SESSION['page']);
-		exit();
 	}
 }
 
