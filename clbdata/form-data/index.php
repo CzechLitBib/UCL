@@ -38,6 +38,15 @@ $db_map = array(
 						
 );
 
+$format_map = array(
+	'fulltext' => 'plný text',
+	'article' => 'článek',
+	'chapter' => 'část knihy',
+	'book' => 'kniha',
+	'study' => 'sborníková studie',
+	'other' => 'ostatní' 
+);
+
 try {
 	$db = new SQLite3('/var/www/data/form/form.db');
 } catch (Exception $e) {
@@ -129,7 +138,7 @@ if(json_decode(file_get_contents('php://input'))) {
 				echo '<div class="row px-1 d-flex align-items-center">';
 					echo '<div class="col col-auto"><svg xmlns="http://www.w3.org/2000/svg" onclick="toggle_data(' . "'" .   $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></div>';
 					echo '<div class="col col-auto text-nowrap">' . date(" d.m Y H:i", hexdec(substr($row['id'],0,8))) . '</div>';# ID
-					echo '<div class="col">' . $row['format'] . '</div>';# FORMAT
+					echo '<div class="col">' .$format_map[$row['format']] . '</div>';# FORMAT
 					echo '<div class="col text-end"><button type="button" class="btn btn-secondary btn-sm" onclick="confirmation(' . "'" . $row['id'] . "'" . ')">Zpracováno</button></div>';
 				echo '</div>';
 				echo '<hr class="m-1 p-0">';
@@ -140,7 +149,7 @@ if(json_decode(file_get_contents('php://input'))) {
 				echo '<table class="table table-sm table-borderless m-0"><tbody>';
 		
 						# PUBLIC
-						if (isset($row['public'])) {
+						if (isset($row['public']) && $row['format'] == 'fulltext') {
 							echo '<tr><td class="text-end align-middle col-2"><b>Veřejný</b></td><td class="text-start align-middle">';
 							if ($row['public'])  {
 								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';

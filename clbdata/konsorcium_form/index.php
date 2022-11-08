@@ -80,9 +80,11 @@ if ($_SESSION['message'] == 1) {
 	if (!$db) {
 		$_SESSION['message'] = 3;
 	} else {
+		isset($_POST['format']) ? $format = $_POST['format'] : $format = 'fulltext';// full-text
+
 		$query = $db->exec("
 			INSERT INTO data (id,visible,format,public,dedication,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,page,other)"
-			. " VALUES ('" . $id . "',1,'" . $_POST['format'] . "', 0," . $_POST['dedication'] . ",'"
+			. " VALUES ('" . $id . "',1,'" . $format . "', 0," . $_POST['dedication'] . ",'"
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
@@ -273,13 +275,13 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div class="row mt-4 mb-5">
 	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
-		<input type="radio" class="btn-check" id="article" name="format" value="článek" onclick="format_load()" checked>
+		<input type="radio" class="btn-check" id="article" name="format" value="article" onclick="format_load()">
 		<label class="btn btn-outline-danger w-100" for="article">Článek</label>
-		<input type="radio" class="btn-check" id="chapter" name="format" value="část knihy" onclick="format_load()">
+		<input type="radio" class="btn-check" id="chapter" name="format" value="chapter" onclick="format_load()">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="chapter">Část knihy</label>
-		<input type="radio" class="btn-check" id="book" name="format" value="kniha" onclick="format_load()">
+		<input type="radio" class="btn-check" id="book" name="format" value="book" onclick="format_load()">
 		<label class="btn btn-outline-danger w-100" for="book">Kniha</label>
-		<input type="radio" class="btn-check" id="study" name="format" value="studie" onclick="format_load()">
+		<input type="radio" class="btn-check" id="study" name="format" value="study" onclick="format_load()">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="study">Sborníková studie</label>
 		<input type="radio" class="btn-check" id="other" name="format" value="other" onclick="format_load()">
 		<label class="btn btn-outline-danger text-nowrap w-100" for="other">Ostatní</label>
