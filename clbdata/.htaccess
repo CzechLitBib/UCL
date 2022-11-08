@@ -1,3 +1,0 @@
-Require ip xxx xxx
-ErrorDocument 403 /4xx/403.html
-ErrorDocument 404 /4xx/404.html
