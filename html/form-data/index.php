@@ -9,7 +9,7 @@ if(empty($_SESSION['auth'])) {
 	exit();
 }
 
-if($_SESSION['group'] != 'admin') {
+if(!in_array($_SESSION['group'], array('admin','from'))) {
         $_SESSION['error'] = True;
         header('Location: /');
         exit();
