@@ -16,6 +16,7 @@ FRONTEND
 - Settings: Search whisper
 - Settings: Permission module "micro icon button multiselect radio group".
 - CAT: CSV download + BOM/Content-type
+- Boostrap 5.1 SASS
 
 BACKEND
 
