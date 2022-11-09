@@ -83,15 +83,15 @@ if ($_SESSION['message'] == 1) {
 		isset($_POST['format']) ? $format = $_POST['format'] : $format = 'fulltext';// full-text
 
 		$query = $db->exec("
-			INSERT INTO data (id,visible,format,public,dedication,link,email,note,text_author,text_name,author,name,place,publisher,year,source,quote,page,other)"
+			INSERT INTO data (id,visible,format,public,dedication,link,email,note,author,name,text_author,text_name,place,publisher,year,source,quote,page,other)"
 			. " VALUES ('" . $id . "',1,'" . $format . "', 0," . $_POST['dedication'] . ",'"
 			. str_replace("'", '_', $_POST['link']) . "','"
 			. str_replace("'", '_', $_POST['email']) . "','"
 			. str_replace("'", '_', $_POST['note']) . "','"
-			. str_replace("'", '_', $_POST['text-author']) . "','"
-			. str_replace("'", '_', $_POST['text-name']) . "','"
 			. str_replace("'", '_', $_POST['author']) . "','"
 			. str_replace("'", '_', $_POST['name']) . "','"
+			. str_replace("'", '_', $_POST['text-author']) . "','"
+			. str_replace("'", '_', $_POST['text-name']) . "','"
 			. str_replace("'", '_', $_POST['place']) . "','"
 			. str_replace("'", '_', $_POST['publisher']) . "','"
 			. str_replace("'", '_', $_POST['year']) . "','"
@@ -288,27 +288,23 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	</div>
 </div>
 
-<div id="chapter-block">
-	<h4 class="mt-4">Údaje o dokumentu</h4>
-	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-author" name="text-author" value="<?php if (isset($_POST['text-author'])) { echo htmlspecialchars($_POST['text-author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-author">Autor/Editor</label>
-	</div>
-	<div class="form-floating my-2">
-		<input type="text" class="form-control" id="text-name" name="text-name" value="<?php if (isset($_POST['text-name'])) { echo htmlspecialchars($_POST['text-name'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-name">Název</label>
-	</div>
-
-	<h4 class="mt-4">Zdrojový dokument</h4>
-</div>
-
-<div id="article-book-block">
-	<h4 class="mt-4">Údaje o dokumentu</h4>
-</div>
+<h4 class="mt-4">Údaje o dokumentu</h4>
 
 <div class="form-floating my-2">
 	<input type="text" class="form-control" id="author" name="author" value="<?php if (isset($_POST['author'])) { echo htmlspecialchars($_POST['author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="author">Autor/Editor</label>
 </div>
 <div class="form-floating my-2">
 	<input type="text" class="form-control" id="name" name="name" value="<?php if (isset($_POST['name'])) { echo htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="name">Název</label>
+</div>
+
+<div id="chapter-block">
+	<h4 class="mt-4">Zdrojový dokument</h4>
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="text-author" name="text-author" value="<?php if (isset($_POST['text-author'])) { echo htmlspecialchars($_POST['text-author'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-author">Autor/Editor</label>
+	</div>
+	<div class="form-floating my-2">
+		<input type="text" class="form-control" id="text-name" name="text-name" value="<?php if (isset($_POST['text-name'])) { echo htmlspecialchars($_POST['text-name'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="text-name">Název</label>
+	</div>
 </div>
 
 <div id="chapter-book-block">

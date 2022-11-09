@@ -172,7 +172,7 @@ if(json_decode(file_get_contents('php://input'))) {
 						# ODKAZ
 						if (!empty($row['link'])) {
 							echo '<tr><td class="text-end align-middle col-2"><b>Odkaz</b></td>';
-							echo '<td class="text-start align-middle"><a class="external-link" href="' . $row['link'] . '" target="_blank">'. $row['link'] . '</a></td></tr>';
+							echo '<td class="text-start align-middle ps-2"><a class="external-link" href="' . $row['link'] . '" target="_blank">'. $row['link'] . '</a></td></tr>';
 						}
 
 						# SOUBOR
@@ -185,7 +185,7 @@ if(json_decode(file_get_contents('php://input'))) {
 						foreach($db_map as $name => $text) {
 							if (!empty($row[$name])) {
 								echo '<tr><td class="text-end align-middle col-2"><b>' . $text . '</b></td>';
-								echo '<td class="text-start align-middle">' . $row[$name] . '</a></td></tr>';
+								echo '<td class="text-start align-middle ps-2">' . $row[$name] . '</a></td></tr>';
 							}
 						}
 
