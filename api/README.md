@@ -18,5 +18,5 @@ cs_CZ.UTF-8
 </pre>
 SOURCE
 
-https://github.com/KyomaHooin/UCL
+https://github.com/CzechLitBib/UCL
 

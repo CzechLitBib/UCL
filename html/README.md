@@ -125,8 +125,52 @@ server {
 	}
 
 }
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+
+	server_name xxx;
+
+	root /var/www/html;
+
+	index index.php;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+	add_header X-Frame-Options "DENY";
+	add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+
+	ssl_certificate /etc/letsencrypt/live/xxx/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/xxx/privkey.pem;
+	include /etc/letsencrypt/options-ssl-nginx.conf;
+
+	error_page 403 /4xx/403.html;
+	error_page 404 /4xx/404.html;
+
+	client_max_body_size 5M;
+
+	# 4xx
+	location ~ /4xx {
+		allow all;
+	}
+
+	location ~ ^/(?!konsorcium_form) {
+		return 301 /konsorcium_form/;
+	}
+
+	# PHP - fallback
+	location ~ \.php {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_pass	unix:/var/run/php/php7.3-fpm.sock;
+		fastcgi_index	index.php;
+		fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_intercept_errors on;
+		include		fastcgi_params;
+	}
+}
+
 </pre>
 SOURCE
 
-https://github.com/KyomaHooin/UCL
+https://github.com/CzechLitBib/UCL
 

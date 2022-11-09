@@ -104,7 +104,7 @@ if (isset($_GET['type'])) {
 			$query->reset();
 
 			echo '<table class="table table-responsive">'
-			. '<thead><tr><th>Kód</th><th>Aleph</th><th>E-mail</th></tr></thead>'
+			. '<thead><tr><th>Šifra</th><th>Aleph</th><th>E-mail</th></tr></thead>'
 			. '<tbody>';
 			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
 				echo '<tr><td>' . $res['code'] . '</td>'

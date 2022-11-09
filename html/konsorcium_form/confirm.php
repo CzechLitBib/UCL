@@ -25,7 +25,7 @@ if (!$db) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>ČLB Vývoj</title>
-	<link href="../bootstrap.min.css" rel="stylesheet">
+	<link href="custom.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="favicon/apple-touch-icon.png" sizes="180x180">
 	<link rel="icon" href="favicon/favicon-32x32.png" sizes="32x32" type="image/png">
@@ -41,9 +41,9 @@ if (!$db) {
 <?php
 
 if (!$error) {
-	echo '<p class="fs-1 my-4">Potvrzeno. Děkujeme!</p>';
+	echo '<p class="fs-2 my-4">Potvrzeno. Děkujeme!</p>';
 } else {
-	echo '<p class="fs-1 my-4">'. $error . '</p>';
+	echo '<p class="fs-2 my-4">'. $error . '</p>';
 }
 
 $db->close();
