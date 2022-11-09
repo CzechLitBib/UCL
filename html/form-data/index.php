@@ -9,7 +9,7 @@ if(empty($_SESSION['auth'])) {
 	exit();
 }
 
-if(!in_array($_SESSION['group'], array('admin','from'))) {
+if(!in_array($_SESSION['group'], array('admin','form'))) {
         $_SESSION['error'] = True;
         header('Location: /');
         exit();
