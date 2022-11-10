@@ -1285,7 +1285,7 @@ for record in records:
 				for F in metadata.get_fields('100','700'):
 					if metadata.leader[7] == 'm' and len(F.get_subfields('4')) == 1 and F['4'] == 'ctb': continue
 					if metadata.leader[7] in ['a', 'm'] and len(F.get_subfields('4')) == 1 and F['4'] == 'cwt': continue
-					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
+					if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt']: continue
 					FC+=1
 				if FC != BRACKET:
 					write_error(TIMESTAMP, IDENT, '245', SIF, '190')
