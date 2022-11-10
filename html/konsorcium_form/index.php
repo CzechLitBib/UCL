@@ -234,7 +234,7 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 
 <div id="fulltext-block">
 
-<p class="my-4">Nahrejte prosím plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
+<p class="my-4">Nahrajte prosím plný text dokumentu, nebo uveďte odkaz na online verzi ke stažení.</p>
 
 <div class="form-group">
 	<label for="pdf" class="form-label">Elektronická verze</label>
@@ -245,8 +245,8 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 	<input type="text" class="form-control" id="link" name="link" value="<?php if (isset($_POST['link'])) { echo htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="link">Vložte odkaz</label>
 </div>
 <div class="form-floating">
-	<input type="email" class="form-control" id="email" name="email" value="<?php if (isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="email">Emailová adresa pro ověření kontaktu</label>
-	<div id="help" class="form-text text-end">Nikdy neposkytujeme Váš email třetím stranám.</div>
+	<input type="email" class="form-control" id="email" name="email" value="<?php if (isset($_POST['email'])) { echo htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="email">E-mailová adresa pro ověření kontaktu</label>
+	<div id="help" class="form-text text-end">Nikdy neposkytujeme Váš e-mail třetím stranám.</div>
 </div>
 <div class="form-floating">
 	<textarea class="form-control" id="note" name="note" style="height: 100px"><?php if (isset($_POST['note'])) { echo htmlspecialchars($_POST['note'], ENT_QUOTES, 'UTF-8'); } ?></textarea>
