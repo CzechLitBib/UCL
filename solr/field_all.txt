@@ -85,7 +85,6 @@ field_995
 field_CAT
 field_KAT
 field_KON
-field_LKR
 field_OWN
 field_POS
 field_POZ

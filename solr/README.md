@@ -54,7 +54,6 @@ cp import /opt/solrmarc
 </pre>
 SOLRMARC - BUG
 <pre>
-      FMT - Invalid control field.
       SIF - Non-repeatable (CLO).
       041 - Non-repeatable (CLO).
       072 - Non-repeatable.
