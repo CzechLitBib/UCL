@@ -12,8 +12,7 @@ FRONTEND
 - DB RO, DB error checks
 - DB catch exception
 - nginx + CSV read
-
-- UCLO/CLO: Upload.
+- UCLO/CLO: Upload ('xhr.txt')
 - Access: | group whisper | user list | perm switches | + store
           (DB) groups, mods, group_mod, group_user  
 - Aleph: tooltip + add query JS
