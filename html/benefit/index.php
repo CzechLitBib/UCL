@@ -2,7 +2,7 @@
 
 session_start();
 
-$user = ['xxx', 'xxx'];
+$user = ['xxx'];
 
 $DB_FILE= '/var/www/data/sodexo.db';
 
@@ -11,31 +11,33 @@ $message_map = array(
         2 => 'Přihlášení selhalo.',
         3 => 'Chyba čtení databáze.',
         4 => 'Chyba zápisu databáze.',
-        5 => 'Uloženo.'
+        5 => 'Uloženo.',
+        6 => 'Formulář byl již uzavřen.'
 );
 
 if (!isset($_SESSION['message'])) { $_SESSION['message'] = null; }
 
 # DATA
 if (isset($_POST['sn']) and isset($_POST['n']) and isset($_POST['q'])) {
-	$db = new SQLite3($DB_FILE);
-	if (!$db) {
-		$_SESSION['message'] = 3;
-	} else {
-		$query = $db->exec("INSERT INTO data (y, n, sn, q)" . " VALUES ("
-			. date('Y') . ",'"
-			. $_POST['n'] . "','"
-			. $_POST['sn'] . "','"
-			. $_POST['q'] . "');"
-		);
-
-		if (!$query) {
-			$_SESSION['message'] = 4;
-		} else {
-			$_SESSION['message'] = 5;
-		}
-		$db->close();
-	}
+	$_SESSION['message'] = 6;
+	#$db = new SQLite3($DB_FILE);
+	#if (!$db) {
+	#	$_SESSION['message'] = 3;
+	#} else {
+	#	$query = $db->exec("INSERT INTO data (y, n, sn, q)" . " VALUES ("
+	#		. date('Y') . ",'"
+	#		. $_POST['n'] . "','"
+	#		. $_POST['sn'] . "','"
+	#		. $_POST['q'] . "');"
+	#	);
+	
+	#	if (!$query) {
+	#		$_SESSION['message'] = 4;
+	#	} else {
+	#		$_SESSION['message'] = 5;
+	#	}
+	#	$db->close();
+	#}
 	# PRG
 	header('Location: /benefit/');
 	exit();

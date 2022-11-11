@@ -60,39 +60,6 @@ cur.execute("CREATE UNIQUE INDEX '337_value' ON dict_337 (value);")
 cur.execute("CREATE TABLE dict_338 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '338_value' ON dict_338 (value);")
 
-with open('/usr/local/bin/code/country.txt', 'r') as f:
-	for line in f:
-		cur.execute("INSERT INTO country VALUES (?);", (line.strip(),))
-
-with open('/usr/local/bin/code/lang.txt', 'r') as f:
-	for line in f:
-		cur.execute("INSERT INTO language VALUES (?);", (line.strip(),))
-
-with open('/usr/local/bin/code/role.txt', 'r') as f:
-	for line in f:
-		cur.execute("INSERT INTO role VALUES (?);", (line.strip(),))
-
-with open('/usr/local/bin/code/recenze.txt', 'r') as f:
-	for line in f:
-		name,aut = line.split('#')
-		cur.execute("INSERT INTO review VALUES (?,?);", (aut.strip(),name.strip()))
-
-with open('/usr/local/bin/code/sif.txt', 'r') as f:
-	for line in f:
-		sif,mail = line.split(':')
-		cur.execute("INSERT INTO user (code, email) VALUES (?,?) ON CONFLICT (code) DO UPDATE SET email=excluded.email;", (sif.strip(), mail.strip()))
-
-with open('/usr/local/bin/code/cat.txt', 'r') as f:
-	for line in f:
-		code,aleph = line.split('#')
-		cur.execute("INSERT INTO user (code, aleph) VALUES (?,?) ON CONFLICT (code) DO UPDATE SET aleph=excluded.aleph;", (code.strip().lower(), aleph.strip()))
-
-err_con= sqlite3.connect(ERR)
-err_cur = err_con.cursor()
-err_cur.execute("SELECT * from error;")
-cur.executemany("INSERT OR IGNORE INTO error (code, label, text) VALUES (?,?,?);", err_cur.fetchall())
-err_con.close()
-
 con.commit()
 con.close()
 

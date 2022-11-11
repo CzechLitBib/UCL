@@ -7,17 +7,16 @@ TODO
 <pre>
 FRONTEND
 
+- Boostrap 5.1 SASS
 - DB SQLi protection
 - DB RO, DB error checks
 - DB catch exception
 - nginx + CSV read
+
 - Aleph: tooltip + add query JS
-- Settings: Solr codes
-- Settings: Search whisper
-- Settings: Permission module "micro icon button multiselect radio group".
+- Settings: Solr codes; search whisper; permission module.
 - CAT: CSV download + BOM/Content-type
 - Form-data: Pagination + switch (test.php cusctom.scss)
-- Boostrap 5.1 SASS
 
 BACKEND
 
