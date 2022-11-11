@@ -10,7 +10,11 @@
 # This chart was implemented based on Benjamin Schmidt's blog post
 # http://sappingattention.blogspot.com/2017/05/a-brief-visual-history-of-marc.html (Tuesday, May 16, 2017).
 #
-
+# TODO:
+#
+# -create numpy memmap file
+#
+#
 import matplotlib
 
 matplotlib.use('Agg')# no display
