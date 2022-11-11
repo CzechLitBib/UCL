@@ -13,7 +13,9 @@ FRONTEND
 - DB catch exception
 - nginx + CSV read
 
-- Access: | group whisper | user list | perm switches | + store  
+- UCLO/CLO: Upload.
+- Access: | group whisper | user list | perm switches | + store
+          (DB) groups, mods, group_mod, group_user  
 - Aleph: tooltip + add query JS
 - Settings: Solr codes; search whisper; permission module.
 - CAT: CSV download + BOM/Content-type
