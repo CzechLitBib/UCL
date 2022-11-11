@@ -13,6 +13,7 @@ FRONTEND
 - DB catch exception
 - nginx + CSV read
 
+- Access: | group whisper | user list | perm switches | + store  
 - Aleph: tooltip + add query JS
 - Settings: Solr codes; search whisper; permission module.
 - CAT: CSV download + BOM/Content-type
