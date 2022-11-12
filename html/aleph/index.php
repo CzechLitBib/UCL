@@ -76,7 +76,7 @@ if (!empty($_POST)) {
 		if($_POST['wt'] == 'json') { header('Content-type: application/json; charset=UTF-8'); }
 		if($_POST['wt'] == 'xml') { header('Content-type: application/xml; charset=UTF-8'); }
 
-		header('Content-disposition: attachment;filename=' . $_POST['index'] . '-' . strftime('%Y%m%d%H%M%S', time()) . '.' . $_POST['wt']);
+		header('Content-disposition: attachment;filename=' . $_POST['index'] . '-' . strftime('%Y%m%d%H%M', time()) . '.' . $_POST['wt']);
 		header('Content-Encoding: UTF-8');
 
 		if($_POST['wt'] == 'csv') { echo "\xEF\xBB\xBF"; }# UTF-8 BOM

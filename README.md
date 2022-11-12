@@ -13,12 +13,12 @@ FRONTEND
 - DB catch exception
 - nginx + CSV read
 - UCLO/CLO: Upload ('xhr.txt')
-- Access: | group whisper | user list | perm switches | + store
-          (DB) groups, mods, group_mod, group_user  
+- Access: (DB) groups, mods, group_mod, group_user  
 - Aleph: tooltip + add query JS
 - Settings: Solr codes; search whisper; permission module.
 - CAT: CSV download + BOM/Content-type
 - Form-data: Pagination + switch (test.php cusctom.scss)
+- API: RRD stacked.
 
 BACKEND
 
