@@ -17,9 +17,11 @@ cur.execute("CREATE INDEX 'daily_code' ON daily (timestamp,ident,code);")
 # WEEKLY
 cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, user TEXT, tag TEXT, code TEXT);")
 cur.execute("CREATE INDEX 'weekly_code' ON weekly (timestamp,ident,code);")
+
 # ERROR
 cur.execute("CREATE TABLE error (code TEXT, label TEXT, text TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'error_code' ON error (code);")
+
 # COUNTRY
 cur.execute("CREATE TABLE country (code TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'country_code' ON country (code);")
@@ -29,6 +31,7 @@ cur.execute("CREATE UNIQUE INDEX 'language_code' ON language (code);")
 # ROLE
 cur.execute("CREATE TABLE role (code TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'role_code' ON role (code);")
+
 # REVIEW
 cur.execute("CREATE TABLE review (authority TEXT, name TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'authority' ON review (authority);")
@@ -38,6 +41,7 @@ cur.execute("CREATE UNIQUE INDEX 'user_code' ON user (code);")
 # EXCEPTION
 cur.execute("CREATE TABLE exception (code TEXT, ident TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'exception_code' ON exception (code,ident);")
+
 # DICT 260/264a
 cur.execute("CREATE TABLE dict_26XA (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '26XA_value' ON dict_26XA (value);")
@@ -59,6 +63,15 @@ cur.execute("CREATE UNIQUE INDEX '337_value' ON dict_337 (value);")
 # DICT 338
 cur.execute("CREATE TABLE dict_338 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '338_value' ON dict_338 (value);")
+
+# GROUP
+cur.execute("CREATE TABLE group (name TEXT UNIQUE);")
+# MODULE
+cur.execute("CREATE TABLE module (name TEXT UNIQUE, desciption TEXT);")
+# USER_GROUP
+cur.execute("CREATE TABLE user_group (user TEXT UNIQUE, gid INTEGER);")
+# MODULE_GROUP
+cur.execute("CREATE TABLE module_group (mid INTEGER, gid INTEGER, UNIQUE(mid,gid));")
 
 con.commit()
 con.close()
