@@ -255,7 +255,7 @@ if ($db) {
 		</select>
 	</td>
 	<td class="align-middle">
-		<textarea class="form-control" rows="<?php echo ($row_size - 1); ?>" id="user-list" name="user-list"></textarea>
+		<textarea class="form-control" style="white-space: pre; overflow: auto; word-wrap: normal;" rows="<?php echo ($row_size - 1); ?>" id="user-list" name="user-list"></textarea>
 	</td>
 	<td class="align-middle">
 
