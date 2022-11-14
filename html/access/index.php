@@ -29,8 +29,8 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	if ($req['type'] == 'user') {
 		$query = $db->query("SELECT user FROM user_group WHERE access_group = '" . $req['data'] . "';");
 		if ($query) {
+			$data=[];
 			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-				$data=[];
 				array_push($data, $res['user']);
 			}
 			$resp['value'] = $data;
@@ -39,8 +39,8 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	if ($req['type'] == 'module') {
 		$query = $db->query("SELECT module FROM module_group WHERE access_group = '" . $req['data'] . "';");
 		if ($query) {
+			$data=[];
 			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-				$data=[];
 				array_push($data, $res['module']);
 			}
 			$resp['value'] = $data;
@@ -101,21 +101,47 @@ if (!empty($_POST)) {
 			}
 		}
 	}
-	//if (!empty($_POST['group-select'])) {
-	//	if !empty user-list
-	//		a] for user in Q = SELECT user FROM user_group WHERE group = G;
-	//			if user ! in user-list then Q = DELETE FROM user_group WHERE user = U;
-	//		b] for user in user-list:
-	//			Q = UPDATE OR IGNORE (user,group) ON user_group VALUES (U,G);
-	//	else Q =  DELETE ALL FROM user_group WHERE group = G;
-
+	if (!empty($_POST['group-option']) && !empty($_POST['access-save'])) {
+		if (!empty($_POST['user-list'])) {
+			$data = explode("\n", $db->escapeString(trim($_POST['user-list'])));
+			$query_user = $db->query("SELECT user FROM user_group WHERE access_group = '" . $_POST['group-option'] .  "';");
+			if ($query_user->fetchArray()) {
+				$query_user->reset();
+				while ($res = $query_user->fetchArray(SQLITE3_ASSOC)) {
+					if(!in_array($res['user'], $data)) {
+						$query = $db->exec("DELETE FROM user_group WHERE user = '" . $res['user'] . "';");
+						if (!$query) { $_SESSION['result'] = "Odstranění uživatele " . $res['user'] . " selhalo."; }
+					}
+				}
+			}
+			$db->exec('BEGIN;');
+			$query = $db->prepare("INSERT OR IGNORE INTO user_group (user,access_group) VALUES (?,?);");
+			foreach($data as $user) {
+				if (trim($user)) {
+					$query->bindValue(1, trim($user));
+					$query->bindValue(2, $_POST['group-option']);
+					$query->execute();
+				}
+			}
+			$transaction = $db->exec('COMMIT;');
+			if (!$transaction) { $_SESSION['result'] = "Zápis uživatelů selhal."; }
+		} else {
+			$query = $db->exec("DELETE FROM user_group WHERE access_group = '" . $_POST['group-option'] ."';");
+			if(!$query) { $_SESSION['result'] = "Zápis uživatelů selhal."; }
+		}
+	//	if (!isset($_POST['module'])) {
+	//		foreach($_POST['module'] as $module) {
+	//			
+	//		}
 	//	if !empty group-list
 	//		a] for group in Q = SELECT group FROM module_group WHERE group = G;
 	//			if group ! in group-list then Q = DELETE FROM module_group WHERE module = M;
 	//		b] for module in module-list:
 	//			Q = UPDATE OR IGNORE (module,group) ON module_group VALUES (M,G);
 	//	else Q =  DELETE ALL FROM module_group WHERE module = M;
-	//}
+	//	} else {
+	//	}
+	}
 
 	header('Location: /access/');
 	exit();
@@ -190,7 +216,7 @@ $query ? $row_size = $query : $row_size = 1;
 	<tbody>
 	<tr>
 	<td class="align-middle col">
-		<select class="form-select" size="<?php echo $row_size;?>" aria-label="group select" id="group-option" name="group-option" onchange="access_on_change()">
+		<select class="form-select" size="<?php echo $row_size;?>" aria-label="group select" id="group-option" name="group-option" onchange="group_on_change()">
 
 <?php
 
@@ -209,13 +235,13 @@ if ($db) {
 	<td class="align-middle"><textarea class="form-control" rows="<?php echo ($row_size - 1); ?>" id="user-list" name="user-list">
 <?php
 
-if ($db) {
-
-	$query = $db->query("SELECT user FROM user_group ORDER BY user;");
-	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
-		echo $result['user'] . "\n";
-        }
-}
+//if ($db) {
+//
+//	$query = $db->query("SELECT user FROM user_group ORDER BY user;");
+//	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+//		echo $result['user'] . "\n";
+//	}
+//}
 
 ?>
 </textarea></td>
@@ -227,7 +253,8 @@ if ($db) {
 
 	$query = $db->query("SELECT name,description FROM module;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
-		echo '<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="' . $result['name'] . '">'
+		echo '<div class=" form-check form-switch">'
+		. '<input class="form-check-input" type="checkbox" role="switch" name="module" value="' . $result['name'] . '" id="' . $result['name'] . '">'
 		. '<label class="form-check-label" for="' . $result['name'] . '">' . $result['description'] . '</label></div>';
         }
 }

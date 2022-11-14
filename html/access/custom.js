@@ -65,22 +65,24 @@ function module_on_delete() {
 
 // ACCESS
 
+function access_on_save() {
+	groups = document.getElementById("group-option");
+ 	group = groups.options[groups.selectedIndex].text;
+	document.getElementById('modal-text').textContent = 'Chcete uložit skupinu ';
+	document.getElementById('modal-text-bold').textContent = group;
+	modal.toggle();
+	modal_action = 'access-save';
+}
+
 async function group_on_change() {
-	// get group
-	groups = document.getElementsByName('group-option');
-	for(var i=0; i<groups.length; i++) {
-		if (groups[i].checked) {
-			selector = 'label[for=' + groups[i].id + ']';
-			label = document.querySelector(selector);
-			text = label.innerHTML;
-		}
-	}
+	groups = document.getElementById("group-option");
+ 	group = groups.options[groups.selectedIndex].text;
 	// update user
 	payload = {'type':'user', 'data':group};
 	ret = await update(payload);
-	//if (ret.length !== 0) {
-	//	document.getElementById('code-data').value = ret['value'].join('\n');
-	//}
+	if (ret.length !== 0) {
+		document.getElementById('user-list').value = ret['value'].join('\n');
+	}
 	// update module
 	payload = {'type':'module', 'data':group};
 	ret = await update(payload);
