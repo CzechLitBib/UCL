@@ -9,11 +9,12 @@ FRONTEND
 
 - Boostrap 5.1 SASS
 - Module templete.
+- Error message "broker"(consorcium_form).
 - DB: DB RO, DB error check, catch exception, SQLi protection
 - nginx + CSV read
 
 - UCLO/CLO: Upload ('xhr.txt')
-- Access: CSS(switch,menu), POST 
+- Access: CSS(switch,menu), integration 
 - Aleph: tooltip + add query JS
 - Settings: Solr codes; search whisper; permission module.
 - CAT: CSV download + BOM/Content-type

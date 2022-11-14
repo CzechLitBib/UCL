@@ -15,7 +15,7 @@ if($_SESSION['group'] !== 'admin') {
         exit();
 }
 
-if (!isset($_SESSION['result'])) { $result = null; }
+if (!isset($_SESSION['result'])) { $_SESSION['result'] = null; }
 
 $db = new SQLite3('/var/www/data/devel.db');
 
@@ -27,7 +27,7 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	$req = json_decode(file_get_contents('php://input'), True);
 	$resp = [];
 	if ($req['type'] == 'user') {
-		$query = $db->query("SELECT user FROM user_group WHERE access_group = '" . $req['data'] . "';");
+		$query = $db->query("SELECT user FROM user_group WHERE access_group = '" . $req['data'] . "' ORDER BY user;");
 		if ($query) {
 			$data=[];
 			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
@@ -55,8 +55,8 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 # PHP POST
 
 if (!empty($_POST)) {
-	if (!empty($_POST['group-new'])) {
-		if (isset($_POST['group-save'])) {
+	if (isset($_POST['group-save'])) {
+		if (!empty($_POST['group-new'])) {
 			$query = $db->exec("INSERT INTO access_group (name) VALUES ('"
 				. $db->escapeString($_POST['group-new']) . "');");
 			if(!$query) {
@@ -65,33 +65,39 @@ if (!empty($_POST)) {
 				$_SESSION['result'] = "Skupina " . $_POST['group-new'] . " uložena."; 
 			}
 		} else {
-			$_SESSION['result'] = "Prázdný vstup skupiny."; 
+			$_SESSION['result'] = "Prázdný název skupiny.";
 		}
-		if (isset($_POST['group-delete'])) {
+	}
+	if (isset($_POST['group-delete'])) {
+		if (!empty($_POST['group-new'])) {
 			$query_group = $db->exec("DELETE FROM access_group WHERE name = '" . $_POST['group-new'] . "';");
-			$query_module = $db->exec("DELETE FROM module_group WHERE group = '" . $_POST['group-new'] . "';");
-			$query_user = $db->exec("DELETE FROM user_group WHERE group = '" . $_POST['group-new'] . "';");
+			$query_module = $db->exec("DELETE FROM module_group WHERE access_group = '" . $_POST['group-new'] . "';");
+			$query_user = $db->exec("DELETE FROM user_group WHERE access_group = '" . $_POST['group-new'] . "';");
 			if(!($query_group and $query_module and $query_user)) {
 				 $_SESSION['result'] = "Odstranění skupiny " . $_POST['group-new'] . " selhalo.";
 			} else {
 				$_SESSION['result'] = "Skupina " . $_POST['group-new'] . " odstraněna."; 
 			}
+		} else {
+			$_SESSION['result'] = "Prázdný název skupiny.";
 		}
 	}
-	if (!empty($_POST['module-new'])) {
-		if (!empty($_POST['module-description']) and isset($_POST['module-save'])) {
-			$query = $db->exec("INSERT INTO module (name,description) VALUES ('"
-				. $db->escapeString($_POST['module-new']) . "','"
-				. $db->escapeString($_POST['module-description']) . "');");
-			if(!$query) {
-				$_SESSION['result'] = "Zápis modulu " . $_POST['module-new'] . " selhal.";
-			} else {
-				$_SESSION['result'] = "Modul " . $_POST['module-new'] . " uložen."; 
-			}
-		} else {
-			$_SESSION['result'] = "Prázdný popis modulu."; 
-		}
-		if (isset($_POST['module-delete'])) {
+	if (isset($_POST['module-save'])) {
+		if (!empty($_POST['module-description'])) {
+			if (!empty($_POST['module-new'])) {
+				$query = $db->exec("INSERT INTO module (name,description) VALUES ('"
+					. $db->escapeString($_POST['module-new']) . "','"
+					. $db->escapeString($_POST['module-description']) . "');");
+				if(!$query) {
+					$_SESSION['result'] = "Zápis modulu " . $_POST['module-new'] . " selhal.";
+				} else {
+					$_SESSION['result'] = "Modul " . $_POST['module-new'] . " uložen."; 
+				}
+			} else { $_SESSION['result'] = "Prázdný název modulu."; }
+		} else { $_SESSION['result'] = "Prázdný popis modulu."; }
+	}
+	if (isset($_POST['module-delete'])) {
+		if (!empty($_POST['module-new'])) {
 			$query_module = $db->exec("DELETE FROM module WHERE name = '" . $_POST['module-new'] . "';");
 			$query_group = $db->exec("DELETE FROM module_group WHERE module = '" . $_POST['module-new'] . "';");
 			if(!($query_module and $query_group)) {
@@ -99,9 +105,10 @@ if (!empty($_POST)) {
 			} else {
 				$_SESSION['result'] = "Modul " . $_POST['module-new'] . " odstraněn."; 
 			}
-		}
+		} else { $_SESSION['result'] = "Prázdný název modulu."; }
 	}
 	if (!empty($_POST['group-option']) && !empty($_POST['access-save'])) {
+		# Store users
 		if (!empty($_POST['user-list'])) {
 			$data = explode("\n", $db->escapeString(trim($_POST['user-list'])));
 			$query_user = $db->query("SELECT user FROM user_group WHERE access_group = '" . $_POST['group-option'] .  "';");
@@ -129,18 +136,33 @@ if (!empty($_POST)) {
 			$query = $db->exec("DELETE FROM user_group WHERE access_group = '" . $_POST['group-option'] ."';");
 			if(!$query) { $_SESSION['result'] = "Zápis uživatelů selhal."; }
 		}
-	//	if (!isset($_POST['module'])) {
-	//		foreach($_POST['module'] as $module) {
-	//			
-	//		}
-	//	if !empty group-list
-	//		a] for group in Q = SELECT group FROM module_group WHERE group = G;
-	//			if group ! in group-list then Q = DELETE FROM module_group WHERE module = M;
-	//		b] for module in module-list:
-	//			Q = UPDATE OR IGNORE (module,group) ON module_group VALUES (M,G);
-	//	else Q =  DELETE ALL FROM module_group WHERE module = M;
-	//	} else {
-	//	}
+		# Store modules
+		if (isset($_POST['module-list'])) {
+			$query_module = $db->query("SELECT module FROM module_group WHERE access_group = '" . $_POST['group-option'] .  "';");
+			if ($query_module->fetchArray()) {
+				$query_module->reset();
+				while ($res = $query_module->fetchArray(SQLITE3_ASSOC)) {
+					if(!in_array($res['module'], $_POST['module-list'])) {
+						$query = $db->exec("DELETE FROM module_group WHERE module = '" . $res['module'] . "' AND access_group = '" . $_POST['group-option'] .  "';");
+						if (!$query) { $_SESSION['result'] = "Odstranění modulu " . $res['module'] . " selhalo."; }
+					}
+				}
+			}
+			$db->exec('BEGIN;');
+			$query = $db->prepare("INSERT OR IGNORE INTO module_group (module,access_group) VALUES (?,?);");
+			
+			foreach($_POST['module-list'] as $module) {
+				$query->bindValue(1, $module);
+				$query->bindValue(2, $_POST['group-option']);
+				$query->execute();
+			}
+			$transaction = $db->exec('COMMIT;');
+			if (!$transaction) { $_SESSION['result'] = "Zápis modulů selhal."; }
+		} else {
+			$query = $db->exec("DELETE FROM module_group WHERE access_group = '" . $_POST['group-option'] ."';");
+			if(!$query) { $_SESSION['result'] = "Zápis modulů selhal."; }
+		}
+		if (empty($_SESSION['result'])) { $_SESSION['result'] = "Skupina " . $_POST['group-option'] . " uložena."; }
 	}
 
 	header('Location: /access/');
@@ -232,19 +254,9 @@ if ($db) {
 
 		</select>
 	</td>
-	<td class="align-middle"><textarea class="form-control" rows="<?php echo ($row_size - 1); ?>" id="user-list" name="user-list">
-<?php
-
-//if ($db) {
-//
-//	$query = $db->query("SELECT user FROM user_group ORDER BY user;");
-//	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
-//		echo $result['user'] . "\n";
-//	}
-//}
-
-?>
-</textarea></td>
+	<td class="align-middle">
+		<textarea class="form-control" rows="<?php echo ($row_size - 1); ?>" id="user-list" name="user-list"></textarea>
+	</td>
 	<td class="align-middle">
 
 <?php
@@ -254,7 +266,7 @@ if ($db) {
 	$query = $db->query("SELECT name,description FROM module;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo '<div class=" form-check form-switch">'
-		. '<input class="form-check-input" type="checkbox" role="switch" name="module" value="' . $result['name'] . '" id="' . $result['name'] . '">'
+		. '<input class="form-check-input" type="checkbox" role="switch" name="module-list[]" value="' . $result['name'] . '" id="' . $result['name'] . '">'
 		. '<label class="form-check-label" for="' . $result['name'] . '">' . $result['description'] . '</label></div>';
         }
 }
@@ -303,8 +315,8 @@ if ($db) {
 	</td>
 	</form>
 	<form method="post" action="." enctype="multipart/form-data">
-	<td class="align-middle"><input class="form-control text-center" id="module-new" name="module-new" type="text" value="" size="2"></td>
-	<td class="align-middle"><input type="text" class="form-control" id="module-description" size="10" name="module-description" value=""></td>
+	<td class="align-middle"><input class="form-control text-center" id="module-new" name="module-new" type="text" value="<?php if (isset($_POST['module-new'])) { echo htmlspecialchars($_POST['module-new'], ENT_QUOTES, 'UTF-8'); } ?>" size="2"></td>
+	<td class="align-middle"><input type="text" class="form-control" id="module-description" size="10" name="module-description" value="<?php if (isset($_POST['module-description'])) { echo htmlspecialchars($_POST['module-description'], ENT_QUOTES, 'UTF-8'); } ?>"></td>
 	<td class="align-middle">
 		<div class="row g-1">
 			<div class="col p-0 text-center">

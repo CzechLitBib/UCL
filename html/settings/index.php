@@ -15,7 +15,7 @@ if($_SESSION['group'] !== 'admin') {
         exit();
 }
 
-if (!isset($_SESSION['result'])) { $result = null; }
+if (!isset($_SESSION['result'])) { $_SESSION['result'] = null; }
 
 $db = new SQLite3('/var/www/data/devel.db');
 

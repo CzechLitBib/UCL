@@ -67,11 +67,13 @@ function module_on_delete() {
 
 function access_on_save() {
 	groups = document.getElementById("group-option");
- 	group = groups.options[groups.selectedIndex].text;
-	document.getElementById('modal-text').textContent = 'Chcete uložit skupinu ';
-	document.getElementById('modal-text-bold').textContent = group;
-	modal.toggle();
-	modal_action = 'access-save';
+	if (groups.selectedIndex >= 0) {
+ 		group = groups.options[groups.selectedIndex].text;
+		document.getElementById('modal-text').textContent = 'Chcete uložit skupinu ';
+		document.getElementById('modal-text-bold').textContent = group;
+		modal.toggle();
+		modal_action = 'access-save';
+	}
 }
 
 async function group_on_change() {
@@ -86,8 +88,13 @@ async function group_on_change() {
 	// update module
 	payload = {'type':'module', 'data':group};
 	ret = await update(payload);
-	//if (ret.length !== 0) {
-	//	document.getElementById('code-data').value = ret['value'].join('\n');
-	//}
+	modules = document.getElementsByName('module-list[]');
+	for(var i=0; i<modules.length; i++) {
+		if (ret['value'].includes(modules[i].id)) {
+			document.getElementById(modules[i].id).checked = true;
+		} else {
+			document.getElementById(modules[i].id).checked = false;
+		}	
+	}
 }
 
