@@ -173,7 +173,7 @@ if(empty($_SESSION['auth'])) {
 	</a>
 	<div>
 		<h4 class="fw-bold mb-0">Přístup</h4>
-		<p>Správce skupin a oprávnění.</p>
+		<p>Správce skupin, modulů a&nbsp;oprávnění.</p>
 	</div>
 </div>
 </div>

@@ -8,17 +8,16 @@ TODO
 FRONTEND
 
 - Boostrap 5.1 SASS
-- DB SQLi protection
-- DB RO, DB error checks
-- DB catch exception
+- Module templete.
+- DB: DB RO, DB error check, catch exception, SQLi protection
 - nginx + CSV read
+
 - UCLO/CLO: Upload ('xhr.txt')
-- Access: (DB) groups, mods, group_mod, group_user  
+- Access: CSS(switch,menu), POST 
 - Aleph: tooltip + add query JS
 - Settings: Solr codes; search whisper; permission module.
 - CAT: CSV download + BOM/Content-type
 - Form-data: Pagination + switch (test.php cusctom.scss)
-- API: RRD stacked.
 
 BACKEND
 

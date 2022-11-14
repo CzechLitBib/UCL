@@ -26,33 +26,26 @@ if (!$db) { $_SESSION['result'] = 'Chyba čtení databáze.'; }
 if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 	$req = json_decode(file_get_contents('php://input'), True);
 	$resp = [];
-	if ($req['data'] == 'export') {
-		if ($req['type'] == 'error') {
-			$query = $db->query("SELECT * FROM error;");
-			if ($query) {
-				echo "\xEF\xBB\xBF"; # UTF-8 BOM
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo $res['code'] . ';' . $res['label'] . ';' . $res['text'] . "\n";
-				}
-			} else { echo 'DB error.'; }
-		}
-		if ($req['type'] == 'exception') {
-			$query = $db->query("SELECT * FROM exception ORDER BY code;");
-			if ($query) {
-				echo "\xEF\xBB\xBF"; # UTF-8 BOM
-				while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
-					echo $res['code'] . ';' . $res['ident'] . "\n";
-				}
-			} else { echo 'DB error.'; }
-		}
-		exit();
-	}
-
-	if ($req['type'] == 'error') {
-		$query = $db->querySingle("SELECT * FROM error WHERE code = '" . $req['data'] . "';", true);
+	if ($req['type'] == 'user') {
+		$query = $db->query("SELECT user FROM user_group WHERE access_group = '" . $req['data'] . "';");
 		if ($query) {
-			$resp['value'] = $query;
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				$data=[];
+				array_push($data, $res['user']);
+			}
+			$resp['value'] = $data;
 		}
+	}
+	if ($req['type'] == 'module') {
+		$query = $db->query("SELECT module FROM module_group WHERE access_group = '" . $req['data'] . "';");
+		if ($query) {
+			while ($res = $query->fetchArray(SQLITE3_ASSOC)) {
+				$data=[];
+				array_push($data, $res['module']);
+			}
+			$resp['value'] = $data;
+		}
+	
 	}
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($resp);
@@ -62,29 +55,69 @@ if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
 # PHP POST
 
 if (!empty($_POST)) {
-	if (!empty($_POST['dict-option']) and !empty(trim($_POST['dict-data']))) {
-		if (isset($_POST['dict-save'])) {
-			$dict = $_POST['dict-option'];
-			$data = explode("\n", trim($_POST['dict-data']));
-			$query = $db->exec("DELETE FROM " . $dict . ";");
-			$db->exec('BEGIN;');
-			$query = $db->prepare("INSERT OR IGNORE INTO " . $dict . " (value) VALUES (?);");
-			foreach($data as $d) {
-				if (trim($d)) {
-					$query->bindValue(1, trim($d));
-					$query->execute();
-				}
-			}
-			$transaction = $db->exec('COMMIT;');
-			if (!$transaction) {
-				$_SESSION['result'] = "Zápis slovníku " . $dict_map[$dict] . " selhal.";
+	if (!empty($_POST['group-new'])) {
+		if (isset($_POST['group-save'])) {
+			$query = $db->exec("INSERT INTO access_group (name) VALUES ('"
+				. $db->escapeString($_POST['group-new']) . "');");
+			if(!$query) {
+				$_SESSION['result'] = "Zápis skupiny " . $_POST['group-new'] . " selhal.";
 			} else {
-				$_SESSION['result'] = "Slovník " . $dict_map[$dict] . " uložen."; 
+				$_SESSION['result'] = "Skupina " . $_POST['group-new'] . " uložena."; 
+			}
+		} else {
+			$_SESSION['result'] = "Prázdný vstup skupiny."; 
+		}
+		if (isset($_POST['group-delete'])) {
+			$query_group = $db->exec("DELETE FROM access_group WHERE name = '" . $_POST['group-new'] . "';");
+			$query_module = $db->exec("DELETE FROM module_group WHERE group = '" . $_POST['group-new'] . "';");
+			$query_user = $db->exec("DELETE FROM user_group WHERE group = '" . $_POST['group-new'] . "';");
+			if(!($query_group and $query_module and $query_user)) {
+				 $_SESSION['result'] = "Odstranění skupiny " . $_POST['group-new'] . " selhalo.";
+			} else {
+				$_SESSION['result'] = "Skupina " . $_POST['group-new'] . " odstraněna."; 
 			}
 		}
-	}# else { $_SESSION['result'] = 'Prázdný seznam hodnot.'; }
+	}
+	if (!empty($_POST['module-new'])) {
+		if (!empty($_POST['module-description']) and isset($_POST['module-save'])) {
+			$query = $db->exec("INSERT INTO module (name,description) VALUES ('"
+				. $db->escapeString($_POST['module-new']) . "','"
+				. $db->escapeString($_POST['module-description']) . "');");
+			if(!$query) {
+				$_SESSION['result'] = "Zápis modulu " . $_POST['module-new'] . " selhal.";
+			} else {
+				$_SESSION['result'] = "Modul " . $_POST['module-new'] . " uložen."; 
+			}
+		} else {
+			$_SESSION['result'] = "Prázdný popis modulu."; 
+		}
+		if (isset($_POST['module-delete'])) {
+			$query_module = $db->exec("DELETE FROM module WHERE name = '" . $_POST['module-new'] . "';");
+			$query_group = $db->exec("DELETE FROM module_group WHERE module = '" . $_POST['module-new'] . "';");
+			if(!($query_module and $query_group)) {
+				 $_SESSION['result'] = "Odstranění modulu " . $_POST['module-new'] . " selhalo.";
+			} else {
+				$_SESSION['result'] = "Modul " . $_POST['module-new'] . " odstraněn."; 
+			}
+		}
+	}
+	//if (!empty($_POST['group-select'])) {
+	//	if !empty user-list
+	//		a] for user in Q = SELECT user FROM user_group WHERE group = G;
+	//			if user ! in user-list then Q = DELETE FROM user_group WHERE user = U;
+	//		b] for user in user-list:
+	//			Q = UPDATE OR IGNORE (user,group) ON user_group VALUES (U,G);
+	//	else Q =  DELETE ALL FROM user_group WHERE group = G;
 
-	header('Location: /settings/');
+	//	if !empty group-list
+	//		a] for group in Q = SELECT group FROM module_group WHERE group = G;
+	//			if group ! in group-list then Q = DELETE FROM module_group WHERE module = M;
+	//		b] for module in module-list:
+	//			Q = UPDATE OR IGNORE (module,group) ON module_group VALUES (M,G);
+	//	else Q =  DELETE ALL FROM module_group WHERE module = M;
+	//}
+
+	header('Location: /access/');
 	exit();
 }
 
@@ -136,6 +169,10 @@ if (isset($_SESSION['result'])) {
 	$_SESSION['result'] = null;
 }
 
+// Row size based on module count..
+$query = $db->querySingle("SELECT COUNT(*) FROM module;");
+$query ? $row_size = $query : $row_size = 1;
+
 ?>
 
 <h3>Nastavení přístupu</h3>
@@ -153,31 +190,55 @@ if (isset($_SESSION['result'])) {
 	<tbody>
 	<tr>
 	<td class="align-middle col">
-		<select class="form-select" size="11" aria-label="multiple select example">
-			<option value="1">správce</option>
-			<option value="1">formulář</option>
-			<option value="2">nkp</option>
-			<option value="3">uživatel</option>
+		<select class="form-select" size="<?php echo $row_size;?>" aria-label="group select" id="group-option" name="group-option" onchange="access_on_change()">
+
+<?php
+
+if ($db) {
+
+	$query = $db->query("SELECT name FROM access_group ORDER BY name;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo '<option value="' . $result['name'] . '">' . $result['name'] . '</option>';
+        }
+}
+
+?>
+
 		</select>
 	</td>
-	<td class="align-middle"><textarea class="form-control" rows="10" id="error-label" name="error-label"></textarea></td>
+	<td class="align-middle"><textarea class="form-control" rows="<?php echo ($row_size - 1); ?>" id="user-list" name="user-list">
+<?php
+
+if ($db) {
+
+	$query = $db->query("SELECT user FROM user_group ORDER BY user;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo $result['user'] . "\n";
+        }
+}
+
+?>
+</textarea></td>
 	<td class="align-middle">
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">Denní</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">Týdenní</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">7</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">NKP</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">CAT</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">CLO</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">UCLO</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">Formuář / Data</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">Solr</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">Nastavení</label></div>
-		<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="module1"><label class="form-check-label" for="module1">Přístup</label></div>
+
+<?php
+
+if ($db) {
+
+	$query = $db->query("SELECT name,description FROM module;");
+	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
+		echo '<div class=" form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="' . $result['name'] . '">'
+		. '<label class="form-check-label" for="' . $result['name'] . '">' . $result['description'] . '</label></div>';
+        }
+}
+
+?>
+
 	</td>
 	<td class="align-middle">
 			<div class="col p-0 mx-2 mt-1 mb-2 text-center">
-			<input type="submit" id="error-save" name="error-save" value="error-save" hidden>
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="error_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
+			<input type="submit" id="access-save" name="access-save" value="access-save" hidden>
+			<svg xmlns="http://www.w3.org/2000/svg" onclick="access_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 	</td>
 	</tr>
@@ -187,7 +248,6 @@ if (isset($_SESSION['result'])) {
 
 <h3>Skupiny a moduly</h3>
 
-<form method="post" action="." enctype="multipart/form-data">
 <table class="table my-4">
 	<thead>
 	<tr>
@@ -200,45 +260,40 @@ if (isset($_SESSION['result'])) {
 	</thead>
 	<tbody>
 	<tr>
-	<td class="align-middle">
-		<input class="form-control text-center" id="exception-code" name="exception-code" type="text" value="" size="2" list="exception-list">
-		<datalist id="exception-list">
-		</datalist>
-	</td>
+	<form method="post" action="." enctype="multipart/form-data">
+	<td class="align-middle"><input class="form-control text-center" id="group-new" name="group-new" type="text" value="" size="2"></td>
 	<td class="col align-middle">
-		<div class="row flex-nowrap">
+		<div class="row g-1">
 			<div class="col p-0 text-center">
-			<input type="submit" id="exception-save" name="exception-save" value="exception-save" hidden>
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
+			<input type="submit" id="group-save" name="group-save" value="group-save" hidden>
+			<svg xmlns="http://www.w3.org/2000/svg" onclick="group_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 			</div>
 			<div class="col p-0 text-center">
-			<input type="submit" id="exception-save" name="exception-save" value="exception-save" hidden>
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="review_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
-			</div>
-		</div>
-	</td>
-	<td class="align-middle">
-		<input class="form-control text-center" id="exception-code" name="exception-code" type="text" value="" size="2" list="exception-list">
-		<datalist id="exception-list">
-		</datalist>
-	</td>
-	<td class="align-middle"><input type="text" class="form-control" id="review-name" size="10" name="review-name" value=""></td>
-	<td class="align-middle">
-		<div class="row flex-nowrap">
-			<div class="col p-0 text-center">
-			<input type="submit" id="exception-save" name="exception-save" value="exception-save" hidden>
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="exception_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
-			</div>
-			<div class="col p-0 text-center">
-			<input type="submit" id="exception-save" name="exception-save" value="exception-save" hidden>
-			<svg xmlns="http://www.w3.org/2000/svg" onclick="review_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+			<input type="submit" id="group-delete" name="group-delete" value="group-delete" hidden>
+			<svg xmlns="http://www.w3.org/2000/svg" onclick="group_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
 			</div>
 		</div>
 	</td>
+	</form>
+	<form method="post" action="." enctype="multipart/form-data">
+	<td class="align-middle"><input class="form-control text-center" id="module-new" name="module-new" type="text" value="" size="2"></td>
+	<td class="align-middle"><input type="text" class="form-control" id="module-description" size="10" name="module-description" value=""></td>
+	<td class="align-middle">
+		<div class="row g-1">
+			<div class="col p-0 text-center">
+			<input type="submit" id="module-save" name="module-save" value="module-save" hidden>
+			<svg xmlns="http://www.w3.org/2000/svg" onclick="module_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
+			</div>
+			<div class="col p-0 text-center">
+			<input type="submit" id="module-delete" name="module-delete" value="module-delete" hidden>
+			<svg xmlns="http://www.w3.org/2000/svg" onclick="module_on_delete()" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+			</div>
+		</div>
+	</td>
+	</form>
 	</tr>
 </tbody>
 </table>
-</form>
 
 </div>
 </div>

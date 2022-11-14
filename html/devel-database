@@ -65,13 +65,13 @@ cur.execute("CREATE TABLE dict_338 (value TEXT);")
 cur.execute("CREATE UNIQUE INDEX '338_value' ON dict_338 (value);")
 
 # GROUP
-cur.execute("CREATE TABLE group (name TEXT UNIQUE);")
+cur.execute("CREATE TABLE 'access_group' (name TEXT UNIQUE);")
 # MODULE
-cur.execute("CREATE TABLE module (name TEXT UNIQUE, desciption TEXT);")
+cur.execute("CREATE TABLE 'module' (name TEXT UNIQUE, desciption TEXT);")
 # USER_GROUP
-cur.execute("CREATE TABLE user_group (user TEXT UNIQUE, gid INTEGER);")
+cur.execute("CREATE TABLE 'user_group' (user TEXT UNIQUE, access_group TEXT);")
 # MODULE_GROUP
-cur.execute("CREATE TABLE module_group (mid INTEGER, gid INTEGER, UNIQUE(mid,gid));")
+cur.execute("CREATE TABLE 'module_group' (module TEXT, access_group TEXT, UNIQUE(module,access_group));")
 
 con.commit()
 con.close()

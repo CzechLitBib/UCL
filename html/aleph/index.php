@@ -144,6 +144,10 @@ if (!empty($_POST)) {
 			<label class="btn btn-outline-danger w-100" for="uclo">UCLO</label>
 			<input type="radio" class="btn-check" id="clo" name="index" value="clo" onclick="get_selection('clo')">
 			<label class="btn btn-outline-danger text-nowrap w-100" for="clo">CLO</label>
+			<input type="radio" class="btn-check" id="aut" name="index" value="aut" onclick="get_selection('aut')">
+			<label class="btn btn-outline-danger text-nowrap w-100" for="aut">AUT</label>
+			<input type="radio" class="btn-check" id="cnb" name="index" value="cnb" onclick="get_selection('cnb')">
+			<label class="btn btn-outline-danger text-nowrap w-100" for="cnb">CNB</label>
 		</div>
 	</div>
 </div>
