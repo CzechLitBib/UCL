@@ -60,6 +60,12 @@ $format_map = array(
 	'other' => 'ostatní' 
 );
 
+try {
+	$db = new SQlite3('/var/www/data/form/form.db');
+} catch (Exception $e) {
+	$db = null;
+}
+
 if (!$db) { $error = 'Chyba databáze.'; }
 
 // XHR
