@@ -9,13 +9,26 @@ if(empty($_SESSION['auth'])) {
 	exit();
 }
 
-if(!in_array($_SESSION['group'], array('admin','form'))) {
-        $_SESSION['error'] = True;
-        header('Location: /');
-        exit();
+try {
+	$db = new SQlite3('/var/www/data/devel.db');
+} catch (Exception $e) {
+	$db = null;
 }
 
-if(!isset($_SESSION['form-data'])) { $_SESSION['form-data'] = Null; }
+if ($db) {
+	$access = "SELECT * FROM module_group WHERE module = 'form-data' AND access_group = '" . $_SESSION['group'] . "';";
+	if (!$db->querySingle($access)) {
+		$_SESSION['error'] = 'Nedostatečné oprávnění.';
+		header('Location: /main/');
+		exit();
+	}
+} else {
+	$_SESSION['error'] = 'Chyba čtení databáze.';
+	header('Location: /main/');
+	exit();
+}
+
+if(!isset($_SESSION['form-data'])) { $_SESSION['form-data'] = null; }
 
 $error = '';
 
@@ -46,12 +59,6 @@ $format_map = array(
 	'study' => 'sborníková studie',
 	'other' => 'ostatní' 
 );
-
-try {
-	$db = new SQLite3('/var/www/data/form/form.db');
-} catch (Exception $e) {
-	$db = null;
-}
 
 if (!$db) { $error = 'Chyba databáze.'; }
 

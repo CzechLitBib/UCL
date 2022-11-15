@@ -9,12 +9,24 @@ if(empty($_SESSION['auth'])) {
 	exit();
 }
 
-if(!in_array($_SESSION['group'], array('admin','nkp'))) {
-	$_SESSION['error'] = True;
+try {
+	$db = new SQlite3('/var/www/data/devel.db');
+} catch (Exception $e) {
+	$db = null;
+}
+
+if ($db) {
+	$access = "SELECT * FROM module_group WHERE module = 'nkp' AND access_group = '" . $_SESSION['group'] . "';";
+	if (!$db->querySingle($access)) {
+		$_SESSION['error'] = 'Nedostatečné oprávnění.';
+		header('Location: /main/');
+		exit();
+	}
+} else {
+	$_SESSION['error'] = 'Chyba čtení databáze.';
 	header('Location: /main/');
 	exit();
 }
-
 
 if(!isset($_SESSION['nkp_month'])) { $_SESSION['nkp_month'] = Null; }
 if(!isset($_SESSION['nkp_year'])) { $_SESSION['nkp_year'] = Null; }

@@ -15,7 +15,7 @@ FRONTEND
 - nginx + invalid date CSV read
 
 - UCLO/CLO: Upload ('xhr.txt')
-- Access: CSS(switch,menu), integration 
+- Access: CSS(switch) 
 - Aleph: tooltip + add query JS
 - Settings: Solr codes; search whisper
 - CAT: CSV download + BOM/Content-type

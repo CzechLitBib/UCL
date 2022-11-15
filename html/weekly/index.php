@@ -9,8 +9,21 @@ if(empty($_SESSION['auth'])) {
 	exit();
 }
 
-if($_SESSION['group'] !== 'admin') {
-	$_SESSION['error'] = True;
+try {
+	$db = new SQlite3('/var/www/data/devel.db');
+} catch (Exception $e) {
+	$db = null;
+}
+
+if ($db) {
+	$access = "SELECT * FROM module_group WHERE module = 'weekly' AND access_group = '" . $_SESSION['group'] . "';";
+	if (!$db->querySingle($access)) {
+		$_SESSION['error'] = 'Nedostatečné oprávnění.';
+		header('Location: /main/');
+		exit();
+	}
+} else {
+	$_SESSION['error'] = 'Chyba čtení databáze.';
 	header('Location: /main/');
 	exit();
 }
@@ -22,8 +35,6 @@ if (!empty($_POST['date'])) {
 	header("Location: " . $_SERVER['REQUEST_URI']);
 	exit();
 }
-
-$db = new SQLite3('/var/www/data/devel.db');
 
 ?>
 
