@@ -10,9 +10,9 @@ if(empty($_SESSION['auth'])) {
 }
 
 if($_SESSION['group'] !== 'admin') {
-        $_SESSION['error'] = True;
-        header('Location: /main/');
-        exit();
+	$_SESSION['error'] = True;
+	header('Location: /main/');
+	exit();
 }
 
 if(!isset($_SESSION['seven_month'])) { $_SESSION['seven_month'] = Null; }

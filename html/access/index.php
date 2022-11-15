@@ -5,8 +5,8 @@ session_start();
 $_SESSION['page'] = '/access/';
 
 if(empty($_SESSION['auth'])) {
-        header('Location: /');
-        exit();
+	header('Location: /');
+	exit();
 }
 
 try {
@@ -258,7 +258,7 @@ if ($db) {
 	$query = $db->query("SELECT name FROM access_group ORDER BY name;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo '<option value="' . $result['name'] . '">' . $result['name'] . '</option>';
-        }
+	}
 }
 
 ?>
@@ -279,7 +279,7 @@ if ($db) {
 		echo '<div class=" form-check form-switch">'
 		. '<input class="form-check-input" type="checkbox" role="switch" name="module-list[]" value="' . $result['name'] . '" id="' . $result['name'] . '">'
 		. '<label class="form-check-label" for="' . $result['name'] . '">' . $result['description'] . '</label></div>';
-        }
+	}
 }
 
 ?>

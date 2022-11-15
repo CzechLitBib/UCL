@@ -4,10 +4,10 @@ session_start();
 
 $id = uniqid();
 
-$from= 'xxx';
-$login = 'xxx';
-$pass = 'xxx';
-$server = 'xxx';
+$from= 'no-reply@ucl.cas.cz';
+$login = 'servis-clb@ucl.cas.cz';
+$pass = '-h%O$\pv9Hd+<V0';
+$server = 'mail.ucl.cas.cz';
 
 $DB_PATH='/var/www/data/form/form.db';
 $FILE_PATH='/var/www/data/form/data/';
@@ -71,7 +71,7 @@ function send_mail($sender, $recipient, $mime_message) {
 		fread($socket,8192);
 
 		fclose($socket);
-   	 }
+	}
 }
 
 if ($_SESSION['message'] == 1) {
@@ -220,12 +220,12 @@ Tímto způsobem jsou přednostně sbírány informace o&nbsp;publikacích mimo 
 </div>
 
 <div class="row my-4">
-        <div class="d-grid gap-2 d-sm-flex justify-content-md-center">
-                <input type="radio" class="btn-check" id="fulltext" name="type" onclick="type_load()" checked>
-                <label class="btn btn-outline-danger w-100" for="fulltext">Vložit plný text</label>
-                <input type="radio" class="btn-check" id="biblio" name="type" onclick="type_load()">
-                <label class="btn btn-outline-danger text-nowrap w-100" for="biblio">Vložit bibliografický údaj</label>
-        </div>
+	<div class="d-grid gap-2 d-sm-flex justify-content-md-center">
+		<input type="radio" class="btn-check" id="fulltext" name="type" onclick="type_load()" checked>
+		<label class="btn btn-outline-danger w-100" for="fulltext">Vložit plný text</label>
+		<input type="radio" class="btn-check" id="biblio" name="type" onclick="type_load()">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="biblio">Vložit bibliografický údaj</label>
+	</div>
 </div>
 
 <hr/>

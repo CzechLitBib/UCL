@@ -32,10 +32,10 @@ if(!isset($_SESSION['nkp_month'])) { $_SESSION['nkp_month'] = Null; }
 if(!isset($_SESSION['nkp_year'])) { $_SESSION['nkp_year'] = Null; }
 
 if (!empty($_POST['month']) and !empty($_POST['year'])) {
-        $_SESSION['nkp_month'] = $_POST['month'];
-        $_SESSION['nkp_year'] = $_POST['year'];
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit();
+	$_SESSION['nkp_month'] = $_POST['month'];
+	$_SESSION['nkp_year'] = $_POST['year'];
+	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
 }
 
 ?>
