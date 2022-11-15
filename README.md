@@ -11,20 +11,19 @@ FRONTEND
 - Boostrap 5.1 SASS
 - Module templete.
 - Error handling "broker (konsorcium_form)
-- DB: DB RO,  try catch exception, SQLi ($db->escapeString())
+- DB: RO, $db->escapeString(), lock primitive include
 - nginx + invalid date CSV read
 
 - UCLO/CLO: Upload ('xhr.txt')
 - Access: CSS(switch) 
 - Aleph: tooltip + add query JS
-- Settings: Solr codes; search whisper
+- Settings: Solr codes DB; search whisper
 - CAT: CSV download + BOM/Content-type
 - Form-data: Pagination + switch (test.php cusctom.scss)
 
 BACKEND
 
-- Leaked mail pass fix.
-- Cleanup '       ' spaces
+- Cleanup '    ' spaces
 - Mod: DB
 - Rule 136 dup code.
 - SMTP auth(five,cat,seven).
