@@ -9,8 +9,21 @@ if(empty($_SESSION['auth'])) {
 	exit();
 }
 
-if($_SESSION['group'] !== 'admin') {
-	$_SESSION['error'] = True;
+try {
+	$db = new SQlite3('/var/www/data/devel.db');
+} catch (Exception $e) {
+	$db = null;
+}
+
+if ($db) {
+	$access = "SELECT * FROM module_group WHERE module = 'nkp' AND access_group = '" . $_SESSION['group'] . "';";
+	if (!$db->querySingle($access)) {
+		$_SESSION['error'] = 'Nedostatečné oprávnění.';
+		header('Location: /main/');
+		exit();
+	}
+} else {
+	$_SESSION['error'] = 'Chyba čtení databáze.';
 	header('Location: /main/');
 	exit();
 }

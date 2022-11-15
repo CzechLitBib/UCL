@@ -4,10 +4,10 @@ session_start();
 
 $id = uniqid();
 
-$from= 'no-reply@ucl.cas.cz';
-$login = 'servis-clb@ucl.cas.cz';
-$pass = '-h%O$\pv9Hd+<V0';
-$server = 'mail.ucl.cas.cz';
+$from= 'xxx';
+$login = 'xxx';
+$pass = 'xxx';
+$server = 'xxx';
 
 $DB_PATH='/var/www/data/form/form.db';
 $FILE_PATH='/var/www/data/form/data/';
