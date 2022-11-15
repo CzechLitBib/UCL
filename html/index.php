@@ -9,54 +9,59 @@ if (!empty($_SESSION['auth']) and isset($_SESSION['page'])) {
 }
 
 $_SESSION['auth'] = False;
-$_SESSION['group'] = 'user';
+$_SESSION['group'] = '';
 $_SESSION['username'] = '';
-
-$admin = ['xxx'];
-$nkp   = ['xxx'];
-$form  = ['xxx'];
-$solr  = ['xxx'];
 
 if (!isset($_SESSION['error'])) { $_SESSION['error'] = False; }
 
 $authorized = False;
 
+try {
+	$db = new SQlite3('/var/www/data/devel.db');
+} catch (Exception $e) {
+	$db = null;
+}
+
 if (isset($_POST['name']) and isset($_POST['pass'])) {
+
+	if ($db) {
+		$group = $db->querySingle("SELECT access_group FROM user_group WHERE user = '" . $db->escapeString($_POST['name']) . "';");
+		if ($group) {
+			
+			$_SESSION['group'] = $group;
+
+			$ldap_dn = 'uid=' . $_POST['name'] . ',ou=Users,dc=ucl,dc=cas,dc=cz';
+			$ldap_conn = ldap_connect('ldap://ds.ucl.cas.cz');
+
+			ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+			ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
+			ldap_set_option($ldap_conn, LDAP_OPT_NETWORK_TIMEOUT, 10);
+
+			$ldap_bind = @ldap_bind($ldap_conn, $ldap_dn, $_POST['pass']);
+
+			if (!$ldap_bind) {//fall-back
+				$ldap_conn2 = ldap_connect('ldap://ds2.ucl.cas.cz');
+
+				ldap_set_option($ldap_conn2, LDAP_OPT_PROTOCOL_VERSION, 3);
+				ldap_set_option($ldap_conn2, LDAP_OPT_REFERRALS, 0);
+				ldap_set_option($ldap_conn2, LDAP_OPT_NETWORK_TIMEOUT, 10);
+
+				$ldap_bind = @ldap_bind($ldap_conn2, $ldap_dn, $_POST['pass']);
+			}
+
+			if ($ldap_bind) { $authorized = True; }
+
+			if ($authorized) {
 	
-	$ldap_dn = 'xxx';
-	$ldap_conn = ldap_connect('xxx');
+				$_SESSION['auth'] = True;
+				$_SESSION['username'] = $_POST['name'];
 
-	ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-	ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
-	ldap_set_option($ldap_conn, LDAP_OPT_NETWORK_TIMEOUT, 10);
+				if(empty($_SESSION['page'])) { $_SESSION['page'] = '/main/'; }// default page
 
-	$ldap_bind = @ldap_bind($ldap_conn, $ldap_dn, $_POST['pass']);
-
-	if (!$ldap_bind) {//fall-back
-		$ldap_conn2 = ldap_connect('xxx');
-
-		ldap_set_option($ldap_conn2, LDAP_OPT_PROTOCOL_VERSION, 3);
-		ldap_set_option($ldap_conn2, LDAP_OPT_REFERRALS, 0);
-		ldap_set_option($ldap_conn2, LDAP_OPT_NETWORK_TIMEOUT, 10);
-
-		$ldap_bind = @ldap_bind($ldap_conn2, $ldap_dn, $_POST['pass']);
-	}
-
-	if ($ldap_bind) { $authorized = True; }
-
-	if ($authorized) {
-		$_SESSION['auth'] = True;
-		$_SESSION['username'] = $_POST['name'];
-
-		if (in_array($_POST['name'], $admin)) { $_SESSION['group'] =  'admin'; }
-		if (in_array($_POST['name'], $form)) { $_SESSION['group'] =  'form'; }
-		if (in_array($_POST['name'], $solr)) { $_SESSION['group'] =  'solr'; }
-		if (in_array($_POST['name'], $nkp)) { $_SESSION['group'] =  'nkp'; }
-
-		if(empty($_SESSION['page'])) { $_SESSION['page'] = '/main/'; }// default page
-
-		header('Location: ' . $_SESSION['page']);
-		exit();
+				header('Location: ' . $_SESSION['page']);
+				exit();
+			}
+		}
 	}
 }
 

@@ -122,7 +122,7 @@ if (!empty($_POST)) {
 				}
 			}
 			$db->exec('BEGIN;');
-			$query = $db->prepare("INSERT OR IGNORE INTO user_group (user,access_group) VALUES (?,?);");
+			$query = $db->prepare("INSERT OR REPLACE INTO user_group (user,access_group) VALUES (?,?);");
 			foreach($data as $user) {
 				if (trim($user)) {
 					$query->bindValue(1, trim($user));
