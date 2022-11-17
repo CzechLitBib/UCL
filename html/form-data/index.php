@@ -32,6 +32,9 @@ if(!isset($_SESSION['form-data'])) { $_SESSION['form-data'] = null; }
 
 $error = '';
 
+$pagination = 8;
+!empty($_GET['page']) ? $page = $_GET['page'] : $page = 1;
+
 $FILE_PATH='/var/www/data/form/data/';
 
 $db_map = array(
@@ -79,11 +82,22 @@ if(json_decode(file_get_contents('php://input'))) {
 		}
 		exit();
 	}
-	if ($req['type'] == 'visible') {
-		$query = $db->exec("UPDATE data SET visible = 0 WHERE id = '" . $req['data'] . "';");
-		if ($query) {
-			$resp['value'] = 'ok';
-		}
+	if ($req['type'] == 'update') {
+		$state = $db->querySingle("SELECT visible FROM data WHERE id = '" . $req['data'] . "';");
+		if (is_numeric($state)) {
+			if ($state == 0) {
+				$query = $db->exec("UPDATE data SET visible = 1 WHERE id = '" . $req['data'] . "';");
+				if ($query) {
+					$resp['value'] = 'off';
+				}
+			}
+			if ($state == 1) {
+				$query = $db->exec("UPDATE data SET visible = 0 WHERE id = '" . $req['data'] . "';");
+				if ($query) {
+					$resp['value'] = 'on';
+				}
+			}
+		} else { echo 'boo'; }
 	}
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($resp);
@@ -98,14 +112,14 @@ if(json_decode(file_get_contents('php://input'))) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>ČLB Vývoj - Formulář / Data</title>
-	<link href="../bootstrap.min.css" rel="stylesheet">
+	<!--<link href="../bootstrap.min.css" rel="stylesheet">--!>
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">
 	<link rel="icon" href="../favicon/favicon-32x32.png" sizes="32x32" type="image/png">
 	<link rel="icon" href="../favicon/favicon-16x16.png" sizes="16x16" type="image/png">
 	<link rel="mask-icon" href="../favicon/safari-pinned-tab.svg" color="#7952b3">
 	<!-- Custom styles -->
-	<link href="../custom.css" rel="stylesheet">
+	<link href="custom.css" rel="stylesheet">
 </head>
 
 <body class="bg-light">
@@ -135,7 +149,12 @@ if(json_decode(file_get_contents('php://input'))) {
 	if ($error) {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">' . $error . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 	} else {
-		$data = $db->query("SELECT * FROM data WHERE visible = 1 ORDER BY id DESC;");
+		$count = $db->querySingle("SELECT COUNT(*) FROM data;");
+
+		$from = $count - $page*$pagination;
+		$to = $count - ($page-1)*$pagination;
+
+		$data = $db->query("SELECT * FROM data WHERE rowid BETWEEN ". strval($from) . " AND " . strval($to) . " ORDER BY id DESC;");
 
 		if (!$data->fetchArray()) {
 			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
@@ -152,7 +171,14 @@ if(json_decode(file_get_contents('php://input'))) {
 					echo '<div class="col col-auto"><svg xmlns="http://www.w3.org/2000/svg" onclick="toggle_data(' . "'" .   $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></div>';
 					echo '<div class="col col-auto">' . date(" d.m Y H:i", hexdec(substr($row['id'],0,8))) . '</div>';# ID
 					echo '<div class="col">' .$format_map[$row['format']] . '</div>';# FORMAT
-					echo '<div class="col col-auto text-end"><button type="button" class="btn btn-secondary btn-sm" onclick="confirmation(' . "'" . $row['id'] . "'" . ')">Zpracováno</button></div>';
+					echo '<div class="col col-auto text-end">';
+					if ($row['visible'] == 1) {
+						echo '<button type="button" class="btn btn-secondary btn-sm" id="btn-' . $row['id'] . '" onclick="on_confirm(' . "'" . $row['id'] . "'" . ')">Zpracováno</button>'; 
+					}
+					if ($row['visible'] == 0) {
+						echo '<button type="button" class="btn btn-danger btn-sm" id="btn-' . $row['id'] . '" onclick="on_confirm(' . "'" . $row['id'] . "'" . ')">Zpracováno</button>';
+					}
+					echo '</div>';
 				echo '</div>';
 				echo '<hr class="m-1 p-0">';
 				echo '</div>';
@@ -211,33 +237,62 @@ if(json_decode(file_get_contents('php://input'))) {
 	}
 ?>
 
+<nav class="mt-4" aria-label="Page navigation">
+	<ul class="pagination justify-content-center">
+<?php
+	// prev
+	if ($page > 1) {
+		echo '<li class="page-item"><a class="page-link" href="?page='. strval($page-1) . '">Předchozí</a></li>';
+	} else {
+		echo '<li class="page-item disabled"><a class="page-link">Předchozí</a></li>';
+	}
+
+	// page |x|
+	if ( $count > 0 and $count <= $pagination) {
+		echo '<li class="page-item active"><a class="page-link">1</a></li>';
+	}
+	// page |x|x|
+	if ($count > $pagination and $count <=2*$pagination) {
+		$page == 1 ? $active = 'active' : $active = '';
+		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=1">1</a></li>';
+		$page == 2 ? $active = 'active' : $active = '';
+		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=2">2</a></li>';
+	}
+	// page |x|x|x|
+	if ($count > 2*$pagination) {
+		// active
+		$page == 1 ? $active = 'active' : $active = '';
+		// num
+		$page == 1 ? $num = '1' : $num = strval($page-1);
+		if ($page*$pagination >= $count) { $num = strval($page-2); }
+		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=' . $num . '">' . $num . '</a></li>';
+		// active
+		($page > 1 and $page < $count/$pagination) ? $active = 'active' : $active = '';
+		// num
+		$page == 1 ? $num = '2' : $num = strval($page);
+		if ($page*$pagination >= $count) { $num = strval($page-1); }
+		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=' . $num .  '">'. $num . '</a></li>';
+		// active
+		($page*$pagination >= $count) ? $active = 'active' : $active = '';
+		// num
+		($page*$pagination >= $count) ? $num = strval($page) : $num = strval($page+1);
+		if ($page == 1) { $num = '3'; }
+		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=' . $num . '">' . $num . '</a></li>';
+	}
+
+	// next
+	if ($count <= $page*$pagination) {
+		echo '<li class="page-item disabled"><a class="page-link">Následujíci</a></li>';
+	} else {
+		echo '<li class="page-item"><a class="page-link" href="?page=' . strval($page+1)  . '">Následujíci</a></li>';
+	}
+?>
+	</ul>
+</nav>
+
 </div>
 </div>
 </main>
-
-<!-- MODAL --!>
-
-<div class="modal" id="modal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow">
-                <div class="container-fluid">
-                        <div class="row my-2">
-                                <div class="col my-2">
-                                        <span class="align-middle" id="modal-text"></span>
-                                        <span class="align-middle"><b id="modal-text-bold"></b></span>
-                                        <span class="align-middle">?</span>
-                                </div>
-                                <div class="col-3 d-flex align-items-center">
-                                        <button class="btn btn-sm btn-danger w-100" onclick="on_confirm()">Ano</button>
-                                </div>
-                                <div class="col-1 d-flex align-items-center me-2">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                        </div>
-                </div>
-        </div>
-        </div>
-</div>
 
 <script src="../bootstrap.min.js"></script>
 <script src="custom.js"></script>

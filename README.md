@@ -8,8 +8,9 @@ TODO
 FRONTEND
 
 - Cleanup '       ' spaces
-- Boostrap 5.1 SASS
-- Module templete.
+- Global Boostrap 5.1 SASS
+- Module templete
+- XHR json detection(form-data/index.php)
 - Error handling "broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive include
 - nginx + invalid date CSV read
@@ -19,7 +20,6 @@ FRONTEND
 - Aleph: tooltip + add query JS
 - Settings: Solr codes DB; search whisper
 - CAT: CSV download + BOM/Content-type
-- Form-data: Pagination + switch (test.php cusctom.scss)
 
 BACKEND
 
