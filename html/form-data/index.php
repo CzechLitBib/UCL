@@ -252,7 +252,7 @@ if(json_decode(file_get_contents('php://input'))) {
 		echo '<li class="page-item active"><a class="page-link">1</a></li>';
 	}
 	// page |x|x|
-	if ($count > $pagination and $count <=2*$pagination) {
+	if ($count > $pagination and $count <= 2*$pagination) {
 		$page == 1 ? $active = 'active' : $active = '';
 		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=1">1</a></li>';
 		$page == 2 ? $active = 'active' : $active = '';
@@ -275,8 +275,8 @@ if(json_decode(file_get_contents('php://input'))) {
 		// active
 		($page*$pagination >= $count) ? $active = 'active' : $active = '';
 		// num
-		($page*$pagination >= $count) ? $num = strval($page) : $num = strval($page+1);
-		if ($page == 1) { $num = '3'; }
+		$page == 1 ? $num = '3' : $num = strval($page+1);
+		if ($page*$pagination >= $count) { $num = strval($page); }
 		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=' . $num . '">' . $num . '</a></li>';
 	}
 
