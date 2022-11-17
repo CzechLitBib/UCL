@@ -97,7 +97,7 @@ if(json_decode(file_get_contents('php://input'))) {
 					$resp['value'] = 'on';
 				}
 			}
-		} else { echo 'boo'; }
+		}
 	}
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($resp);
