@@ -1,5 +1,5 @@
 <?php
-  
+
 session_start();
 
 $_SESSION['page'] = '/access/';
@@ -122,7 +122,7 @@ if (!empty($_POST)) {
 		# Store users
 		if (!empty($_POST['user-list'])) {
 			$data = explode("\n", $db->escapeString(trim($_POST['user-list'])));
-			$query_user = $db->query("SELECT user FROM user_group WHERE access_group = '" . $_POST['group-option'] .  "';");
+			$query_user = $db->query("SELECT user FROM user_group WHERE access_group = '" . $_POST['group-option'] . "';");
 			if ($query_user->fetchArray()) {
 				$query_user->reset();
 				while ($res = $query_user->fetchArray(SQLITE3_ASSOC)) {
@@ -149,12 +149,12 @@ if (!empty($_POST)) {
 		}
 		# Store modules
 		if (isset($_POST['module-list'])) {
-			$query_module = $db->query("SELECT module FROM module_group WHERE access_group = '" . $_POST['group-option'] .  "';");
+			$query_module = $db->query("SELECT module FROM module_group WHERE access_group = '" . $_POST['group-option'] . "';");
 			if ($query_module->fetchArray()) {
 				$query_module->reset();
 				while ($res = $query_module->fetchArray(SQLITE3_ASSOC)) {
 					if(!in_array($res['module'], $_POST['module-list'])) {
-						$query = $db->exec("DELETE FROM module_group WHERE module = '" . $res['module'] . "' AND access_group = '" . $_POST['group-option'] .  "';");
+						$query = $db->exec("DELETE FROM module_group WHERE module = '" . $res['module'] . "' AND access_group = '" . $_POST['group-option'] . "';");
 						if (!$query) { $_SESSION['result'] = "Odstranění modulu " . $res['module'] . " selhalo."; }
 					}
 				}

@@ -1,12 +1,12 @@
 <?php
-  
+
 session_start();
 
 $_SESSION['page'] = '/settings/';
 
 if(empty($_SESSION['auth'])) {
-        header('Location: /');
-        exit();
+	header('Location: /');
+	exit();
 }
 
 try {
@@ -264,7 +264,7 @@ if (!empty($_POST)) {
 				$query = $db->exec("INSERT INTO review (authority, name) VALUES ('"
 					. $db->escapeString($_POST['review-authority']) . "','"
 					. $db->escapeString($_POST['review-name'])
-					. "') ON CONFLICT (authority) DO UPDATE SET  name=excluded.name;");
+					. "') ON CONFLICT (authority) DO UPDATE SET name=excluded.name;");
 				if(!$query) {
 					$_SESSION['result'] = "Zápis recenze " . $_POST['review-authority'] . " selhal.";
 				} else {
@@ -291,7 +291,7 @@ if (!empty($_POST)) {
 			}
 			$transaction = $db->exec('COMMIT;');
 			if (!$transaction) {
-				$_SESSION['result'] = "Zápis kódů " . $code_map[$code] .  " selhal.";
+				$_SESSION['result'] = "Zápis kódů " . $code_map[$code] . " selhal.";
 			} else {
 				$_SESSION['result'] = "Kódy pro " . $code_map[$code] . " uloženy."; 
 			}
@@ -390,8 +390,7 @@ if ($db) {
 		$error_code = $result['code'];
 		$error_label = $result['label'];
 		$error_text = $result['text'];
-        }
-	
+	}
 }
 
 ?>
@@ -419,7 +418,7 @@ if ($db) {
 	$query = $db->query("SELECT code FROM error;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo '<option value="' . $result['code'] . '">';
-        }
+	}
 }
 
 ?>
@@ -467,8 +466,7 @@ if ($db) {
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		$exception_code = $result['code'];
 		$exception_ident = $result['ident'];
-        }
-	
+	}
 }
 
 ?>
@@ -495,7 +493,7 @@ if ($db) {
 	$query = $db->query("SELECT DISTINCT code FROM exception;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo '<option value="' . $result['code'] . '">';
-        }
+	}
 }
 
 ?>
@@ -510,7 +508,7 @@ if ($db) {
 	$query = $db->query("SELECT ident FROM exception WHERE code = '" . $exception_code . "' ORDER BY ident DESC;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['ident'] . "\n";
-        }
+	}
 }
 
 ?>
@@ -555,8 +553,7 @@ if ($db) {
 		$user_code = $result['code'];
 		$user_aleph = $result['aleph'];
 		$user_email = $result['email'];
-        }
-	
+	}
 }
 
 ?>
@@ -584,7 +581,7 @@ if ($db) {
 	$query = $db->query("SELECT code FROM user;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo '<option value="' . $result['code'] . '">';
-        }
+	}
 }
 
 ?>
@@ -631,8 +628,7 @@ if ($db) {
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		$review_authority = $result['authority'];
 		$review_name = $result['name'];
-        }
-	
+	}
 }
 
 ?>
@@ -659,7 +655,7 @@ if ($db) {
 	$query = $db->query("SELECT authority FROM review;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo '<option value="' . $result['authority'] . '">';
-        }
+	}
 }
 
 ?>
@@ -708,9 +704,9 @@ if ($db) {
 	<td class="align-middle col-4 text-center">
 		<input type="radio" class="btn-check" onchange="code_on_change('country')" name="code-option" id="code-country" value="country" checked>
 		<label class="btn btn-outline-dark m-1" for="code-country">Země</label>
-		<input type="radio" class="btn-check"  onchange="code_on_change('language')" name="code-option" id="code-language" value="language">
+		<input type="radio" class="btn-check" onchange="code_on_change('language')" name="code-option" id="code-language" value="language">
 		<label class="btn btn-outline-dark m-1" for="code-language">Jazyk</label>
-		<input type="radio" class="btn-check"  onchange="code_on_change('role')" name="code-option" id="code-role" value="role">
+		<input type="radio" class="btn-check" onchange="code_on_change('role')" name="code-option" id="code-role" value="role">
 		<label class="btn btn-outline-dark m-1" for="code-role">Role</label>
 	</td>
 	<td class="col-8 align-middle"><textarea class="form-control" id="code-data" name="code-data" rows="5">
@@ -721,7 +717,7 @@ if ($db) {
 	$query = $db->query("SELECT code FROM country ORDER BY code;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['code'] . "\n";
-        }
+	}
 }
 
 ?>
@@ -758,17 +754,17 @@ if ($db) {
 	<td class="align-middle col-4 text-center">
 		<input type="radio" class="btn-check" onchange="dict_on_change('dict_26XA')" name="dict-option" id="dict-26XA" value="dict_26XA" checked>
 		<label class="btn btn-outline-dark m-1" for="dict-26XA">260/264a</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_26XB')" name="dict-option" id="dict-26XB" value="dict_26XB">
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_26XB')" name="dict-option" id="dict-26XB" value="dict_26XB">
 		<label class="btn btn-outline-dark m-1" for="dict-26XB">260/264b</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_490')" name="dict-option" id="dict-490" value="dict_490">
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_490')" name="dict-option" id="dict-490" value="dict_490">
 		<label class="btn btn-outline-dark m-1" for="dict-490">490a</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_773')" name="dict-option" id="dict-773" value="dict_773">
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_773')" name="dict-option" id="dict-773" value="dict_773">
 		<label class="btn btn-outline-dark m-1" for="dict-773">773t</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_336')" name="dict-option" id="dict-336" value="dict_336">
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_336')" name="dict-option" id="dict-336" value="dict_336">
 		<label class="btn btn-outline-dark m-1" for="dict-336">336</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_337')" name="dict-option" id="dict-337" value="dict_337">
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_337')" name="dict-option" id="dict-337" value="dict_337">
 		<label class="btn btn-outline-dark m-1" for="dict-337">337</label>
-		<input type="radio" class="btn-check"  onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" value="dict_338">
+		<input type="radio" class="btn-check" onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" value="dict_338">
 		<label class="btn btn-outline-dark m-1" for="dict-338">338</label>
 	</td>
 	<td class="align-middle col-8"><textarea class="form-control" style="white-space: pre; overflow: auto; word-wrap: normal;" id="dict-data" name="dict-data" rows="5">
@@ -779,7 +775,7 @@ if ($db) {
 	$query = $db->query("SELECT * FROM dict_26XA;");
 	while ($result = $query->fetchArray(SQLITE3_ASSOC)) {
 		echo $result['value'] . "\n";
-        }
+	}
 }
 
 ?>

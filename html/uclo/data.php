@@ -85,7 +85,7 @@ if (isset($_GET['tag']) and isset($_GET['seven'])) {
 		if (($handle = fopen($file, 'r')) !== FALSE) {
 			while (($data = fgetcsv($handle, 1000, '|')) !== FALSE) {
 				$num = count($data);
-				for ($c=0;  $c < $num; $c++) {
+				for ($c=0; $c < $num; $c++) {
 					$csv[$row][] = $data[$c];
 				}
 				$row++;
@@ -94,7 +94,7 @@ if (isset($_GET['tag']) and isset($_GET['seven'])) {
 		}
 		echo '<table>';
 		echo '<table class="table table-sm"><thead class="table-light">'
-		.  '<tr><th scope="col">#</th><th scope="col">Hodnota</th></tr></thead><tbody>';
+		. '<tr><th scope="col">#</th><th scope="col">Hodnota</th></tr></thead><tbody>';
 
 		foreach($csv as $row) {
 			echo '<tr><td class="pe-4">' . $row[0] . '</td><td>' . $row[2] . '</td></tr>';

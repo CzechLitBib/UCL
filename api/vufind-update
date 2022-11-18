@@ -258,7 +258,7 @@ for record in records:
 	#		if '[=' in metadata['245']['c']:
 	#			if re.findall('\[=(.+?)\]', metadata['245']['c']):
 	#				LOW = re.findall('\[=(.+?)\]', metadata['245']['c'].strip())[0]
-	#				NAME =  metadata['245']['c'].replace(LOW, name_to_upper(LOW, ident)).strip('. ')
+	#				NAME = metadata['245']['c'].replace(LOW, name_to_upper(LOW, ident)).strip('. ')
 	# 245
 	if '245' in metadata:
 		A = [sub for sub in metadata['245'].get_subfields('a')]
@@ -410,13 +410,13 @@ for record in records:
 
 # UPDATE DELETES
 with open(DELETES, 'w') as deletes:
-        for SYSNO in DEL:
-                deletes.write(SYSNO + '\n')
+	for SYSNO in DEL:
+		deletes.write(SYSNO + '\n')
 
 # UPDATE LKRS
 with open(LKRS, 'w') as lkrs:
-        for SYSNO in LKR:
-                lkrs.write(SYSNO + '|' + LKR[SYSNO] + '\n')
+	for SYSNO in LKR:
+		lkrs.write(SYSNO + '|' + LKR[SYSNO] + '\n')
 
 # UPDATE RRD
 DS1,DS2='U','U'

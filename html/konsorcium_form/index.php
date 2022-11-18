@@ -57,7 +57,7 @@ function send_mail($sender, $recipient, $mime_message) {
 		fread($socket,8192);
 		fwrite($socket, "AUTH LOGIN\r\n");
 		fread($socket,8192);
-		fwrite($socket, base64_encode($login)  . "\r\n");
+		fwrite($socket, base64_encode($login) . "\r\n");
 		fread($socket,8192);
 		fwrite($socket, base64_encode($pass) . "\r\n");
 		fread($socket,8192);

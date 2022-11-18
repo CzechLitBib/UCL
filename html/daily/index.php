@@ -1,12 +1,12 @@
 <?php
-  
+
 session_start();
 
 $_SESSION['page'] = '/daily/';
 
 if(empty($_SESSION['auth'])) {
-        header('Location: /');
-        exit();
+	header('Location: /');
+	exit();
 }
 
 try {
@@ -31,9 +31,9 @@ if ($db) {
 if(!isset($_SESSION['daily'])) { $_SESSION['daily'] = Null; }
 
 if (!empty($_POST['date'])) {
-        $_SESSION['daily'] = $_POST['date'];
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit();
+	$_SESSION['daily'] = $_POST['date'];
+	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
 }
 
 ?>
@@ -99,7 +99,7 @@ echo '<input type="date" class="form-control" name="date" value="' . $default . 
 <?php
 
 if (!empty($_SESSION['daily'])){
-        if (preg_match('/\d{4}-\d{2}-\d{2}/', $_SESSION['daily'])) {
+	if (preg_match('/\d{4}-\d{2}-\d{2}/', $_SESSION['daily'])) {
 
 		$date = new DateTime($_SESSION['daily']);
 		$result = $db->query("SELECT * FROM daily WHERE timestamp BETWEEN "

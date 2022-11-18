@@ -168,7 +168,7 @@ if(json_decode(file_get_contents('php://input'))) {
 				echo '<div id="' . $row['id'] . '">';
 				echo '<hr class="m-1 p-0">';
 				echo '<div class="row px-1 d-flex align-items-center">';
-					echo '<div class="col col-auto"><svg xmlns="http://www.w3.org/2000/svg" onclick="toggle_data(' . "'" .   $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></div>';
+					echo '<div class="col col-auto"><svg xmlns="http://www.w3.org/2000/svg" onclick="toggle_data(' . "'" . $row['id'] . "'" . ')" width="24" height="24" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></div>';
 					echo '<div class="col col-auto">' . date(" d.m Y H:i", hexdec(substr($row['id'],0,8))) . '</div>';# ID
 					echo '<div class="col">' .$format_map[$row['format']] . '</div>';# FORMAT
 					echo '<div class="col col-auto text-end">';
@@ -190,7 +190,7 @@ if(json_decode(file_get_contents('php://input'))) {
 						# PUBLIC
 						if (isset($row['public']) && $row['format'] == 'fulltext') {
 							echo '<tr><td class="text-end align-middle col-2"><b>Veřejný</b></td><td class="text-start align-middle">';
-							if ($row['public'])  {
+							if ($row['public']) {
 								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
 							} else {
 								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
@@ -200,7 +200,7 @@ if(json_decode(file_get_contents('php://input'))) {
 						# DEDICATION
 						if (isset($row['dedication'])) {
 							echo '<tr><td class="text-end align-middle col-2"><b>Dedikace</b></td><td class="text-start align-middle">';
-							if ($row['dedication'])  {
+							if ($row['dedication']) {
 								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
 							} else {
 								echo '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
@@ -271,7 +271,7 @@ if(json_decode(file_get_contents('php://input'))) {
 		// num
 		$page == 1 ? $num = '2' : $num = strval($page);
 		if ($page*$pagination >= $count) { $num = strval($page-1); }
-		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=' . $num .  '">'. $num . '</a></li>';
+		echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=' . $num . '">'. $num . '</a></li>';
 		// active
 		($page*$pagination >= $count) ? $active = 'active' : $active = '';
 		// num
@@ -284,7 +284,7 @@ if(json_decode(file_get_contents('php://input'))) {
 	if ($count <= $page*$pagination) {
 		echo '<li class="page-item disabled"><a class="page-link">Následujíci</a></li>';
 	} else {
-		echo '<li class="page-item"><a class="page-link" href="?page=' . strval($page+1)  . '">Následujíci</a></li>';
+		echo '<li class="page-item"><a class="page-link" href="?page=' . strval($page+1) . '">Následujíci</a></li>';
 	}
 ?>
 	</ul>

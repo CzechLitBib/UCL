@@ -65,7 +65,7 @@ if (!empty($_POST)) {
 		}
 	}
 	if (!empty($query)) {
-		$q.=urlencode(implode(' ' . $q_op  . ' ', $query));
+		$q.=urlencode(implode(' ' . $q_op . ' ', $query));
 	} else { $q.=urlencode('*:*'); }
 	
 	$rows='rows=10';
@@ -294,8 +294,8 @@ foreach($subfield as $field=>$subs) {
 <hr/>
 <h4 class="my-2">Výstup</h4>
 <div class="row my-4 justify-content-center">
-        <div class="col">
-                <div class="d-grid gap-2 d-sm-flex">
+	<div class="col">
+		<div class="d-grid gap-2 d-sm-flex">
 			<div class="form-floating">
 				<input type="text" class="form-control" id="rows" name="rows" value="10"><label for="rows">Počet řádků</label>
 			</div>
@@ -305,8 +305,8 @@ foreach($subfield as $field=>$subs) {
 			<div class="form-floating">
 				<input type="text" class="form-control" id="csv-mv-separator" name="csv-mv-separator" value="#"><label for="csv-mv-separator">Oddělovač hodnot</label>
 			</div>
-                </div>
-        </div>
+		</div>
+	</div>
 </div>
 
 <div class="row mt-4 justify-content-center">

@@ -32,10 +32,10 @@ if(!isset($_SESSION['cat_month'])) { $_SESSION['cat_month'] = Null; }
 if(!isset($_SESSION['cat_year'])) { $_SESSION['cat_year'] = Null; }
 
 if (!empty($_POST['month']) and !empty($_POST['year'])) {
-        $_SESSION['cat_month'] = $_POST['month'];
-        $_SESSION['cat_year'] = $_POST['year'];
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit();
+	$_SESSION['cat_month'] = $_POST['month'];
+	$_SESSION['cat_year'] = $_POST['year'];
+	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
 }
 
 ?>
@@ -79,7 +79,7 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 <div class="row mt-4 justify-content-center">
 <div class="col col-md-8">
 
-<form class="mb-4"  method="post" action="." enctype="multipart/form-data">
+<form class="mb-4" method="post" action="." enctype="multipart/form-data">
 	<div class="row gx-3 justify-content-md-center">
 		<div class="col col-md-3">
 			<div class="form-floating">
@@ -108,7 +108,7 @@ foreach($month_map as $m => $mon) {
 	} elseif (empty($_SESSION['cat_month']) and $m == date('m', strtotime("-1 month"))) {
 		echo "<option selected>" . $mon . "</option>";
 	} else {
-		echo "<option>" . $mon  . "</option>";
+		echo "<option>" . $mon . "</option>";
 	}
 }
 
@@ -124,7 +124,7 @@ foreach($month_map as $m => $mon) {
 
 <?php
 
-foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
+foreach (range(2020, date('Y', strtotime("-1 month"))) as $y) {
 	if ($y == $_SESSION['cat_year']) {
 		echo "<option selected>" . $y . "</option>";
 	} elseif (empty($_SESSION['cat_year']) and $y == date('Y', strtotime("-1 month"))) {
@@ -156,7 +156,7 @@ foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
 if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
 	if (preg_match('/\d{2}/', array_search($_SESSION['cat_month'], $month_map)) and preg_match('/\d{4}/', $_SESSION['cat_year'])) {
 	
-		$file =  'data/' . $_SESSION['cat_year'] . '/' . array_search($_SESSION['cat_month'],$month_map) . '/data.json';
+		$file = 'data/' . $_SESSION['cat_year'] . '/' . array_search($_SESSION['cat_month'],$month_map) . '/data.json';
 
 		if (file_exists($file)) {
 			$data = json_decode(file_get_contents($file), true);

@@ -7,12 +7,12 @@ $user = ['xxx'];
 $DB_FILE= '/var/www/data/sodexo.db';
 
 $message_map = array(
-        1 => 'Přihlášení.',
-        2 => 'Přihlášení selhalo.',
-        3 => 'Chyba čtení databáze.',
-        4 => 'Chyba zápisu databáze.',
-        5 => 'Uloženo.',
-        6 => 'Formulář byl již uzavřen.'
+	1 => 'Přihlášení.',
+	2 => 'Přihlášení selhalo.',
+	3 => 'Chyba čtení databáze.',
+	4 => 'Chyba zápisu databáze.',
+	5 => 'Uloženo.',
+	6 => 'Formulář byl již uzavřen.'
 );
 
 if (!isset($_SESSION['message'])) { $_SESSION['message'] = null; }
@@ -134,7 +134,7 @@ if($_SESSION['message'] > 1) {
 		<div class="card shadow-sm">
 			<div class="card-header bg-primary"></div>
 		<div class="card-body p-md-4">
-   			<h3 class="card-title">Příspěvek ze Sociálního fondu <?php echo date('Y');?></h3>
+			<h3 class="card-title">Příspěvek ze Sociálního fondu <?php echo date('Y');?></h3>
 			<p class="card-text">Příspěvek mohou čerpat zaměstnanci s&nbsp;úvazkem 0,5 a&nbsp;vyšším. Hodnota příspěvku je 7000,-. V&nbsp;případě zájmu o&nbsp;čerpání příspěvku vyplňte prosím informace níže.</p>
 		</div>
 		</div>

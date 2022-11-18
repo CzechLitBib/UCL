@@ -7,11 +7,10 @@ TODO
 <pre>
 FRONTEND
 
-- Cleanup '       ' spaces
 - Global Boostrap 5.1 SASS
-- Module templete
+- Module templete / include
 - XHR json detection(form-data/index.php)
-- Error handling "broker (konsorcium_form)
+- Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive include
 - nginx + invalid date CSV read
 
@@ -23,7 +22,6 @@ FRONTEND
 
 BACKEND
 
-- Cleanup '    ' spaces
 - Mod: DB
 - Rule 136 dup code.
 - SMTP auth(five,cat,seven).

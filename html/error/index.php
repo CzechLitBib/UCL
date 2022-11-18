@@ -45,8 +45,7 @@ if (!$db) {
 		. '</div><div class="col"><h5 class="card-title">' . $res['label'] . '</h5>'
 		. '<p class="card-text">' . $res['text'] . '</p></div></div></div></div>';
 		echo '<a class="anchor" id="' . $res['code'] . '"></a>';
-        }
-        
+	}
 	$db->close();
 }
 

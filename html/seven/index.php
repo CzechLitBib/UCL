@@ -32,10 +32,10 @@ if(!isset($_SESSION['seven_month'])) { $_SESSION['seven_month'] = Null; }
 if(!isset($_SESSION['seven_year'])) { $_SESSION['seven_year'] = Null; }
 
 if (!empty($_POST['month']) and !empty($_POST['year'])) {
-        $_SESSION['seven_month'] = $_POST['month'];
-        $_SESSION['seven_year'] = $_POST['year'];
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit();
+	$_SESSION['seven_month'] = $_POST['month'];
+	$_SESSION['seven_year'] = $_POST['year'];
+	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
 }
 
 ?>
@@ -79,7 +79,7 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 <div class="row my-4 justify-content-center">
 <div class="col col-md-8">
 
-<form class="mb-4"  method="post" action="." enctype="multipart/form-data">
+<form class="mb-4" method="post" action="." enctype="multipart/form-data">
 	<div class="row gx-3 justify-content-md-center">
 		<div class="col col-md-3">
 			<div class="form-floating">
@@ -108,7 +108,7 @@ foreach($month_map as $m => $mon) {
 	} elseif (empty($_SESSION['seven_month']) and $m == date('m', strtotime("-1 month"))) {
 		echo "<option selected>" . $mon . "</option>";
 	} else {
-		echo "<option>" . $mon  . "</option>";
+		echo "<option>" . $mon . "</option>";
 	}
 }
 
@@ -124,7 +124,7 @@ foreach($month_map as $m => $mon) {
 
 <?php
 
-foreach (range(2020,  date('Y', strtotime("-1 month"))) as $y) {
+foreach (range(2020, date('Y', strtotime("-1 month"))) as $y) {
 	if ($y == $_SESSION['seven_year']) {
 		echo "<option selected>" . $y . "</option>";
 	} elseif (empty($_SESSION['seven_year']) and $y == date('Y', strtotime("-1 month"))) {
@@ -162,7 +162,7 @@ function getLines($file)
 if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 	if (preg_match('/\d{2}/', array_search($_SESSION['seven_month'], $month_map)) and preg_match('/\d{4}/', $_SESSION['seven_year'])) {
 	
-		$dir =  'data/' . $_SESSION['seven_year'] . '/' . array_search($_SESSION['seven_month'],$month_map);
+		$dir = 'data/' . $_SESSION['seven_year'] . '/' . array_search($_SESSION['seven_month'],$month_map);
 
 		# NEW
 
@@ -191,7 +191,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 				if (!empty($has_seven)) {
 
 					echo'<tr><td scope="row" class="align-middle"><b>' . $tag . '</b></td>'
-					. '<td><a href="' . $dir  . '/' . $tag .  '.7.csv">'
+					. '<td><a href="' . $dir . '/' . $tag . '.7.csv">'
 					. '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-binary" viewBox="0 0 16 16"><path d="M7.05 11.885c0 1.415-.548 2.206-1.524 2.206C4.548 14.09 4 13.3 4 11.885c0-1.412.548-2.203 1.526-2.203.976 0 1.524.79 1.524 2.203zm-1.524-1.612c-.542 0-.832.563-.832 1.612 0 .088.003.173.006.252l1.559-1.143c-.126-.474-.375-.72-.733-.72zm-.732 2.508c.126.472.372.718.732.718.54 0 .83-.563.83-1.614 0-.085-.003-.17-.006-.25l-1.556 1.146zm6.061.624V14h-3v-.595h1.181V10.5h-.05l-1.136.747v-.688l1.19-.786h.69v3.633h1.125z"/><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/></svg></a></td>'
 					. '<td><a href="/seven/data.php?tag=' . $tag . '&seven=1&new=1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bar-chart" viewBox="0 0 16 16"><path d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5v12h-2V2h2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z"/></svg></a></td>'
 					. '<td>' . $has_seven . '</td>'
@@ -200,7 +200,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					echo'<tr><td scope="row" class="align-middle"><b>' . $tag . '</b></td><td colspan="3"></td><td>0%</td>';
 				}
 				if (!empty($has_no_seven)) {
-					echo '<td><a href="' . $dir  . '/' . $tag .  '.csv">'
+					echo '<td><a href="' . $dir . '/' . $tag . '.csv">'
 					. '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-binary" viewBox="0 0 16 16"><path d="M7.05 11.885c0 1.415-.548 2.206-1.524 2.206C4.548 14.09 4 13.3 4 11.885c0-1.412.548-2.203 1.526-2.203.976 0 1.524.79 1.524 2.203zm-1.524-1.612c-.542 0-.832.563-.832 1.612 0 .088.003.173.006.252l1.559-1.143c-.126-.474-.375-.72-.733-.72zm-.732 2.508c.126.472.372.718.732.718.54 0 .83-.563.83-1.614 0-.085-.003-.17-.006-.25l-1.556 1.146zm6.061.624V14h-3v-.595h1.181V10.5h-.05l-1.136.747v-.688l1.19-.786h.69v3.633h1.125z"/><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/></svg></a></td>'
 					. '<td><a href="/seven/data.php?tag=' . $tag . '&seven=0&new=1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bar-chart" viewBox="0 0 16 16"><path d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5v12h-2V2h2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z"/></svg></a></td>'
 					. '<td>' . $has_no_seven . '</td>'
@@ -215,7 +215,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 			. '<td scope="col"><b>' . round($seven/($seven + $no_seven)*100) . '%</b></td>'
 			. '<td scope="col" colspan="2"></td>'
 			. '<td scope="col"><b>' . $no_seven . '</b></td>'
-			. '<td scope="col"><b>' . round($no_seven/($seven + $no_seven)*100) .  '%</b></td></tr>'
+			. '<td scope="col"><b>' . round($no_seven/($seven + $no_seven)*100) . '%</b></td></tr>'
 			. '</tfoot></table>';
 		}
 
@@ -246,7 +246,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 				if (!empty($has_seven)) {
 
 					echo'<tr><td scope="row" class="align-middle"><b>' . $tag . '</b></td>'
-					. '<td><a href="' . $dir  . '/' . $tag .  '.old.7.csv">'
+					. '<td><a href="' . $dir . '/' . $tag . '.old.7.csv">'
 					. '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-binary" viewBox="0 0 16 16"><path d="M7.05 11.885c0 1.415-.548 2.206-1.524 2.206C4.548 14.09 4 13.3 4 11.885c0-1.412.548-2.203 1.526-2.203.976 0 1.524.79 1.524 2.203zm-1.524-1.612c-.542 0-.832.563-.832 1.612 0 .088.003.173.006.252l1.559-1.143c-.126-.474-.375-.72-.733-.72zm-.732 2.508c.126.472.372.718.732.718.54 0 .83-.563.83-1.614 0-.085-.003-.17-.006-.25l-1.556 1.146zm6.061.624V14h-3v-.595h1.181V10.5h-.05l-1.136.747v-.688l1.19-.786h.69v3.633h1.125z"/><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/></svg></a></td>'
 					. '<td><a href="/seven/data.php?tag=' . $tag . '&seven=1&new=0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bar-chart" viewBox="0 0 16 16"><path d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5v12h-2V2h2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z"/></svg></a></td>'
 					. '<td>' . $has_seven . '</td>'
@@ -255,7 +255,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 					echo'<tr><td scope="row" class="align-middle"><b>' . $tag . '</b></td><td colspan="3"></td><td>0%</td>';
 				}
 				if (!empty($has_no_seven)) {
-					echo '<td><a href="' . $dir  . '/' . $tag .  '.old.csv">'
+					echo '<td><a href="' . $dir . '/' . $tag . '.old.csv">'
 					. '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-binary" viewBox="0 0 16 16"><path d="M7.05 11.885c0 1.415-.548 2.206-1.524 2.206C4.548 14.09 4 13.3 4 11.885c0-1.412.548-2.203 1.526-2.203.976 0 1.524.79 1.524 2.203zm-1.524-1.612c-.542 0-.832.563-.832 1.612 0 .088.003.173.006.252l1.559-1.143c-.126-.474-.375-.72-.733-.72zm-.732 2.508c.126.472.372.718.732.718.54 0 .83-.563.83-1.614 0-.085-.003-.17-.006-.25l-1.556 1.146zm6.061.624V14h-3v-.595h1.181V10.5h-.05l-1.136.747v-.688l1.19-.786h.69v3.633h1.125z"/><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/></svg></a></td>'
 					. '<td><a href="/seven/data.php?tag=' . $tag . '&seven=0&new=0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bar-chart" viewBox="0 0 16 16"><path d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5v12h-2V2h2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z"/></svg></a></td>'
 					. '<td>' . $has_no_seven . '</td>'
@@ -270,7 +270,7 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 			. '<td scope="col"><b>' . round($seven/($seven + $no_seven)*100) . '%</b></td>'
 			. '<td scope="col" colspan="2"></td>'
 			. '<td scope="col"><b>' . $no_seven . '</b></td>'
-			. '<td scope="col"><b>' . round($no_seven/($seven + $no_seven)*100) .  '%</b></td></tr>'
+			. '<td scope="col"><b>' . round($no_seven/($seven + $no_seven)*100) . '%</b></td></tr>'
 			. '</tfoot></table>';
 		}
 
