@@ -12,12 +12,10 @@ FRONTEND
 - XHR json detection(form-data/index.php)
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive include
-- nginx + invalid date CSV read
-
+- nginx: invalid dir read(seven,nkp..)
 - UCLO/CLO: Upload ('xhr.txt')
-- Access: CSS(switch) 
-- Aleph: tooltip + add query JS
-- Settings: Solr codes DB; search whisper
+- Aleph: tooltip, add query JS
+- Settings: Solr codes DB, search whisper
 - CAT: CSV download + BOM/Content-type
 
 BACKEND
