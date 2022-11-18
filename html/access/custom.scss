@@ -1,0 +1,29 @@
+
+// SVG color
+.bi {
+	color: #212529;
+	&:hover {
+		color: #dc3545;
+	}
+	&:focus {
+		color: #dc3545;
+	}
+}
+
+// Switch
+$form-check-input-focus-border: #dc3545;
+$form-check-input-focus-box-shadow: 0 0 0 .25rem rgba(220,53,69,.25);
+$form-check-input-checked-bg-color: #dc3545;
+$form-check-input-checked-border-color: #dc3545;
+$form-switch-focus-color: pink;
+
+// Pagination
+$pagination-color: #212529;
+$pagination-focus-color: #212529;
+$pagination-hover-color: #212529;
+$pagination-active-bg: #dc3545;
+$pagination-active-border-color: #dc3545;
+$pagination-focus-box-shadow: 0 0 0 .25rem rgba(220,53,69,.25);
+
+@import "../bootstrap/bootstrap";
+
