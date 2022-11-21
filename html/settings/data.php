@@ -9,15 +9,26 @@ if(empty($_SESSION['auth'])) {
 	exit();
 }
 
-if($_SESSION['group'] !== 'admin') {
-        $_SESSION['error'] = True;
-        header('Location: /main/');
-        exit();
+try {
+	$db = new SQlite3('/var/www/data/devel.db');
+} catch (Exception $e) {
+	$db = null;
+}
+
+if ($db) {
+	$access = "SELECT * FROM module_group WHERE module = 'settings' AND access_group = '" . $_SESSION['group'] . "';";
+	if (!$db->querySingle($access)) {
+		$_SESSION['error'] = 'Nedostatečné oprávnění.';
+		header('Location: /main/');
+		exit();
+	}
+} else {
+	$_SESSION['error'] = 'Chyba čtení databáze.';
+	header('Location: /main/');
+	exit();
 }
 
 $error = '';
-
-$db = new SQLite3('/var/www/data/devel.db');
 
 if (!$db) { $error = 'Chyba čtení databáze.'; }
 
@@ -29,7 +40,6 @@ if (!$db) { $error = 'Chyba čtení databáze.'; }
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>ČLB Vývoj</title>
-	<link href="../bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">
 	<link rel="icon" href="../favicon/favicon-32x32.png" sizes="32x32" type="image/png">
