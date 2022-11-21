@@ -19,50 +19,37 @@ cur.execute("CREATE TABLE weekly (timestamp INTEGER, ident TEXT, user TEXT, tag 
 cur.execute("CREATE INDEX 'weekly_code' ON weekly (timestamp,ident,code);")
 
 # ERROR
-cur.execute("CREATE TABLE error (code TEXT, label TEXT, text TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'error_code' ON error (code);")
+cur.execute("CREATE TABLE error (code TEXT UNIQUE, label TEXT, text TEXT);")
 
 # COUNTRY
-cur.execute("CREATE TABLE country (code TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'country_code' ON country (code);")
+cur.execute("CREATE TABLE country (code TEXT UNIQUE);")
 # LANGUAGE
-cur.execute("CREATE TABLE language (code TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'language_code' ON language (code);")
+cur.execute("CREATE TABLE language (code TEXT UNIQUE);")
 # ROLE
-cur.execute("CREATE TABLE role (code TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'role_code' ON role (code);")
+cur.execute("CREATE TABLE role (code TEXT UNIQUE);")
 
 # REVIEW
-cur.execute("CREATE TABLE review (authority TEXT, name TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'authority' ON review (authority);")
+cur.execute("CREATE TABLE review (authority TEXT UNIQUE, name TEXT);")
 # USER
-cur.execute("CREATE TABLE user (code TEXT, aleph TEXT, email TEXT);")
-cur.execute("CREATE UNIQUE INDEX 'user_code' ON user (code);")
+cur.execute("CREATE TABLE user (code TEXT UNIQUE, aleph TEXT, email TEXT);")
 # EXCEPTION
 cur.execute("CREATE TABLE exception (code TEXT, ident TEXT);")
 cur.execute("CREATE UNIQUE INDEX 'exception_code' ON exception (code,ident);")
 
 # DICT 260/264a
-cur.execute("CREATE TABLE dict_26XA (value TEXT);")
-cur.execute("CREATE UNIQUE INDEX '26XA_value' ON dict_26XA (value);")
+cur.execute("CREATE TABLE dict_26XA (value TEXT UNIQUE);")
 # DICT 260/264b
-cur.execute("CREATE TABLE dict_26XB (value TEXT);")
-cur.execute("CREATE UNIQUE INDEX '26XB_value' ON dict_26XB (value);")
+cur.execute("CREATE TABLE dict_26XB (value TEXT UNIQUE);")
 # DICT 490a
-cur.execute("CREATE TABLE dict_490 (value TEXT);")
-cur.execute("CREATE UNIQUE INDEX '490_value' ON dict_490 (value);")
+cur.execute("CREATE TABLE dict_490 (value TEXT UNIQUE);")
 # DICT 773
-cur.execute("CREATE TABLE dict_773 (value TEXT);")
-cur.execute("CREATE UNIQUE INDEX '773_value' ON dict_773 (value);")
+cur.execute("CREATE TABLE dict_773 (value TEXT UNIQUE);")
 # DICT 336
-cur.execute("CREATE TABLE dict_336 (value TEXT);")
-cur.execute("CREATE UNIQUE INDEX '336_value' ON dict_336 (value);")
+cur.execute("CREATE TABLE dict_336 (value TEXT UNIQUE);")
 # DICT 337
-cur.execute("CREATE TABLE dict_337 (value TEXT);")
-cur.execute("CREATE UNIQUE INDEX '337_value' ON dict_337 (value);")
+cur.execute("CREATE TABLE dict_337 (value TEXT UNIQUE);")
 # DICT 338
-cur.execute("CREATE TABLE dict_338 (value TEXT);")
-cur.execute("CREATE UNIQUE INDEX '338_value' ON dict_338 (value);")
+cur.execute("CREATE TABLE dict_338 (value TEXT UNIQUE);")
 
 # GROUP
 cur.execute("CREATE TABLE 'access_group' (name TEXT UNIQUE);")

@@ -17,7 +17,7 @@ wget https://github.com/twbs/bootstrap/archive/v5.1.3.zip
 /custom/bootstrap/*.scss
 /custom/scss/custom.scss
 
-sass --style=compressed custom.scss custom.css
+sass --no-source-map --style=compressed custom.scss custom.css
 </pre>
 PHP
 <pre>

@@ -46,7 +46,6 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>ČLB Vývoj - NKP</title>
-	<link href="../bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">
 	<link rel="icon" href="../favicon/favicon-32x32.png" sizes="32x32" type="image/png">

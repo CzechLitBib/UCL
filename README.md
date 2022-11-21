@@ -7,7 +7,6 @@ TODO
 <pre>
 FRONTEND
 
-- Global Boostrap 5.1 SASS
 - Module templete / include
 - XHR json detection(form-data/index.php)
 - Error handling broker (konsorcium_form)

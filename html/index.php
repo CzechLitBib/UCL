@@ -30,8 +30,8 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 			
 			$_SESSION['group'] = $group;
 
-			$ldap_dn = 'uid=' . $_POST['name'] . ',ou=Users,dc=ucl,dc=cas,dc=cz';
-			$ldap_conn = ldap_connect('ldap://ds.ucl.cas.cz');
+			$ldap_dn = 'xxx';
+			$ldap_conn = ldap_connect('xxx');
 
 			ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
@@ -40,7 +40,7 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 			$ldap_bind = @ldap_bind($ldap_conn, $ldap_dn, $_POST['pass']);
 
 			if (!$ldap_bind) {//fall-back
-				$ldap_conn2 = ldap_connect('ldap://ds2.ucl.cas.cz');
+				$ldap_conn2 = ldap_connect('xxx');
 
 				ldap_set_option($ldap_conn2, LDAP_OPT_PROTOCOL_VERSION, 3);
 				ldap_set_option($ldap_conn2, LDAP_OPT_REFERRALS, 0);
@@ -73,7 +73,6 @@ if (isset($_POST['name']) and isset($_POST['pass'])) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>ČLB Vývoj</title>
-	<link href="bootstrap.min.css" rel="stylesheet">
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="favicon/apple-touch-icon.png" sizes="180x180">
 	<link rel="icon" href="favicon/favicon-32x32.png" sizes="32x32" type="image/png">
