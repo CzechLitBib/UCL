@@ -8,7 +8,6 @@ TODO
 FRONTEND
 
 - Module templete / include
-- XHR json detection(form-data/index.php)
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive include
 - nginx: invalid dir read(seven,nkp..)

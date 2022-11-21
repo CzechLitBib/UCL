@@ -50,7 +50,7 @@ $code_map = array(
 
 # XHR POST
 
-if ($_SERVER["CONTENT_TYPE"] == 'application/json') {
+if (json_decode(file_get_contents('php://input'))) {
 	$req = json_decode(file_get_contents('php://input'), True);
 	$resp = [];
 	if ($req['data'] == 'export') {
