@@ -32,7 +32,7 @@ if(!isset($_SESSION['form-data'])) { $_SESSION['form-data'] = null; }
 
 $error = '';
 
-$pagination = 8;
+$pagination = 9;
 !empty($_GET['page']) ? $page = $_GET['page'] : $page = 1;
 
 $FILE_PATH='/var/www/data/form/data/';
@@ -153,8 +153,7 @@ if(json_decode(file_get_contents('php://input'))) {
 		$from = $count - $page*$pagination;
 		$to = $count - ($page-1)*$pagination;
 
-		$data = $db->query("SELECT * FROM data WHERE rowid BETWEEN ". strval($from) . " AND " . strval($to) . " ORDER BY id DESC;");
-
+		$data = $db->query("SELECT * FROM data WHERE rowid > ". strval($from) . " AND rowid <= " . strval($to) . " ORDER BY id DESC;");
 		if (!$data->fetchArray()) {
 			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 		} else {
