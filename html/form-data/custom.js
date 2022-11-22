@@ -61,11 +61,15 @@ async function on_confirm(id) {
 	payload = {'type':'update', 'data':id};
 	const ret = await update(payload);
 	if (ret.length !== 0) {
-		if (ret['value'] === 'on') {
+		if (ret['value'] === 'on') {// red
 			document.getElementById('btn-' + id).style.background='#dc3545';
 			document.getElementById('btn-' + id).style.borderColor='#dc3545';
 		}
-		if (ret['value'] === 'off') {
+		if (ret['value'] === 'part') {// green
+			document.getElementById('btn-' + id).style.background='#198754';
+			document.getElementById('btn-' + id).style.borderColor='#198754';
+		}
+		if (ret['value'] === 'off') {// grey
 			document.getElementById('btn-' + id).style.background='#6c757d';
 			document.getElementById('btn-' + id).style.borderColor='#6c757d';
 		}

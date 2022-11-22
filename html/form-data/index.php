@@ -85,16 +85,22 @@ if(json_decode(file_get_contents('php://input'))) {
 	if ($req['type'] == 'update') {
 		$state = $db->querySingle("SELECT visible FROM data WHERE id = '" . $req['data'] . "';");
 		if (is_numeric($state)) {
-			if ($state == 0) {
+			if ($state == 0) {# on -> off
 				$query = $db->exec("UPDATE data SET visible = 1 WHERE id = '" . $req['data'] . "';");
 				if ($query) {
 					$resp['value'] = 'off';
 				}
 			}
-			if ($state == 1) {
+			if ($state == 2) {# partial -> on
 				$query = $db->exec("UPDATE data SET visible = 0 WHERE id = '" . $req['data'] . "';");
 				if ($query) {
 					$resp['value'] = 'on';
+				}
+			}
+			if ($state == 1) {# off -> partial
+				$query = $db->exec("UPDATE data SET visible = 2 WHERE id = '" . $req['data'] . "';");
+				if ($query) {
+					$resp['value'] = 'part';
 				}
 			}
 		}
@@ -175,6 +181,9 @@ if(json_decode(file_get_contents('php://input'))) {
 					}
 					if ($row['visible'] == 0) {
 						echo '<button type="button" class="btn btn-danger btn-sm" id="btn-' . $row['id'] . '" onclick="on_confirm(' . "'" . $row['id'] . "'" . ')">Zpracováno</button>';
+					}
+					if ($row['visible'] == 2) {
+						echo '<button type="button" class="btn btn-success btn-sm" id="btn-' . $row['id'] . '" onclick="on_confirm(' . "'" . $row['id'] . "'" . ')">Zpracováno</button>';
 					}
 					echo '</div>';
 				echo '</div>';
