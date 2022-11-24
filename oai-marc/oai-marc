@@ -249,12 +249,9 @@ for record in records:
 
 		# SKIP BOT ------------------
 
-		BOT=False
 		for F in metadata.get_fields('CAT','KAT')[-1:]:# last CAT/KAT
-			if 'a' in F:
-				if 'BATCH' in F['a']: BOT=True
-				if 'OIT' in F['a']: BOT=True
-		if BOT: continue
+			if 'a' in F and F['a'] not in ['BATCH-UPD', 'OIT']: break
+		else: continue
 	
 		# SKIP FILTER ------------------
 
