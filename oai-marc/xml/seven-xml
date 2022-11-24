@@ -9,16 +9,16 @@ from pymarc import marcxml,MARCReader
 
 # VAR -------------------
 
-XML='ucloall.xml'
-#MARC='CLO.mrc'
-DATA='/var/www/html/uclo/data'
-#DATA='/var/www/html/clo/data'
+#XML='ucloall.xml'
+MARC='CLO-2022-09-03.mrc'
+#DATA='/var/www/html/uclo/data'
+DATA='/var/www/html/clo/data'
 
 TAGLIST = []
 
 # INIT -------------------
 
-#reader = MARCReader(open(MARC,'rb'))
+reader = MARCReader(open(MARC,'rb'))
 
 # DEF -------------------
 
@@ -37,14 +37,14 @@ def validate(record):
 	else:
 		return
 
-	# CLB-CPK filter
-	for F in record.get_fields('599'):
-		if 'a' in F and F['a'] == 'CLB-CPK': break
-	else:
-		for F in record.get_fields('964'):
-			if 'a' in F and F['a'] in ['ECS', 'ECR']: break
-		else:
-			return
+	# CLB-CPK filter - UCLO ONLY
+#	for F in record.get_fields('599'):
+#		if 'a' in F and F['a'] == 'CLB-CPK': break
+#	else:
+#		for F in record.get_fields('964'):
+#			if 'a' in F and F['a'] in ['ECS', 'ECR']: break
+#		else:
+#			return
 
 	for tag, value, seven in [(f.tag, get_value(f), f['7']) for f in record.fields]:
 		if tag != '653' and re.match('(1..|6..|700|710|711|730)', tag):
@@ -53,25 +53,25 @@ def validate(record):
 			# raw data
 			if not seven and value:
 				try:
-					with open(DATA + '/' +tag + '.csv', 'a') as f:
+					with open(DATA + '/' +tag + '.csv', 'a', 'utf-8-sig') as f:
 						f.write(value + '||' + ident + '\n')
 				except:
 					print('Non Unicode ID: ' + ident + ' TAG: ' + tag)
 			if seven and value:
 				try:
-					with open(DATA + '/' + tag + '.7.csv', 'a') as f:
+					with open(DATA + '/' + tag + '.7.csv', 'a', 'utf-8-sig') as f:
 						f.write(value + '||' + ident + '\n')
 				except:
 					print('Non Unicode ID: ' + ident + ' TAG: ' + tag)
 
 # MAIN -------------------
 
-marcxml.map_xml(validate, XML)
+#marcxml.map_xml(validate, XML)
 
-#for rec in reader:
-#	validate(rec)
+for rec in reader:
+	validate(rec)
 
-#reader.close()
+reader.close()
 
 for TAG in sorted(TAGLIST):
 
@@ -90,7 +90,7 @@ for TAG in sorted(TAGLIST):
 	for value in DB: SORT[value] = len(DB[value])
 
 	if SORT:
-		with open(DATA + '/' + TAG + '.stat.csv', 'a') as sort_csv:
+		with open(DATA + '/' + TAG + '.stat.csv', 'a', 'utf-8-sig') as sort_csv:
 			for value in sorted(SORT, key=SORT.get, reverse=True):
 				sort_csv.write(str(SORT[value]) + '||' + value + '\n')
 
@@ -109,7 +109,7 @@ for TAG in sorted(TAGLIST):
 	for value in DB: SORT[value] = len(DB[value])
 
 	if SORT:
-		with open(DATA + '/' + TAG + '.7.stat.csv', 'a') as sort_csv:
+		with open(DATA + '/' + TAG + '.7.stat.csv', 'a', 'utf-8-sig') as sort_csv:
 			for value in sorted(SORT, key=SORT.get, reverse=True):
 				sort_csv.write(str(SORT[value]) + '||' + value + '\n')
 
