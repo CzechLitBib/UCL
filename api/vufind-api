@@ -135,7 +135,9 @@ class ListRecords(Resource):
 			return abort(400, "Invalid 'until' argument: <iso8601_datetime>.")
 		data = query_db("SELECT {} FROM record WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp;".format(prefix), (_from,_until))
 		if data:
-			if prefix in ['xml','marc']:
+			if prefix == 'xml':
+				return XML_HEAD + b''.join([row[prefix] for row in data]) + XML_FOOT
+			if prefix == 'marc':
 				return b''.join([row[prefix] for row in data])
 			return '[' + ','.join([row[prefix] for row in data]) + ']'
 		else:
