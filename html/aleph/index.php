@@ -110,7 +110,7 @@ if (!empty($_POST)) {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>ČLB Vývoj - Solr</title>
+	<title>ČLB Vývoj - Aleph Solr</title>
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" href="../favicon/apple-touch-icon.png" sizes="180x180">
 	<link rel="icon" href="../favicon/favicon-32x32.png" sizes="32x32" type="image/png">
