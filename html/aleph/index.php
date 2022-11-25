@@ -362,15 +362,14 @@ foreach($subfield as $field=>$subs) {
 		<h5>Logické operátory</h5>
 		<p>Operátory a&nbsp; kulaté závorky spojují kombinované podmínky.</p>
 		<div class="alert alert-warning" role="alert">
-			<b>(</b>field_500:* <b>OR</b> subfield_773-t:*<b>) AND</b> field_964:INT
+			<b>(</b>field_100:* <b>OR</b> field_110:*<b>) AND</b> field_964:*
 		</div>
 		<h5>Rozhraní</h5>
-		<p>Zaškrtávací políčka pod podmínkou určují jaké hodnoty budou součástí výstupu. Pole a&nbsp;podpole výstupu nemusí odpovídat polím a&nbsp;podpolím podmínky a&nbsp;naopak. Indentifikátor záznamu se vkládá automaticky. Prázdné pole "počet řádků" vrátí všechny dostupné záznamy.</p> 
+		<p>Zaškrtávací políčka pod podmínkou určují jaké hodnoty budou součástí výstupu. Pole a&nbsp;podpole výstupu nemusí odpovídat polím a&nbsp;podpolím podmínky. Indentifikátor záznamu se vkládá automaticky. Prázdné pole "počet řádků" vrátí všechny dostupné záznamy.</p> 
 		<h5>Příklad</h5>
-		<p>Všechny záznamy které obsahují pole 856 a&nbsp;pole 964 s&nbsp;hodnotou INT.</b>
+		<p>Všechny záznamy které obsahují libovolné pole 856 a&nbsp;pole 964 s&nbsp;hodnotou INT.</b>
 		<div class="alert alert-warning" role="alert">
-			field_856:* AND field_964:INT<br><br>
-			Zaškrtnuté políčko 856 a&nbsp;prázné pole "počet řádků".
+			field_856:* AND field_964:INT
 		</div>
 		<h5>Více</h5>
 		<p><a class="link-danger" href="https://solr.apache.org/guide/8_1/the-standard-query-parser.html#specifying-terms-for-the-standard-query-parser" target="_blank">https://solr.apache.org/guide/8_1/the-standard-query-parser.html#specifying-terms-for-the-standard-query-parser</a>
