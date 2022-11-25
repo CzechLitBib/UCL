@@ -12,7 +12,7 @@ FRONTEND
 - DB: RO, $db->escapeString(), lock primitive include
 - nginx: invalid dir read(seven,nkp..)
 - UCLO/CLO: Upload ('xhr.txt')
-- Aleph: tooltip, add query JS
+- Aleph: add query JS
 - Settings: Solr codes DB, search whisper
 - CAT: CSV download + BOM/Content-type
 

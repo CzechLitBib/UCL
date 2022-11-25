@@ -1,4 +1,10 @@
 
+// modal
+modal = new bootstrap.Modal(document.getElementById('help'));
+function help() {
+	modal.toggle();
+}
+
 // core selector
 function get_selection(core) {
 	const clo = [
