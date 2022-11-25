@@ -164,15 +164,14 @@ if (!empty($_POST)) {
 	</div>
 </div>
 
-<div class="row mt-3 justify-content-center">
+<div class="row mt-3 gx-0 justify-content-center">
 	<div class="col col-md">
 		<div class="form-floating">
 			<input type="text" class="form-control" id="q" name="query0" value="<?php if (isset($_POST['query0'])) { echo htmlspecialchars($_POST['query0'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="q">Podmínka</label>
 		</div>
 	</div>
 	<div class="col-auto ps-0 m-0 d-flex align-items-center">
-		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" onclick="help()" fill="currentColor" class="bi bi-question-square" viewBox="0 0 16 16"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
-</svg>
+		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" onclick="help()" fill="currentColor" class="bi bi-info" viewBox="0 0 16 16"><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
 	</div>
 </div>
 
@@ -341,19 +340,19 @@ foreach($subfield as $field=>$subs) {
 	<div class="modal-dialog modal-dialog-scrollable">
 	<div class="modal-content">
 	<div class="modal-header">
-		<h5 class="modal-title" id="staticBackdropLabel">Podmínka - Nápověda</h5>
+		<h5 class="modal-title" id="staticBackdropLabel">Nápověda - Apache Solr</h5>
 		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	</div>
 	<div class="modal-body">
 		<h5>Indexy</h5>
-		<p>Pole, podpole a speciální hodnoty se zapisují pomocí pojmenovaných indexů s předponou podle typu.</p>
+		<p>Pole, podpole a speciální hodnoty se zapisují pomocí pojmenovaných indexů s&nbsp;předponou podle typu.</p>
 		<div class="alert alert-warning" role="alert">
 			<b>field_</b>500<br>
 			<b>subfield_</b>787-a<br>
 			<b>local_</b>008-16
 		</div>
 		<h5>Hodnoty</h5>
-		<p>Hledaná hodnota je oddělena dvojtečkou. Zástupné znaky hvězda, otazník, nebo hranaté závorky nahrazují libovolný, částečný, nebo složený text včetně rozsahu.</p>
+		<p>Hledané hodnoty jsou odděleny dvojtečkou. Zástupné znaky hvězdička, otazník, uvozovky nebo hranaté závorky nahrazují libovolný, částečný, nebo složený text včetně rozsahu.</p>
 		<div class="alert alert-warning" role="alert">
 			field_500<b>:*</b><br>
 			subfield_264-a<b>:Pra?a</b><br>
@@ -361,20 +360,20 @@ foreach($subfield as $field=>$subs) {
 			subfield_912-r<b>:[2001 TO 2022]</b>
 		</div>
 		<h5>Logické operátory</h5>
-		<p>Operátory a kulaté závorky spojují kombinované podmínky.</p>
+		<p>Operátory a&nbsp; kulaté závorky spojují kombinované podmínky.</p>
 		<div class="alert alert-warning" role="alert">
-			<b>(</b>field_500:* <b>OR</b> subfield_264-a:*<b>) AND</b> subfield_964-a:INT
+			<b>(</b>field_500:* <b>OR</b> subfield_773-t:*<b>) AND</b> field_964:INT
 		</div>
 		<h5>Rozhraní</h5>
-		<p>Zaškrtávací políčka pod podmínkou určují jaké hodnoty budou součástí výstupu na základě vstupní podmínky. Identifikátor záznamu je vkládán automaticky. Pole a podpole na výstupu nemusí odpovídat polím a podpolím v podmínce a naopak. Prázdný výstupní počet řádků vrátí všechny hodnoty.</p> 
+		<p>Zaškrtávací políčka pod podmínkou určují jaké hodnoty budou součástí výstupu. Pole a&nbsp;podpole výstupu nemusí odpovídat polím a&nbsp;podpolím podmínky a&nbsp;naopak. Indentifikátor záznamu se vkládá automaticky. Prázdné pole "počet řádků" vrátí všechny dostupné záznamy.</p> 
 		<h5>Příklad</h5>
-		<p>"Všechny záznamy které obsahují pole 856 a alespoň jedno pole 964 s hodnotou 'INT'."</b>
+		<p>Všechny záznamy které obsahují pole 856 a&nbsp;pole 964 s&nbsp;hodnotou INT.</b>
 		<div class="alert alert-warning" role="alert">
-			field_964:INT AND field_856:*<br><br>
-			Zaškrtnuté políčko 856 a prázná hodnota 'počet řádků'.
+			field_856:* AND field_964:INT<br><br>
+			Zaškrtnuté políčko 856 a&nbsp;prázné pole "počet řádků".
 		</div>
 		<h5>Více</h5>
-		<p><a class="link-danger" href="https://solr.apache.org/guide/8_1/the-standard-query-parser.html#the-standard-query-parser" target="_blank">https://solr.apache.org/guide/8_1/the-standard-query-parser.html#the-standard-query-parser</a>
+		<p><a class="link-danger" href="https://solr.apache.org/guide/8_1/the-standard-query-parser.html#specifying-terms-for-the-standard-query-parser" target="_blank">https://solr.apache.org/guide/8_1/the-standard-query-parser.html#specifying-terms-for-the-standard-query-parser</a>
 	</div>
 	</div>
 	</div>
