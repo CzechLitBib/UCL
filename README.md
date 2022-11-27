@@ -7,11 +7,11 @@ TODO
 <pre>
 FRONTEND
 
-- Module templete / include
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - nginx: invalid dir read(seven,nkp..)
 - CAT: CSV download + BOM/Content-type
+- Module templete / include
 
 BACKEND
 
