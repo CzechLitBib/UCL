@@ -44,34 +44,19 @@ if (!empty($_POST)) {
 	$q_op='q.op=' . $_POST['op'];
 
 	$fl='fl=id';
-	$select=array();
-	$default=array('index','op','rows','csv-separator','csv-mv-separator','wt');
-	foreach($_POST as $key=>$val) {
-		if (!in_array($key, $default)) {
-			if (strpos($key, 'query') === false) {
-				array_push($select, $key);
-			}
-		}	
+	if(!empty($_POST['fl'])) {
+		$fl=$fl . urlencode(',' . implode(',', $_POST['fl']));
 	}
-	if (!empty($select)) { $fl=$fl . urlencode(',' . implode(',', $select)); }
 
-	$q='q=';
-	$query=array();
-	foreach($_POST as $key=>$val) {
-		if (strpos($key, 'query') !== false) {
-			if (!empty($val)) {
-				array_push($query, $val);
-			}
-		}
+	$q='q=*:*';
+	if(!empty($_POST['query'])) {
+		$q='q=' . urlencode(implode(' ', $_POST['query']));
 	}
-	if (!empty($query)) {
-		$q.=urlencode(implode(' ' . $q_op . ' ', $query));
-	} else { $q.=urlencode('*:*'); }
-	
+
 	$rows='rows=10';
 	if (!empty($_POST['rows'])) {
 		if (intval($_POST['rows']) > 0) { $rows='rows=' . strval(intval($_POST['rows'])); }
-	} else { $rows='rows=1000000'; }
+	} else { $rows='rows=1500000'; }
 
 	$params=array($csv_separator, $csv_mv_separator, $fl, $q_op, $q, $rows, $wt);
 
@@ -164,25 +149,33 @@ if (!empty($_POST)) {
 	</div>
 </div>
 
-<div class="row mt-3 gx-0 justify-content-center">
-	<div class="col col-md">
-		<div class="form-floating">
-			<input type="text" class="form-control" id="q" name="query0" value="<?php if (isset($_POST['query0'])) { echo htmlspecialchars($_POST['query0'], ENT_QUOTES, 'UTF-8'); } ?>"><label for="q">Podmínka</label>
+<div id="query-group">
+	<div class="row mt-3 gx-0 justify-content-center">
+		<div class="col col-md">
+			<div class="form-floating">
+				<input type="text" class="form-control" id="query0" name="query[]" value="<?php if (isset($_POST['query'])) { echo htmlspecialchars($_POST['query'][0], ENT_QUOTES, 'UTF-8'); } ?>"><label for="query0">Podmínka</label>
+			</div>
+		</div>
+		<div class="col-auto ps-0 m-0 d-flex align-items-center">
+			<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" onclick="help()" fill="currentColor" class="bi bi-info" viewBox="0 0 16 16"><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
 		</div>
 	</div>
-	<div class="col-auto ps-0 m-0 d-flex align-items-center">
-		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" onclick="help()" fill="currentColor" class="bi bi-info" viewBox="0 0 16 16"><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+</div>
+
+<div class="row mt-2 justify-content-start">
+	<div class="col ms-1">
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" onclick="add_query()" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
 	</div>
 </div>
 
 <div class="row mt-3 gx-2 justify-content-center">
 	<div class="col-4 col-md-2">
-		<input type="radio" class="btn-check" id="or" name="op" value="OR" checked>
-		<label class="btn btn-outline-danger w-100" for="or">OR</label>
+		<input type="radio" class="btn-check" id="and" name="op" value="AND" checked>
+		<label class="btn btn-outline-danger w-100" for="and">AND</label>
 	</div>
 	<div class="col-4 col-md-2">
-		<input type="radio" class="btn-check" id="and" name="op" value="AND">
-		<label class="btn btn-outline-danger text-nowrap w-100" for="and">AND</label>
+		<input type="radio" class="btn-check" id="or" name="op" value="OR">
+		<label class="btn btn-outline-danger text-nowrap w-100" for="or">OR</label>
 	</div>
 </div>
 
@@ -204,8 +197,8 @@ $field = [
 foreach($field as $name=>$tags) {
 	foreach($tags as $t) {
 		echo '<div class="col-3 col-md-2"><div class="form-check">'
-		. '<input class="form-check-input" type="checkbox" id="' . $t . '" name="field_' . $t . '" value="1">'
-		. '<label class="form-check-label" for="'. $t . '">' . $t . '</label>'
+		. '<input class="form-check-input" type="checkbox" id="field_' . $t . '" name="fl[]" value="' .'field_' . $t . '">'
+		. '<label class="form-check-label" for="field_' . $t . '">' . $t . '</label>'
 		. '</div></div>';
 	}
 }
@@ -236,8 +229,8 @@ $subfield = [
 foreach($subfield as $field=>$subs) {
 	foreach($subs as $s) {
 		echo '<div class="col-3 col-md-2"><div class="form-check">'
-		. '<input class="form-check-input" type="checkbox" id="' . $field . '-' . $s . '" name="subfield_'.$field . '-' . $s . '" value="1">'
-		. '<label class="form-check-label" for="'. $field . '-' . $s . '">' . $field . '-' . $s . '</label>'
+		. '<input class="form-check-input" type="checkbox" id="' . $field . '-' . $s . '" name="fl[]" value="subfield_' . $field . '-' . $s . '">'
+		. '<label class="form-check-label" for="' . $field . '-' . $s . '">' . $field . '-' . $s . '</label>'
 		. '</div></div>';
 	}
 }
@@ -251,43 +244,43 @@ foreach($subfield as $field=>$subs) {
 <div class="row row-cols-sm-5 mx-2 my-3">
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="local_LDR-8" name="local_LDR-8" value="1">
+		<input class="form-check-input" type="checkbox" id="local_LDR-8" name="fl[]" value="local_LDR-8">
 		<label class="form-check-label" for="local_LDR-8">LDR-8</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="local_008-16" name="local_008-16" value="1">
+		<input class="form-check-input" type="checkbox" id="local_008-16" name="fl[]" value="local_008-16">
 		<label class="form-check-label" for="local_008-16">008-16</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="local_008-7" name="local_008-7" value="1">
+		<input class="form-check-input" type="checkbox" id="local_008-7" name="fl[]" value="local_008-7">
 		<label class="form-check-label" for="local_008-7">008-7</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="local_008-811" name="local_008-811" value="1">
+		<input class="form-check-input" type="checkbox" id="local_008-811" name="fl[]" value="local_008-811">
 		<label class="form-check-label" for="local_008-811">008-811</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="local_008-815" name="local_008-815" value="1">
+		<input class="form-check-input" type="checkbox" id="local_008-815" name="fl[]" value="local_008-815">
 		<label class="form-check-label" for="local_008-815">008-815</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="local_008-1618" name="local_008-1618" value="1">
+		<input class="form-check-input" type="checkbox" id="local_008-1618" name="fl[]" value="local_008-1618">
 		<label class="form-check-label" for="local_008-1618">008-1618</label>
 	</div>
 </div>
 <div class="col-3 col-md-3">
 	<div class="form-check">
-		<input class="form-check-input" type="checkbox" id="local_008-3638" name="local_008-3638" value="1">
+		<input class="form-check-input" type="checkbox" id="local_008-3638" name="fl[]" value="local_008-3638">
 		<label class="form-check-label" for="local_008-3638">008-3638</label>
 	</div>
 </div>

@@ -230,11 +230,14 @@ function review_on_delete() {
 
 // CODE
 
+var last_code = document.getElementById('code-data').value.split('\n');
+
 async function code_on_change(code) {
 	payload = {'type':'code', 'data':code};
 	const ret = await update(payload);
 	if (ret.length !== 0) {
 		document.getElementById('code-data').value = ret['value'].join('\n');
+		last_code = ret['value'];
 	}
 }
 
@@ -255,11 +258,14 @@ function code_on_save() {
 
 // DICT
 
+var last_dict = document.getElementById('dict-data').value.split('\n');
+
 async function dict_on_change(dict) { 
 	payload = {'type':'dict', 'data':dict};
 	const ret = await update(payload);
 	if (ret.length !== 0) {
 		document.getElementById('dict-data').value = ret['value'].join('\n');
+		last_dict = ret['value'];
 	}
 }
 
@@ -276,5 +282,29 @@ function dict_on_save() {
 	document.getElementById('modal-text-bold').textContent = text;
 	modal.toggle();
 	modal_action = 'dict-save';
+}
+
+// DICT SEARCH
+
+const dict_search = document.getElementById('dict-search');
+dict_search.addEventListener('input', search_text_change);
+
+function search_text_change() {
+	idx=last_dict.findIndex(element => element.includes(dict_search.value))
+	ta = document.getElementById('dict-data');
+	jump = idx * 24 + 4;// magic
+	ta.scrollTop = jump;
+}
+
+// CODE SEARCH
+
+const code_search = document.getElementById('code-search');
+code_search.addEventListener('input', code_text_change);
+
+function code_text_change() {
+	idx=last_code.findIndex(element => element.includes(code_search.value))
+	ta = document.getElementById('code-data');
+	jump = idx * 24 + 4;// magic
+	ta.scrollTop = jump;
 }
 

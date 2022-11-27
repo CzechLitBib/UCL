@@ -708,7 +708,12 @@ if ($db) {
 		<input type="radio" class="btn-check" onchange="code_on_change('role')" name="code-option" id="code-role" value="role">
 		<label class="btn btn-outline-dark m-1" for="code-role">Role</label>
 	</td>
-	<td class="col-8 align-middle"><textarea class="form-control" id="code-data" name="code-data" rows="5">
+	<td class="col-8 align-middle">
+		<div class="row">
+			<input type="text" class="form-control" id="code-search" name="code-search" placeholder="Hledaný text" value="">
+		</div>
+		<div class="row mt-1">
+		<textarea class="form-control" id="code-data" name="code-data" rows="5">
 <?php
 
 if ($db) {
@@ -720,7 +725,9 @@ if ($db) {
 }
 
 ?>
-</textarea></td>
+</textarea>
+		</div>
+	</td>
 	<td class="align-middle text-center">
 		<div class="row-3 mb-3">
 			<input type="submit" id="code-save" name="code-save" value="code-save" hidden>
@@ -766,7 +773,12 @@ if ($db) {
 		<input type="radio" class="btn-check" onchange="dict_on_change('dict_338')" name="dict-option" id="dict-338" value="dict_338">
 		<label class="btn btn-outline-dark m-1" for="dict-338">338</label>
 	</td>
-	<td class="align-middle col-8"><textarea class="form-control" style="white-space: pre; overflow: auto; word-wrap: normal;" id="dict-data" name="dict-data" rows="5">
+	<td class="align-middle col-8">
+		<div class="row">
+			<input type="text" class="form-control" id="dict-search" name="dict-search" placeholder="Hledaný text" value="">
+		</div>
+		<div class="row mt-1">
+		<textarea class="form-control" style="white-space: pre; overflow: auto; word-wrap: normal;" id="dict-data" name="dict-data" rows="5">
 <?php
 
 if ($db) {
@@ -778,7 +790,9 @@ if ($db) {
 }
 
 ?>
-</textarea></td>
+</textarea>
+		</div>
+	</td>
 	<td class="align-middle text-center">
 		<div class="row-3 mb-3">
 			<input type="submit" id="dict-save" name="dict-save" value="dict-save" hidden>

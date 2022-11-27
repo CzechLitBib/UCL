@@ -9,18 +9,15 @@ FRONTEND
 
 - Module templete / include
 - Error handling broker (konsorcium_form)
-- DB: RO, $db->escapeString(), lock primitive include
+- DB: RO, $db->escapeString(), lock primitive
 - nginx: invalid dir read(seven,nkp..)
-- UCLO/CLO: Upload ('xhr.txt')
-- Aleph: add query JS
-- Settings: Solr codes DB, search whisper
 - CAT: CSV download + BOM/Content-type
 
 BACKEND
 
-- Mod: DB
-- Rule 136 dup code.
-- SMTP auth(five,cat,seven).
+- UCLO/CLO: seven-solr
+- mod: DB, SMTP auth
+- oai-marc: 136 dup code.
 - API: plot UTC bug
 </pre>
 FILE
@@ -32,6 +29,7 @@ graveyard/ - Inactive.
      solr/ - Solr server.
    vufind/ - Vufind server.
 </pre>
+
 SOURCE
 
 https://github.com/CzechLitBib/UCL
