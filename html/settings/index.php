@@ -710,7 +710,7 @@ if ($db) {
 	</td>
 	<td class="col-8 align-middle">
 		<div class="row">
-			<input type="text" class="form-control" id="code-search" name="code-search" placeholder="Hledaný text" value="">
+			<input type="text" class="form-control" id="code-search" name="code-search" placeholder="Hledaný výraz" value="">
 		</div>
 		<div class="row mt-1">
 		<textarea class="form-control" id="code-data" name="code-data" rows="5">
@@ -775,7 +775,7 @@ if ($db) {
 	</td>
 	<td class="align-middle col-8">
 		<div class="row">
-			<input type="text" class="form-control" id="dict-search" name="dict-search" placeholder="Hledaný text" value="">
+			<input type="text" class="form-control" id="dict-search" name="dict-search" placeholder="Hledaný výraz" value="">
 		</div>
 		<div class="row mt-1">
 		<textarea class="form-control" style="white-space: pre; overflow: auto; word-wrap: normal;" id="dict-data" name="dict-data" rows="5">
