@@ -287,24 +287,24 @@ function dict_on_save() {
 // DICT SEARCH
 
 const dict_search = document.getElementById('dict-search');
+const dict_area = document.getElementById('dict-data');
 dict_search.addEventListener('input', search_text_change);
 
 function search_text_change() {
 	idx=last_dict.findIndex(element => element.includes(dict_search.value))
-	ta = document.getElementById('dict-data');
 	jump = idx * 24 + 4;// magic
-	ta.scrollTop = jump;
+	dict_area.scrollTop = jump;
 }
 
 // CODE SEARCH
 
 const code_search = document.getElementById('code-search');
+const code_area = document.getElementById('code-data');
 code_search.addEventListener('input', code_text_change);
 
 function code_text_change() {
 	idx=last_code.findIndex(element => element.includes(code_search.value))
-	ta = document.getElementById('code-data');
 	jump = idx * 24 + 4;// magic
-	ta.scrollTop = jump;
+	code_area.scrollTop = jump;
 }
 
