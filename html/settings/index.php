@@ -709,10 +709,10 @@ if ($db) {
 		<label class="btn btn-outline-dark m-1" for="code-role">Role</label>
 	</td>
 	<td class="col-8 align-middle">
-		<div class="row">
+		<div class="row m-0 p-0">
 			<input type="text" class="form-control" id="code-search" name="code-search" placeholder="Hledaný výraz" value="">
 		</div>
-		<div class="row mt-1">
+		<div class="row mt-1 m-0 p-0">
 		<textarea class="form-control" id="code-data" name="code-data" rows="5">
 <?php
 
@@ -729,11 +729,11 @@ if ($db) {
 		</div>
 	</td>
 	<td class="align-middle text-center">
-		<div class="row-3 mb-3 ms-2">
+		<div class="row-3 mb-3">
 			<input type="submit" id="code-save" name="code-save" value="code-save" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="code_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 		</div>
-		<div class="row-3 mt-3 ms-2">
+		<div class="row-3 mt-3">
 			<input type="submit" id="code-export" name="code-export" value="code-export" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="on_export('code')" width="24" height="24" fill="currentColor" class="bi bi-filetype-txt" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-2v-1h2a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.928 15.849v-3.337h1.136v-.662H0v.662h1.134v3.337h.794Zm4.689-3.999h-.894L4.9 13.289h-.035l-.832-1.439h-.932l1.228 1.983-1.24 2.016h.862l.853-1.415h.035l.85 1.415h.907l-1.253-1.992 1.274-2.007Zm1.93.662v3.337h-.794v-3.337H6.619v-.662h3.064v.662H8.546Z"/></svg>
 		</div>
@@ -774,10 +774,10 @@ if ($db) {
 		<label class="btn btn-outline-dark m-1" for="dict-338">338</label>
 	</td>
 	<td class="align-middle col-8">
-		<div class="row">
+		<div class="row m-0 p-0">
 			<input type="text" class="form-control" id="dict-search" name="dict-search" placeholder="Hledaný výraz" value="">
 		</div>
-		<div class="row mt-1">
+		<div class="row mt-1 m-0 p-0">
 		<textarea class="form-control" style="white-space: pre; overflow: auto; word-wrap: normal;" id="dict-data" name="dict-data" rows="5">
 <?php
 
@@ -794,11 +794,11 @@ if ($db) {
 		</div>
 	</td>
 	<td class="align-middle text-center">
-		<div class="row-3 mb-3 ms-2">
+		<div class="row-3 mb-3">
 			<input type="submit" id="dict-save" name="dict-save" value="dict-save" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="dict_on_save()" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>	
 		</div>
-		<div class="row-3 mt-3 ms-2">
+		<div class="row-3 mt-3">
 			<input type="submit" id="dict-export" name=dict-export" value="dict-export" hidden>
 			<svg xmlns="http://www.w3.org/2000/svg" onclick="on_export('dictionary')" width="24" height="24" fill="currentColor" class="bi bi-filetype-txt" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-2v-1h2a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.928 15.849v-3.337h1.136v-.662H0v.662h1.134v3.337h.794Zm4.689-3.999h-.894L4.9 13.289h-.035l-.832-1.439h-.932l1.228 1.983-1.24 2.016h.862l.853-1.415h.035l.85 1.415h.907l-1.253-1.992 1.274-2.007Zm1.93.662v3.337h-.794v-3.337H6.619v-.662h3.064v.662H8.546Z"/></svg>
 		</div>
