@@ -1335,6 +1335,7 @@ for record in records:
 		for F in metadata.get_fields('700'):
 			if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
 			if sorted(F.get_subfields('4')) == ['aqt','ctb']: continue
+			if metadata.leader[7] == 'm' and len(F.get_subfields('4')) == 1 and F['4'] == 'cwt': continue
 			if [sub for sub in F.get_subfields('4') if sub != 'aut']: AUT=True
 		for F in metadata.get_fields('100'):
 			if [sub for sub in F.get_subfields('4') if sub != 'aut']: AUT=True
