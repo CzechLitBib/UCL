@@ -15,7 +15,7 @@ FRONTEND
 
 BACKEND
 
-- UCLO/CLO: seven-solr
+- UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
 - oai-marc: 136 dup code.
 - API: plot UTC bug
