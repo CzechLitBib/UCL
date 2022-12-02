@@ -1376,6 +1376,11 @@ for record in records:
 			if 'a' in metadata['245'] and re.match('.*/\.?$', metadata['245']['a']):
 				write_error(TIMESTAMP, IDENT, '245', SIF, '200')
 
+		# 787a comma
+		for F in metadata.get_fields('787'):
+			if 'a' in F and re.match('.*,', F['a']):
+				write_error(TIMESTAMP, IDENT, '787', SIF, '201')
+
 	COUNTER+=1
 
 # EXIT -------------------
