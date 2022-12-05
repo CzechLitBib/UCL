@@ -5,8 +5,13 @@ Library support software.
 
 TODO
 <pre>
+VUFIND
+
+- log4j.root.logger = warn
+
 FRONTEND
 
+- From POST on input enter bug
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - nginx: invalid dir read(seven,nkp..)
@@ -15,6 +20,7 @@ FRONTEND
 
 BACKEND
 
+- DB: email
 - UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
 - oai-marc: 136 dup code.

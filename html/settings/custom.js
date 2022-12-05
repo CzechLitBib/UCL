@@ -11,6 +11,7 @@ function on_confirm() {
 	if (modal_action == 'exception-delete') { document.getElementById('exception-delete').click(); }
 	if (modal_action == 'user-save') { document.getElementById('user-save').click(); }
 	if (modal_action == 'user-delete') { document.getElementById('user-delete').click(); }
+	if (modal_action == 'email-save') { document.getElementById('email-save').click(); }
 	if (modal_action == 'review-save') { document.getElementById('review-save').click(); }
 	if (modal_action == 'review-delete') { document.getElementById('review-delete').click(); }
 	if (modal_action == 'code-save') { document.getElementById('code-save').click(); }
@@ -194,6 +195,14 @@ function user_on_delete() {
 	document.getElementById('modal-text-bold').textContent = document.getElementById('user-code').value;
 	modal.toggle();
 	modal_action = 'user-delete';
+}
+
+// E-MAIL
+
+function email_on_save() {
+	document.getElementById('modal-text').textContent = 'Chcete uložit nastavení odesílatele';
+	modal.toggle();
+	modal_action = 'email-save';
 }
 
 // REVIEW

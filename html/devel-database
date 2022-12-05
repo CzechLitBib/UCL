@@ -60,6 +60,9 @@ cur.execute("CREATE TABLE 'user_group' (user TEXT UNIQUE, access_group TEXT);")
 # MODULE_GROUP
 cur.execute("CREATE TABLE 'module_group' (module TEXT, access_group TEXT, UNIQUE(module,access_group));")
 
+# EMAIL
+cur.execute("CREATE TABLE 'email' (username TEXT, passwd TEXT, server TEXT);")
+
 con.commit()
 con.close()
 
