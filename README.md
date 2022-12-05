@@ -11,7 +11,8 @@ VUFIND
 
 FRONTEND
 
-- From POST on input enter bug
+- Aleph: select all switch
+- Form POST on input enter disable
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - nginx: invalid dir read(seven,nkp..)
