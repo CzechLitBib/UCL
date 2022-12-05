@@ -11,7 +11,7 @@ VUFIND
 
 FRONTEND
 
-- Aleph: select all switch
+- Aleph: select all switch; IST (php + JS)
 - Form POST on input enter disable
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
@@ -21,6 +21,7 @@ FRONTEND
 
 BACKEND
 
+-Solr: IST
 - DB: email
 - UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
