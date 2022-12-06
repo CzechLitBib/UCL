@@ -179,8 +179,18 @@ if (!empty($_POST)) {
 	</div>
 </div>
 
-<h4 class="my-2">Pole</h4>
-<div class="row row-cols-sm-5 mx-2 my-3">
+<div class="row mt-3">
+	<div class="col">
+		<h4>Pole</h4>
+	</div>
+	<div class="col me-2 d-flex justify-content-end">
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" role="switch" id="check-all" onclick="on_check_all()">
+			<label class="form-check-label" for="check-all">Vybrat vše</label>
+		</div>
+	</div>
+</div>
+<div class="row row-cols-sm-5 mx-2 mt-1 mb-3">
 
 <?php
 

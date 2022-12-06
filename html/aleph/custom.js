@@ -1,4 +1,44 @@
 
+// check-all
+function on_check_all() {
+	cha = document.getElementById('check-all'); 
+	checks = document.querySelectorAll('input[type=checkbox]:not([role=switch])');
+	cores = document.getElementsByName('index');
+	core = 'uclo';
+
+	const clo = [
+		'001','003','005','008','024','040','046','080',
+		'100','368','370','371','372','373','374','375',
+		'377','400','400','663','664','665','667','670',
+		'675','678','680','682','856','906','961','962',
+		'963','964','965','966','967','995','KON','LDR',
+		'POS','POZ','VER'
+	];
+
+	for (var i = 0; i < cores.length; i++) {
+		if(cores[i].checked) { core = cores[i].value }
+	}
+
+	if (cha.checked) {
+		for (var i = 0; i < checks.length; i++) {
+			if(checks[i].value.match('^field_')) {
+				checks[i].checked = true;
+				if (core == 'clo') {
+					if (!clo.includes(checks[i].value.replace("field_", ""))) {
+						checks[i].checked = false;
+					}
+				}
+			}
+		}
+	} else {
+		for (var i = 0; i < checks.length; i++) {
+			if(checks[i].value.match('^field_')) {
+				checks[i].checked = false;
+			}
+		}
+	}
+}
+
 // add query
 function last_query_id() {
 	queries = document.getElementsByName('query[]');
@@ -57,7 +97,7 @@ function get_selection(core) {
 		'POS','POZ','VER'
 	];
 
-	checks = document.querySelectorAll('input[type=checkbox]');
+	checks = document.querySelectorAll('input[type=checkbox]:not([role=switch])');
 	for (var i = 0; i < checks.length; i++) {
 		checks[i].disabled = false;
 		if (core == 'clo') {

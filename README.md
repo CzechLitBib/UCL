@@ -11,7 +11,7 @@ VUFIND
 
 FRONTEND
 
-- Aleph: select all switch; IST (php + JS)
+- Aleph: IST (php + JS)
 - Form POST on input enter disable
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
