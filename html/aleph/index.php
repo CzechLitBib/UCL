@@ -49,7 +49,7 @@ if (!empty($_POST)) {
 	}
 
 	$q='q=*:*';
-	if(!empty($_POST['query'])) {
+	if(!empty($_POST['query'][0])) {
 		$q='q=' . urlencode(implode(' ', $_POST['query']));
 	}
 
