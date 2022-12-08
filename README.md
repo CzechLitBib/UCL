@@ -11,7 +11,6 @@ VUFIND
 
 FRONTEND
 
-- Aleph: IST (php + JS)
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - nginx: invalid dir read(seven,nkp..)
@@ -20,7 +19,6 @@ FRONTEND
 
 BACKEND
 
--Solr: IST
 - DB: email
 - UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
