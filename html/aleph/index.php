@@ -355,7 +355,7 @@ foreach($subfield as $field=>$subs) {
 			<b>local_</b>008-16
 		</div>
 		<h5>Hodnoty</h5>
-		<p>Hledané hodnoty jsou odděleny dvojtečkou. Zástupné znaky hvězdička, otazník, uvozovky nebo hranaté závorky nahrazují libovolný, částečný, nebo složený text včetně rozsahu.</p>
+		<p>Hledané hodnoty jsou odděleny dvojtečkou. Zástupné znaky hvězdička, otazník, uvozovky nebo hranaté závorky nahrazují libovolný, částečný nebo složený text včetně rozsahu.</p>
 		<div class="alert alert-warning" role="alert">
 			field_500<b>:*</b><br>
 			subfield_264-a<b>:Pra?a</b><br>
@@ -368,7 +368,7 @@ foreach($subfield as $field=>$subs) {
 			<b>(</b>field_100:* <b>OR</b> field_110:*<b>) AND</b> field_964:*
 		</div>
 		<h5>Rozhraní</h5>
-		<p>Zaškrtávací políčka pod podmínkou určují jaké hodnoty budou součástí výstupu. Pole a&nbsp;podpole výstupu nemusí odpovídat polím a&nbsp;podpolím podmínky. Identifikátor záznamu se vkládá automaticky. Prázdné pole "počet řádků" odpovídá všem dostupným záznamům.</p> 
+		<p>Zaškrtávací políčka pod podmínkou určují jaké hodnoty budou součástí výstupu. Pole a&nbsp;podpole výstupu nemusí odpovídat polím a&nbsp;podpolím podmínky. Identifikátor záznamu se vkládá automaticky. Prázdná podmínka odpovídá všem hodnotám. Prázdné pole "počet řádků" odpovídá všem dostupným záznamům.</p> 
 		<h5>Příklad</h5>
 		<p>Záznamy které obsahují libovolné pole 856 a&nbsp;pole 964 s&nbsp;hodnotou INT.</b>
 		<div class="alert alert-warning" role="alert">
