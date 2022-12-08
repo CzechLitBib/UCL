@@ -1,14 +1,14 @@
+
 // Prevent [enter] submit
-//enter = window.addEventListener('keydown', enter_submission, true);
-//function enter_submisson() {
-//	types = ['date', 'email', 'file', 'month', 'number', 'text', 'week'];
-//	if (e.keyIdentifier == 'U+000A' || e.keyIdentifier == 'Enter' || e.keyCode == 13) {
-//		if (e.target.nodeName == 'INPUT' && types.include(e.target.type)) {
-//			e.preventDefault();
-//			return false;
-//		}
-//	}
-//}
+window.addEventListener('keydown', function(e) {
+	types = ['email', 'file', 'number', 'text'];
+	if (e.keyIdentifier == 'U+000A' || e.keyIdentifier == 'Enter' || e.keyCode == 13) {
+		if (e.target.nodeName == 'INPUT' && types.includes(e.target.type)) {
+			e.preventDefault();
+			return false;
+		}
+	}
+}, true);
 
 // MODAL
 
