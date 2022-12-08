@@ -183,7 +183,7 @@ if (!empty($_POST)) {
 	<div class="col">
 		<h4>Pole</h4>
 	</div>
-	<div class="col me-2 d-flex justify-content-end">
+	<div class="col me-2 d-flex align-items-center justify-content-end">
 		<div class="form-check form-switch">
 			<input class="form-check-input" type="checkbox" role="switch" id="check-all" onclick="on_check_all()">
 			<label class="form-check-label" for="check-all">Vybrat vše</label>
