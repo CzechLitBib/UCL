@@ -5,10 +5,6 @@ Library support software.
 
 TODO
 <pre>
-VUFIND
-
-- log4j.root.logger = warn
-
 FRONTEND
 
 - Error handling broker (konsorcium_form)
