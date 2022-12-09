@@ -10,11 +10,12 @@ FRONTEND
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - nginx: invalid dir read(seven,nkp..)
-- CAT: CSV download + BOM/Content-type
+- CAT: Pie chart + TXT download
 - Module templete / include
 
 BACKEND
 
+- CAT: rewrite to DB
 - DB: email
 - UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
