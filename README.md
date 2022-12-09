@@ -7,15 +7,14 @@ TODO
 <pre>
 FRONTEND
 
+- Module templete / include
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
-- nginx: invalid dir read(seven,nkp..)
-- CAT: Pie chart + TXT download
-- Module templete / include
+- seven,nkp: scandir warn
+- cat: PIlls, TXT download
 
 BACKEND
 
-- CAT: rewrite to DB
 - DB: email
 - UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
