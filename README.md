@@ -1,7 +1,7 @@
 
 DESCRIPTION
 
-Library support software.
+Bibliography support software.
 
 TODO
 <pre>
@@ -15,6 +15,7 @@ FRONTEND
 
 BACKEND
 
+- vufind-update: 21.10. hourly bug name_invert()
 - DB: email
 - UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
