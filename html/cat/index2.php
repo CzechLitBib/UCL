@@ -147,7 +147,16 @@ foreach (range(2020, date('Y', strtotime("-1 month"))) as $y) {
 
 </div>
 </div>
-<div class="row mb-4 justify-content-center">
+<div class="row justify-content-center">
+	<div class="col col-md-3">
+		<canvas class="mx-auto d-block" id="donut" width="200" height="200"></canvas>
+	</div>
+	<div class="col col-md-3">
+		<canvas class="mx-auto d-block" id="donut2" width="200" height="200"></canvas>
+	</div>
+</div>
+
+<div class="row my-4 justify-content-center">
 <div class="col col-md-5">
 
 <?php
@@ -160,42 +169,41 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
 		if (file_exists($file)) {
 			$data = json_decode(file_get_contents($file), true);
 
-			echo '<table class="table table-sm align-middle text-center"><thead><tr><th>Šifra</th><th>Záznamy</th><th>Opravy</th><th></th></thead><tbody><tr>';
+			echo '<table class="table table-sm table-borderless align-middle text-center"><tbody><tr>';
 			// sif
-			echo '<td class="col">'
-			. '<select class="form-select" size="10" aria-label="group select" id="group-option" name="group-option" onchange="group_on_change()">'
-			. '<option value="SIF">SIF</option>'
-			. '<option value="SIF">SIF</option>'
-			. '<option value="SIF">SIF</option>'
-			. '<option value="SIF">SIF</option>'
-			. '<option value="SIF">SIF</option>'
-			. '<option value="SIF">SIF</option>'
-			. '<option value="SIF">SIF</option>'
-			. '</select></td>';
+			echo '<td class="col">';
+			echo '<select class="form-select" size="5" aria-label="group select" id="group-option" name="group-option" onchange="group_on_change()">';
+			foreach (array_keys($data) as $sif) { echo '<option value="' . $sif . '">' . $sif . '</option>'; }
+
+			echo '</select></td>';
 			// numbers
 			echo '<td>'
 			. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-				. '<div class="col col-md-7 ms-2">Nově založené</div><div class="col"><div class="badge fs-5 text-dark border">35</div></div>'
+				. '<div class="col col-md-7 ms-2">Nově založené</div><div class="col"><div class="badge fs-5 text-dark border">' . $data[$sif]['sif_count'] . '</div></div>'
 			. '</div>'
 			. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-				. '<div class="col col-md-7 ms-2">Vlastní opravy</div><div class="col"><div class="badge fs-5 text-dark border">124</div></div>'
+				. '<div class="col col-md-7 ms-2">Vlastní opravy</div><div class="col"><div class="badge fs-5 text-dark border">' . $data[$sif]['sif_cat_count'] . '</div></div>'
 			. '</div>'
 			. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-				. '<div class="col col-md-7 ms-2">Ostatní opravy</div><div class="col"><div class="badge fs-5 text-dark border">56</div></div>'
+				. '<div class="col col-md-7 ms-2">Ostatní opravy</div><div class="col"><div class="badge fs-5 text-dark border">' . $data[$sif]['cat_count'] . '</div></div>'
 			. '</div>'
 			. '</td>';
 			// coop
-			echo '<td class="col-2">'
-			. '<div class="row">'
-			. '<div class="col text-nowrap">SIF<span class="badge bg-dark ms-1">2</span></div>'
-			. '<div class="col text-nowrap">SIF<span class="badge bg-dark ms-1">2</span></div>'
-			. '<div class="col text-nowrap">SIF<span class="badge bg-dark ms-1">2</span></div>'
-			. '<div class="col text-nowrap">SIF<span class="badge bg-dark ms-1">2</span></div>'
-			. '<div class="col text-nowrap">SIF<span class="badge bg-dark ms-1">2</span></div>'
-			. '</div>'
-			. '</td>';
+			echo '<td>';
+
+			foreach (array_keys($data) as $other) {
+				if (array_key_exists($other, $data[$sif]['other'])) {
+					if ($data[$sif]['other'][$other] > 0) {
+						echo '<div class="row mx-1"><div class="col p-0 text-nowrap">'
+						. $sif . '</div><div class="col p-0"><span class="badge bg-dark">'
+						. $data[$sif]['other'][$other] . '</span></div></div>';
+					}
+				}
+			}
+
+			echo '</td>';
 			// download
-			echo '<td class="col"><svg xmlns="http://www.w3.org/2000/svg" onclick="on_download()" width="24" height="24" fill="currentColor" class="bi bi-filetype-txt" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-2v-1h2a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.928 15.849v-3.337h1.136v-.662H0v.662h1.134v3.337h.794Zm4.689-3.999h-.894L4.9 13.289h-.035l-.832-1.439h-.932l1.228 1.983-1.24 2.016h.862l.853-1.415h.035l.85 1.415h.907l-1.253-1.992 1.274-2.007Zm1.93.662v3.337h-.794v-3.337H6.619v-.662h3.064v.662H8.546Z"/></svg></td>';
+			echo '<td><svg xmlns="http://www.w3.org/2000/svg" onclick="on_download()" width="24" height="24" fill="currentColor" class="bi bi-filetype-txt" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-2v-1h2a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.928 15.849v-3.337h1.136v-.662H0v.662h1.134v3.337h.794Zm4.689-3.999h-.894L4.9 13.289h-.035l-.832-1.439h-.932l1.228 1.983-1.24 2.016h.862l.853-1.415h.035l.85 1.415h.907l-1.253-1.992 1.274-2.007Zm1.93.662v3.337h-.794v-3.337H6.619v-.662h3.064v.662H8.546Z"/></svg></td>';
 
 			echo '</tr></tbody></table>';
 		} else {
@@ -210,6 +218,9 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
 </main>
 
 <script src="../bootstrap.min.js"></script>
+<script src="chart.umd.js"></script>
+<script src="chartjs-plugin-labels.min.js"></script>
+<script src="custom.js"></script>
 
 </body>
 </html>
