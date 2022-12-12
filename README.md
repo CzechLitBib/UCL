@@ -15,6 +15,7 @@ FRONTEND
 
 BACKEND
 
+- cat: fix multi-sif, exclude creation CAT
 - vufind-update: 21.10. hourly bug name_invert()
 - DB: email
 - UCLO/CLO: seven-solr / download
