@@ -5,10 +5,10 @@ var myChart = new Chart(ctx, {
 	type: 'doughnut',
 	data: {
 	datasets: [{
-		label: '# of Tomatoes',
+		label: 'SIF',
 		data: [243, 123, 68, 45, 13, 10],
-		backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-		borderColor: ['rgba(255,99,132,1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
+		backgroundColor: ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#ffffff'],
+		borderColor: ['#000000'],
 		borderWidth: 1
 	}]
 	},
@@ -28,10 +28,10 @@ var myChart = new Chart(ctx, {
 	type: 'doughnut',
 	data: {
 	datasets: [{
-		label: '# of Tomatoes',
-		data: [243, 123, 68, 45, 13, 10],
-		backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-		borderColor: ['rgba(255,99,132,1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
+		label: 'SIF',
+		data: [834, 222, 133, 74, 5, 1],
+		backgroundColor: ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#ffffff'],
+		borderColor: ['#000000'],
 		borderWidth: 1
 	}]
 	},
