@@ -148,6 +148,11 @@ foreach (range(2020, date('Y', strtotime("-1 month"))) as $y) {
 </div>
 </div>
 
+<?php 
+
+	if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
+
+echo '
 <div class="row my-2 justify-content-center">
   	<div class="col col-md-3 text-center">
 		<span class="fs-5">Nové záznamy</span>
@@ -167,6 +172,10 @@ foreach (range(2020, date('Y', strtotime("-1 month"))) as $y) {
 		<canvas class="mx-auto d-block" id="donut2" width="200" height="200"></canvas>
 	</div>
 </div>
+';
+}
+
+?>
 
 <div class="row my-4 justify-content-center">
 <div class="col col-md-5">
@@ -175,10 +184,11 @@ foreach (range(2020, date('Y', strtotime("-1 month"))) as $y) {
 
 if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
 	if (preg_match('/\d{2}/', array_search($_SESSION['cat_month'], $month_map)) and preg_match('/\d{4}/', $_SESSION['cat_year'])) {
-	
+
 		$file = 'data/' . $_SESSION['cat_year'] . '/' . array_search($_SESSION['cat_month'],$month_map) . '/data.json';
 
 		if (file_exists($file)) {
+
 			$data = json_decode(file_get_contents($file), true);
 
 			echo '<table class="table table-sm table-borderless align-middle text-center"><tbody><tr>';
