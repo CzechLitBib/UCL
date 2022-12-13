@@ -1,0 +1,35 @@
+
+# HELP
+
+https://github.com/drevets/hot-bikes/commit/758f4acd5dd0d49322fd8eeb4fb4e8e68b485f27
+https://github.com/adwhit/flask-leaflet-demo/blob/master/static/demo.js
+
+# INSTALL
+
+apt-get install python3-flask python3-plotly
+
+CSS/JS
+
+wget https://github.com/twbs/bootstrap/releases/download/v5.1.3/bootstrap-5.1.3-dist.zip
+
+/static/bootstrap.min.css
+/static/bootstrap.min.js
+
+#LEAFLET
+
+wget https://leafletjs-cdn.s3.amazonaws.com/content/leaflet/v1.7.1/leaflet.zip
+
+/static/images/
+/static/leaflet.css
+/static/leaflet.js
+
+# NGINX
+
+	# MAP
+	location ~ /map {
+		proxy_pass http://localhost:5000;
+	}
+
+	location /static {
+		alias /usr/local/bin/map/static;
+	}
