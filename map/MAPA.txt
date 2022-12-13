@@ -1,6 +1,9 @@
 
 # HELP
 
+https://mapa.knihoveda.cz
+https://mapa.knihoveda.cz/files/Knihoveda_mapa-popis_vysledku_a_metod.pdf
+
 https://github.com/drevets/hot-bikes/commit/758f4acd5dd0d49322fd8eeb4fb4e8e68b485f27
 https://github.com/adwhit/flask-leaflet-demo/blob/master/static/demo.js
 
