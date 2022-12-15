@@ -1381,6 +1381,12 @@ for record in records:
 			if 'a' in F and re.match('.*,$', F['a']):
 				write_error(TIMESTAMP, IDENT, '787', SIF, '201')
 
+		# xbibl
+		if metadata.leader[7] == 'm':
+			FNN = [F['a'] for F in metadata.get_fields('599') if 'a' in F]	
+			if ('CLB-CPK' in FNN and 'xbibl' not in FNN) or ('xibibl' in FNN and 'CLB-CPK' not in FNN):
+				write_error(TIMESTAMP, IDENT, '599', SIF, '202')
+
 	COUNTER+=1
 
 # EXIT -------------------
