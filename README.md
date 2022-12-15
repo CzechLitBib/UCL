@@ -12,6 +12,7 @@ FRONTEND
 - DB: RO, $db->escapeString(), lock primitive
 - seven,nkp: scandir warn
 - cat: Beta, TXT download
+- error: description nbsp
 
 BACKEND
 
