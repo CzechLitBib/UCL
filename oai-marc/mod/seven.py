@@ -17,8 +17,8 @@ MAIL_TARGET=['xxx']
 MAIL_SERVER='xxx'
 MAIL_SERVER_BACKUP='xxx'
 
-SEVEN='/var/www/html/seven/data/' + (datetime.today()-timedelta(days=1)).strftime('%Y/%m') + '/'
-NKP='/var/www/html/nkp/data/' + (datetime.today()-timedelta(days=1)).strftime('%Y/%m') + '/'
+SEVEN='/var/www/html/seven/data/' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y/%m') + '/'
+NKP='/var/www/html/nkp/data/' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y/%m') + '/'
 
 DATA={}
 DATA_7={}

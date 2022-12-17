@@ -3,7 +3,7 @@
 # OAI-PMH 2.0 modular loader.
 #
 
-import argparse,io,sys
+import argparse,sqlite3,sys,io
 
 from datetime import datetime
 from oaipmh.client import Client
@@ -16,6 +16,7 @@ from mod import five,cat,seven
 # VAR -------------------
 
 URL='https://aleph.lib.cas.cz/OAI'
+DB='/var/www/data/devel.db'
 
 # DEF -------------------
 
@@ -47,6 +48,13 @@ if not args.until_date:
 
 # INIT -------------------
 
+try:
+	db = sqlite3.connect(DB)
+except:
+	print('Failed to open database.')
+	exit(1)
+
+
 registry = MetadataRegistry()
 registry.registerReader('marc21', MarcXML)
 
@@ -67,8 +75,8 @@ for record in records:
 	# write DATA
 	DATA.append(record[1])
 
+cat.run(DATA,db)
 five.run(DATA)
-cat.run(DATA)
 seven.run(DATA)
 
 sys.exit(0)

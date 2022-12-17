@@ -3,61 +3,39 @@
 # 'CAT/KAT' module
 #
 
-import json
+import json,sys
 
 from datetime import datetime,timedelta
 
 # VAR -------------------
 
-KAT_CODE='/usr/local/bin/code/cat.txt'
-
-JSON='/var/www/html/cat/data/' + (datetime.today()-timedelta(days=1)).strftime('%Y/%m/') + 'data.json'
+JSON='/var/www/html/cat/data/' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y/%m/') + 'data.json'
 
 # DEF -------------------
 
-def get_sif_map():
-	try:
-		sif_code = {}
-		with open(KAT_CODE, 'r') as f:
-			for line in f:
-				user_name, user_code = line.split('#')
-				sif_code[user_name] = user_code.strip()
-		return sif_code
-	except:
-		return {}
-
-def get_cat(record):
-	out = []
-	for F in record.get_fields('CAT','KAT'):
-		if 'a' in F and 'BATCH' not in F['a']:# not a bot
-			if 'c' in F and F['c'][0:6] == (datetime.today()-timedelta(days=1)).strftime('%Y%m'):
-				out.append(F['a'])
-	return out
+def valid_cat(field):
+	if 'c' in field and field['c'][0:6] == (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y%m'): return True
+	return False
 
 def get_key(val,lst):
 	for sif,cat in lst.items():
-		if cat == val:
-			return sif
+		if cat == val: return sif
 
-def run(DATA):
+def run(DATA,db):
 
 	buff={}
 
 	# SIF/CAT map
-	sif_cat_map = get_sif_map()
+	sif_aleph_map = dict(db.execute("SELECT code,aleph FROM user WHERE aleph IS NOT NULL AND aleph != '';").fetchall())
 
 	# initialize data
-	for sif_parent in sif_cat_map:
-		buff[sif_parent] = {
-			'sif_count': 0,
-			'cat_count': 0,
-			'sif_cat_count': 0,
-			'other': {},
+	for sif in sif_aleph_map:
+		buff[sif] = {
+			'new_count': 0,
+			'fix_count': 0,
+			'fix_other_count': 0,
 			'ident': []
 		}
-		for sif_child in sif_cat_map:
-			if sif_parent != sif_child:
-				buff[sif_parent]['other'][sif_child] = 0
 
 	for record in DATA:
 
@@ -69,43 +47,36 @@ def run(DATA):
 
 		# SIF
 		SIF=''
-		if 'SIF' in record and 'a' in record['SIF']:
-				SIF = record['SIF']['a'].upper()
+		if 'SIF' in record and 'a' in record['SIF']: SIF = record['SIF']['a']
 
-		# SIF count
-		if SIF in sif_cat_map:
-			buff[SIF]['sif_count']+=1
+		# CAT/KAT list
+		cats = record.get_fields('CAT','KAT')
 
-		# KAT count	
-		for cat in get_cat(record):
-			if cat in sif_cat_map.values():
-				if SIF in sif_cat_map:
-					# SELF
-					if SIF == get_key(cat,sif_cat_map):
-						# KAT count
-						buff[SIF]['cat_count']+=1
-						# SIF/KAT count
-						buff[SIF]['sif_cat_count']+=1
-						# IDENT
-						if ident not in buff[SIF]['ident']:
-							buff[SIF]['ident'].append(ident)
-					# OTHER
-					else:
-						# KAT count
-						buff[get_key(cat,sif_cat_map)]['cat_count']+=1
-						# OTHER count
-						buff[SIF]['other'][get_key(cat,sif_cat_map)]+=1
-						# IDENT
-						if ident not in buff[get_key(cat,sif_cat_map)]['ident']:
-							buff[get_key(cat,sif_cat_map)]['ident'].append(ident)
-				else:
-					# KAT count
-					buff[get_key(cat,sif_cat_map)]['cat_count']+=1
-					# IDENT
-					if not ident in buff[get_key(cat,sif_cat_map)]['ident']:
-						buff[get_key(cat,sif_cat_map)]['ident'].append(ident)
+		# creation CAT
+		for cat in cats[:1]:
+			if valid_cat(cat) and SIF in sif_aleph_map:
+				buff[SIF]['new_count'] += 1
+				if ident not in buff[SIF]['ident']: buff[SIF]['ident'].append(ident)
+		# fix CAT
+		for cat in cats[1:]:
+			# bot
+			if 'a' in cat and cat['a'] in ['BATCH-UPD', 'OIT']: continue
+			# old
+			if not valid_cat(cat): continue
+			# aleph
+			if 'a' in cat and cat['a'] in sif_aleph_map.values():
+			
+				owner = get_key(cat['a'], sif_aleph_map)
+
+				if owner == SIF: # own
+					buff[owner]['fix_count'] += 1
+					if ident not in buff[owner]['ident']: buff[owner]['ident'].append(ident)
+				elif owner: # other
+					buff[owner]['fix_other_count'] += 1
+					if ident not in buff[owner]['ident']: buff[owner]['ident'].append(ident)
 
 	# JSON
-	with open(JSON, 'w') as f:
-		json.dump(buff, f)
+	with open(JSON, 'w') as f: json.dump(buff, f)
+	# DB
+	#db.query("INSERT INTO cat VALUES (?,?);", (DATE,json.dump(buff)))
 
