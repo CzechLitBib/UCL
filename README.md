@@ -12,7 +12,7 @@ FRONTEND
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - seven,nkp: scandir warn
-- cat: Beta, TXT download
+- cat: chart JS + layout, TXT download
 - error: description nbsp
 
 BACKEND

@@ -1,4 +1,35 @@
 
+// FETCH  - JSON { type, value } response JSON { value }
+async function update(payload) {
+	return await fetch('/cat/', {
+		method: 'POST',
+		headers: {'Content-Type' :'application/json'},
+		body: JSON.stringify(payload)
+	})
+	.then(response => response.json())
+	.then(data => {
+		 return data;
+	})
+	.catch(error => {
+		console.error(error);
+		return;
+	});
+}
+
+// cipher on change
+async function cipher_on_change() {
+	ciphers = document.getElementById("cipher-option");
+ 	cipher = ciphers.options[ciphers.selectedIndex].text;
+	// update cipher detail
+	payload = {'type':'cipher', 'data':cipher};
+	ret = await update(payload);
+	if (ret.length !== 0) {
+		document.getElementById('cipher-new').innerHTML = ret['value']['new'];
+		document.getElementById('cipher-fix').innerHTML = ret['value']['fix'];
+		document.getElementById('cipher-other').innerHTML = ret['value']['other'];
+	}
+}
+
 // chart
 var ctx = document.getElementById("donut");
 var myChart = new Chart(ctx, {

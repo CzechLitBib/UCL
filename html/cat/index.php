@@ -28,6 +28,22 @@ if ($db) {
 	exit();
 }
 
+$month_map = [
+	'01' => 'Leden',
+	'02' => 'Únor',
+	'03' => 'Březen',
+	'04' => 'Duben',
+	'05' => 'Květen',
+	'06' => 'Červen',
+	'07' => 'Červenec',
+	'08' => 'Srpen',
+	'09' => 'Září',
+	'10' => 'Říjen',
+	'11' => 'Listopad',
+	'12' => 'Prosinec',
+];
+
+
 if(!isset($_SESSION['cat_month'])) { $_SESSION['cat_month'] = Null; }
 if(!isset($_SESSION['cat_year'])) { $_SESSION['cat_year'] = Null; }
 
@@ -35,6 +51,36 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 	$_SESSION['cat_month'] = $_POST['month'];
 	$_SESSION['cat_year'] = $_POST['year'];
 	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
+}
+
+$data = null;
+if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])) {
+	if (preg_match('/\d{2}/', array_search($_SESSION['cat_month'], $month_map)) and preg_match('/\d{4}/', $_SESSION['cat_year'])) {
+		$file = 'data/' . $_SESSION['cat_year'] . '/' . array_search($_SESSION['cat_month'],$month_map) . '/data.json';
+		if (file_exists($file)) {
+			$data = json_decode(file_get_contents($file), true);
+		}
+	}
+}
+
+# XHR POST
+
+if (json_decode(file_get_contents('php://input'))) {
+	$req = json_decode(file_get_contents('php://input'), True);
+	$resp = [];
+	if ($req['type'] == 'cipher') {
+		$res = [];
+		if (!empty($data)) {
+			$res['new'] = $data[$req['data']]['new_count'];
+			$res['fix'] = $data[$req['data']]['fix_count'];
+			$res['other'] = $data[$req['data']]['fix_other_count'];
+		}
+		$resp['value'] = $res;
+	}
+
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode($resp);
 	exit();
 }
 
@@ -86,21 +132,6 @@ if (!empty($_POST['month']) and !empty($_POST['year'])) {
 
 <?php
 
-$month_map = [
-	'01' => 'Leden',
-	'02' => 'Únor',
-	'03' => 'Březen',
-	'04' => 'Duben',
-	'05' => 'Květen',
-	'06' => 'Červen',
-	'07' => 'Červenec',
-	'08' => 'Srpen',
-	'09' => 'Září',
-	'10' => 'Říjen',
-	'11' => 'Listopad',
-	'12' => 'Prosinec',
-];
-
 foreach($month_map as $m => $mon) {
 	if ($mon == $_SESSION['cat_month']) {
 		echo "<option selected>" . $mon . "</option>";
@@ -150,17 +181,24 @@ foreach (range(2020, date('Y', strtotime("-1 month"))) as $y) {
 
 <?php 
 
-	if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
+if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])) {
+	if (!empty($data)) {
+		$new_total = 0;
+		$fix_total = 0;
 
+		foreach ($data as $sif => $vals) {
+			$new_total += $vals['new_count'];
+			$fix_total += $vals['fix_count'] + $vals['fix_other_count'];
+		}
 echo '
 <div class="row my-2 justify-content-center">
   	<div class="col col-md-3 text-center">
 		<span class="fs-5">Nové záznamy</span>
-		<span class="badge fs-5 ms-1 text-dark border">548</span>
+		<span class="badge fs-5 ms-1 text-dark border">'. $new_total . '</span>
 	</div>
 	<div class="col col-md-3 text-center">
 		<span class="fs-5">Opravy</span>
-		<span class="badge fs-5 ms-1 text-dark border">1270</span>
+		<span class="badge fs-5 ms-1 text-dark border">' . $fix_total . '</span>
 	</div>
 </div>
 
@@ -173,6 +211,8 @@ echo '
 	</div>
 </div>
 ';
+
+	}
 }
 
 ?>
@@ -182,59 +222,38 @@ echo '
 
 <?php
 
-if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])){
-	if (preg_match('/\d{2}/', array_search($_SESSION['cat_month'], $month_map)) and preg_match('/\d{4}/', $_SESSION['cat_year'])) {
+if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])) {
+	if (empty($data)) {
+		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+	} else {
+	echo '<table class="table table-sm table-borderless align-middle text-center"><tbody><tr>';
+	// sif
+	echo '<td class="col">';
+	echo '<select class="form-select" size="5" aria-label="group select" id="cipher-option" name="cipher-option" onchange="cipher_on_change()">';
+	foreach (array_keys($data) as $sif) { echo '<option value="' . $sif . '">' . $sif . '</option>'; }
 
-		$file = 'data/' . $_SESSION['cat_year'] . '/' . array_search($_SESSION['cat_month'],$month_map) . '/data.json';
+	echo '</select></td>';
+	// numbers
+	echo '<td>'
+	. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
+	. '<div class="col col-md-7 ms-2">nově založené</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-new">0</div></div>'
+	. '</div>'
+	. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
+	. '<div class="col col-md-7 ms-2">vlastní opravy</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-fix">0</div></div>'
+	. '</div>'
+	. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
+	. '<div class="col col-md-7 ms-2">ostatní opravy</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-other">0</div></div>'
+	. '</div>'
+	. '</td>';
+	// download
+	echo '<td><svg xmlns="http://www.w3.org/2000/svg" onclick="on_download()" width="24" height="24" fill="currentColor" class="bi bi-filetype-txt" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-2v-1h2a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.928 15.849v-3.337h1.136v-.662H0v.662h1.134v3.337h.794Zm4.689-3.999h-.894L4.9 13.289h-.035l-.832-1.439h-.932l1.228 1.983-1.24 2.016h.862l.853-1.415h.035l.85 1.415h.907l-1.253-1.992 1.274-2.007Zm1.93.662v3.337h-.794v-3.337H6.619v-.662h3.064v.662H8.546Z"/></svg></td>';
 
-		if (file_exists($file)) {
-
-			$data = json_decode(file_get_contents($file), true);
-
-			echo '<table class="table table-sm table-borderless align-middle text-center"><tbody><tr>';
-			// sif
-			echo '<td class="col">';
-			echo '<select class="form-select" size="5" aria-label="group select" id="group-option" name="group-option" onchange="group_on_change()">';
-			foreach (array_keys($data) as $sif) { echo '<option value="' . $sif . '">' . $sif . '</option>'; }
-
-			echo '</select></td>';
-			// numbers
-			echo '<td>'
-			. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-				. '<div class="col col-md-7 ms-2">nově založené</div><div class="col"><div class="badge fs-5 text-dark border">' . $data[$sif]['sif_count'] . '</div></div>'
-			. '</div>'
-			. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-				. '<div class="col col-md-7 ms-2">vlastní opravy</div><div class="col"><div class="badge fs-5 text-dark border">' . $data[$sif]['sif_cat_count'] . '</div></div>'
-			. '</div>'
-			. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-				. '<div class="col col-md-7 ms-2">ostatní opravy</div><div class="col"><div class="badge fs-5 text-dark border">' . $data[$sif]['cat_count'] . '</div></div>'
-			. '</div>'
-			. '</td>';
-			// coop
-			echo '<td>';
-
-			foreach (array_keys($data) as $other) {
-				if (array_key_exists($other, $data[$sif]['other'])) {
-					if ($data[$sif]['other'][$other] > 0) {
-						echo '<div class="row mx-1"><div class="col p-0 text-nowrap">'
-						. $sif . '</div><div class="col p-0"><span class="badge bg-dark">'
-						. $data[$sif]['other'][$other] . '</span></div></div>';
-					}
-				}
-			}
-
-			echo '</td>';
-			// download
-			echo '<td><svg xmlns="http://www.w3.org/2000/svg" onclick="on_download()" width="24" height="24" fill="currentColor" class="bi bi-filetype-txt" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-2v-1h2a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.928 15.849v-3.337h1.136v-.662H0v.662h1.134v3.337h.794Zm4.689-3.999h-.894L4.9 13.289h-.035l-.832-1.439h-.932l1.228 1.983-1.24 2.016h.862l.853-1.415h.035l.85 1.415h.907l-1.253-1.992 1.274-2.007Zm1.93.662v3.337h-.794v-3.337H6.619v-.662h3.064v.662H8.546Z"/></svg></td>';
-
-			echo '</tr></tbody></table>';
-		} else {
-			echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-		}
+	echo '</tr></tbody></table>';
 	}
 }
 
 ?>
+
 </div>
 </div>
 </main>
