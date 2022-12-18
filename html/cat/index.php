@@ -211,12 +211,12 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])) {
 		}
 echo '
 <div class="row my-4 justify-content-center">
-  	<div class="col col-md-3 mx-md-3 text-center">
+  	<div class="col col-md-4 mx-0 text-center">
 		<span class="fs-5">Nové záznamy</span>
 		<span class="badge fs-5 ms-1 text-dark border">'. $new_total . '</span>
 		<canvas class="mx-auto d-block my-4" id="A-doughnut" width="300" height="300"></canvas>
 	</div>
-	<div class="col col-md-3 mx-md-3 text-center">
+	<div class="col col-md-4 mx-0 text-center">
 		<span class="fs-5">Opravy</span>
 		<span class="badge fs-5 ms-1 text-dark border">' . $fix_total . '</span>
 		<canvas class="mx-auto d-block my-4" id="B-doughnut" width="300" height="300"></canvas>
