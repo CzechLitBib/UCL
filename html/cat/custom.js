@@ -31,12 +31,49 @@ async function cipher_on_change() {
 }
 
 // chart
-var ctx = document.getElementById("donut");
+
+donut_a_labels = ['a','b','c','d','e','f'];
+donut_a_data = [243, 123, 68, 45, 13, 10];
+donut_a_color = ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#ffffff'];
+
+var ctx = document.getElementById("donut_a");
 var myChart = new Chart(ctx, {
 	type: 'doughnut',
 	data: {
+	labels: donut_a_labels,
 	datasets: [{
-		label: 'SIF',
+		data: donut_a_data,
+		backgroundColor: donut_a_color,
+		borderColor: ['#000000'],
+		borderWidth: 1
+	}]
+	},
+	plugins: ['chartjs-plugin-labels'],
+	options: {
+		responsive: false,
+		plugins: {
+			tooltip: {
+				displayColors: false,
+				callbacks: {
+					title: function (tooltipItem) { return ''; }
+				}
+			},
+			legend: {
+				display: false
+			},
+			labels: {
+				render: 'label'
+			}
+		}
+  	}
+});
+
+var ctx = document.getElementById("donut_b");
+var myChart = new Chart(ctx, {
+	type: 'doughnut',
+	data: {
+	labels: ['a','b','c','d','e','f'],
+	datasets: [{
 		data: [243, 123, 68, 45, 13, 10],
 		backgroundColor: ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#ffffff'],
 		borderColor: ['#000000'],
@@ -47,31 +84,17 @@ var myChart = new Chart(ctx, {
 	options: {
 		responsive: false,
 		plugins: {
+			tooltip: {
+				displayColors: false,
+				callbacks: {
+					title: function (tooltipItem) { return ''; }
+				}
+			},
+			legend: {
+				display: false
+			},
 			labels: {
-				render: 'value'
-			}
-		}
-  	}
-});
-
-var ctx = document.getElementById("donut2");
-var myChart = new Chart(ctx, {
-	type: 'doughnut',
-	data: {
-	datasets: [{
-		label: 'SIF',
-		data: [834, 222, 133, 74, 5, 1],
-		backgroundColor: ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#ffffff'],
-		borderColor: ['#000000'],
-		borderWidth: 1
-	}]
-	},
-	plugins: ['chartjs-plugin-labels'],
-	options: {
-		responsive: false,
-		plugins: {
-			labels: {
-				render: 'value'
+				render: 'label'
 			}
 		}
   	}

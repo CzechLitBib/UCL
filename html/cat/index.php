@@ -195,19 +195,12 @@ echo '
   	<div class="col col-md-3 text-center">
 		<span class="fs-5">Nové záznamy</span>
 		<span class="badge fs-5 ms-1 text-dark border">'. $new_total . '</span>
+		<canvas class="mx-auto d-block my-4" id="donut_a" width="200" height="200"></canvas>
 	</div>
 	<div class="col col-md-3 text-center">
 		<span class="fs-5">Opravy</span>
 		<span class="badge fs-5 ms-1 text-dark border">' . $fix_total . '</span>
-	</div>
-</div>
-
-<div class="row my-4 justify-content-center">
-	<div class="col col-md-3">
-		<canvas class="mx-auto d-block" id="donut" width="200" height="200"></canvas>
-	</div>
-	<div class="col col-md-3">
-		<canvas class="mx-auto d-block" id="donut2" width="200" height="200"></canvas>
+		<canvas class="mx-auto d-block my-4" id="donut_b" width="200" height="200"></canvas>
 	</div>
 </div>
 ';
