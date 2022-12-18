@@ -230,7 +230,7 @@ echo '
 ?>
 
 <div class="row justify-content-center">
-<div class="col col-md-5">
+<div class="col col-md-5 mb-4">
 
 <?php
 
