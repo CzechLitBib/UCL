@@ -30,73 +30,60 @@ async function cipher_on_change() {
 	}
 }
 
+// cipher on record
+function cipher_on_record() {
+	ciphers = document.getElementById("cipher-option");
+ 	cipher = ciphers.options[ciphers.selectedIndex].text;
+	if (cipher.length !== 0) {
+		window.location.href = '/cat/data.php?sif=' + encodeURI(cipher);// redirect
+	}
+}
+
 // chart
+doughnut_label = [], doughnut_data = [];
+doughnut_color = ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#f8f9fa'];
 
-donut_a_labels = ['a','b','c','d','e','f'];
-donut_a_data = [243, 123, 68, 45, 13, 10];
-donut_a_color = ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#ffffff'];
+async function doughnut_update(model) {
+	payload = {'type':'chart', 'data': model};
+	ret = await update(payload);
+	if (ret.length !== 0) {
+		doughnut_label = ret['value']['label'];
+		doughnut_data = ret['value']['data'];
+	}
 
-var ctx = document.getElementById("donut_a");
-var myChart = new Chart(ctx, {
-	type: 'doughnut',
-	data: {
-	labels: donut_a_labels,
-	datasets: [{
-		data: donut_a_data,
-		backgroundColor: donut_a_color,
-		borderColor: ['#000000'],
-		borderWidth: 1
-	}]
-	},
-	plugins: ['chartjs-plugin-labels'],
-	options: {
-		responsive: false,
-		plugins: {
-			tooltip: {
-				displayColors: false,
-				callbacks: {
-					title: function (tooltipItem) { return ''; }
+	ctx = document.getElementById(model + '-doughnut');
+	myChart = new Chart(ctx, {
+		type: 'doughnut',
+		data: {
+		labels: doughnut_label,
+		datasets: [{
+			data: doughnut_data,
+			backgroundColor: doughnut_color,
+			borderColor: ['#000000'],
+			borderWidth: 1
+		}]
+		},
+		plugins: ['chartjs-plugin-labels'],
+		options: {
+			responsive: false,
+			plugins: {
+				tooltip: {
+					displayColors: false,
+					callbacks: {
+						title: function (tooltipItem) { return ''; }
+					}
+				},
+				legend: {
+					display: false
+				},
+				labels: {
+					render: 'label'
 				}
-			},
-			legend: {
-				display: false
-			},
-			labels: {
-				render: 'label'
 			}
-		}
-  	}
-});
+  		}
+	});
+}
 
-var ctx = document.getElementById("donut_b");
-var myChart = new Chart(ctx, {
-	type: 'doughnut',
-	data: {
-	labels: ['a','b','c','d','e','f'],
-	datasets: [{
-		data: [243, 123, 68, 45, 13, 10],
-		backgroundColor: ['#dc3545', '#ea4c46', '#f07470', '#f1959b', '#f6bdc0', '#ffffff'],
-		borderColor: ['#000000'],
-		borderWidth: 1
-	}]
-	},
-	plugins: ['chartjs-plugin-labels'],
-	options: {
-		responsive: false,
-		plugins: {
-			tooltip: {
-				displayColors: false,
-				callbacks: {
-					title: function (tooltipItem) { return ''; }
-				}
-			},
-			legend: {
-				display: false
-			},
-			labels: {
-				render: 'label'
-			}
-		}
-  	}
-});
+doughnut_update('A');
+doughnut_update('B');
 

@@ -79,6 +79,25 @@ if (json_decode(file_get_contents('php://input'))) {
 		$resp['value'] = $res;
 	}
 
+	if ($req['type'] == 'chart') {
+		$res = [];
+		if (!empty($data)) {
+			if ($req['data'] == 'A') {
+				uasort($data, function ($v1, $v2) { return $v1['new_count'] <= $v2['new_count']; });
+				$res['label'] = array_keys($data);
+				$res['data'] = array_column($data, 'new_count');
+			}
+			if ($req['data'] == 'B') {
+				$pre = [];
+				foreach ($data as $key => $val) { $pre[$key] = $val['fix_count'] + $val['fix_other_count']; }
+				arsort($pre);
+				$res['label'] = array_keys($pre);
+				$res['data'] = array_values($pre);
+			}
+		}
+		$resp['value'] = $res;
+	}
+
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($resp);
 	exit();
@@ -191,16 +210,16 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])) {
 			$fix_total += $vals['fix_count'] + $vals['fix_other_count'];
 		}
 echo '
-<div class="row my-2 justify-content-center">
-  	<div class="col col-md-3 text-center">
+<div class="row my-4 justify-content-center">
+  	<div class="col col-md-3 mx-md-3 text-center">
 		<span class="fs-5">Nové záznamy</span>
 		<span class="badge fs-5 ms-1 text-dark border">'. $new_total . '</span>
-		<canvas class="mx-auto d-block my-4" id="donut_a" width="200" height="200"></canvas>
+		<canvas class="mx-auto d-block my-4" id="A-doughnut" width="300" height="300"></canvas>
 	</div>
-	<div class="col col-md-3 text-center">
+	<div class="col col-md-3 mx-md-3 text-center">
 		<span class="fs-5">Opravy</span>
 		<span class="badge fs-5 ms-1 text-dark border">' . $fix_total . '</span>
-		<canvas class="mx-auto d-block my-4" id="donut_b" width="200" height="200"></canvas>
+		<canvas class="mx-auto d-block my-4" id="B-doughnut" width="300" height="300"></canvas>
 	</div>
 </div>
 ';
@@ -210,7 +229,7 @@ echo '
 
 ?>
 
-<div class="row my-4 justify-content-center">
+<div class="row justify-content-center">
 <div class="col col-md-5">
 
 <?php
@@ -219,29 +238,27 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])) {
 	if (empty($data)) {
 		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádná data.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 	} else {
-	echo '<table class="table table-sm table-borderless align-middle text-center"><tbody><tr>';
-	// sif
-	echo '<td class="col">';
-	echo '<select class="form-select" size="5" aria-label="group select" id="cipher-option" name="cipher-option" onchange="cipher_on_change()">';
-	foreach (array_keys($data) as $sif) { echo '<option value="' . $sif . '">' . $sif . '</option>'; }
-
-	echo '</select></td>';
-	// numbers
-	echo '<td>'
-	. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-	. '<div class="col col-md-7 ms-2">nově založené</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-new">0</div></div>'
-	. '</div>'
-	. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-	. '<div class="col col-md-7 ms-2">vlastní opravy</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-fix">0</div></div>'
-	. '</div>'
-	. '<div class="d-grid my-2 gap-2 d-sm-flex align-items-center justify-content-center">'
-	. '<div class="col col-md-7 ms-2">ostatní opravy</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-other">0</div></div>'
-	. '</div>'
-	. '</td>';
-	// download
-	echo '<td><svg xmlns="http://www.w3.org/2000/svg" onclick="on_download()" width="24" height="24" fill="currentColor" class="bi bi-filetype-txt" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-2v-1h2a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.928 15.849v-3.337h1.136v-.662H0v.662h1.134v3.337h.794Zm4.689-3.999h-.894L4.9 13.289h-.035l-.832-1.439h-.932l1.228 1.983-1.24 2.016h.862l.853-1.415h.035l.85 1.415h.907l-1.253-1.992 1.274-2.007Zm1.93.662v3.337h-.794v-3.337H6.619v-.662h3.064v.662H8.546Z"/></svg></td>';
-
-	echo '</tr></tbody></table>';
+		echo '<table class="table table-sm align-middle text-center"><thead><tr><th>Šifra</th><th>Hodnoty</th><th>Záznamy</th></tr></thead><tbody><tr>';
+		// sif
+		echo '<td class="col-3">';
+			echo '<select class="form-select" size="10" aria-label="group select" id="cipher-option" name="cipher-option" onchange="cipher_on_change()">';
+				foreach (array_keys($data) as $sif) { echo '<option value="' . $sif . '">' . $sif . '</option>'; }
+			echo '</select></td>';
+		// numbers
+		echo '<td class="col-6">'
+			. '<div class="d-grid my-3 gap-2 d-sm-flex align-items-center justify-content-center">'
+				. '<div class="col col-md-7 ms-2">nové záznamy</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-new">0</div></div>'
+			. '</div>'
+			. '<div class="d-grid my-3 gap-2 d-sm-flex align-items-center justify-content-center">'
+				. '<div class="col col-md-7 ms-2">vlastní opravy</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-fix">0</div></div>'
+			. '</div>'
+			. '<div class="d-grid my-3 gap-2 d-sm-flex align-items-center justify-content-center">'
+				. '<div class="col col-md-7 ms-2">ostatní opravy</div><div class="col"><div class="badge fs-5 text-dark border" id="cipher-other">0</div></div>'
+			. '</div>'
+		. '</td>';
+		// download
+		echo '<td><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" onclick="cipher_on_record()" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg></td>';
+		echo '</tr></tbody></table>';
 	}
 }
 

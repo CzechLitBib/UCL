@@ -11,18 +11,17 @@ FRONTEND
 - Module templete / include
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
-- seven,nkp: scandir warn
-- cat: chart JS + layout, TXT download
+- seven/nkp: scandir() warn
 - error: description nbsp
 
 BACKEND
 
-- vufind-update: 21.10. hourly bug name_invert()
 - DB: email
-- UCLO/CLO: seven-solr / download
 - mod: DB, SMTP auth
+- vufind-update: 21.10. hourly bug name_invert()
+- uclo/clo: seven-solr / download
 - oai-marc: 136 dup code.
-- API: plot UTC bug
+- api: plot UTC bug
 </pre>
 FILE
 <pre>
