@@ -52,7 +52,7 @@ try:
 	db = sqlite3.connect(DB)
 except:
 	print('Failed to open database.')
-	exit(1)
+	sys.exit(1)
 
 
 registry = MetadataRegistry()
