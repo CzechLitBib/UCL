@@ -87,3 +87,11 @@ async function doughnut_update(model) {
 doughnut_update('A');
 doughnut_update('B');
 
+// select first
+ciphers = document.getElementById("cipher-option");
+console.log(ciphers.selectedIndex);
+if (ciphers.selectedIndex < 0) {
+	ciphers.options[0].selected = true;
+}
+cipher_on_change();
+
