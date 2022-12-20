@@ -3,6 +3,8 @@ DESCRIPTION
 
 Bibliography support software.
 
+![UCL](https://github.com/CzechLitBib/UCL/raw/master/UCL_screen.png "screenshot")
+
 TODO
 <pre>
 FRONTEND
