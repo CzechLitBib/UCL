@@ -41,6 +41,7 @@ field_500
 field_505
 field_506
 field_520
+field_524
 field_594
 field_599
 field_600
