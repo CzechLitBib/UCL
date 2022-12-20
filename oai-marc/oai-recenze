@@ -223,8 +223,8 @@ for record in records:
 
 # EXIT -------------------
 
-print('TOTAL:' + str(TOTAL))
-print('MATCH:' + str(MATCH))
+print('TOTAL ' + str(TOTAL))
+print('MATCH ' + str(MATCH))
 
 if args.notify: notify()
 
