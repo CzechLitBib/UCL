@@ -9,63 +9,44 @@ from datetime import datetime,timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# VAR -------------------
-
-SIF_CODE='/usr/local/bin/code/sif.txt'
-
-MAIL_SENDER='xxx'
-MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
-
 # DEF -------------------
 
-def notify(buff,sif_code):
+def notify(buff,db,sif_email_map):
+	MAIL_CONF = db.execute("SELECT username,passwd,server FROM email;").fetchone()
+
 	body = ('<br>Dobrý den,<br><br>V příloze naleznete seznam všech textových polí z vašich záznamů za poslední měsíc.<br><br>' +
 		'Prosíme o jazykovou kontrolu (např. kontrola gramatiky ve Wordu) a opravu.<br><br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
 		)
-	for SIF in buff:
-		# rewind
-		buff[SIF].seek(0)
-		# send buffer as CSV attachment
+	for sif in buff:
+		# SEEK
+		buff[sif].seek(0)
+		# MULTIPART
 		msg = MIMEMultipart()
 		msg.attach(MIMEText(body, 'html', 'utf-8'))
-		att = MIMEText(buff[SIF].read(), _charset='utf-8')
-		att['Content-Disposition'] = "attachment; filename*=utf-8''" + urllib.parse.quote((SIF + '.csv'))
+		att = MIMEText(buff[sif].read(), _charset='utf-8')
+		att['Content-Disposition'] = "attachment; filename*=utf-8''"
+			+ urllib.parse.quote(('texty_' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y%m') + .'.csv'))
 		msg.attach(att)
-		msg['Subject'] = 'Kontrolní zpráva - texty'
-		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
-		msg['To'] = sif_code[SIF]
+		msg['Subject'] = 'Kontrolní zpráva - Texty'
+		msg['From'] = 'Kontrola MARC <' + MAIL_CONF['username'] + '>'
+		msg['To'] = sif_email_map[sif]
 		try:
-			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-			s.sendmail(MAIL_SENDER, sif_code[SIF], msg.as_string())
+			s = smtplib.SMTP(MAIL_CONF['server'], timeout=5)
+			s.ehlo()
+			s.starttls()
+			s.login(MAIL_CONF['username'], MAIL_CONF['passwd'])
+			s.sendmail(MAIL_CONF['username'], sif_email_map[sif], msg.as_string())
 			s.quit()
-		except:
-			try:
-				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-				s.sendmail(MAIL_SENDER, sif_code[SIF], msg.as_string())
-				s.quit()
-			except:
-				print('Sendmail error.')
+		except Exception as e:
+			print(e)
 
-def sif():
-	try:
-		sif_code = {}
-		with open(SIF_CODE, 'r') as f:
-			for line in f:
-				acct_code, acct_addr = line.split(':')
-				sif_code[acct_code] = acct_addr.strip()
-		return sif_code
-	except:
-		return {}
+def run(DATA,db):
 
-def run(DATA):
-
-	# IO data list
+	# IO data buffer
 	buff={}
-
-	# SIF code list
-	sif_code = sif()
+	# SIF email map
+        sif_email_map = dict(db.execute("SELECT code,email FROM user WHERE email != '';").fetchall())
 
 	for record in DATA:
 
@@ -74,31 +55,22 @@ def run(DATA):
 			IDENT = record['001'].value()
 		else:
 			continue
-
-		# only newly created
-		OUTDATE=False
+		# NEW ONLY
 		for F in record.get_fields('CAT','KAT')[:1]:# first CAT/KAT
-			if 'c' in F:
-				CAT_DATE = datetime.strptime(F['c'], '%Y%m%d')
-				FIRST = datetime.strptime(datetime.today().replace(day=1).strftime('%Y%m%d'),'%Y%m%d')# zero pad
-				# 1st day this month
-				if CAT_DATE >= FIRST: OUTDATE=True
-				# 1st day prev. month 
-				if CAT_DATE < (FIRST - timedelta(days=1)).replace(day=1): OUTDATE=True 
-		if OUTDATE: continue
-
+			if 'c' in F and F['c'][0:6] == (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y%m'): break
+		else: continue
 		# SIF
 		SIF = ''
-		if 'SIF' in record and 'a' in record['SIF']:
-			SIF = record['SIF']['a'].lower()
-
-		# data
-		for TAG, VALUE in [(f.tag, f.value()) for f in record.fields]:
-			if TAG != '599' and re.match('(245|246|5..)', TAG):
-				if SIF in sif_code:
-					if SIF not in buff: buff[SIF] = io.StringIO()
-					buff[SIF].write(IDENT + ';' + SIF + ';' + VALUE + "\n")
+		if 'SIF' in record and 'a' in record['SIF']: SIF = record['SIF']['a']
+		# DATA
+		for tag,value in [(F.tag, F.value()) for F in record.fields]:
+			if tag != '599' and re.match('(245|246|5..)', tag):
+				if SIF in sif_email_map:
+					if SIF not in buff:
+						buff[SIF] = io.StringIO()
+						buff[SIF].write('\ufeff')# UTF-8 BOM
+					buff[SIF].write(IDENT + ';' + tag + ';' + value + "\n")
 
 	# Notify
-	notify(buff,sif_code)
+	notify(buff,db,sif_email_map)
 

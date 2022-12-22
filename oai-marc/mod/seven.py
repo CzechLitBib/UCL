@@ -11,11 +11,7 @@ from email.mime.text import MIMEText
 # VAR -------------------
 
 EDITOR=['UCLRE', 'UCLJCH','UCLFB']
-
-MAIL_SENDER='xxx'
-MAIL_TARGET=['xxx']
-MAIL_SERVER='xxx'
-MAIL_SERVER_BACKUP='xxx'
+MAIL_TARGET=['vm','vr']
 
 SEVEN='/var/www/html/seven/data/' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y/%m') + '/'
 NKP='/var/www/html/nkp/data/' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y/%m') + '/'
@@ -50,28 +46,29 @@ def is_worker(metadata):
 			return True
 	return False
 
-def notify():
-	for mail_target in MAIL_TARGET:
-		html = ('<br>Dobrý den,<br><br>Výstupní data za uplynulý měsíc jsou dotupná na adrese:<br><br>' +
-			'<a target="_blank" href="https://vyvoj.ucl.cas.cz/nkp">https://vyvoj.ucl.cas.cz/nkp</a><br><br>' +
-			'---------------------------<br><br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
-		msg = MIMEText(html, 'html', 'utf-8')
-		msg['Subject'] = 'UCL - Kontrolní zpráva'
-		msg['From'] = 'UCL Kontrola <' + MAIL_SENDER + '>'
-		msg['To'] = mail_target
-		try:
-			s = smtplib.SMTP(MAIL_SERVER, timeout=10)
-			s.sendmail(MAIL_SENDER, mail_target, msg.as_string())
-			s.quit()
-		except:
+def notify(db):
+	MAIL_CONF = db.execute("SELECT username,passwd,server FROM email;").fetchone()
+	sif_email_map = dict(db.execute("SELECT code,email FROM user;").fetchall())
+	for sif in MAIL_TARGET:
+		if sif in sif_email_map:
+			html = ('<br>Dobrý den,<br><br>Výstupní data za uplynulý měsíc jsou dotupná na adrese:<br><br>' +
+				'<a target="_blank" href="https://vyvoj.ucl.cas.cz/nkp">https://vyvoj.ucl.cas.cz/nkp</a><br><br>' +
+				'---------------------------<br><br>TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
+			msg = MIMEText(html, 'html', 'utf-8')
+			msg['Subject'] = 'UCL - Kontrolní zpráva'
+			msg['From'] = 'UCL Kontrola <' + MAIL_CONF['username'] + '>'
+			msg['To'] = sif_email_map[sif]
 			try:
-				s = smtplib.SMTP(MAIL_SERVER_BACKUP, timeout=10)
-				s.sendmail(MAIL_SENDER, mail_target, msg.as_string())
+				s = smtplib.SMTP(MAIL_CONF['server'], timeout=5)
+				s.ehlo()
+				s.starttls()
+				s.login(MAIL_CONF['username'], MAIL_CONF['passwd'])
+				s.sendmail(MAIL_CONF['username'], sif_email_map[sif], msg.as_string())
 				s.quit()
-			except:
-				print('Sendmail error.')
+			except Exception as e:
+				print(e)
 
-def run(records):
+def run(records,db):
 
 	# tag list
 	tag_list=[]
@@ -237,4 +234,5 @@ def run(records):
 					brig_stat_csv.write(str(BRIG_SORT[value]) + '||' + value + '\n')
 
 	# Notify
-	notify()
+	notify(db)
+
