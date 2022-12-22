@@ -68,12 +68,12 @@ def notify(db):
 			except Exception as e:
 				print(e)
 
-def run(records,db):
+def run(DATA,db):
 
 	# tag list
 	tag_list=[]
 
-	for record in records:
+	for record in DATA:
 
 		# ident
 		if '001' in record:

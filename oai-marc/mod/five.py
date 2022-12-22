@@ -25,8 +25,7 @@ def notify(buff,db,sif_email_map):
 		msg = MIMEMultipart()
 		msg.attach(MIMEText(body, 'html', 'utf-8'))
 		att = MIMEText(buff[sif].read(), _charset='utf-8')
-		att['Content-Disposition'] = "attachment; filename*=utf-8''"
-			+ urllib.parse.quote(('texty_' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y%m') + .'.csv'))
+		att['Content-Disposition'] = "attachment; filename*=utf-8''" + urllib.parse.quote(('texty_' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y%m') + '.csv'))
 		msg.attach(att)
 		msg['Subject'] = 'Kontrolní zpráva - Texty'
 		msg['From'] = 'Kontrola MARC <' + MAIL_CONF['username'] + '>'
@@ -46,7 +45,7 @@ def run(DATA,db):
 	# IO data buffer
 	buff={}
 	# SIF email map
-        sif_email_map = dict(db.execute("SELECT code,email FROM user WHERE email != '';").fetchall())
+	sif_email_map = dict(db.execute("SELECT code,email FROM user WHERE email != '';").fetchall())
 
 	for record in DATA:
 

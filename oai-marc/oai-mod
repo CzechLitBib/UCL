@@ -77,8 +77,8 @@ for record in records:
 	DATA.append(record[1])
 
 cat.run(DATA,db)
-five.run(DATA)
-seven.run(DATA)
+five.run(DATA,db)
+seven.run(DATA,db)
 
 sys.exit(0)
 
