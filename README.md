@@ -18,7 +18,6 @@ FRONTEND
 
 BACKEND
 
-- DB: email
 - mod: DB, SMTP auth
 - vufind-update: 21.10. hourly bug name_invert()
 - uclo/clo: seven-solr / download

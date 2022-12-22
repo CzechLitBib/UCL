@@ -24,10 +24,7 @@ ERROR_PAGE='https://vyvoj.ucl.cas.cz/error/#'
 
 DB='/var/www/data/devel.db'
 
-MAIL_USER='xxx'
-MAIL_SENDER='xxx'
-MAIL_PASSWD='xxx'
-MAIL_SERVER='xxx'
+MAIL_USER='vm'
 
 COUNTER=0
 MATCH=0
@@ -63,26 +60,28 @@ def url_response(url):
 	except: pass
 	return 0
 
-def send_mail(target,message):
+def send_mail(message,target,sender,passwd,server):
 	msg = MIMEText(message, 'html', 'utf-8')
 	msg['Subject'] = 'Kontrolní zpráva'
-	msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+	msg['From'] = 'Kontrola MARC <' + sender + '>'
 	msg['To'] = target
 	try:
-		s = smtplib.SMTP(MAIL_SERVER, timeout=5)
+		s = smtplib.SMTP(server, timeout=5)
 		s.ehlo()
 		s.starttls()
-		s.login(MAIL_SENDER, MAIL_PASSWD)
-		s.sendmail(MAIL_SENDER, target, msg.as_string())
+		s.login(sender, passwd)
+		s.sendmail(sender, target, msg.as_string())
 		s.quit()
 	except Exception as e:
 		print(e)
 
 def notify():
+	MAIL_CONF = db.execute("SELECT username,passwd,server FROM email;").fetchone()
+
 	if args.daily:
 		html_header = 'Dobrý den,<br><br>Ve vašich záznamech byly při kontrolách nalezeny následující chyby:<br><br>'
 		html_footer = ('<br>Prosíme o opravu.<br><br>---------------------------<br><br>'
-			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
+			+ 'TATO ZPRÁVA JE GENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
 		# USER | MAIL
 		for user,email in db.execute("SELECT code,email FROM user;").fetchall():
 			html_body=''
@@ -97,7 +96,7 @@ def notify():
 				html_body += (
 					'<a target="_blank" href="https://aleph.lib.cas.cz/F/?func=direct&doc_number='
 					+ ident + '&local_base=AV&format=001">' + ident + '</a> ' + ' [<a target="_blank" href="'
-					+ ERROR_PAGE + code + '">' + code + '</a>] ' + label[0].replace('XXX',tag) + '<br>'
+					+ ERROR_PAGE + code + '">' + code + '</a>] ' + label['label'].replace('XXX',tag) + '<br>'
 				)
 			if html_body and email:
 				send_mail(email, html_header + html_body + html_footer)
@@ -105,10 +104,10 @@ def notify():
 		html = ('Dobrý den,<br><br>Kontrolní zpráva je dostupná na adrese:<br><br>'
 			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">' + WEEKLY_PAGE + '</a><br><br>'
 			+ '---------------------------<br><br>'
-			+ 'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
+			+ 'TATO ZPRÁVA JE GENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>'
 		)
 		email = db.execute("SELECT email FROM user WHERE code = ?;",(MAIL_USER,)).fetchone()
-		if email: send_mail(email[0], html)
+		if email: send_mail(html, email['email'], MAIL_CONF['username'], MAIL_CONF['passwd'], MAIL_CONF['server'])
 
 def write_error(timestamp,ident,tag,sif,code):
 	global MATCH

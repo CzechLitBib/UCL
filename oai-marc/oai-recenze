@@ -22,10 +22,7 @@ DB='/var/www/data/devel.db'
 
 RECLIST={'A':{},'B':{}}
 
-MAIL_USER='xxx'
-MAIL_SENDER='xxx'
-MAIL_PASSWD='xxx'
-MAIL_SERVER='xxx'
+MAIL_USER='im'
 
 TOTAL=0
 MATCH=0
@@ -54,6 +51,8 @@ def valid_request(s):
 		raise argparse.ArgumentTypeError('Invalid request format.')
 
 def notify():
+	MAIL_CONF = db.execute("SELECT username,passwd,server FROM email;").fetchone()
+
 	html_header = '<br>Dobrý den,<br><br>Zasíláme nové záznamy pro web Českého literárního centra.<br><br>'
 	html_footer =('<br>---------------------------<br><br>' +
 		'TATO ZPRÁVA BYLA VYGENEROVÁNA AUTOMATICKY, NEODPOVÍDEJTE NA NI.<br>')
@@ -73,14 +72,14 @@ def notify():
 	if html_body and mail:
 		msg = MIMEText(html_header + html_body + html_footer, 'html', 'utf-8')
 		msg['Subject'] = 'Bibliografie MZK'
-		msg['From'] = 'Kontrola MARC <' + MAIL_SENDER + '>'
+		msg['From'] = 'Kontrola MARC <' + MAIL_CONF['username'] + '>'
 		msg['To'] = mail[0]
 		try:
-			s = smtplib.SMTP(MAIL_SERVER, timeout=5)
+			s = smtplib.SMTP(MAIL_CONF['server'], timeout=5)
 			s.ehlo()
 			s.starttls()
-			s.login(MAIL_SENDER, MAIL_PASSWD)
-			s.sendmail(MAIL_SENDER, mail[0], msg.as_string())
+			s.login(MAIL_CONF['username'], MAIL_CONF['passwd'])
+			s.sendmail(MAIL_CONF['username'], mail['email'], msg.as_string())
 			s.quit()
 		except Exception as e:
 			print(e)
