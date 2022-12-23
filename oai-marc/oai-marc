@@ -99,7 +99,7 @@ def notify():
 					+ ERROR_PAGE + code + '">' + code + '</a>] ' + label['label'].replace('XXX',tag) + '<br>'
 				)
 			if html_body and email:
-				send_mail(email, html_header + html_body + html_footer)
+				send_mail(html_header + html_body + html_footer, email, MAIL_CONF['username'], MAIL_CONF['passwd'], MAIL_CONF['server'])
 	if args.weekly:
 		html = ('Dobrý den,<br><br>Kontrolní zpráva je dostupná na adrese:<br><br>'
 			+ '<a target="_blank" href="' + WEEKLY_PAGE + '">' + WEEKLY_PAGE + '</a><br><br>'
