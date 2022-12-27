@@ -109,3 +109,10 @@ async function group_on_change() {
 	}
 }
 
+// select first
+groups = document.getElementById("group-option");
+if (groups.selectedIndex < 0) {
+        groups.options[0].selected = true;
+        group_on_change();
+}
+

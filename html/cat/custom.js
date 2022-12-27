@@ -84,14 +84,13 @@ async function doughnut_update(model) {
 	});
 }
 
-doughnut_update('A');
-doughnut_update('B');
+if(document.getElementById('A-doughnut')) { doughnut_update('A'); }
+if(document.getElementById('B-doughnut')) { doughnut_update('B'); }
 
 // select first
 ciphers = document.getElementById("cipher-option");
-console.log(ciphers.selectedIndex);
-if (ciphers.selectedIndex < 0) {
+if (ciphers !== null && ciphers.selectedIndex < 0) {
 	ciphers.options[0].selected = true;
+	cipher_on_change();
 }
-cipher_on_change();
 
