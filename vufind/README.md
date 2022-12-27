@@ -277,6 +277,9 @@ http://xxx/Install/done
 
 /usr/local/vufind/local/config/vufind/NoILS.ini:
 mode = ils-none
+
+touch /var/log/vufind.log
+chown www-data:www-data /var/log/vufind.log
 </pre>
 TUNE
 <pre>
