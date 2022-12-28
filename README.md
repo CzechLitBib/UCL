@@ -14,7 +14,6 @@ FRONTEND
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - seven/nkp: scandir() warn
-- error: description nbsp (&gt;152)
 
 BACKEND
 
