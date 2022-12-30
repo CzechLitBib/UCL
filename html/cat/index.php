@@ -60,6 +60,7 @@ if (!empty($_SESSION['cat_month']) and !empty($_SESSION['cat_year'])) {
 		$file = 'data/' . $_SESSION['cat_year'] . '/' . array_search($_SESSION['cat_month'],$month_map) . '/data.json';
 		if (file_exists($file)) {
 			$data = json_decode(file_get_contents($file), true);
+			ksort($data, SORT_STRING);		
 		}
 	}
 }
