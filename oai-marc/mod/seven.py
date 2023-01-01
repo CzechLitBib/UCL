@@ -16,15 +16,15 @@ MAIL_TARGET=['vm','vr']
 SEVEN='/var/www/html/seven/data/' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y/%m') + '/'
 NKP='/var/www/html/nkp/data/' + (datetime.today().replace(day=1)-timedelta(days=1)).strftime('%Y/%m') + '/'
 
-DATA={}
-DATA_7={}
-DATA_OLD={}
-DATA_OLD_7={}
+REC={}
+REC_7={}
+REC_OLD={}
+REC_OLD_7={}
 
-BRIG_DATA={}
-BRIG_DATA_7={}
-BRIG_DATA_OLD={}
-BRIG_DATA_OLD_7={}
+BRIG_REC={}
+BRIG_REC_7={}
+BRIG_REC_OLD={}
+BRIG_REC_OLD_7={}
 
 # DEF -------------------
 
@@ -91,45 +91,45 @@ def run(DATA,db):
 					if not seven and value:
 						# BRIG
 						if is_worker(record):
-							if tag not in BRIG_DATA: BRIG_DATA[tag] = {}
-							if value not in BRIG_DATA[tag]: BRIG_DATA[tag][value] = []
-							BRIG_DATA[tag][value].append(ident)
+							if tag not in BRIG_REC: BRIG_REC[tag] = {}
+							if value not in BRIG_REC[tag]: BRIG_REC[tag][value] = []
+							BRIG_REC[tag][value].append(ident)
 						# DATA
-						if tag not in DATA: DATA[tag] = {}
-						if value not in DATA[tag]: DATA[tag][value] = []
-						DATA[tag][value].append(ident)
+						if tag not in REC: REC[tag] = {}
+						if value not in REC[tag]: REC[tag][value] = []
+						REC[tag][value].append(ident)
 					if seven and value:
 						# BRIG 7
 						if is_worker(record):
-							if tag not in BRIG_DATA_7: BRIG_DATA_7[tag] = {}
-							if value not in BRIG_DATA_7[tag]: BRIG_DATA_7[tag][value] = []
-							BRIG_DATA_7[tag][value].append(ident)
+							if tag not in BRIG_REC_7: BRIG_REC_7[tag] = {}
+							if value not in BRIG_REC_7[tag]: BRIG_REC_7[tag][value] = []
+							BRIG_REC_7[tag][value].append(ident)
 						# DATA 7
-						if tag not in DATA_7: DATA_7[tag] = {}
-						if value not in DATA_7[tag]: DATA_7[tag][value] = []
-						DATA_7[tag][value].append(ident)
+						if tag not in REC_7: REC_7[tag] = {}
+						if value not in REC_7[tag]: REC_7[tag][value] = []
+						REC_7[tag][value].append(ident)
 				# OLD
 				else:
 					if not seven and value:
 						if is_worker(record):
 							# BRIG OLDER
-							if tag not in BRIG_DATA_OLD: BRIG_DATA_OLD[tag] = {}
-							if value not in BRIG_DATA_OLD[tag]: BRIG_DATA_OLD[tag][value] = []
-							BRIG_DATA_OLD[tag][value].append(ident)
+							if tag not in BRIG_REC_OLD: BRIG_REC_OLD[tag] = {}
+							if value not in BRIG_REC_OLD[tag]: BRIG_REC_OLD[tag][value] = []
+							BRIG_REC_OLD[tag][value].append(ident)
 						# DATA OLDER
-						if tag not in DATA_OLD: DATA_OLD[tag] = {}
-						if value not in DATA_OLD[tag]: DATA_OLD[tag][value] = []
-						DATA_OLD[tag][value].append(ident)
+						if tag not in REC_OLD: REC_OLD[tag] = {}
+						if value not in REC_OLD[tag]: REC_OLD[tag][value] = []
+						REC_OLD[tag][value].append(ident)
 					if seven and value:
 						# BRIG OLDER 7
 						if is_worker(record):
-							if tag not in BRIG_DATA_OLD_7: BRIG_DATA_OLD_7[tag] = {}
-							if value not in BRIG_DATA_OLD_7[tag]: BRIG_DATA_OLD_7[tag][value] = []
-							BRIG_DATA_OLD_7[tag][value].append(ident)
+							if tag not in BRIG_REC_OLD_7: BRIG_REC_OLD_7[tag] = {}
+							if value not in BRIG_REC_OLD_7[tag]: BRIG_REC_OLD_7[tag][value] = []
+							BRIG_REC_OLD_7[tag][value].append(ident)
 						# DATA OLDER 7
-						if tag not in DATA_OLD_7: DATA_OLD_7[tag] = {}
-						if value not in DATA_OLD_7[tag]: DATA_OLD_7[tag][value] = []
-						DATA_OLD_7[tag][value].append(ident)
+						if tag not in REC_OLD_7: REC_OLD_7[tag] = {}
+						if value not in REC_OLD_7[tag]: REC_OLD_7[tag][value] = []
+						REC_OLD_7[tag][value].append(ident)
 
 	for TAG in tag_list:
 	
@@ -138,17 +138,17 @@ def run(DATA,db):
 		SORT = {}
 		BRIG_SORT = {}
 
-		if TAG in DATA:
+		if TAG in REC:
 			with open(SEVEN + TAG + '.csv', 'w') as csv:
-				for value in DATA[TAG]:
-					SORT[value] = len(DATA[TAG][value])
-					for ident in DATA[TAG][value]:
+				for value in REC[TAG]:
+					SORT[value] = len(REC[TAG][value])
+					for ident in REC[TAG][value]:
 						csv.write(value + '||' + ident + '\n')
-		if TAG in BRIG_DATA:
+		if TAG in BRIG_REC:
 			with open(NKP + TAG + '.csv', 'w') as brig_csv:
-				for value in BRIG_DATA[TAG]:
-					BRIG_SORT[value] = len(BRIG_DATA[TAG][value])
-					for ident in BRIG_DATA[TAG][value]:
+				for value in BRIG_REC[TAG]:
+					BRIG_SORT[value] = len(BRIG_REC[TAG][value])
+					for ident in BRIG_REC[TAG][value]:
 						brig_csv.write(value + '||' + ident + '\n')
 		if SORT:
 			with open(SEVEN + TAG + '.stat.csv', 'w') as stat_csv:
@@ -162,17 +162,17 @@ def run(DATA,db):
 		SORT = {}
 		BRIG_SORT = {}
 
-		if TAG in DATA_7:
+		if TAG in REC_7:
 			with open(SEVEN + TAG + '.7.csv', 'w') as csv:
-				for value in DATA_7[TAG]:
-					SORT[value] = len(DATA_7[TAG][value])
-					for ident in DATA_7[TAG][value]:
+				for value in REC_7[TAG]:
+					SORT[value] = len(REC_7[TAG][value])
+					for ident in REC_7[TAG][value]:
 						csv.write(value + '||' + ident + '\n')
-		if TAG in BRIG_DATA_7:
+		if TAG in BRIG_REC_7:
 			with open(NKP + TAG + '.7.csv', 'w') as brig_csv:
-				for value in BRIG_DATA_7[TAG]:
-					BRIG_SORT[value] = len(BRIG_DATA_7[TAG][value])
-					for ident in BRIG_DATA_7[TAG][value]:
+				for value in BRIG_REC_7[TAG]:
+					BRIG_SORT[value] = len(BRIG_REC_7[TAG][value])
+					for ident in BRIG_REC_7[TAG][value]:
 						brig_csv.write(value + '||' + ident + '\n')
 		if SORT:
 			with open(SEVEN + TAG + '.7.stat.csv', 'w') as stat_csv:
@@ -188,17 +188,17 @@ def run(DATA,db):
 		SORT = {}
 		BRIG_SORT = {}
 
-		if TAG in DATA_OLD:
+		if TAG in REC_OLD:
 			with open(SEVEN + TAG + '.old.csv', 'w') as csv:
-				for value in DATA_OLD[TAG]:
-					SORT[value] = len(DATA_OLD[TAG][value])
-					for ident in DATA_OLD[TAG][value]:
+				for value in REC_OLD[TAG]:
+					SORT[value] = len(REC_OLD[TAG][value])
+					for ident in REC_OLD[TAG][value]:
 						csv.write(value + '||' + ident + '\n')
-		if TAG in BRIG_DATA_OLD:
+		if TAG in BRIG_REC_OLD:
 			with open(NKP + TAG + '.old.csv', 'w') as brig_csv:
-				for value in BRIG_DATA_OLD[TAG]:
-					BRIG_SORT[value] = len(BRIG_DATA_OLD[TAG][value])
-					for ident in BRIG_DATA_OLD[TAG][value]:
+				for value in BRIG_REC_OLD[TAG]:
+					BRIG_SORT[value] = len(BRIG_REC_OLD[TAG][value])
+					for ident in BRIG_REC_OLD[TAG][value]:
 						brig_csv.write(value + '||' + ident + '\n')
 		if SORT:
 			with open(SEVEN + TAG + '.old.stat.csv', 'w') as stat_csv:
@@ -212,17 +212,17 @@ def run(DATA,db):
 		SORT = {}
 		BRIG_SORT = {}
 
-		if TAG in DATA_OLD_7:
+		if TAG in REC_OLD_7:
 			with open(SEVEN + TAG + '.old.7.csv', 'w') as csv:
-				for value in DATA_OLD_7[TAG]:
-					SORT[value] = len(DATA_OLD_7[TAG][value])
-					for ident in DATA_OLD_7[TAG][value]:
+				for value in REC_OLD_7[TAG]:
+					SORT[value] = len(REC_OLD_7[TAG][value])
+					for ident in REC_OLD_7[TAG][value]:
 						csv.write(value + '||' + ident + '\n')
-		if TAG in BRIG_DATA_OLD_7:
+		if TAG in BRIG_REC_OLD_7:
 			with open(NKP + TAG + '.old.7.csv', 'w') as brig_csv:
-				for value in BRIG_DATA_OLD_7[TAG]:
-					BRIG_SORT[value] = len(BRIG_DATA_OLD_7[TAG][value])
-					for ident in BRIG_DATA_OLD_7[TAG][value]:
+				for value in BRIG_REC_OLD_7[TAG]:
+					BRIG_SORT[value] = len(BRIG_REC_OLD_7[TAG][value])
+					for ident in BRIG_REC_OLD_7[TAG][value]:
 						brig_csv.write(value + '||' + ident + '\n')
 		if SORT:
 			with open(SEVEN + TAG + '.old.7.stat.csv', 'w') as stat_csv:
