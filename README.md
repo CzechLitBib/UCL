@@ -14,6 +14,7 @@ FRONTEND
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
 - seven/nkp: scandir() warn
+- Replace DB stored NBSP with PHP code
 
 BACKEND
 
