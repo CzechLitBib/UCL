@@ -322,7 +322,7 @@ if (!empty($_POST)) {
 
 	if (!empty($_POST['email-username']) and !empty($_POST['email-passwd']) and !empty($_POST['email-server'])) {
 		if (isset($_POST['email-save'])) {
-			$query = $db->exec("INSERT OR REPLACE INTO email (username, passwd, server) VALUES ('"
+			$query = $db->exec("INSERT OR REPLACE INTO email (rowid, username, passwd, server) VALUES (1, '"
 				. $db->escapeString($_POST['email-username']) . "', '"
 				. $db->escapeString($_POST['email-passwd']) . "', '"
 				. $db->escapeString($_POST['email-server'])  . "');");
