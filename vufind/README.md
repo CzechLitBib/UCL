@@ -153,17 +153,28 @@ server {
 	}
 
         # SAM
-	location ~ /SAM/(.*) {
-		proxy_pass https://xxx/solr/$1$is_args$args;
+	location ~ /SAM {
+		alias /var/www/html/opvvvweb/www/;
+		index index.php;
+
+		try_files $uri $uri/ /SAM/index.php$is_args$args;
+
+		location ~ \.php {
+			fastcgi_param SCRIPT_FILENAME /var/www/html/opvvvweb/www/index.php;
+			include fastcgi_params;
+			fastcgi_pass unix:/var/run/php/php-fpm.sock;
+			fastcgi_index index.php;
+		}
 	}
+
 	location /css {
-		proxy_pass https://xxx/css/;
+		alias /var/www/html/opvvvweb/www/css/;
 	}
 	location /js {
-		proxy_pass https://xxx/js/;
+		alias /var/www/html/opvvvweb/www/js/;
 	}
 	location /clb.png {
-		proxy_pass https://xxx/clb.png;
+		alias /var/www/html/opvvvweb/www/clb.png;
 	}
 
 	# AWSTATS
