@@ -19,7 +19,6 @@ FRONTEND
 
 BACKEND
 
-- vufind-update: 21.10. hourly bug name_invert()
 - uclo/clo: seven-solr / download
 - oai-marc: 136 dup code.
 - api: plot UTC bug
