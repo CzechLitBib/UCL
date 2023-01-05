@@ -174,7 +174,7 @@ for record in records:
 		if len(LHT) > 0 and len(LHT) <= len(AUT) and '594' not in metadata:# tag
 			for LH in LHT:
 				if re.match('<<\[.*\]>>', LH): LH = 'Nepodepsáno.'# [] tag
-				if LH == '<<>>': LH = name_invert(AUT[0]['a'], ident)# <<>> tag
+				if LH == '<<>>' and 'a' in AUT[0]: LH = name_invert(AUT[0]['a'], ident)# <<>> tag
 				SUB=['x', re.sub('<<([^<>]*)>>', '\\1', LH)]
 				SUB+=AUT[0].subfields
 				metadata.add_field(Field(tag='594', indicators=[' ',' '], subfields=SUB))
