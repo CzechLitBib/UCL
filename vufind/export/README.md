@@ -6,18 +6,18 @@ TODO
 </pre>
 INSTALL
 <pre>
-apt-get install uwsgi uwsgi-plugin-python3 python-flask python3-reportgen
+apt-get install uwsgi uwsgi-plugin-python3 python-flask python3-reportlab
 
-svglib-1.3.0:
+svglib-1.5.1:
 
-apt-get install python3-lxml python3-cssselect2 python3-tinycss2 python3-webencodings
+apt-get install python3-lxml python3-cssselect2 python3-tinycss2
 
 python-docx-0.8.11
 
 mkdir /usr/local/bin/export
 cp -p vufind-export /usr/local/bin/export
-cp -p clb.svg /usr/local/bin/export
-chown -Rsolr:solr /usr/local/bin/export
+cp -p logo.svg /usr/local/bin/export
+chown -R solr:solr /usr/local/bin/export
 cp vufind-export.service /etc/systemd/system/
 systemctl enable vufind-export
 systemctl start vufind-export
