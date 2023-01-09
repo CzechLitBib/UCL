@@ -14,6 +14,8 @@ apt-get install python3-lxml python3-cssselect2 python3-tinycss2
 
 python-docx-0.8.11
 
+pymarc-4.0.0 + patch
+
 mkdir /usr/local/bin/export
 cp -p vufind-export /usr/local/bin/export
 cp -p logo.svg /usr/local/bin/export
