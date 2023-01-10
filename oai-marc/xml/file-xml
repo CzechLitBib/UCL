@@ -3,25 +3,45 @@
 # XML / MARC parsing
 #
 
-import io,requests,lxml.html,time,sys,os,re
+import traceback,requests,lxml.html,time,sys,os,io,re
 
-from pymarc import marcxml,Field,MARCWriter,MARCReader,XMLWriter
+from pymarc import marcxml,Leader,Field,MARCWriter,MARCReader,XMLWriter
 from pymarc.record import Record
 
 # ------------------------------------------------------
 # VAR
 # ------------------------------------------------------
 
-DATA='ucla.xml'
+DATA='CLO-2022-09-03.mrc'
 
-#aleph = open('505.aleph', 'w')
-#xml = XMLWriter(open('PNP_CLO.xml', 'w'))
-#writer = MARCWriter(open('ucla.mrc', 'wb'))
+xml = XMLWriter(open('CLO_PNP_2022_12.xml', 'wb'))
+reader = MARCReader(open(DATA,'rb'))
+#writer = MARCWriter(open('hnl_fix.mrc', 'wb'))
 
-# 964 ---------
+for record in reader:
 
-#DATADIR='/var/www/html/964'
-#BASE=['B12', 'B45', 'B70', 'B80', 'B97', 'CLE', 'INT', 'RET', 'SMZ', 'PWC', 'MBK']
+	record.remove_fields('LDR')# LDR dup
+
+	tags = [F.tag for F in record.fields]
+
+	for T in tags:
+		if T not in ['001', '046', '100', '368', '370', '372', '400', '678']:
+			record.remove_fields(T)
+
+	xml.write(record)
+
+#	record.force_utf8 = True
+#	writer.write(record)
+
+	#print(record)
+	#sys.exit(1)
+
+reader.close()
+xml.close()
+
+sys.exit(1)
+
+#f = open('history.dat', 'w')
 
 # ------------------------------------------------------
 # DEF
@@ -31,103 +51,89 @@ def validate(record):
 
 	metadata = record
 
-# ------------------------------------------------------
-# PATCH
-# ------------------------------------------------------
-
-	# LDR dup
 #	metadata.remove_fields('LDR')# LDR dup
+#	metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'HunNatLib']))
 
-#	if metadata['001'].value() == '001232606': metadata.remove_fields('506')# UCLEC broken control field
-#	if metadata['001'].value() == '001852470': return # UCLA skip broken encoding
+#	xml.write(metadata)
+
+
+	if 'VER' in metadata:
+		print(record)
+		sys.exit(1)
 	
-	# UCLEC drop records
-	#if metadata['001'].value() in ['001676249','002194963','002265478','001232724','002549375','001232855']: return
-	#if metadata['001'].value() == '001232855': return
+	return
 
-	# UCLEC: 912 -> 913 ind1 = 2
-	#for F in [f for f in metadata.get_fields('912') if f.indicator1 == '2']: F.tag = '913'
+	for F in metadata.get_fields('KAT'):
+		print(F['a'])
 
-	# UCLEC: 912 -> 911 ind1 = ' ' ind2 = ' '
-	#for F in [f for f in metadata.get_fields('912') if f.indicator1 + f.indicator2 == '  ']: F.tag = '911'
+	return
 
-	# UCLEC drop 506 fields
-	#etadata.remove_fields('506')
+	#metadata.remove_fields('LDR')# LDR dup
 
-	# UCLA:  webarchiv
-#	for F in metadata.get_fields('856'):
-#		if 'y' in F:
-#			if F['y'] == 'Weabrchiv': F['y'] = 'Webarchiv'
-#			if F['y'] == 'WebArchiv': F['y'] = 'Webarchiv'
-#			if F['y'] == 'Webarhciv': F['y'] = 'Webarchiv'
-#			if F['y'] == 'Wenarchiv': F['y'] = 'Webarchiv'
-
-	# UCLA: drop X
-#	X=False
-#	for F in metadata.get_fields('773'):
-#		if X and 'x' in F: F.delete_subfield('x')# drop more than one
-#		if 'x' in F: X = True# catch the first one
-
-	# UCLA: add MBK
-#	MBK=False
-#	if '044' in metadata:
-#		if 'a' in metadata['044']:
-#			if metadata['044']['a'] != 'xr': MBK=True
+	#if '001' in metadata:
+	#	ident = metadata['001'].value()
+	
 #	if '008' in metadata:
-#		if metadata['008'].value()[15:17] != 'xr': MBK=True
-#	for F in metadata.get_fields('964'):
-#		if 'CLE' in F.value(): MBK=False
-#	if MBK:
-#		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'MBK']))
+#		f.write(metadata['008'].value()[0:6] + ' ' + metadata['008'].value()[7:11] + '\n')
 
-	# 599 UCLO special
-	#for F in metadata.get_fields('599'):
-	#	if 'a' in F:
-	#		BUFF+=F['a'] + str('|') + IDENT + '\n'
 
-	# UCLO 599a
-#	XEDICE=False
-#	for F in metadata.get_fields('599'):
-#		if 'a' in F and F['a'] == 'xedice':
-#			XEDICE=True
-#	if XEDICE:
-#		COUNTER+=1
-#		metadata.add_ordered_field(Field(tag='964', indicators=[' ',' '], subfields=['a', 'XEDICE']))
+#	if metadata:
+#		metadata.remove_fields('LDR')# LDR dup
+
+#		if '001' in metadata:
+#			ident = metadata['001'].value()
+	
+#		print('####   ' + ident + '   #####')  
+
+#		metadata.force_utf8 = True
+
+#		print(metadata)
+		#print(metadata.leader[9])
 #		writer.write(metadata)
+	#	for F in metadata.fields:
+	#		try:
+	#			print(F.__str__().encode('latin-1'))
+	#		except:
+	#			pass
+	return
 
-# ------------------------------------------------------
-# GENERIC
-# ------------------------------------------------------
+	#if '001' in metadata:
+	#	ident = metadata['001'].value()
+	
+	#if 'FMT' in metadata:
+	#	metadata.add_ordered_field(Field(tag='990', indicators=[' ',' '], subfields=['a', metadata['FMT'].value()]))
+	#	metadata.remove_fields('FMT')
 
-	#IDENT = metadata['001'].value()
+	#if 'LKR' in metadata:
+	#	metadata.add_ordered_field(Field(tag='994', indicators=[' ',' '], subfields=metadata['LKR'].subfields))
+	#	metadata.remove_fields('LKR')
 
-	#if '700' in metadata and '245' in metadata:
-	#	f.write(IDENT + ';' + metadata['245'].value() + '\n')
+	#writer.write(metadata)
 
-	#if '700' in metadata:
-	#	if '245' in metadata and 'c' in metadata['245']:
-	#		BRACKET = len(re.findall('<<[^<>]+>>', metadata['245']['c']))
-	#		for F in metadata.get_fields('505'):
-	#			if 't' in F: BRACKET += len(re.findall('<<[^<>]+>>', F['t']))
-	#		if BRACKET > 0:
-	#			FC = len(metadata.get_fields('100','593'))
-	#			for F in metadata.get_fields('700'):
-	#				if len(F.get_subfields('4')) == 1 and F['4'] in ['aqt','ctb']: continue
-	#				FC+=1
-	#			print(FC)
-	#			print(BRACKET)
-	#			if FC != BRACKET:
-	#				print("Boo!")
+	return
 
-	#if '245' in metadata and 'c' in metadata['245']:
-	#	for T in re.findall('<<[^<>]+>>', metadata['245']['c']):
-	#		if '100' in metadata and 'a' in metadata['100']:
-	#			if T == '<<' + metadata['100']['a'] + '>>': continue
-	#		for F in metadata.get_fields('700'):
-	#			if 'a' in F and T == '<<' + F['a'] + '>>': break
-	#		else:
-	#			if (not T[2].isupper()) and T[2] != '[':
-	#				print("Foo")
+	if '001' in metadata:
+		ident = metadata['001'].value()
+	else:
+		return
+
+	# CLB / ECS / ECR filter
+	for F in metadata.get_fields('599'):
+		if 'a' in F and F['a'] == 'CLB-CPK': break
+	else:
+		for F in metadata.get_fields('964'):
+			if 'a' in F and F['a'] in ['ECS', 'ECR']: break
+		else: return
+
+	if len(metadata.get_fields('964')) > 1:
+		print(ident)
+	
+	return
+
+	# CLO FIX
+
+	# remove LDR dup
+	#record.remove_fields('LDR')
 
 # ------------------------------------------------------
 # MAIN
@@ -150,15 +156,16 @@ def validate(record):
 
 #validate(record)
 
-#marcxml.map_xml(validate, DATA)
+marcxml.map_xml(validate, DATA)
+
+#with open('encoding.txt', 'r') as f:
+#	for I in f.read().splitlines():
+#		marcxml.map_xml(validate, 'xml/' + I + '.xml')
 
 #aleph.close()
 #xml.close()
 #writer.close()
-
-#link.close()
-#wayback.close()
-#aleph.close()
+#f.close()
 
 # EXIT -------------------
 
