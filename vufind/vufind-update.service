@@ -1,0 +1,12 @@
+[Unit]
+Description=Update Vufind Solr from API service
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/root/bin/vufind-update.sh
+
+[Install]
+WantedBy=multi-user.target
+

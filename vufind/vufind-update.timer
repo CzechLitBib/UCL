@@ -1,0 +1,9 @@
+[Unit]
+Description=Update Vufind Sorl from remote API timer
+
+[Timer]
+OnCalendar=*-*-* 00:15:00
+
+[Install]
+WantedBy=timers.target
+
