@@ -6,6 +6,8 @@ Type=simple
 User=root
 Group=root
 ExecStart=/root/bin/vufind-update.sh
+StandardOutput=append:/var/log/vufind-update.log
+StandardError=append:/var/log/vufind-update.log
 
 [Install]
 WantedBy=multi-user.target
