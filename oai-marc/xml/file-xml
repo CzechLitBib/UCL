@@ -14,9 +14,9 @@ from pymarc.record import Record
 
 DATA='CLO-2022-09-03.mrc'
 
-xml = XMLWriter(open('CLO_PNP_2022_12.xml', 'wb'))
+#xml = XMLWriter(open('CLO_PNP_2022_12.xml', 'wb'))
 reader = MARCReader(open(DATA,'rb'))
-#writer = MARCWriter(open('hnl_fix.mrc', 'wb'))
+writer = MARCWriter(open('CLO_fix.mrc', 'wb'))
 
 for record in reader:
 
@@ -25,19 +25,17 @@ for record in reader:
 	tags = [F.tag for F in record.fields]
 
 	for T in tags:
-		if T not in ['001', '046', '100', '368', '370', '372', '400', '678']:
+		# PNP filter
+		#if T not in ['001', '046', '100', '368', '370', '372', '400', '678']:
+		# Vufind filter
+		if T not in ['001','005','046','100','368','370','372','373','374','375','377','400','410','411','678','680','POZ']:
 			record.remove_fields(T)
 
-	xml.write(record)
-
-#	record.force_utf8 = True
-#	writer.write(record)
-
-	#print(record)
-	#sys.exit(1)
+	record.force_utf8 = True
+	writer.write(record)
 
 reader.close()
-xml.close()
+writer.close()
 
 sys.exit(1)
 
