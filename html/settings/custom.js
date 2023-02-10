@@ -31,6 +31,11 @@ function on_confirm() {
 	modal.toggle();
 }
 
+function on_dismiss() {
+	document.getElementById('modal-text').textContent = '';
+	document.getElementById('modal-text-bold').textContent = '';
+}
+
 // FETCH - EXPORT
 
 async function export_data(payload,type) {

@@ -890,7 +890,7 @@ if ($db) {
 					<button class="btn btn-sm btn-danger w-100" onclick="on_confirm()">Ano</button>
 				</div>
 				<div class="col-1 d-flex align-items-center me-2">
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="on_dismiss()"></button>
 				</div>
 			</div>
 		</div>
