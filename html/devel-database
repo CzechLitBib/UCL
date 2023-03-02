@@ -6,7 +6,6 @@
 import sqlite3
 
 DB='devel.db'
-ERR='/var/www/html/error/error.db'
 
 con = sqlite3.connect(DB)
 cur = con.cursor()

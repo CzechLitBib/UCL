@@ -98,7 +98,7 @@ server {
 	}
 
 	# PHP - local
-	location ~ ^/(?!cardio|2fa) {
+	location / {
 		allow xxx/24;
 		allow xxx/25;
 		allow 127.0.0.1;
