@@ -13,7 +13,6 @@ FRONTEND
 - Module templete / include
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
-- cat: blank data output on zeroed cipher
 
 BACKEND
 
