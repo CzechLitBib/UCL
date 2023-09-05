@@ -29,6 +29,7 @@ if ($db) {
 }
 
 $clo_date = '03.09.2022';
+$dir = 'data';
 
 ?>
 
@@ -83,9 +84,10 @@ function getLines($file)
 	return $lines;
 }
 
-$dir = 'data';
+if (is_dir($dir)) {
+	$files = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.*/', $var); } );
+} else { $files = []; }
 
-$files = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.*/', $var); } );
 $tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $files));
 
 $no_seven = 0;
