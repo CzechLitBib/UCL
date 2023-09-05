@@ -30,6 +30,10 @@
 
 <?php
 
+function typo($text) {
+	return preg_replace('/ ([aiuoksvzAIUOKSVZ]) /', ' $1&nbsp;', $text);
+}
+
 $db = new SQLite3('/var/www/data/devel.db');
 
 if (!$db) {
@@ -38,12 +42,17 @@ if (!$db) {
 
 	$result = $db->query("SELECT code,label,text FROM error ORDER BY code;");
 
-	while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
-		echo '<div class="card my-2"><div class="card-body"><div class="row"><div class="col-2 col-md-1">'
-		. '<h5 class="card-title text-danger text-nowrap">' . $res['code'] . '</h5>'
-		. '</div><div class="col"><h5 class="card-title">' . $res['label'] . '</h5>'
-		. '<p class="card-text">' . $res['text'] . '</p></div></div></div></div>';
-		echo '<a class="anchor" id="' . $res['code'] . '"></a>';
+	if ($result->fetchArray()) {
+		$result->reset();
+		while ($res = $result->fetchArray(SQLITE3_ASSOC)) {
+			echo '<div class="card my-2"><div class="card-body"><div class="row"><div class="col-2 col-md-1">'
+			. '<h5 class="card-title text-danger text-nowrap">' . $res['code'] . '</h5>'
+			. '</div><div class="col"><h5 class="card-title">' . $res['label'] . '</h5>'
+			. '<p class="card-text">' . typo($res['text']) . '</p></div></div></div></div>';
+			echo '<a class="anchor" id="' . $res['code'] . '"></a>';
+		}
+	} else {
+		echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">Žádný chybový kód.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 	}
 	$db->close();
 }
