@@ -13,9 +13,6 @@ FRONTEND
 - Module templete / include
 - Error handling broker (konsorcium_form)
 - DB: RO, $db->escapeString(), lock primitive
-- seven/nkp: scandir() warn
-- error: Replace DB stored NBSP with PHP code
-- cat: blank data output on zeroed cipher
 
 BACKEND
 

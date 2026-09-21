@@ -75,8 +75,11 @@ def run(DATA,db):
 					buff[owner]['fix_other_count'] += 1
 					if ident not in buff[owner]['ident']: buff[owner]['ident'].append(ident)
 
+	# Drop zero
+	for sif in sif_aleph_map:
+		if buff[sif]['new_count'] == buff[sif]['fix_count'] == buff[sif]['fix_other_count'] == 0:
+			 del buff[sif]
+
 	# JSON
 	with open(JSON, 'w') as f: json.dump(buff, f)
-	# DB
-	#db.query("INSERT INTO cat VALUES (?,?);", (DATE,json.dump(buff)))
 

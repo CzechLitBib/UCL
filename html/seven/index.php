@@ -165,7 +165,10 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 
 		# NEW
 
-		$new = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.(?!old).*/', $var); } );
+		if (is_dir($dir)) {
+			$new = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.(?!old).*/', $var); } );
+		} else { $new = []; }
+	
 		$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $new));
 		$no_seven = 0;
 		$seven = 0;
@@ -220,7 +223,10 @@ if (!empty($_SESSION['seven_month']) and !empty($_SESSION['seven_year'])) {
 
 		# OLD	
 
-		$old = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.old.*/', $var); } );
+		if (is_dir($dir)) {
+			$old = array_filter(scandir($dir), function ($var) { return preg_match('/\d{3}.old.*/', $var); } );
+		} else { $old = []; }
+
 		$tags = array_unique(array_map(function ($var) { return explode('.', $var)[0]; }, $old));
 		$no_seven = 0;
 		$seven = 0;
